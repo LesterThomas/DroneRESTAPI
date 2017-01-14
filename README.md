@@ -34,10 +34,10 @@ Using a browser or REST API Client (I recommend Advanced REST Client which is a 
 
 The returned payload is the EntryPoint (or homepage) of the API and shows the APIs available. The following images capture a sample of browsing through the API.
 
-![Images/EntryPoint.png]
-![Images/VehicleCollection.png]
-![Images/Vehicle1.png]
-![Images/Vehicle1Actions.png]
+![EntryPoint](Images/EntryPoint.png)
+![Vehicle Collection](Images/VehicleCollection.png)
+![Vehicle Details](Images/Vehicle1.png)
+![Vehicle Actions](Images/Vehicle1Actions.png)
 
 
 
