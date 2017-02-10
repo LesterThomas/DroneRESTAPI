@@ -436,6 +436,8 @@ class action:
 
         inVehicle=connectVehicle(vehicleId)      
         web.header('Content-Type', 'application/json')
+        web.header('Access-Control-Allow-Origin',      '*')
+        web.header('Access-Control-Allow-Credentials', 'true')
 
         data = json.loads(web.data())
         value = data["name"]
