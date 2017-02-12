@@ -8,9 +8,14 @@ import math
 
 import web
 
-serverURL="http://localhost:1234"
 connectionStringArray = ["","udp:127.0.0.1:14551"] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
 connectionArray=[None ,None]
+
+def applyHeadders():
+    web.header('Content-Type', 'application/json')
+    web.header('Access-Control-Allow-Origin',      '*')
+    web.header('Access-Control-Allow-Credentials', 'true')        
+    return
 
 def connectVehicle(inVehicleId):
     global connectionStringArray
@@ -58,7 +63,6 @@ def rtl(inVehicle):
 
 def takeoff(inVehicle, inHeight):        
     outputObj={}
-
     if inVehicle.is_armable:
         outputObj["name"]="takeoff"
         outputObj["status"]="success"
@@ -72,13 +76,11 @@ def takeoff(inVehicle, inHeight):
             time.sleep(1)
         print "Taking off!"
         inVehicle.simple_takeoff(inHeight) # Take off to target altitude
-       
     else:
         outputObj["name"] = "takeoff"
         outputObj["status"] = "error"
         outputObj["error"] = "vehicle not armable"
         print "vehicle not armable"
-
     return outputObj
 
 def auto(inVehicle):        
@@ -86,19 +88,16 @@ def auto(inVehicle):
     if inVehicle.armed:
         outputObj["name"]="auto"
         outputObj["status"]="success"
-        print "Returning to Launch"
+        print "Auto mission"
         inVehicle.mode = VehicleMode("AUTO")
     else:    
         outputObj["name"]="auto"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
-
     return outputObj
 
 def land(inVehicle):        
     outputObj={}
-
-
     if inVehicle.armed:
         outputObj["name"]="land"
         outputObj["status"]="success"
@@ -108,15 +107,12 @@ def land(inVehicle):
         outputObj["name"]="land"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
-
-
     return outputObj
 
 def goto(inVehicle, dNorth, dEast, dDown):
     """
     Moves the vehicle to a position dNorth metres North and dEast metres East of the current position.
     """
-
     outputObj={}
     if inVehicle.armed:
         outputObj["name"]="gotoRelativeCurrent"
@@ -124,13 +120,11 @@ def goto(inVehicle, dNorth, dEast, dDown):
         currentLocation = inVehicle.location.global_relative_frame
         targetLocation = get_location_metres(currentLocation, dNorth, dEast)
         targetLocation.alt=targetLocation.alt-dDown
-
         inVehicle.simple_goto(targetLocation, groundspeed=10)
     else:    
         outputObj["name"]="gotoRelativeCurrent"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
-
     return outputObj
 
 def get_location_metres(original_location, dNorth, dEast):
@@ -156,18 +150,14 @@ def get_location_metres(original_location, dNorth, dEast):
         targetlocation=LocationGlobalRelative(newlat, newlon,original_location.alt)
     else:
         raise Exception("Invalid Location object passed")
-        
     return targetlocation;
 
 def gotoRelative(inVehicle, north, east, down):
-
     outputObj={}
-
     if inVehicle.armed:
         outputObj["name"]="gotoRelativeHome"
         outputObj["status"]="success"
         #vehicle.mode = VehicleMode("GUIDED")
-
         msg = inVehicle.message_factory.set_position_target_local_ned_encode(
             0,       # time_boot_ms (not used)
             0, 0,    # target system, target component
@@ -179,20 +169,15 @@ def gotoRelative(inVehicle, north, east, down):
             0, 0)    # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink) 
         # send command to vehicle
         inVehicle.send_mavlink(msg)
-
     else:    
         outputObj["name"]="gotoRelativeHome"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
-
-
     return outputObj
 
 
 def gotoAbsolute(inVehicle, inLocation):        
-
     outputObj={}
-
     if inVehicle.armed:
         outputObj["name"]="gotoAbsolute"
         outputObj["status"]="success"
@@ -201,25 +186,20 @@ def gotoAbsolute(inVehicle, inLocation):
         print "lat" + str(inLocation['lat'])
         #vehicle.mode = VehicleMode("GUIDED")
         inVehicle.simple_goto(LocationGlobal(inLocation['lat'],inLocation['lon'],inLocation['alt']), groundspeed=10)
-
     else:    
         outputObj["name"]="gotoAbsolute"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
-
     return outputObj
 
 def roi(inVehicle, inLocation):        
     outputObj={}
     outputObj["name"]="roi"
     outputObj["status"]="success"
-
-
     print " Home Location: %s" % inLocation     
     output = {"home_location":inLocation}
     print "lat" + str(inLocation['lat'])
     set_roi(inVehicle, inLocation)
-
     return outputObj
 
 def set_roi(inVehicle, location):
@@ -292,124 +272,103 @@ def getVehicleStatus(inVehicle):
 
 class index:        
     def GET(self):
-        global serverURL
         print "#####################################################################"
         print "Method GET of index"
         print "#####################################################################"
-        web.header('Content-Type', 'application/json')
+        applyHeadders()
         outputObj={}
-        outputObj['@id']=serverURL
+        outputObj['@id']=web.ctx.home
         outputObj['@type']="EntryPoint"
-        outputObj['vehicle']=[{"method":"GET","href":serverURL+"/vehicle","description":"Return the collection of available vehicles."},
-            {"method":"POST","href":serverURL+"/vehicle","description":"Add a connection to a new vehicle. It will return the id of the vehicle.","samplePayload":{"connection":"udp:10.0.0.2:6000"}}]
+        outputObj['vehicle']=[{"method":"GET","href":web.ctx.home+"/vehicle","description":"Return the collection of available vehicles."},
+            {"method":"POST","href":web.ctx.home+"/vehicle","description":"Add a connection to a new vehicle. It will return the id of the vehicle.","samplePayload":{"connection":"udp:10.0.0.2:6000"}}]
         output=json.dumps(outputObj)    
         return output
 
 class vehicleIndex:        
     def GET(self):
-        global serverURL
         print "#####################################################################"
         print "Method GET of vehicleIndex"
         print "#####################################################################"
-        web.header('Content-Type', 'application/json')
+        applyHeadders()
         outputObj=[]
         for i in range (1,len(connectionStringArray)) :
-
             outputObj.append( {"id":i,
-                    "details":{"method":"GET","href":serverURL+"/vehicle/"+str(i)+"/","description":"Get status for vehicle " + str(i),"connection":connectionStringArray[i]}})
-        
+                    "details":{"method":"GET","href":web.ctx.home+"/vehicle/"+str(i)+"/","description":"Get status for vehicle " + str(i),"connection":connectionStringArray[i]}})
         output=json.dumps(outputObj)    
         return output
 
     def POST(self):
-
         print "#####################################################################"
         print "Method POST of vehicleIndex"
         print "#####################################################################"
-
         web.header('Content-Type', 'application/json')
-
         data = json.loads(web.data())
-
         connection = data["connection"]
         print connection
-
         connectionStringArray.append(connection)
         outputObj={}
         outputObj["connection"]=connection
         outputObj["id"]=len(connectionStringArray)-1
-
         return json.dumps(outputObj)
 
 class action:     
     def GET(self, vehicleId):
-        global serverURL
         print "#####################################################################"
         print "Method GET of action"
         print "#####################################################################"
-        web.header('Content-Type', 'application/json')
-        web.header('Access-Control-Allow-Origin',      '*')
-        web.header('Access-Control-Allow-Credentials', 'true')
-
+        applyHeadders()
         inVehicle=connectVehicle(vehicleId)      
         vehicleStatus=getVehicleStatus(inVehicle)
-
         outputObj={}
-
         availableActions=[]
-
-
-        
-
         #available when armed
         if vehicleStatus["armed"]:
-
             availableActions.append({   
                 "name":"roi",
                 "description":"Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
-                "href":serverURL+"/vehicle/"+str(vehicleId)+"/action",
+                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"roi","lat":51.3946,"lon":-1.299,"alt":105}
             })
             availableActions.append({   
                 "name":"land",
                 "description":"Land at current location",
-                "href":serverURL+"/vehicle/"+str(vehicleId)+"/action",
+                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"land"}
             })
             availableActions.append({   
                 "name":"rtl",
                 "description":"Return to launch: Return to the home location and land.",
-                "href":serverURL+"/vehicle/"+str(vehicleId)+"/action",
+                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"rtl"}
             })
             availableActions.append({   
                 "name":"auto",
                 "description":"Begin the pre-defined mission.",
-                "href":serverURL+"/vehicle/"+str(vehicleId)+"/action",
+                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"auto"}
             })
             availableActions.append({   
                 "name":"gotoAbsolute",
                 "description":"Go to the location at latitude <lat>, longitude <lon> and altitude <alt> (above sea level).",
-                "href":serverURL+"/vehicle/"+str(vehicleId)+"/action",
+                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"gotoAbsolute","lat":51.3946,"lon":-1.299,"alt":105} 
             })
             availableActions.append({   
                 "name":"gotoRelativeHome",
                 "description":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the home location.",
-                "href":serverURL+"/vehicle/"+str(vehicleId)+"/action",
+                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"gotoRelativeHome","north":30,"east":30,"up":10}
             })
             availableActions.append({   
                 "name":"gotoRelativeCurrent",
                 "description":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the current location.",
-                "href":serverURL+"/vehicle/"+str(vehicleId)+"/action",
+                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"gotoRelativeCurrent","north":30,"east":30,"up":10}
             })
@@ -417,35 +376,24 @@ class action:
             availableActions.append({   
                 "name":"takeoff",
                 "description":"Arm and takeoff in GUIDED mode to height of <height> (default 20m).",
-                "href":serverURL+"/vehicle/"+str(vehicleId)+"/action",
+                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"takeoff","height":30}
             })
-
-
         outputObj['availableActions']=availableActions
-
         output=json.dumps(outputObj)   
         return output
 
     def POST(self, vehicleId):
-
         print "#####################################################################"
         print "Method POST of action"
         print "#####################################################################"
-
         inVehicle=connectVehicle(vehicleId)      
-        web.header('Content-Type', 'application/json')
-        web.header('Access-Control-Allow-Origin',      '*')
-        web.header('Access-Control-Allow-Credentials', 'true')
-
+        applyHeadders()
         data = json.loads(web.data())
         value = data["name"]
         print value
-
         outputObj={}
-
-
         if value=="rtl":
             outputObj["action"]=rtl(inVehicle)
         if value=="takeoff":
@@ -484,28 +432,16 @@ class action:
             inAlt=data.get("alt",defaultLocation.alt)
             locationObj={'lat':float(inLat), 'lon':float(inLon), 'alt':float(inAlt)}
             outputObj["action"]=roi(inVehicle,locationObj)
-
-
         return json.dumps(outputObj)
-
-
-
-
-
 
 class vehicleStatus:        
     def GET(self, vehicleId, statusVal):
-        global serverURL
         print "#####################################################################"
         print "Method GET of vehicleStatus "
         print "#####################################################################"
-
         print "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'"
-        web.header('Content-Type', 'application/json')
-        web.header('Access-Control-Allow-Origin',      '*')
-        web.header('Access-Control-Allow-Credentials', 'true')        
+        applyHeadders()
         outputObj={}
-
         #test if vehicleId is an integer 1-4
         try:
             vehId=int(vehicleId)
@@ -513,21 +449,14 @@ class vehicleStatus:
             stringArray=vehicleId.split('/')
             vehicleId=stringArray[0]
             statusVal=stringArray[1]
-
-
         print "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'"
         inVehicle=connectVehicle(vehicleId)      
         vehicleStatus=getVehicleStatus(inVehicle)
-
-        outputObj['homeLocation']={"method":"GET","href":serverURL + "/vehicle/" + str(vehicleId) + "/homelocation","description":"Get the home location for this vehicle"}
-        outputObj['availableActions']={"method":"GET","href":serverURL+ "/vehicle/" + str(vehicleId) +"/action","description":"Get the actions available for this vehicle."}
+        outputObj['homeLocation']={"method":"GET","href":web.ctx.home + "/vehicle/" + str(vehicleId) + "/homelocation","description":"Get the home location for this vehicle"}
+        outputObj['availableActions']={"method":"GET","href":web.ctx.home+ "/vehicle/" + str(vehicleId) +"/action","description":"Get the actions available for this vehicle."}
         output=""
-
-
-
         if statusVal=="/":
             statusVal=""            
-
         if statusVal=="":
             outputObj["vehicleStatus"]=vehicleStatus
             output = json.dumps(outputObj)
@@ -535,56 +464,38 @@ class vehicleStatus:
             cmds = inVehicle.commands
             cmds.download()
             cmds.wait_ready()
-
             print " Home Location: %s" % inVehicle.home_location     
             output = json.dumps({"home_location":latLonAltObj(inVehicle.home_location)}   )   
         elif statusVal=="action":
-            outputObj["vehicleStatus"]={"error":"Use "+serverURL+"/vehicle/1/action  (with no / at the end)."}
+            outputObj["vehicleStatus"]={"error":"Use "+web.ctx.home+"/vehicle/1/action  (with no / at the end)."}
             output = json.dumps(outputObj)
         else:
             statusLen=len(statusVal)
             print statusLen
             #statusVal=statusVal[1:]
             print statusVal
-            outputObj["vehicleStatus"]={statusVal: vehicleStatus.get(statusVal,{"error":"Vehicle status '"+statusVal+"' not found. Try getting all using "+serverURL+"/vehicle/"+vehicleId+"/"})}
+            outputObj["vehicleStatus"]={statusVal: vehicleStatus.get(statusVal,{"error":"Vehicle status '"+statusVal+"' not found. Try getting all using "+web.ctx.home+"/vehicle/"+vehicleId+"/"})}
             output = json.dumps(outputObj)
-
-
         return output
-
-
-
 
 class catchAll:
     def GET(self, user):
-        global serverURL
         print "#####################################################################"
         print "Method GET of catchAll"
         print "#####################################################################"
-        web.header('Content-Type', 'application/json')
-        outputObj={"Error":"No API endpoint found. Try navigating to "+serverURL+"/vehicle for list of vehicles or to "+serverURL+"/vehicle/1/ for the status of vehicle #1 or to "+serverURL+"/vehicle/1/action for the list of actions available for vehicle #1." }
-
+        applyHeadders()
+        print web.ctx.home
+        outputObj={"Error":"No API endpoint found. Try navigating to "+web.ctx.home+"/vehicle for list of vehicles or to "+web.ctx.home+"/vehicle/1/ for the status of vehicle #1 or to "+web.ctx.home+"/vehicle/1/action for the list of actions available for vehicle #1." }
         return json.dumps(outputObj)
 
     def POST(self, user):
-        global serverURL
         print "#####################################################################"
         print "Method POST of catchAll"
         print "#####################################################################"
-        web.header('Content-Type', 'application/json')
-        outputObj={"Error":"No API endpoint found. Try navigating to "+serverURL+"/vehicle for list of vehicles or to "+serverURL+"/vehicle/1/ for the status of vehicle #1 or to "+serverURL+"/vehicle/1/action for the list of actions available for vehicle #1." }
-
+        applyHeadders()
+        outputObj={"Error":"No API endpoint found. Try navigating to "+web.ctx.home+"/vehicle for list of vehicles or to "+web.ctx.home+"/vehicle/1/ for the status of vehicle #1 or to "+web.ctx.home+"/vehicle/1/action for the list of actions available for vehicle #1." }
         return json.dumps(outputObj)
 
-
-
-
-
-
-
-
-
-        
 
 urls = (
     '/', 'index',
@@ -595,7 +506,6 @@ urls = (
 )
 
 app = web.application(urls, globals())
-
 
 if __name__ == "__main__":
     app.run()
