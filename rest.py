@@ -277,10 +277,17 @@ class index:
         print "#####################################################################"
         applyHeadders()
         outputObj={}
-        outputObj['@id']=web.ctx.home
-        outputObj['@type']="EntryPoint"
-        outputObj['vehicle']=[{"method":"GET","href":web.ctx.home+"/vehicle","description":"Return the collection of available vehicles."},
-            {"method":"POST","href":web.ctx.home+"/vehicle","description":"Add a connection to a new vehicle. It will return the id of the vehicle.","samplePayload":{"connection":"udp:10.0.0.2:6000"}}]
+        outputObj['_links']={
+            'self':{"href": web.ctx.home},
+            'vehicle': {
+                'operations':  [
+                    {"method":"GET",
+                    "description":"Return the collection of available vehicles."},
+                    {"method":"POST",
+                    "description":"Add a connection to a new vehicle. It will return the id of the vehicle.",
+                    "samplePayload":{"connection":"udp:10.0.0.2:6000"}}],
+                    "href": web.ctx.home+"/vehicle" }}
+        outputObj['id']="EntryPoint"
         output=json.dumps(outputObj)    
         return output
 
