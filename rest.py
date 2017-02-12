@@ -434,6 +434,45 @@ class action:
             outputObj["action"]=roi(inVehicle,locationObj)
         return json.dumps(outputObj)
 
+class missionCommands:        
+    def GET(self, vehicleId):
+        print "#####################################################################"
+        print "Method GET of missionCommands "
+        print "#####################################################################"
+        print "vehicleId = '"+vehicleId+"'"
+        applyHeadders()
+        inVehicle=connectVehicle(vehicleId)      
+        vehicleStatus=getVehicleStatus(inVehicle)
+        outputObj={}
+        availableActions=[]
+        cmds = inVehicle.commands
+        cmds.download()
+        cmds.wait_ready()
+        print "#####################################################################"
+        print "#####################################################################"
+        print "Mission Commands"
+        # Save the vehicle commands to a list
+        missionlist=[]
+        for cmd in cmds:
+            autoContinue=True
+            if (cmd.autocontinue==0):
+                autoContinue=False
+            missionlist.append({'id':cmd.seq,"autoContinue": autoContinue ,"command": cmd.command,"coordinate": [cmd.x,cmd.y,cmd.z],'frame':cmd.frame,'param1':cmd.param1,'param2':cmd.param2,'param3':cmd.param3,'param4':cmd.param4,"type": "missionItem"})
+            print cmd
+        print missionlist
+        outputObj['items']=missionlist
+        outputObj['plannedHomePosition']={'id':0,'autoContinue':True,'command':16,"coordinate": [inVehicle.home_location.lat,inVehicle.home_location.lon,0], 'frame':0,'param1':0,'param2':0,'param3':0,'param4':0,'type':'missionItem'}
+        outputObj['version']='1.0'
+        outputObj['MAV_AUTOPILOT']=3
+        outputObj['complexItems']=[]
+        outputObj['groundStation']='QGroundControl'
+
+
+
+        #outputObj['missionCommands']=cmds
+        output=json.dumps(outputObj)   
+        return output
+
 class vehicleStatus:        
     def GET(self, vehicleId, statusVal):
         print "#####################################################################"
@@ -454,6 +493,7 @@ class vehicleStatus:
         vehicleStatus=getVehicleStatus(inVehicle)
         outputObj['homeLocation']={"method":"GET","href":web.ctx.home + "/vehicle/" + str(vehicleId) + "/homelocation","description":"Get the home location for this vehicle"}
         outputObj['availableActions']={"method":"GET","href":web.ctx.home+ "/vehicle/" + str(vehicleId) +"/action","description":"Get the actions available for this vehicle."}
+        outputObj['missionCommands']={"method":"GET","href":web.ctx.home+ "/vehicle/" + str(vehicleId) +"/missionCommands","description":"Get the current mission commands from the vehicle."}
         output=""
         if statusVal=="/":
             statusVal=""            
@@ -500,10 +540,13 @@ class catchAll:
 urls = (
     '/', 'index',
     '/vehicle/(.*)/action', 'action',
+    '/vehicle/(.*)/missionCommands', 'missionCommands',
     '/vehicle', 'vehicleIndex',
     '/vehicle/(.*)/(.*)', 'vehicleStatus',
     '/(.*)', 'catchAll'
 )
+
+
 
 app = web.application(urls, globals())
 
