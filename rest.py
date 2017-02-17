@@ -8,16 +8,23 @@ import math
 
 import web
 
-connectionStringArray = ["","udp:127.0.0.1:14551"] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
+connectionStringArray = ["","udp:10.0.0.2:6000"] #["","udp:127.0.0.1:14551","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
 connectionArray=[None ,None]
 
 def applyHeadders():
+    print "Applying HTTP headers"
     web.header('Content-Type', 'application/json')
     web.header('Access-Control-Allow-Origin',      '*')
+<<<<<<< HEAD
+    web.header('Access-Control-Allow-Credentials', 'true')        
+    web.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')   
+    web.header('Access-Control-Allow-Headers', 'Content-Type')      
+=======
     web.header('Access-Control-Allow-Credentials', 'true')    
     web.header('Access-Control-Allow-Headers', 'Content-Type')    
     
     
+>>>>>>> b2785b1ed86e030d41819821df102ba6710637d1
     return
 
 def connectVehicle(inVehicleId):
@@ -281,7 +288,7 @@ class index:
         applyHeadders()
         outputObj={}
         outputObj['_links']={
-            'self':{"href": web.ctx.home},
+            'self':{"href": homeDomain},
             'vehicle': {
                 'operations':  [
                     {"method":"GET",
@@ -289,7 +296,7 @@ class index:
                     {"method":"POST",
                     "description":"Add a connection to a new vehicle. It will return the id of the vehicle.",
                     "samplePayload":{"connection":"udp:10.0.0.2:6000"}}],
-                    "href": web.ctx.home+"/vehicle" }}
+                    "href": homeDomain+"/vehicle" }}
         outputObj['id']="EntryPoint"
         output=json.dumps(outputObj)    
         return output
@@ -303,7 +310,7 @@ class vehicleIndex:
         outputObj=[]
         for i in range (1,len(connectionStringArray)) :
             outputObj.append( {"id":i,
-                    "details":{"method":"GET","href":web.ctx.home+"/vehicle/"+str(i)+"/","description":"Get status for vehicle " + str(i),"connection":connectionStringArray[i]}})
+                    "details":{"method":"GET","href":homeDomain+"/vehicle/"+str(i)+"/","description":"Get status for vehicle " + str(i),"connection":connectionStringArray[i]}})
         output=json.dumps(outputObj)    
         return output
 
@@ -322,10 +329,22 @@ class vehicleIndex:
         return json.dumps(outputObj)
 
 class action:     
+    def OPTIONS(self, vehicleId):
+        print "#####################################################################"
+        print "Method OPTIONS of action - just here to suppor the CORS Cross-Origin security"
+        print "#####################################################################"
+        applyHeadders()
+
+        outputObj={}
+        output=json.dumps(outputObj)   
+        return output
+
+
     def GET(self, vehicleId):
         print "#####################################################################"
         print "Method GET of action"
         print "#####################################################################"
+
         applyHeadders()
         inVehicle=connectVehicle(vehicleId)      
         vehicleStatus=getVehicleStatus(inVehicle)
@@ -336,49 +355,49 @@ class action:
             availableActions.append({   
                 "name":"roi",
                 "description":"Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
-                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
+                "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"roi","lat":51.3946,"lon":-1.299,"alt":105}
             })
             availableActions.append({   
                 "name":"land",
                 "description":"Land at current location",
-                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
+                "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"land"}
             })
             availableActions.append({   
                 "name":"rtl",
                 "description":"Return to launch: Return to the home location and land.",
-                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
+                "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"rtl"}
             })
             availableActions.append({   
                 "name":"auto",
                 "description":"Begin the pre-defined mission.",
-                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
+                "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"auto"}
             })
             availableActions.append({   
                 "name":"gotoAbsolute",
                 "description":"Go to the location at latitude <lat>, longitude <lon> and altitude <alt> (above sea level).",
-                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
+                "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"gotoAbsolute","lat":51.3946,"lon":-1.299,"alt":105} 
             })
             availableActions.append({   
                 "name":"gotoRelativeHome",
                 "description":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the home location.",
-                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
+                "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"gotoRelativeHome","north":30,"east":30,"up":10}
             })
             availableActions.append({   
                 "name":"gotoRelativeCurrent",
                 "description":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the current location.",
-                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
+                "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"gotoRelativeCurrent","north":30,"east":30,"up":10}
             })
@@ -386,7 +405,7 @@ class action:
             availableActions.append({   
                 "name":"takeoff",
                 "description":"Arm and takeoff in GUIDED mode to height of <height> (default 20m).",
-                "href":web.ctx.home+"/vehicle/"+str(vehicleId)+"/action",
+                "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
                 "samplePayload":{"name":"takeoff","height":30}
             })
@@ -501,9 +520,9 @@ class vehicleStatus:
         print "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'"
         inVehicle=connectVehicle(vehicleId)      
         vehicleStatus=getVehicleStatus(inVehicle)
-        outputObj['homeLocation']={"method":"GET","href":web.ctx.home + "/vehicle/" + str(vehicleId) + "/homelocation","description":"Get the home location for this vehicle"}
-        outputObj['availableActions']={"method":"GET","href":web.ctx.home+ "/vehicle/" + str(vehicleId) +"/action","description":"Get the actions available for this vehicle."}
-        outputObj['missionCommands']={"method":"GET","href":web.ctx.home+ "/vehicle/" + str(vehicleId) +"/missionCommands","description":"Get the current mission commands from the vehicle."}
+        outputObj['homeLocation']={"method":"GET","href":homeDomain + "/vehicle/" + str(vehicleId) + "/homelocation","description":"Get the home location for this vehicle"}
+        outputObj['availableActions']={"method":"GET","href":homeDomain+ "/vehicle/" + str(vehicleId) +"/action","description":"Get the actions available for this vehicle."}
+        outputObj['missionCommands']={"method":"GET","href":homeDomain+ "/vehicle/" + str(vehicleId) +"/missionCommands","description":"Get the current mission commands from the vehicle."}
         output=""
         if statusVal=="/":
             statusVal=""            
@@ -517,14 +536,14 @@ class vehicleStatus:
             print " Home Location: %s" % inVehicle.home_location     
             output = json.dumps({"home_location":latLonAltObj(inVehicle.home_location)}   )   
         elif statusVal=="action":
-            outputObj["vehicleStatus"]={"error":"Use "+web.ctx.home+"/vehicle/1/action  (with no / at the end)."}
+            outputObj["vehicleStatus"]={"error":"Use "+homeDomain+"/vehicle/1/action  (with no / at the end)."}
             output = json.dumps(outputObj)
         else:
             statusLen=len(statusVal)
             print statusLen
             #statusVal=statusVal[1:]
             print statusVal
-            outputObj["vehicleStatus"]={statusVal: vehicleStatus.get(statusVal,{"error":"Vehicle status '"+statusVal+"' not found. Try getting all using "+web.ctx.home+"/vehicle/"+vehicleId+"/"})}
+            outputObj["vehicleStatus"]={statusVal: vehicleStatus.get(statusVal,{"error":"Vehicle status '"+statusVal+"' not found. Try getting all using "+homeDomain+"/vehicle/"+vehicleId+"/"})}
             output = json.dumps(outputObj)
         return output
 
@@ -534,8 +553,8 @@ class catchAll:
         print "Method GET of catchAll"
         print "#####################################################################"
         applyHeadders()
-        print web.ctx.home
-        outputObj={"Error":"No API endpoint found. Try navigating to "+web.ctx.home+"/vehicle for list of vehicles or to "+web.ctx.home+"/vehicle/1/ for the status of vehicle #1 or to "+web.ctx.home+"/vehicle/1/action for the list of actions available for vehicle #1." }
+        print homeDomain
+        outputObj={"Error":"No API endpoint found. Try navigating to "+homeDomain+"/vehicle for list of vehicles or to "+homeDomain+"/vehicle/1/ for the status of vehicle #1 or to "+homeDomain+"/vehicle/1/action for the list of actions available for vehicle #1." }
         return json.dumps(outputObj)
 
     def POST(self, user):
@@ -543,7 +562,7 @@ class catchAll:
         print "Method POST of catchAll"
         print "#####################################################################"
         applyHeadders()
-        outputObj={"Error":"No API endpoint found. Try navigating to "+web.ctx.home+"/vehicle for list of vehicles or to "+web.ctx.home+"/vehicle/1/ for the status of vehicle #1 or to "+web.ctx.home+"/vehicle/1/action for the list of actions available for vehicle #1." }
+        outputObj={"Error":"No API endpoint found. Try navigating to "+homeDomain+"/vehicle for list of vehicles or to "+homeDomain+"/vehicle/1/ for the status of vehicle #1 or to "+homeDomain+"/vehicle/1/action for the list of actions available for vehicle #1." }
         return json.dumps(outputObj)
 
 
@@ -556,7 +575,7 @@ urls = (
     '/(.*)', 'catchAll'
 )
 
-
+homeDomain='http://sail.vodafone.com/drone'
 
 app = web.application(urls, globals())
 
