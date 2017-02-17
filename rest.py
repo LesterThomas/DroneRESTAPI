@@ -15,16 +15,9 @@ def applyHeadders():
     print "Applying HTTP headers"
     web.header('Content-Type', 'application/json')
     web.header('Access-Control-Allow-Origin',      '*')
-<<<<<<< HEAD
     web.header('Access-Control-Allow-Credentials', 'true')        
     web.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')   
     web.header('Access-Control-Allow-Headers', 'Content-Type')      
-=======
-    web.header('Access-Control-Allow-Credentials', 'true')    
-    web.header('Access-Control-Allow-Headers', 'Content-Type')    
-    
-    
->>>>>>> b2785b1ed86e030d41819821df102ba6710637d1
     return
 
 def connectVehicle(inVehicleId):
