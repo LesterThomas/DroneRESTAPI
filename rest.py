@@ -14,7 +14,10 @@ connectionArray=[None ,None]
 def applyHeadders():
     web.header('Content-Type', 'application/json')
     web.header('Access-Control-Allow-Origin',      '*')
-    web.header('Access-Control-Allow-Credentials', 'true')        
+    web.header('Access-Control-Allow-Credentials', 'true')    
+    web.header('Access-Control-Allow-Headers', 'Content-Type')    
+    
+    
     return
 
 def connectVehicle(inVehicleId):
