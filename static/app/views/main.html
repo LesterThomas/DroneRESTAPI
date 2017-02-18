@@ -1,0 +1,137 @@
+
+
+<div  class="col-lg-6 col-sm-12">	 
+	<div class="panel panel-default panel-primary">
+		<div class="panel-heading">API Source</div>
+		<div class="panel-body">
+			<input type="text" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" name="apiURL" ng-model="apiURL" />
+		</div>
+	</div>
+ 
+	<div class="panel panel-default panel-primary">
+		<div class="panel-heading">Map</div>
+		<div class="panel-body">
+			<ng-map style="height: 404px; display:block; "></ng-map>
+		</div>
+	</div>
+</div>
+
+<div  class="col-lg-3 col-sm-6">			
+	<div class="panel panel-default panel-primary">
+		<div class="panel-heading ">Battery </div>
+		<div class="panel-body">
+			<canvas id="line" class="chart chart-line" chart-data="batteryCurrent.data"
+				chart-labels="batteryCurrent.labels" chart-series="batteryCurrent.series" chart-options="batteryCurrent.options"
+				chart-dataset-override="batteryCurrent.datasetOverride" chart-click="batteryCurrent.onClick">
+			</canvas>
+		</div>
+	</div>
+</div>
+
+<div  class="col-lg-3 col-sm-6">			
+	<div class="panel panel-default panel-primary">
+		<div class="panel-heading">Altitude and Velocity </div>
+		<div class="panel-body">
+			<canvas id="line" class="chart chart-line" chart-data="altVel.data"
+				chart-labels="altVel.labels" chart-series="altVel.series" chart-options="altVel.options"
+				chart-dataset-override="altVel.datasetOverride" chart-click="altVel.onClick">
+			</canvas>
+		</div>
+	</div>
+</div>
+
+<div  class="col-lg-6 col-sm-12">		
+	<div class="panel panel-default panel-primary">
+		<div class="panel-heading">Telemetry Stats</div>
+		<div class="panel-body">
+	 
+			<table class="table table-striped">
+				<tr>
+					<th>Status
+					</th>
+					<td ng-style="vehicleStatus.armed_colour">{{vehicleStatus.armed_status}}
+					</td>					
+					<th>Mode
+					</th>
+					<td>{{vehicleStatus.mode}}
+					</td>
+				</tr>					
+				<tr>
+					<th>Groundspeed
+					</th>
+					<td>{{vehicleStatus.groundspeed | number : 0}} km/h
+					</td>					
+					<th>Airspeed
+					</th>
+					<td>{{vehicleStatus.airspeed | number : 0}} km/h
+					</td>
+				</tr>	
+				<tr>
+					<th>Height (rel home)</th>
+					<td>{{vehicleStatus.altitude | number : 2}}</td>
+					<th>Altitude (msl)</th>
+					<td>{{vehicleStatus.global_frame.alt | number : 2}}</td>
+				</tr>
+				<tr>
+					<th>Latitude</th>
+					<td>{{vehicleStatus.global_frame.lat | number : 4}}</td>
+					<th>Longitude</th>
+					<td>{{vehicleStatus.global_frame.lon | number : 4}}</td>
+				</tr>
+				<tr>
+					<th>Heading</th>
+					<td>{{vehicleStatus.heading | number : 0}} &deg;</td>
+					<th>Distance (home)</th>
+					<td>{{vehicleStatus.distance_home | number : 0}} m</td>
+				</tr>
+				<tr>
+					<th>Roll</th>
+					<td>{{vehicleStatus.attitude.roll*57.2958 | number : 0}} &deg;</td>
+					<th>Pitch</th>
+					<td>{{vehicleStatus.attitude.pitch*57.2958 | number : 0}} &deg;</td>
+				</tr>
+				<tr>
+					<th>Heartbeat</th>
+					<td ng-style="vehicleStatus.heartbeat_colour">{{vehicleStatus.heartbeat_status}}</td>
+					<th>EKF</th>
+					<td ng-style="vehicleStatus.ekf_colour">{{vehicleStatus.ekf_status}}</td>
+				</tr>			
+			</table>
+		</div>
+	</div>
+</div>
+<div  class="col-lg-6 col-sm-12">			
+	<div class="panel panel-default panel-primary">
+		<div class="panel-heading">Actions </div>
+		<div class="panel-body">
+			<div class="panel-group" id="accordion">
+			  <div ng-repeat="action in actions.availableActions" class="panel panel-default">
+				<div class="panel-heading">
+				  <h4 class="panel-title">
+					<a data-toggle="collapse" data-parent="#accordion" data-target="{{'#'+action.name}}">{{action.name}}</a>
+				  </h4>
+				</div>
+				<div id="{{action.name}}" class="panel-collapse collapse">
+				  <div class="panel-body">
+					<p>{{action.description}}</p>
+					<div class="container-fluid">
+						<div class="row form-inline" ng-repeat="attribute in action.attributes" >
+							<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2" for="usr">{{attribute.name}}:</label>
+							<input type="text" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" name="attribute.name" ng-model="attribute.value" />
+						</div>
+						<button type="button" class="btn btn-primary" ng-click='actionButton(action)'>{{action.name}}</button>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			</div>
+			
+			
+		</div>
+	</div>
+</div>
+	 
+
+
+
+

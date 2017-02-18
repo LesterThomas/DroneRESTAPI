@@ -5,7 +5,7 @@ from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative
 import time
 import json
 import math
-
+import os
 import web
 
 connectionStringArray = ["","udp:127.0.0.1:14551"] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
@@ -53,12 +53,12 @@ def rtl(inVehicle):
      
     outputObj={}
     if inVehicle.armed:
-        outputObj["name"]="rtl"
+        outputObj["name"]="Return-to-Launch"
         outputObj["status"]="success"
         print "Returning to Launch"
         inVehicle.mode = VehicleMode("RTL")
     else:
-        outputObj["name"]="rtl"
+        outputObj["name"]="Return-to-Launch"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
 
@@ -67,7 +67,7 @@ def rtl(inVehicle):
 def takeoff(inVehicle, inHeight):        
     outputObj={}
     if inVehicle.is_armable:
-        outputObj["name"]="takeoff"
+        outputObj["name"]="Takeoff"
         outputObj["status"]="success"
         print "Arming motors"
         # Copter should arm in GUIDED mode
@@ -80,7 +80,7 @@ def takeoff(inVehicle, inHeight):
         print "Taking off!"
         inVehicle.simple_takeoff(inHeight) # Take off to target altitude
     else:
-        outputObj["name"] = "takeoff"
+        outputObj["name"] = "Takeoff"
         outputObj["status"] = "error"
         outputObj["error"] = "vehicle not armable"
         print "vehicle not armable"
@@ -89,12 +89,12 @@ def takeoff(inVehicle, inHeight):
 def auto(inVehicle):        
     outputObj={}
     if inVehicle.armed:
-        outputObj["name"]="auto"
+        outputObj["name"]="Start-Mission"
         outputObj["status"]="success"
         print "Auto mission"
         inVehicle.mode = VehicleMode("AUTO")
     else:    
-        outputObj["name"]="auto"
+        outputObj["name"]="Start-Mission"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
     return outputObj
@@ -102,12 +102,12 @@ def auto(inVehicle):
 def land(inVehicle):        
     outputObj={}
     if inVehicle.armed:
-        outputObj["name"]="land"
+        outputObj["name"]="Land"
         outputObj["status"]="success"
         print "Landing"
         inVehicle.mode = VehicleMode("LAND")
     else:    
-        outputObj["name"]="land"
+        outputObj["name"]="Land"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
     return outputObj
@@ -118,14 +118,14 @@ def goto(inVehicle, dNorth, dEast, dDown):
     """
     outputObj={}
     if inVehicle.armed:
-        outputObj["name"]="gotoRelativeCurrent"
+        outputObj["name"]="Goto-Relative-Current"
         outputObj["status"]="success"
         currentLocation = inVehicle.location.global_relative_frame
         targetLocation = get_location_metres(currentLocation, dNorth, dEast)
         targetLocation.alt=targetLocation.alt-dDown
         inVehicle.simple_goto(targetLocation, groundspeed=10)
     else:    
-        outputObj["name"]="gotoRelativeCurrent"
+        outputObj["name"]="Goto-Relative-Current"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
     return outputObj
@@ -158,7 +158,7 @@ def get_location_metres(original_location, dNorth, dEast):
 def gotoRelative(inVehicle, north, east, down):
     outputObj={}
     if inVehicle.armed:
-        outputObj["name"]="gotoRelativeHome"
+        outputObj["name"]="Goto-Relative-Home"
         outputObj["status"]="success"
         #vehicle.mode = VehicleMode("GUIDED")
         msg = inVehicle.message_factory.set_position_target_local_ned_encode(
@@ -171,9 +171,11 @@ def gotoRelative(inVehicle, north, east, down):
             0, 0, 0, # x, y, z acceleration (not supported yet, ignored in GCS_Mavlink)
             0, 0)    # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink) 
         # send command to vehicle
+        print "msg:"
+        print msg
         inVehicle.send_mavlink(msg)
     else:    
-        outputObj["name"]="gotoRelativeHome"
+        outputObj["name"]="Goto-Relative-Home"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
     return outputObj
@@ -182,7 +184,7 @@ def gotoRelative(inVehicle, north, east, down):
 def gotoAbsolute(inVehicle, inLocation):        
     outputObj={}
     if inVehicle.armed:
-        outputObj["name"]="gotoAbsolute"
+        outputObj["name"]="Goto-Absolute"
         outputObj["status"]="success"
         print " Goto Location: %s" % inLocation     
         output = {"global_frame":inLocation}
@@ -190,14 +192,14 @@ def gotoAbsolute(inVehicle, inLocation):
         #vehicle.mode = VehicleMode("GUIDED")
         inVehicle.simple_goto(LocationGlobal(inLocation['lat'],inLocation['lon'],inLocation['alt']), groundspeed=10)
     else:    
-        outputObj["name"]="gotoAbsolute"
+        outputObj["name"]="Goto-Absolute"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
     return outputObj
 
 def roi(inVehicle, inLocation):        
     outputObj={}
-    outputObj["name"]="roi"
+    outputObj["name"]="Region-of-Interest"
     outputObj["status"]="success"
     print " Home Location: %s" % inLocation     
     output = {"home_location":inLocation}
@@ -346,61 +348,61 @@ class action:
         #available when armed
         if vehicleStatus["armed"]:
             availableActions.append({   
-                "name":"roi",
+                "name":"Region-of-Interest",
                 "description":"Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"roi","lat":51.3946,"lon":-1.299,"alt":105}
+                "samplePayload":{"name":"Region-of-Interest","lat":51.3946,"lon":-1.299,"alt":105}
             })
             availableActions.append({   
-                "name":"land",
+                "name":"Land",
                 "description":"Land at current location",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"land"}
+                "samplePayload":{"name":"Land"}
             })
             availableActions.append({   
-                "name":"rtl",
+                "name":"Return-to-Launch",
                 "description":"Return to launch: Return to the home location and land.",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"rtl"}
+                "samplePayload":{"name":"Return-to-Launch"}
             })
             availableActions.append({   
-                "name":"auto",
+                "name":"Start-Mission",
                 "description":"Begin the pre-defined mission.",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"auto"}
+                "samplePayload":{"name":"Start-Mission"}
             })
             availableActions.append({   
-                "name":"gotoAbsolute",
+                "name":"Goto-Absolute",
                 "description":"Go to the location at latitude <lat>, longitude <lon> and altitude <alt> (above sea level).",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"gotoAbsolute","lat":51.3946,"lon":-1.299,"alt":105} 
+                "samplePayload":{"name":"Goto-Absolute","lat":51.3946,"lon":-1.299,"alt":105} 
             })
             availableActions.append({   
-                "name":"gotoRelativeHome",
+                "name":"Goto-Relative-Home",
                 "description":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the home location.",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"gotoRelativeHome","north":30,"east":30,"up":10}
+                "samplePayload":{"name":"Goto-Relative-Home","north":30,"east":30,"up":10}
             })
             availableActions.append({   
-                "name":"gotoRelativeCurrent",
+                "name":"Goto-Relative-Current",
                 "description":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the current location.",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"gotoRelativeCurrent","north":30,"east":30,"up":10}
+                "samplePayload":{"name":"Goto-Relative-Current","north":30,"east":30,"up":10}
             })
         else :
             availableActions.append({   
-                "name":"takeoff",
+                "name":"Takeoff",
                 "description":"Arm and takeoff in GUIDED mode to height of <height> (default 20m).",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"takeoff","height":30}
+                "samplePayload":{"name":"Takeoff","height":30}
             })
         outputObj['availableActions']=availableActions
         output=json.dumps(outputObj)   
@@ -413,20 +415,23 @@ class action:
         inVehicle=connectVehicle(vehicleId)      
         applyHeadders()
         data = json.loads(web.data())
+        print "Data:"
+        print data
         value = data["name"]
+        print "Value:"
         print value
         outputObj={}
-        if value=="rtl":
+        if value=="Return-to-Launch":
             outputObj["action"]=rtl(inVehicle)
-        if value=="takeoff":
+        if value=="Takeoff":
             height=data.get("height",20) #get height - default to 20
             print "Taking off to height of " + str(height)
             outputObj["action"]=takeoff(inVehicle,height)
-        if value=="auto":
+        if value=="Start-Mission":
             outputObj["action"]=auto(inVehicle)
-        if value=="land":
+        if value=="Land":
             outputObj["action"]=land(inVehicle)
-        if value=="gotoAbsolute":
+        if value=="Goto-Absolute":
             defaultLocation=inVehicle.location.global_frame #default to current position
             print "Global Frame" + str(defaultLocation)
             inLat=data.get("lat",defaultLocation.lat)
@@ -434,17 +439,21 @@ class action:
             inAlt=data.get("alt",defaultLocation.alt)
             locationObj={'lat':float(inLat), 'lon':float(inLon), 'alt':float(inAlt)}
             outputObj["action"]=gotoAbsolute(inVehicle,locationObj)
-        if value=="gotoRelativeHome":
+        if value=="Goto-Relative-Home":
             inNorth=data.get("north",0)
             inEast=data.get("east",0)
             inDown=-data.get("up",0)
+            print "Goto-Relative-Home" 
+            print inNorth
+            print inEast
+            print inDown
             outputObj["action"]=gotoRelative(inVehicle,inNorth,inEast,inDown)
-        if value=="gotoRelativeCurrent":
+        if value=="Goto-Relative-Current":
             inNorth=data.get("north",0)
             inEast=data.get("east",0)
             inDown=-data.get("up",0)
             outputObj["action"]=goto(inVehicle,inNorth,inEast,inDown)
-        if value=="roi":
+        if value=="Region-of-Interest":
             cmds = inVehicle.commands
             cmds.download()
             cmds.wait_ready()
@@ -568,7 +577,9 @@ urls = (
     '/(.*)', 'catchAll'
 )
 
-homeDomain='http://sail.vodafone.com/drone'
+defaultHomeDomain='http://sail.vodafone.com/drone'
+homeDomain = os.getenv('HOME_DOMAIN', defaultHomeDomain)
+print "Home Domain:"  + homeDomain
 
 app = web.application(urls, globals())
 
