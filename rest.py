@@ -7,12 +7,13 @@ import json
 import math
 import os
 import web
+import logging
 
 connectionStringArray = ["","udp:127.0.0.1:14551"] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
 connectionArray=[None ,None]
-
+logging.basicConfig(level=logging.DEBUG)
 def applyHeadders():
-    #print "Applying HTTP headers"
+    logging.debug('Applying HTTP headers')
     web.header('Content-Type', 'application/json')
     web.header('Access-Control-Allow-Origin',      '*')
     web.header('Access-Control-Allow-Credentials', 'true')        
@@ -23,21 +24,20 @@ def applyHeadders():
 def connectVehicle(inVehicleId):
     global connectionStringArray
     global connectionArray
-    #print ""
-    #print "connectVehicle called with inVehicleId = " + str(inVehicleId)
+    logging.debug( "connectVehicle called with inVehicleId = " + str(inVehicleId))
     try:
         connectionString=connectionStringArray[int(inVehicleId)]
     except ValueError:
-    #    print inVehicleId + " is not an Integer"
+        logging.warn( inVehicleId + " is not an Integer")
         return 
 
     # Connect to the Vehicle.
     if not connectionArray[int(inVehicleId)]:
-    #    print("connectionString: %s" % (connectionString,))
-    #    print("Connecting to vehicle on: %s" % (connectionString,))
+        logging.info("connectionString: %s" % (connectionString,))
+        logging.info("Connecting to vehicle on: %s" % (connectionString,))
         connectionArray[int(inVehicleId)] = connect(connectionString, wait_ready=True)
     else:
-        print "Already connected to vehicle" 
+        logging.debug( "Already connected to vehicle" )
 
     return connectionArray[int(inVehicleId)]
 
@@ -55,12 +55,13 @@ def rtl(inVehicle):
     if inVehicle.armed:
         outputObj["name"]="Return-to-Launch"
         outputObj["status"]="success"
-        print "Returning to Launch"
+        logging.info( "Returning to Launch")
         inVehicle.mode = VehicleMode("RTL")
     else:
         outputObj["name"]="Return-to-Launch"
         outputObj["status"]="error"
         outputObj["error"]="Vehicle not armed"
+        logging.warn( "RTL error - Vehicle not armed")
 
     return outputObj  
 
@@ -69,21 +70,21 @@ def takeoff(inVehicle, inHeight):
     if inVehicle.is_armable:
         outputObj["name"]="Takeoff"
         outputObj["status"]="success"
-        print "Arming motors"
+        logging.info( "Arming motors")
         # Copter should arm in GUIDED mode
         inVehicle.mode    = VehicleMode("GUIDED")
         inVehicle.armed   = True
         # Confirm vehicle armed before attempting to take off
         while not inVehicle.armed:
-            print " Waiting for arming..."  
+            logging.info( " Waiting for arming..."  )
             time.sleep(1)
-        print "Taking off!"
+        logging.info( "Taking off!")
         inVehicle.simple_takeoff(inHeight) # Take off to target altitude
     else:
         outputObj["name"] = "Takeoff"
         outputObj["status"] = "error"
         outputObj["error"] = "vehicle not armable"
-        print "vehicle not armable"
+        logging.warn( "vehicle not armable")
     return outputObj
 
 def auto(inVehicle):        
@@ -91,7 +92,7 @@ def auto(inVehicle):
     if inVehicle.armed:
         outputObj["name"]="Start-Mission"
         outputObj["status"]="success"
-        print "Auto mission"
+        logging.info( "Auto mission")
         inVehicle.mode = VehicleMode("AUTO")
     else:    
         outputObj["name"]="Start-Mission"
@@ -104,7 +105,7 @@ def land(inVehicle):
     if inVehicle.armed:
         outputObj["name"]="Land"
         outputObj["status"]="success"
-        print "Landing"
+        logging.info( "Landing")
         inVehicle.mode = VehicleMode("LAND")
     else:    
         outputObj["name"]="Land"
@@ -120,6 +121,7 @@ def goto(inVehicle, dNorth, dEast, dDown):
     if inVehicle.armed:
         outputObj["name"]="Goto-Relative-Current"
         outputObj["status"]="success"
+        inVehicle.mode = VehicleMode("GUIDED")
         currentLocation = inVehicle.location.global_relative_frame
         targetLocation = get_location_metres(currentLocation, dNorth, dEast)
         targetLocation.alt=targetLocation.alt-dDown
@@ -139,8 +141,8 @@ def get_location_metres(original_location, dNorth, dEast):
     The function is useful when you want to move the vehicle around specifying locations relative to 
     the current vehicle position.
     """
-    print "lat:" + str(original_location.lat) + " lon:" + str(original_location.lon)
-    print "north:" + str(dNorth) + " east:" + str(dEast)
+    logging.debug( "lat:" + str(original_location.lat) + " lon:" + str(original_location.lon))
+    logging.debug( "north:" + str(dNorth) + " east:" + str(dEast))
      
     earth_radius = 6378137.0 #Radius of "spherical" earth
     #Coordinate offsets in radians
@@ -163,20 +165,7 @@ def gotoRelative(inVehicle, north, east, down):
     if inVehicle.armed:
         outputObj["name"]="Goto-Relative-Home"
         outputObj["status"]="success"
-        #vehicle.mode = VehicleMode("GUIDED")
-        #msg = inVehicle.message_factory.set_position_target_local_ned_encode(
-        #    0,       # time_boot_ms (not used)
-        #    0, 0,    # target system, target component
-        #    mavutil.mavlink.MAV_FRAME_LOCAL_NED, # frame
-        #    0b0000111111111000, # type_mask (only positions enabled)
-        #    north, east, down, # x, y, z positions (or North, East, Down in the MAV_FRAME_BODY_NED frame
-        #    0, 0, 0, # x, y, z velocity in m/s  (not used)
-        #    0, 0, 0, # x, y, z acceleration (not supported yet, ignored in GCS_Mavlink)
-        #    0, 0)    # yaw, yaw_rate (not supported yet, ignored in GCS_Mavlink) 
-        # send command to vehicle
-        #print "msg:"
-        #print msg
-        #inVehicle.send_mavlink(msg)
+        inVehicle.mode = VehicleMode("GUIDED")
 
         cmds = inVehicle.commands
         cmds.download()
@@ -200,10 +189,10 @@ def gotoAbsolute(inVehicle, inLocation):
     if inVehicle.armed:
         outputObj["name"]="Goto-Absolute"
         outputObj["status"]="success"
-        print " Goto Location: %s" % inLocation     
+        logging.debug( " Goto Location: %s" % inLocation   )  
         output = {"global_frame":inLocation}
-        print "lat" + str(inLocation['lat'])
-        #vehicle.mode = VehicleMode("GUIDED")
+        logging.debug( "lat" + str(inLocation['lat']))
+        inVehicle.mode = VehicleMode("GUIDED")
         inVehicle.simple_goto(LocationGlobal(inLocation['lat'],inLocation['lon'],inLocation['alt']), groundspeed=10)
     else:    
         outputObj["name"]="Goto-Absolute"
@@ -215,9 +204,9 @@ def roi(inVehicle, inLocation):
     outputObj={}
     outputObj["name"]="Region-of-Interest"
     outputObj["status"]="success"
-    print " Home Location: %s" % inLocation     
+    logging.debug( " Home Location: %s" % inLocation     )
     output = {"home_location":inLocation}
-    print "lat" + str(inLocation['lat'])
+    logging.debug( "lat" + str(inLocation['lat']))
     set_roi(inVehicle, inLocation)
     return outputObj
 
@@ -239,61 +228,57 @@ def getVehicleStatus(inVehicle):
     # inVehicle is an instance of the Vehicle class
     outputObj={}
     web.header('Content-Type', 'application/json')
-    #print ""
-    #print "###################################################################################"
-    #print "Autopilot Firmware version: %s" % inVehicle.version
+    logging.debug( "Autopilot Firmware version: %s" % inVehicle.version)
     outputObj["version"]=str(inVehicle.version)
-    #print "Global Location: %s" % inVehicle.location.global_frame
+    logging.debug( "Global Location: %s" % inVehicle.location.global_frame)
     global_frame=latLonAltObj(inVehicle.location.global_frame)
     outputObj["global_frame"]=global_frame
-    #print "Global Location (relative altitude): %s" % inVehicle.location.global_relative_frame
+    logging.debug( "Global Location (relative altitude): %s" % inVehicle.location.global_relative_frame)
     global_relative_frame=latLonAltObj(inVehicle.location.global_relative_frame)
     outputObj["global_relative_frame"]=global_relative_frame
-    #print "Local Location: %s" % inVehicle.location.local_frame    #NED
+    logging.debug( "Local Location: %s" % inVehicle.location.local_frame)    #NED
     local_frame={}
     local_frame["north"]=(inVehicle.location.local_frame.north)
     local_frame["east"]=(inVehicle.location.local_frame.east)
     local_frame["down"]=(inVehicle.location.local_frame.down)
     outputObj["local_frame"]=local_frame
-    #print "Attitude: %s" % inVehicle.attitude
+    logging.debug( "Attitude: %s" % inVehicle.attitude)
     outputObj["attitude"]={"pitch":inVehicle.attitude.pitch,"roll":inVehicle.attitude.roll,"yaw":inVehicle.attitude.yaw}
-    #print "Velocity: %s" % inVehicle.velocity
+    logging.debug( "Velocity: %s" % inVehicle.velocity)
     outputObj["velocity"]=(inVehicle.velocity)
-    #print "GPS: %s" % inVehicle.gps_0
+    logging.debug( "GPS: %s" % inVehicle.gps_0)
     outputObj["gps_0"]={"eph":(inVehicle.gps_0.eph),"epv":(inVehicle.gps_0.eph),"fix_type":(inVehicle.gps_0.fix_type),"satellites_visible":(inVehicle.gps_0.satellites_visible)}
-    #print "Groundspeed: %s" % inVehicle.groundspeed
+    logging.debug( "Groundspeed: %s" % inVehicle.groundspeed)
     outputObj["groundspeed"]=(inVehicle.groundspeed)
-    #print "Airspeed: %s" % inVehicle.airspeed
+    logging.debug( "Airspeed: %s" % inVehicle.airspeed)
     outputObj["airspeed"]=(inVehicle.airspeed)
-    #print "Gimbal status: %s" % inVehicle.gimbal
+    logging.debug( "Gimbal status: %s" % inVehicle.gimbal)
     outputObj["gimbal"]={"pitch":inVehicle.gimbal.pitch,"roll":inVehicle.gimbal.roll,"yaw":inVehicle.gimbal.yaw}
-    #print "Battery: %s" % inVehicle.battery
+    logging.debug( "Battery: %s" % inVehicle.battery)
     outputObj["battery"]={"voltage":inVehicle.battery.voltage,"current":inVehicle.battery.current,"level":inVehicle.battery.level}
-    #print "EKF OK?: %s" % inVehicle.ekf_ok
+    logging.debug( "EKF OK?: %s" % inVehicle.ekf_ok)
     outputObj["ekf_ok"]=(inVehicle.ekf_ok)
-    #print "Last Heartbeat: %s" % inVehicle.last_heartbeat
+    logging.debug( "Last Heartbeat: %s" % inVehicle.last_heartbeat)
     outputObj["last_heartbeat"]=(inVehicle.last_heartbeat)
-    #print "Rangefinder: %s" % inVehicle.rangefinder
+    logging.debug( "Rangefinder: %s" % inVehicle.rangefinder)
     outputObj["rangefinder"]={"distance":inVehicle.rangefinder.distance,"voltage":inVehicle.rangefinder.voltage}
-    #print "Heading: %s" % inVehicle.heading
+    logging.debug( "Heading: %s" % inVehicle.heading)
     outputObj["heading"]=(inVehicle.heading)
-    #print "Is Armable?: %s" % inVehicle.is_armable
+    logging.debug( "Is Armable?: %s" % inVehicle.is_armable)
     outputObj["is_armable"]=(inVehicle.is_armable)
-    #print "System status: %s" % inVehicle.system_status.state
+    logging.debug( "System status: %s" % inVehicle.system_status.state)
     outputObj["system_status"]=str(inVehicle.system_status.state)
-    #print "Mode: %s" % inVehicle.mode.name    # settable
+    logging.debug( "Mode: %s" % inVehicle.mode.name  )  # settable
     outputObj["mode"]=str(inVehicle.mode.name)
-    #print "Armed: %s" % inVehicle.armed    # settable    
+    logging.debug( "Armed: %s" % inVehicle.armed  )  # settable    
     outputObj["armed"]=(inVehicle.armed)
-    #print "###################################################################################"
-    #print ""
     return outputObj
 
 class index:        
     def GET(self):
-        print "#####################################################################"
-        print "Method GET of index"
-        print "#####################################################################"
+        logging.info( "#####################################################################")
+        logging.info( "Method GET of index")
+        logging.info( "#####################################################################")
         applyHeadders()
         outputObj={}
         outputObj['_links']={
@@ -312,9 +297,9 @@ class index:
 
 class vehicleIndex:        
     def GET(self):
-        print "#####################################################################"
-        print "Method GET of vehicleIndex"
-        print "#####################################################################"
+        logging.info( "#####################################################################")
+        logging.info( "Method GET of vehicleIndex")
+        logging.info( "#####################################################################")
         applyHeadders()
         outputObj=[]
         for i in range (1,len(connectionStringArray)) :
@@ -324,13 +309,13 @@ class vehicleIndex:
         return output
 
     def POST(self):
-        print "#####################################################################"
-        print "Method POST of vehicleIndex"
-        print "#####################################################################"
+        logging.info( "#####################################################################")
+        logging.info( "Method POST of vehicleIndex")
+        logging.info( "#####################################################################")
         web.header('Content-Type', 'application/json')
         data = json.loads(web.data())
         connection = data["connection"]
-        print connection
+        logging.debug( connection)
         connectionStringArray.append(connection)
         outputObj={}
         outputObj["connection"]=connection
@@ -339,9 +324,9 @@ class vehicleIndex:
 
 class action:     
     def OPTIONS(self, vehicleId):
-        print "#####################################################################"
-        print "Method OPTIONS of action - just here to suppor the CORS Cross-Origin security"
-        print "#####################################################################"
+        logging.info( "#####################################################################")
+        logging.info( "Method OPTIONS of action - just here to suppor the CORS Cross-Origin security")
+        logging.info( "#####################################################################")
         applyHeadders()
 
         outputObj={}
@@ -350,9 +335,9 @@ class action:
 
 
     def GET(self, vehicleId):
-        #print "#####################################################################"
-        #print "Method GET of action"
-        #print "#####################################################################"
+        logging.info( "#####################################################################")
+        logging.info( "Method GET of action")
+        logging.info( "#####################################################################")
 
         applyHeadders()
         inVehicle=connectVehicle(vehicleId)      
@@ -423,23 +408,23 @@ class action:
         return output
 
     def POST(self, vehicleId):
-        print "#####################################################################"
-        print "Method POST of action"
-        print "#####################################################################"
+        logging.info( "#####################################################################")
+        logging.info( "Method POST of action")
+        logging.info( "#####################################################################")
         inVehicle=connectVehicle(vehicleId)      
         applyHeadders()
         data = json.loads(web.data())
-        print "Data:"
-        print data
+        logging.debug( "Data:")
+        logging.debug( data)
         value = data["name"]
-        print "Value:"
-        print value
+        logging.debug( "Value:")
+        logging.debug( value)
         outputObj={}
         if value=="Return-to-Launch":
             outputObj["action"]=rtl(inVehicle)
         if value=="Takeoff":
             height=data.get("height",20) #get height - default to 20
-            print "Taking off to height of " + str(height)
+            logging.debug( "Taking off to height of " + str(height))
             outputObj["action"]=takeoff(inVehicle,height)
         if value=="Start-Mission":
             outputObj["action"]=auto(inVehicle)
@@ -447,7 +432,7 @@ class action:
             outputObj["action"]=land(inVehicle)
         if value=="Goto-Absolute":
             defaultLocation=inVehicle.location.global_frame #default to current position
-            print "Global Frame" + str(defaultLocation)
+            logging.debug( "Global Frame" + str(defaultLocation))
             inLat=data.get("lat",defaultLocation.lat)
             inLon=data.get("lon",defaultLocation.lon)
             inAlt=data.get("alt",defaultLocation.alt)
@@ -457,15 +442,15 @@ class action:
             inNorth=float(data.get("north",0))
             inEast=float(data.get("east",0))
             inDown=-float(data.get("up",0))
-            print "Goto-Relative-Home" 
-            print inNorth
-            print inEast
-            print inDown
+            logging.debug( "Goto-Relative-Home" )
+            logging.debug( inNorth)
+            logging.debug( inEast)
+            logging.debug( inDown)
             outputObj["action"]=gotoRelative(inVehicle,inNorth,inEast,inDown)
         if value=="Goto-Relative-Current":
-            inNorth=data.get("north",0)
-            inEast=data.get("east",0)
-            inDown=-data.get("up",0)
+            inNorth=float(data.get("north",0))
+            inEast=float(data.get("east",0))
+            inDown=-float(data.get("up",0))
             outputObj["action"]=goto(inVehicle,inNorth,inEast,inDown)
         if value=="Region-of-Interest":
             cmds = inVehicle.commands
@@ -481,10 +466,10 @@ class action:
 
 class missionCommands:        
     def GET(self, vehicleId):
-        print "#####################################################################"
-        print "Method GET of missionCommands "
-        print "#####################################################################"
-        print "vehicleId = '"+vehicleId+"'"
+        logging.info( "#####################################################################")
+        logging.info( "Method GET of missionCommands ")
+        logging.info( "#####################################################################")
+        logging.debug( "vehicleId = '"+vehicleId+"'")
         applyHeadders()
         inVehicle=connectVehicle(vehicleId)      
         vehicleStatus=getVehicleStatus(inVehicle)
@@ -493,9 +478,9 @@ class missionCommands:
         cmds = inVehicle.commands
         cmds.download()
         cmds.wait_ready()
-        print "#####################################################################"
-        print "#####################################################################"
-        print "Mission Commands"
+        logging.info( "#####################################################################")
+        logging.info( "#####################################################################")
+        logging.debug( "Mission Commands")
         # Save the vehicle commands to a list
         missionlist=[]
         for cmd in cmds:
@@ -503,8 +488,8 @@ class missionCommands:
             if (cmd.autocontinue==0):
                 autoContinue=False
             missionlist.append({'id':cmd.seq,"autoContinue": autoContinue ,"command": cmd.command,"coordinate": [cmd.x,cmd.y,cmd.z],'frame':cmd.frame,'param1':cmd.param1,'param2':cmd.param2,'param3':cmd.param3,'param4':cmd.param4,"type": "missionItem"})
-            print cmd
-        print missionlist
+            logging.debug( cmd)
+        logging.debug( missionlist)
         outputObj['items']=missionlist
         outputObj['plannedHomePosition']={'id':0,'autoContinue':True,'command':16,"coordinate": [inVehicle.home_location.lat,inVehicle.home_location.lon,0], 'frame':0,'param1':0,'param2':0,'param3':0,'param4':0,'type':'missionItem'}
         outputObj['version']='1.0'
@@ -520,10 +505,10 @@ class missionCommands:
 
 class vehicleStatus:        
     def GET(self, vehicleId, statusVal):
-        #print "#####################################################################"
-        #print "Method GET of vehicleStatus "
-        #print "#####################################################################"
-        #print "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'"
+        logging.info( "#####################################################################")
+        logging.info( "Method GET of vehicleStatus ")
+        logging.info( "#####################################################################")
+        logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
         applyHeadders()
         outputObj={}
         #test if vehicleId is an integer 1-4
@@ -533,7 +518,7 @@ class vehicleStatus:
             stringArray=vehicleId.split('/')
             vehicleId=stringArray[0]
             statusVal=stringArray[1]
-        #print "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'"
+        logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
         inVehicle=connectVehicle(vehicleId)      
         vehicleStatus=getVehicleStatus(inVehicle)
         outputObj['homeLocation']={"method":"GET","href":homeDomain + "/vehicle/" + str(vehicleId) + "/homelocation","description":"Get the home location for this vehicle"}
@@ -549,34 +534,34 @@ class vehicleStatus:
             cmds = inVehicle.commands
             cmds.download()
             cmds.wait_ready()
-            #print " Home Location: %s" % inVehicle.home_location     
+            logging.debug( " Home Location: %s" % inVehicle.home_location     )
             output = json.dumps({"home_location":latLonAltObj(inVehicle.home_location)}   )   
         elif statusVal=="action":
             outputObj["vehicleStatus"]={"error":"Use "+homeDomain+"/vehicle/1/action  (with no / at the end)."}
             output = json.dumps(outputObj)
         else:
             statusLen=len(statusVal)
-            #print statusLen
+            logging.debug( statusLen)
             #statusVal=statusVal[1:]
-            #print statusVal
+            logging.debug( statusVal)
             outputObj["vehicleStatus"]={statusVal: vehicleStatus.get(statusVal,{"error":"Vehicle status '"+statusVal+"' not found. Try getting all using "+homeDomain+"/vehicle/"+vehicleId+"/"})}
             output = json.dumps(outputObj)
         return output
 
 class catchAll:
     def GET(self, user):
-        print "#####################################################################"
-        print "Method GET of catchAll"
-        print "#####################################################################"
+        logging.info( "#####################################################################")
+        logging.info( "Method GET of catchAll")
+        logging.info( "#####################################################################")
         applyHeadders()
-        print homeDomain
+        logging.debug( homeDomain)
         outputObj={"Error":"No API endpoint found. Try navigating to "+homeDomain+"/vehicle for list of vehicles or to "+homeDomain+"/vehicle/1/ for the status of vehicle #1 or to "+homeDomain+"/vehicle/1/action for the list of actions available for vehicle #1." }
         return json.dumps(outputObj)
 
     def POST(self, user):
-        print "#####################################################################"
-        print "Method POST of catchAll"
-        print "#####################################################################"
+        logging.info( "#####################################################################")
+        logging.info( "Method POST of catchAll")
+        logging.info( "#####################################################################")
         applyHeadders()
         outputObj={"Error":"No API endpoint found. Try navigating to "+homeDomain+"/vehicle for list of vehicles or to "+homeDomain+"/vehicle/1/ for the status of vehicle #1 or to "+homeDomain+"/vehicle/1/action for the list of actions available for vehicle #1." }
         return json.dumps(outputObj)
@@ -593,7 +578,7 @@ urls = (
 
 defaultHomeDomain='http://sail.vodafone.com/drone'
 homeDomain = os.getenv('HOME_DOMAIN', defaultHomeDomain)
-print "Home Domain:"  + homeDomain
+logging.debug( "Home Domain:"  + homeDomain)
 
 app = web.application(urls, globals())
 
