@@ -11,7 +11,9 @@ import logging
 
 connectionStringArray = ["","udp:127.0.0.1:14551"] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
 connectionArray=[None ,None]
-logging.basicConfig(level=logging.DEBUG)
+actionArray=[]
+
+logging.basicConfig(level=logging.INFO)
 def applyHeadders():
     logging.debug('Applying HTTP headers')
     web.header('Content-Type', 'application/json')
@@ -55,6 +57,14 @@ def rtl(inVehicle):
     if inVehicle.armed:
         outputObj["name"]="Return-to-Launch"
         outputObj["status"]="success"
+        #coodinates are same as home
+        homeLocation=inVehicle.home_location
+        outputObj["coordinate"]=[homeLocation.lat, homeLocation.lon, homeLocation.alt]
+        outputObj["param0"]=0
+        outputObj["param1"]=0
+        outputObj["param2"]=0
+        outputObj["param3"]=0
+        outputObj["command"]=20
         logging.info( "Returning to Launch")
         inVehicle.mode = VehicleMode("RTL")
     else:
@@ -69,7 +79,16 @@ def takeoff(inVehicle, inHeight):
     outputObj={}
     if inVehicle.is_armable:
         outputObj["name"]="Takeoff"
+        outputObj["height"]=inHeight
         outputObj["status"]="success"
+        #coodinates are same as current + height
+        currentLocation=inVehicle.location.global_relative_frame
+        outputObj["coordinate"]=[currentLocation.lat, currentLocation.lon, inHeight]
+        outputObj["param0"]=0
+        outputObj["param1"]=0
+        outputObj["param2"]=0
+        outputObj["param3"]=0
+        outputObj["command"]=22
         logging.info( "Arming motors")
         # Copter should arm in GUIDED mode
         inVehicle.mode    = VehicleMode("GUIDED")
@@ -105,6 +124,14 @@ def land(inVehicle):
     if inVehicle.armed:
         outputObj["name"]="Land"
         outputObj["status"]="success"
+        #coodinates are same as current 
+        currentLocation=inVehicle.location.global_relative_frame
+        outputObj["coordinate"]=[currentLocation.lat, currentLocation.lon, 0]
+        outputObj["param0"]=0
+        outputObj["param1"]=0
+        outputObj["param2"]=0
+        outputObj["param3"]=0
+        outputObj["command"]=23
         logging.info( "Landing")
         inVehicle.mode = VehicleMode("LAND")
     else:    
@@ -125,6 +152,13 @@ def goto(inVehicle, dNorth, dEast, dDown):
         currentLocation = inVehicle.location.global_relative_frame
         targetLocation = get_location_metres(currentLocation, dNorth, dEast)
         targetLocation.alt=targetLocation.alt-dDown
+        #coodinates are target
+        outputObj["coordinate"]=[targetLocation.lat, targetLocation.lon, targetLocation.alt]
+        outputObj["param0"]=0
+        outputObj["param1"]=0
+        outputObj["param2"]=0
+        outputObj["param3"]=0
+        outputObj["command"]=16
         inVehicle.simple_goto(targetLocation, groundspeed=10)
     else:    
         outputObj["name"]="Goto-Relative-Current"
@@ -167,14 +201,19 @@ def gotoRelative(inVehicle, north, east, down):
         outputObj["status"]="success"
         inVehicle.mode = VehicleMode("GUIDED")
 
-        cmds = inVehicle.commands
-        cmds.download()
-        cmds.wait_ready()
         homeLocation=inVehicle.home_location
 
         #currentLocation = inVehicle.location.global_relative_frame
         targetLocation = get_location_metres(homeLocation, north, east)
         targetLocation.alt=homeLocation.alt-down
+
+        #coodinates are target
+        outputObj["coordinate"]=[targetLocation.lat, targetLocation.lon, -down]
+        outputObj["param0"]=0
+        outputObj["param1"]=0
+        outputObj["param2"]=0
+        outputObj["param3"]=0
+        outputObj["command"]=16  
         inVehicle.simple_goto(targetLocation, groundspeed=10)
 
     else:    
@@ -193,6 +232,14 @@ def gotoAbsolute(inVehicle, inLocation):
         output = {"global_frame":inLocation}
         logging.debug( "lat" + str(inLocation['lat']))
         inVehicle.mode = VehicleMode("GUIDED")
+        #coodinates are target
+        outputObj["coordinate"]=[inLocation['lat'], inLocation['lon'], inLocation['alt']]
+        outputObj["param0"]=0
+        outputObj["param1"]=0
+        outputObj["param2"]=0
+        outputObj["param3"]=0
+        outputObj["command"]=16
+
         inVehicle.simple_goto(LocationGlobal(inLocation['lat'],inLocation['lon'],inLocation['alt']), groundspeed=10)
     else:    
         outputObj["name"]="Goto-Absolute"
@@ -207,6 +254,13 @@ def roi(inVehicle, inLocation):
     logging.debug( " Home Location: %s" % inLocation     )
     output = {"home_location":inLocation}
     logging.debug( "lat" + str(inLocation['lat']))
+    #coodinates are target
+    outputObj["coordinate"]=[inLocation['lat'],inLocation['lon'],inLocation['alt']]
+    outputObj["param0"]=0
+    outputObj["param1"]=0
+    outputObj["param2"]=0
+    outputObj["param3"]=0
+    outputObj["command"]=80  
     set_roi(inVehicle, inLocation)
     return outputObj
 
@@ -414,6 +468,12 @@ class action:
         inVehicle=connectVehicle(vehicleId)      
         applyHeadders()
         data = json.loads(web.data())
+        #get latest data (inc homeLocation from vehicle)
+        cmds = inVehicle.commands
+        cmds.download()
+        cmds.wait_ready()
+
+
         logging.debug( "Data:")
         logging.debug( data)
         value = data["name"]
@@ -462,12 +522,15 @@ class action:
             inAlt=data.get("alt",defaultLocation.alt)
             locationObj={'lat':float(inLat), 'lon':float(inLon), 'alt':float(inAlt)}
             outputObj["action"]=roi(inVehicle,locationObj)
+        outputObj['action']['id']=len(actionArray)
+        actionArray.append(outputObj);
+
         return json.dumps(outputObj)
 
-class missionCommands:        
+class missionActions:        
     def GET(self, vehicleId):
         logging.info( "#####################################################################")
-        logging.info( "Method GET of missionCommands ")
+        logging.info( "Method GET of missionActions ")
         logging.info( "#####################################################################")
         logging.debug( "vehicleId = '"+vehicleId+"'")
         applyHeadders()
@@ -499,7 +562,7 @@ class missionCommands:
 
 
 
-        #outputObj['missionCommands']=cmds
+        #outputObj['missionActions']=cmds
         output=json.dumps(outputObj)   
         return output
 
@@ -523,7 +586,7 @@ class vehicleStatus:
         vehicleStatus=getVehicleStatus(inVehicle)
         outputObj['homeLocation']={"method":"GET","href":homeDomain + "/vehicle/" + str(vehicleId) + "/homelocation","description":"Get the home location for this vehicle"}
         outputObj['availableActions']={"method":"GET","href":homeDomain+ "/vehicle/" + str(vehicleId) +"/action","description":"Get the actions available for this vehicle."}
-        outputObj['missionCommands']={"method":"GET","href":homeDomain+ "/vehicle/" + str(vehicleId) +"/missionCommands","description":"Get the current mission commands from the vehicle."}
+        outputObj['missionActions']={"method":"GET","href":homeDomain+ "/vehicle/" + str(vehicleId) +"/missionActions","description":"Get the current mission commands from the vehicle."}
         output=""
         if statusVal=="/":
             statusVal=""            
@@ -570,7 +633,7 @@ class catchAll:
 urls = (
     '/', 'index',
     '/vehicle/(.*)/action', 'action',
-    '/vehicle/(.*)/missionCommands', 'missionCommands',
+    '/vehicle/(.*)/missionActions', 'missionActions',
     '/vehicle', 'vehicleIndex',
     '/vehicle/(.*)/(.*)', 'vehicleStatus',
     '/(.*)', 'catchAll'
