@@ -39,4 +39,10 @@ The returned payload is the EntryPoint (or homepage) of the API and shows the AP
 
 
 
+##Building Docker image
+
+The Dockerfile builds on top of the baselineDocker file (that creates the `lesterthomas/sitlbase:1.0` image). To re-build the Docker image execute the command:
+
+```docker build -t lesterthomas/dronesim:1.5 .```
+
 
