@@ -112,6 +112,10 @@ def auto(inVehicle):
         outputObj["name"]="Start-Mission"
         outputObj["status"]="success"
         logging.info( "Auto mission")
+        if inVehicle.mode.name=="AUTO":
+            #vehicle already in auto mode - swap it into GUIDED first.
+            inVehicle.mode    = VehicleMode("GUIDED")
+            time.sleep(1)
         inVehicle.mode = VehicleMode("AUTO")
     else:    
         outputObj["name"]="Start-Mission"
@@ -528,6 +532,36 @@ class action:
 
         return json.dumps(outputObj)
 
+def getMissionActions(vehicleId) :
+    inVehicle=connectVehicle(vehicleId)      
+    vehicleStatus=getVehicleStatus(inVehicle)
+    outputObj={}
+    availableActions=[]
+    cmds = inVehicle.commands
+    cmds.download()
+    cmds.wait_ready()
+    logging.info( "#####################################################################")
+    logging.info( "#####################################################################")
+    logging.debug( "Mission Commands")
+    # Save the vehicle commands to a list
+    missionlist=[]
+    for cmd in cmds:
+        autoContinue=True
+        if (cmd.autocontinue==0):
+            autoContinue=False
+        missionlist.append({'id':cmd.seq,"autoContinue": autoContinue ,"command": cmd.command,"coordinate": [cmd.x,cmd.y,cmd.z],'frame':cmd.frame,'param1':cmd.param1,'param2':cmd.param2,'param3':cmd.param3,'param4':cmd.param4,"type": "missionItem"})
+        logging.debug( cmd)
+    logging.debug( missionlist)
+    outputObj['items']=missionlist
+    outputObj['plannedHomePosition']={'id':0,'autoContinue':True,'command':16,"coordinate": [inVehicle.home_location.lat,inVehicle.home_location.lon,0], 'frame':0,'param1':0,'param2':0,'param3':0,'param4':0,'type':'missionItem'}
+    outputObj['version']='1.0'
+    outputObj['MAV_AUTOPILOT']=3
+    outputObj['complexItems']=[]
+    outputObj['groundStation']='QGroundControl'
+    #outputObj['missionActions']=cmds
+    output=json.dumps(outputObj)   
+    return output
+
 class missionActions:        
     def GET(self, vehicleId):
         logging.info( "#####################################################################")
@@ -535,33 +569,7 @@ class missionActions:
         logging.info( "#####################################################################")
         logging.debug( "vehicleId = '"+vehicleId+"'")
         applyHeadders()
-        inVehicle=connectVehicle(vehicleId)      
-        vehicleStatus=getVehicleStatus(inVehicle)
-        outputObj={}
-        availableActions=[]
-        cmds = inVehicle.commands
-        cmds.download()
-        cmds.wait_ready()
-        logging.info( "#####################################################################")
-        logging.info( "#####################################################################")
-        logging.debug( "Mission Commands")
-        # Save the vehicle commands to a list
-        missionlist=[]
-        for cmd in cmds:
-            autoContinue=True
-            if (cmd.autocontinue==0):
-                autoContinue=False
-            missionlist.append({'id':cmd.seq,"autoContinue": autoContinue ,"command": cmd.command,"coordinate": [cmd.x,cmd.y,cmd.z],'frame':cmd.frame,'param1':cmd.param1,'param2':cmd.param2,'param3':cmd.param3,'param4':cmd.param4,"type": "missionItem"})
-            logging.debug( cmd)
-        logging.debug( missionlist)
-        outputObj['items']=missionlist
-        outputObj['plannedHomePosition']={'id':0,'autoContinue':True,'command':16,"coordinate": [inVehicle.home_location.lat,inVehicle.home_location.lon,0], 'frame':0,'param1':0,'param2':0,'param3':0,'param4':0,'type':'missionItem'}
-        outputObj['version']='1.0'
-        outputObj['MAV_AUTOPILOT']=3
-        outputObj['complexItems']=[]
-        outputObj['groundStation']='QGroundControl'
-        #outputObj['missionActions']=cmds
-        output=json.dumps(outputObj)   
+        output=getMissionActions(vehicleId) 
         return output
 
     def POST(self, vehicleId):
@@ -570,22 +578,19 @@ class missionActions:
         logging.info( "#####################################################################")
         applyHeadders()
         inVehicle=connectVehicle(vehicleId)    
-        outputObj={}
         #download existing commands
         logging.info( "download existing commands")
         cmds = inVehicle.commands
         cmds.download()
         cmds.wait_ready()
-        #change the commands
+        #clear the commands
         logging.info( "clearing existing commands")
         cmds.clear()
         inVehicle.flush()
-
-
         missionActionArray = json.loads(web.data())
         logging.info( "missionCommandArray:")
         logging.info( missionActionArray)
-
+        #add new commands
         for missionAction in missionActionArray:
             logging.info(missionAction)
             lat = missionAction['coordinate'][0]
@@ -597,15 +602,10 @@ class missionActions:
             logging.info( "Add new command with altitude:")
             logging.info( altitude)
             cmds.add(cmd)
-
         inVehicle.flush()
         logging.info( "Command added")
-
-        #data = json.loads(web.data())
-        #outputObj['action']['id']=len(actionArray)
-        #actionArray.append(outputObj);
-
-        return json.dumps(outputObj)
+        output=getMissionActions(vehicleId) 
+        return output
 
     def OPTIONS(self, vehicleId):
         logging.info( "#####################################################################")
@@ -637,9 +637,11 @@ class vehicleStatus:
         logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
         inVehicle=connectVehicle(vehicleId)      
         vehicleStatus=getVehicleStatus(inVehicle)
-        outputObj['homeLocation']={"method":"GET","href":homeDomain + "/vehicle/" + str(vehicleId) + "/homelocation","description":"Get the home location for this vehicle"}
-        outputObj['availableActions']={"method":"GET","href":homeDomain+ "/vehicle/" + str(vehicleId) +"/action","description":"Get the actions available for this vehicle."}
-        outputObj['missionActions']={"method":"GET","href":homeDomain+ "/vehicle/" + str(vehicleId) +"/missionActions","description":"Get the current mission commands from the vehicle."}
+        outputObj['_links']={};
+        outputObj['_links']["self"]={"href": homeDomain+"/vehicle/"+str(vehicleId)+"/", "operations":[{"method":"GET","description":"Get status for vehicle "+str(vehicleId)+"."}]};
+        outputObj['_links']['homeLocation']={"href":homeDomain + "/vehicle/" + str(vehicleId) + "/homelocation","operations":[{"method":"GET","description":"Get the home location for this vehicle"}]};
+        outputObj['_links']['availableActions']={"href":homeDomain+ "/vehicle/" + str(vehicleId) +"/action","operations":[{"method":"GET","description":"Get the actions available for this vehicle."}]};
+        outputObj['_links']['missionActions']={"href":homeDomain+ "/vehicle/" + str(vehicleId) +"/missionActions","operations":[{"method":"GET","description":"Get the current mission commands from the vehicle."},{"method":"POST","description":"Upload a new mission to the vehicle. The mission is a collection of mission actions with <command>, <coordinate[lat,lon,alt]> and command specific <param1>,<param2>,<param3>,<param4>. The command-set is described at https://pixhawk.ethz.ch/mavlink/", "samplePayload": [{"coordinate":[51.3957,-1.3441,30],"command":16,"param1":0,"param2":0,"param3":0,"param4":0}]}]};
         output=""
         if statusVal=="/":
             statusVal=""            
