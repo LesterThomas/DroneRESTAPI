@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Import DroneKit-Python
-from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative, mavutil
+from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative, Command, mavutil
 import time
 import json
 import math
@@ -13,7 +13,7 @@ connectionStringArray = ["","udp:127.0.0.1:14551"] #["","udp:10.0.0.2:6000","udp
 connectionArray=[None ,None]
 actionArray=[]
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 def applyHeadders():
     logging.debug('Applying HTTP headers')
     web.header('Content-Type', 'application/json')
@@ -366,11 +366,12 @@ class vehicleIndex:
         logging.info( "#####################################################################")
         logging.info( "Method POST of vehicleIndex")
         logging.info( "#####################################################################")
-        web.header('Content-Type', 'application/json')
+        applyHeadders()
         data = json.loads(web.data())
         connection = data["connection"]
         logging.debug( connection)
         connectionStringArray.append(connection)
+        connectionArray.append(None)
         outputObj={}
         outputObj["connection"]=connection
         outputObj["id"]=len(connectionStringArray)-1
@@ -559,12 +560,64 @@ class missionActions:
         outputObj['MAV_AUTOPILOT']=3
         outputObj['complexItems']=[]
         outputObj['groundStation']='QGroundControl'
-
-
-
         #outputObj['missionActions']=cmds
         output=json.dumps(outputObj)   
         return output
+
+    def POST(self, vehicleId):
+        logging.info( "#####################################################################")
+        logging.info( "Method POST of missionActions")
+        logging.info( "#####################################################################")
+        applyHeadders()
+        inVehicle=connectVehicle(vehicleId)    
+        outputObj={}
+        #download existing commands
+        logging.info( "download existing commands")
+        cmds = inVehicle.commands
+        cmds.download()
+        cmds.wait_ready()
+        #change the commands
+        logging.info( "clearing existing commands")
+        cmds.clear()
+        inVehicle.flush()
+
+
+        missionActionArray = json.loads(web.data())
+        logging.info( "missionCommandArray:")
+        logging.info( missionActionArray)
+
+        for missionAction in missionActionArray:
+            logging.info(missionAction)
+            lat = missionAction['coordinate'][0]
+            lon = missionAction['coordinate'][1]
+            altitude = missionAction['coordinate'][2]
+            cmd = Command(0,0,0, mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT, missionAction['command'],
+                0, 0, missionAction['param1'], missionAction['param2'], missionAction['param3'], missionAction['param4'],
+                lat, lon, altitude)
+            logging.info( "Add new command with altitude:")
+            logging.info( altitude)
+            cmds.add(cmd)
+
+        inVehicle.flush()
+        logging.info( "Command added")
+
+        #data = json.loads(web.data())
+        #outputObj['action']['id']=len(actionArray)
+        #actionArray.append(outputObj);
+
+        return json.dumps(outputObj)
+
+    def OPTIONS(self, vehicleId):
+        logging.info( "#####################################################################")
+        logging.info( "Method OPTIONS of missionActions - just here to suppor the CORS Cross-Origin security")
+        logging.info( "#####################################################################")
+        applyHeadders()
+
+        outputObj={}
+        output=json.dumps(outputObj)   
+        return output
+
+
 
 class vehicleStatus:        
     def GET(self, vehicleId, statusVal):
