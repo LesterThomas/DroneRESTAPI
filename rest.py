@@ -637,6 +637,7 @@ class vehicleStatus:
         logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
         inVehicle=connectVehicle(vehicleId)      
         vehicleStatus=getVehicleStatus(inVehicle)
+        vehicleStatus['id']=int(vehicleId)
         outputObj['_links']={};
         outputObj['_links']["self"]={"href": homeDomain+"/vehicle/"+str(vehicleId)+"/", "operations":[{"method":"GET","description":"Get status for vehicle "+str(vehicleId)+"."}]};
         outputObj['_links']['homeLocation']={"href":homeDomain + "/vehicle/" + str(vehicleId) + "/homelocation","operations":[{"method":"GET","description":"Get the home location for this vehicle"}]};
