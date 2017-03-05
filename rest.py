@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Import DroneKit-Python
-from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative, Command, mavutil
+from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative, Command, mavutil, APIException
 import time
 import json
 import math
@@ -39,7 +39,17 @@ def connectVehicle(inVehicleId):
         logging.info("Connecting to vehicle on: %s" % (connectionString,))
         connectionArray[int(inVehicleId)] = connect(connectionString, wait_ready=True)
     else:
-        logging.debug( "Already connected to vehicle" )
+    	if connectionArray[int(inVehicleId)].last_heartbeat<5 :
+        	logging.debug( "Already connected to vehicle" )
+        else:
+        	logging.debug( "Connection timed-out" )
+        	connectionArray[int(inVehicleId)].close()
+        	logging.info("Re-connecting to vehicle on: %s" % (connectionString,))
+        	connectionArray[int(inVehicleId)] = connect(connectionString, wait_ready=True)
+
+
+
+
 
     return connectionArray[int(inVehicleId)]
 
@@ -399,7 +409,11 @@ class action:
         logging.info( "#####################################################################")
 
         applyHeadders()
-        inVehicle=connectVehicle(vehicleId)      
+        try:
+            inVehicle=connectVehicle(vehicleId)   
+        except:
+        	return json.dumps({"error":"Cant connect to vehicle 1" + str(vehicleId)}) 
+
         vehicleStatus=getVehicleStatus(inVehicle)
         outputObj={}
         availableActions=[]
@@ -470,13 +484,21 @@ class action:
         logging.info( "#####################################################################")
         logging.info( "Method POST of action")
         logging.info( "#####################################################################")
-        inVehicle=connectVehicle(vehicleId)      
+        try:
+            inVehicle=connectVehicle(vehicleId)   
+        except:
+        	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
         applyHeadders()
         data = json.loads(web.data())
         #get latest data (inc homeLocation from vehicle)
+        logging.debug( "Getting commands:")
+
         cmds = inVehicle.commands
+        logging.debug( "Download:")
+
         cmds.download()
-        cmds.wait_ready()
+        logging.debug( "Wait until ready:")
+        cmds.wait_ready() 
 
 
         logging.debug( "Data:")
@@ -533,7 +555,10 @@ class action:
         return json.dumps(outputObj)
 
 def getMissionActions(vehicleId) :
-    inVehicle=connectVehicle(vehicleId)      
+    try:
+        inVehicle=connectVehicle(vehicleId)   
+    except:
+    	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
     vehicleStatus=getVehicleStatus(inVehicle)
     outputObj={}
     availableActions=[]
@@ -577,7 +602,10 @@ class missionActions:
         logging.info( "Method POST of missionActions")
         logging.info( "#####################################################################")
         applyHeadders()
-        inVehicle=connectVehicle(vehicleId)    
+        try:
+            inVehicle=connectVehicle(vehicleId)   
+        except:
+        	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
         #download existing commands
         logging.info( "download existing commands")
         cmds = inVehicle.commands
@@ -635,7 +663,10 @@ class vehicleStatus:
             vehicleId=stringArray[0]
             statusVal=stringArray[1]
         logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
-        inVehicle=connectVehicle(vehicleId)      
+        try:
+            inVehicle=connectVehicle(vehicleId)   
+        except:
+        	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
         vehicleStatus=getVehicleStatus(inVehicle)
         vehicleStatus['id']=int(vehicleId)
         outputObj['_links']={};

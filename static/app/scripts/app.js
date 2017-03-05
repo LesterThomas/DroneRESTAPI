@@ -21,12 +21,16 @@ angular
   ])
   .config(function ($routeProvider) {
     $routeProvider
+      .when('/individual', {
+        templateUrl: 'views/individual.html',
+        controller: 'IndividualCtrl',
+        controllerAs: 'individual'
+      })
       .when('/', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
         controllerAs: 'main'
       })
-
       .otherwise({
         redirectTo: '/'
       });
