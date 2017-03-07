@@ -88,7 +88,7 @@ def rtl(inVehicle):
         inVehicle.mode = VehicleMode("RTL")
     else:
         outputObj["name"]="Return-to-Launch"
-        outputObj["status"]="error"
+        outputObj["status"]="Error"
         outputObj["error"]="Vehicle not armed"
         logging.warn( "RTL error - Vehicle not armed")
 
@@ -120,7 +120,7 @@ def takeoff(inVehicle, inHeight):
         inVehicle.simple_takeoff(inHeight) # Take off to target altitude
     else:
         outputObj["name"] = "Takeoff"
-        outputObj["status"] = "error"
+        outputObj["status"] = "Error"
         outputObj["error"] = "vehicle not armable"
         logging.warn( "vehicle not armable")
     return outputObj
@@ -138,7 +138,7 @@ def auto(inVehicle):
         inVehicle.mode = VehicleMode("AUTO")
     else:    
         outputObj["name"]="Start-Mission"
-        outputObj["status"]="error"
+        outputObj["status"]="Error"
         outputObj["error"]="Vehicle not armed"
     return outputObj
 
@@ -159,7 +159,7 @@ def land(inVehicle):
         inVehicle.mode = VehicleMode("LAND")
     else:    
         outputObj["name"]="Land"
-        outputObj["status"]="error"
+        outputObj["status"]="Error"
         outputObj["error"]="Vehicle not armed"
     return outputObj
 
@@ -169,12 +169,13 @@ def goto(inVehicle, dNorth, dEast, dDown):
     """
     outputObj={}
     if inVehicle.armed:
-    	distance=math.sqrt(dNorth*dNorth+dEast*dEast)
+    	distance=round(math.sqrt(dNorth*dNorth+dEast*dEast))
     	logging.info("Goto a distance of " + str(distance) + "m.")
     	if distance>MAX_DISTANCE:
-    		outputObj["status"]="Error"
-    		outputObj["name"]="Can not go more than "+ str(MAX_DISTANCE)+"m in single command"
-    	else:
+            outputObj["status"]="Error"
+            outputObj["error"]="Can not go more than " + str(MAX_DISTANCE) + "m in single command. Action was to go " + str(distance) + " m."
+            outputObj["name"]="Max-Distance-Error"
+        else:
 	        outputObj["name"]="Goto-Relative-Current"
 	        outputObj["status"]="success"
 	        inVehicle.mode = VehicleMode("GUIDED")
@@ -191,7 +192,7 @@ def goto(inVehicle, dNorth, dEast, dDown):
 	        inVehicle.simple_goto(targetLocation, groundspeed=10)
     else:    
         outputObj["name"]="Goto-Relative-Current"
-        outputObj["status"]="error"
+        outputObj["status"]="Error"
         outputObj["error"]="Vehicle not armed"
     return outputObj
 
@@ -235,10 +236,11 @@ def gotoRelative(inVehicle, north, east, down):
         #currentLocation = inVehicle.location.global_relative_frame
         targetLocation = get_location_metres(homeLocation, north, east)
         targetLocation.alt=homeLocation.alt-down
-        distance=distanceInMeters(targetLocation.lat,targetLocation.lon,inVehicle.location.global_frame.lat,inVehicle.location.global_frame.lon)
+        distance=round(distanceInMeters(targetLocation.lat,targetLocation.lon,inVehicle.location.global_frame.lat,inVehicle.location.global_frame.lon))
     	if distance>MAX_DISTANCE:
-    		outputObj["status"]="Error"
-    		outputObj["name"]="Can not go more than "+ str(MAX_DISTANCE)+"m in single command"
+            outputObj["status"]="Error"
+            outputObj["error"]="Can not go more than " + str(MAX_DISTANCE) + "m in single command. Action was to go " + str(distance) + " m."
+            outputObj["name"]="Max-Distance-Error"
     	else:
 	        #coodinates are target
 	        outputObj["coordinate"]=[targetLocation.lat, targetLocation.lon, -down]
@@ -250,7 +252,7 @@ def gotoRelative(inVehicle, north, east, down):
 	        inVehicle.simple_goto(targetLocation, groundspeed=10)
     else:    
         outputObj["name"]="Goto-Relative-Home"
-        outputObj["status"]="error"
+        outputObj["status"]="Error"
         outputObj["error"]="Vehicle not armed"
     return outputObj
 
@@ -264,10 +266,11 @@ def gotoAbsolute(inVehicle, inLocation):
         output = {"global_frame":inLocation}
         logging.debug( "lat" + str(inLocation['lat']))
 
-        distance=distanceInMeters(inLocation['lat'], inLocation['lon'],inVehicle.location.global_frame.lat,inVehicle.location.global_frame.lon)
+        distance=round(distanceInMeters(inLocation['lat'], inLocation['lon'],inVehicle.location.global_frame.lat,inVehicle.location.global_frame.lon))
     	if distance>MAX_DISTANCE:
-    		outputObj["status"]="Error"
-    		outputObj["name"]="Can not go more than "+ str(MAX_DISTANCE)+"m in single command. Action was to go " + str(distance) + "m."
+            outputObj["status"]="Error"
+            outputObj["error"]="Can not go more than " + str(MAX_DISTANCE) + "m in single command. Action was to go " + str(distance) + " m."
+            outputObj["name"]="Max-Distance-Error"
     	else:
 	        inVehicle.mode = VehicleMode("GUIDED")
 	        #coodinates are target
@@ -281,7 +284,7 @@ def gotoAbsolute(inVehicle, inLocation):
 	        inVehicle.simple_goto(LocationGlobal(inLocation['lat'],inLocation['lon'],inLocation['alt']), groundspeed=10)
     else:    
         outputObj["name"]="Goto-Absolute"
-        outputObj["status"]="error"
+        outputObj["status"]="Error"
         outputObj["error"]="Vehicle not armed"
     return outputObj
 
