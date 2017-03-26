@@ -369,6 +369,48 @@ def getVehicleStatus(inVehicle):
     outputObj["armed"]=(inVehicle.armed)
     return outputObj
 
+def updateActionStatus(inVehicle):
+    #test to see whether the vehicle is at the target location of them action
+    if (len(actionArray)>0):
+        latestAction=actionArray[len(actionArray)-1]
+
+        if (latestAction['action']['status']=="Error"):
+            latestAction['complete']=False
+            latestAction['completeStatus']='Error'
+            return
+
+        targetCoordinates=latestAction['action']['coordinate'] #array with lat,lon,alt
+        logging.info(inVehicle)
+        vehicleCoordinates=inVehicle.location.global_relative_frame #object with lat,lon,alt attributes
+        #Return-to-launch uses global_frame (alt is absolute)
+        if (latestAction['action']['name']=='Return-to-Launch'):
+            vehicleCoordinates=inVehicle.location.global_frame #object with lat,lon,alt attributes
+
+        horizontalDistance=distanceInMeters(targetCoordinates[0],targetCoordinates[1],vehicleCoordinates.lat,vehicleCoordinates.lon)
+        verticalDistance=abs(targetCoordinates[2]-vehicleCoordinates.alt)
+        latestAction['horizontalDistance']=round(horizontalDistance,2)
+        latestAction['verticalDistance']=round(verticalDistance,2)
+        if ((horizontalDistance<5) and (verticalDistance<1)):
+            latestAction['complete']=True
+            latestAction['completeStatus']='Complete'
+        else:
+            latestAction['completeStatus']='In progress'
+            latestAction['complete']=False
+        #region of interest is special case
+        if (latestAction['action']['name']=='Region-of-Interest'):
+            latestAction['complete']=True
+            latestAction['completeStatus']='Complete'
+    if (len(actionArray)>1): #check if previous actions completed or were interrupted
+        previousAction=actionArray[len(actionArray)-2]
+        if (previousAction.get('complete',False)==False):
+            if (previousAction.get('completeStatus','In progress')=="In progress"):
+                previousAction['completeStatus']='Interrupted'
+                previousAction['complete']=False
+
+           
+
+    return
+
 class index:        
     def GET(self):
         logging.info( "#####################################################################")
@@ -439,7 +481,7 @@ class action:
         try:
             inVehicle=connectVehicle(vehicleId)   
         except:
-        	return json.dumps({"error":"Cant connect to vehicle 1" + str(vehicleId)}) 
+        	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
 
         vehicleStatus=getVehicleStatus(inVehicle)
         outputObj={}
@@ -504,6 +546,8 @@ class action:
                 "samplePayload":{"name":"Takeoff","height":30}
             })
         outputObj['availableActions']=availableActions
+        updateActionStatus(inVehicle);
+        outputObj['actions']=actionArray
         output=json.dumps(outputObj)   
         return output
 
