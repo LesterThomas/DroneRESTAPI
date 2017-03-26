@@ -620,8 +620,14 @@ class action:
             inAlt=data.get("alt",defaultLocation.alt)
             locationObj={'lat':float(inLat), 'lon':float(inLon), 'alt':float(inAlt)}
             outputObj["action"]=roi(inVehicle,locationObj)
-        outputObj['action']['id']=len(actionArray)
-        actionArray.append(outputObj);
+        if (len(actionArray)==0):
+            outputObj['action']['id']=0;
+        else:
+            outputObj['action']['id']=actionArray[len(actionArray)-1]['action']['id']+1
+        actionArray.append(outputObj)
+        if (len(actionArray)>10):
+            actionArray.pop(0)
+
 
         return json.dumps(outputObj)
 
