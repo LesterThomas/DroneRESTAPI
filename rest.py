@@ -368,6 +368,8 @@ def getVehicleStatus(inVehicle):
     outputObj["mode"]=str(inVehicle.mode.name)
     logging.debug( "Armed: %s" % inVehicle.armed  )  # settable    
     outputObj["armed"]=(inVehicle.armed)
+
+
     return outputObj
 
 def updateActionStatus(inVehicle):
@@ -864,7 +866,13 @@ class vehicleStatus:
         except:
         	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
         vehicleStatus=getVehicleStatus(inVehicle)
+
         vehicleStatus["zone"]=authorizedZoneArray[int(vehicleId)]
+        #check if vehicle still in zone
+        distance=distanceInMeters(vehicleStatus["zone"]["shape"]["lat"],vehicleStatus["zone"]["shape"]["lon"],vehicleStatus["global_frame"]["lat"],vehicleStatus["global_frame"]["lon"])
+        if (distance>500):
+            rtl(inVehicle)
+
 
         vehicleStatus['id']=int(vehicleId)
         outputObj['_links']={};
