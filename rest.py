@@ -536,15 +536,15 @@ class action:
         outputObj={}
         if value=="Return-to-Launch":
             outputObj["action"]=rtl(inVehicle)
-        if value=="Takeoff":
+        elif value=="Takeoff":
             height=data.get("height",20) #get height - default to 20
             logging.debug( "Taking off to height of " + str(height))
             outputObj["action"]=takeoff(inVehicle,height)
-        if value=="Start-Mission":
+        elif value=="Start-Mission":
             outputObj["action"]=auto(inVehicle)
-        if value=="Land":
+        elif value=="Land":
             outputObj["action"]=land(inVehicle)
-        if value=="Goto-Absolute":
+        elif value=="Goto-Absolute":
             defaultLocation=inVehicle.location.global_frame #default to current position
             logging.debug( "Global Frame" + str(defaultLocation))
             inLat=data.get("lat",defaultLocation.lat)
@@ -552,7 +552,7 @@ class action:
             inAlt=data.get("alt",defaultLocation.alt)
             locationObj={'lat':float(inLat), 'lon':float(inLon), 'alt':float(inAlt)}
             outputObj["action"]=gotoAbsolute(inVehicle,locationObj)
-        if value=="Goto-Relative-Home":
+        elif value=="Goto-Relative-Home":
             inNorth=float(data.get("north",0))
             inEast=float(data.get("east",0))
             inDown=-float(data.get("up",0))
@@ -561,12 +561,12 @@ class action:
             logging.debug( inEast)
             logging.debug( inDown)
             outputObj["action"]=gotoRelative(inVehicle,inNorth,inEast,inDown)
-        if value=="Goto-Relative-Current":
+        elif value=="Goto-Relative-Current":
             inNorth=float(data.get("north",0))
             inEast=float(data.get("east",0))
             inDown=-float(data.get("up",0))
             outputObj["action"]=goto(inVehicle,inNorth,inEast,inDown)
-        if value=="Region-of-Interest":
+        elif value=="Region-of-Interest":
             cmds = inVehicle.commands
             cmds.download()
             cmds.wait_ready()
@@ -576,6 +576,10 @@ class action:
             inAlt=data.get("alt",defaultLocation.alt)
             locationObj={'lat':float(inLat), 'lon':float(inLon), 'alt':float(inAlt)}
             outputObj["action"]=roi(inVehicle,locationObj)
+        else:
+            outputObj["action"]={"status":"error", "name":value, "error":"No action found with name '" + value+ "'." }
+
+
         outputObj['action']['id']=len(actionArray)
         actionArray.append(outputObj);
 
@@ -632,7 +636,7 @@ class missionActions:
         try:
             inVehicle=connectVehicle(vehicleId)   
         except:
-        	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
+            return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
         #download existing commands
         logging.info( "download existing commands")
         cmds = inVehicle.commands
@@ -673,6 +677,75 @@ class missionActions:
         return output
 
 
+def getSimulatorParams(vehicleId) :
+    try:
+        inVehicle=connectVehicle(vehicleId)   
+    except:
+        return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
+    vehicleStatus=getVehicleStatus(inVehicle)
+    outputObj={}
+    simulatorParams={}
+
+    logging.info( "#####################################################################")
+    logging.info( "#####################################################################")
+    logging.debug( "Simulator Parameters")
+    logging.debug( inVehicle.parameters)
+
+    for key, value in inVehicle.parameters.iteritems():
+        logging.debug( " Key:"+str(key)+" Value:" + str(value))
+        logging.debug( key.find("SIM"))
+        if (key.find("SIM")==0):
+            simulatorParams[key]=inVehicle.parameters[key]
+
+    outputObj['simulatorParams']=simulatorParams
+    #outputObj['missionActions']=cmds
+    output=json.dumps(outputObj)   
+    return output
+
+
+class simulator:        
+    def GET(self, vehicleId):
+        logging.info( "#####################################################################")
+        logging.info( "Method GET of simulator ")
+        logging.info( "#####################################################################")
+        logging.debug( "vehicleId = '"+vehicleId+"'")
+        applyHeadders()
+        output=getSimulatorParams(vehicleId) 
+        return output
+
+    def POST(self, vehicleId):
+        logging.info( "#####################################################################")
+        logging.info( "Method POST of simulator")
+        logging.info( "#####################################################################")
+        applyHeadders()
+        try:
+            inVehicle=connectVehicle(vehicleId)   
+        except:
+            return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
+        logging.info( "posting new simulator parameter")
+        simulatorData = json.loads(web.data());
+        logging.info(simulatorData);
+        simKey=str(simulatorData['parameter'])
+        simValue=simulatorData['value']
+        logging.info(simKey);
+        logging.info(simValue);
+        inVehicle.parameters[simKey]=simValue;
+        logging.info('Updated parameter');
+       
+        output=getSimulatorParams(vehicleId) 
+        return output
+
+    def OPTIONS(self, vehicleId):
+        logging.info( "#####################################################################")
+        logging.info( "Method OPTIONS of simulator - just here to suppor the CORS Cross-Origin security")
+        logging.info( "#####################################################################")
+        applyHeadders()
+
+        outputObj={}
+        output=json.dumps(outputObj)   
+        return output
+
+
 
 class vehicleStatus:        
     def GET(self, vehicleId, statusVal):
@@ -701,6 +774,7 @@ class vehicleStatus:
         outputObj['_links']['homeLocation']={"href":homeDomain + "/vehicle/" + str(vehicleId) + "/homelocation","operations":[{"method":"GET","description":"Get the home location for this vehicle"}]};
         outputObj['_links']['availableActions']={"href":homeDomain+ "/vehicle/" + str(vehicleId) +"/action","operations":[{"method":"GET","description":"Get the actions available for this vehicle."}]};
         outputObj['_links']['missionActions']={"href":homeDomain+ "/vehicle/" + str(vehicleId) +"/missionActions","operations":[{"method":"GET","description":"Get the current mission commands from the vehicle."},{"method":"POST","description":"Upload a new mission to the vehicle. The mission is a collection of mission actions with <command>, <coordinate[lat,lon,alt]> and command specific <param1>,<param2>,<param3>,<param4>. The command-set is described at https://pixhawk.ethz.ch/mavlink/", "samplePayload": [{"coordinate":[51.3957,-1.3441,30],"command":16,"param1":0,"param2":0,"param3":0,"param4":0}]}]};
+        outputObj['_links']['simulator']={"href":homeDomain+ "/vehicle/" + str(vehicleId) +"/simulator","operations":[{"method":"GET","description":"Get the current simulator parameters from the vehicle."},{"method":"POST","description":"Upload a new simulator paramater to the simulator. ", "samplePayload": {"parameter":"SIM_WIND_SPD","value":10}}]};
         output=""
         if statusVal=="/":
             statusVal=""            
@@ -748,6 +822,7 @@ urls = (
     '/', 'index',
     '/vehicle/(.*)/action', 'action',
     '/vehicle/(.*)/missionActions', 'missionActions',
+    '/vehicle/(.*)/simulator', 'simulator',
     '/vehicle', 'vehicleIndex',
     '/vehicle/(.*)/(.*)', 'vehicleStatus',
     '/(.*)', 'catchAll'
