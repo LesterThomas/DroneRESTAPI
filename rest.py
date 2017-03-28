@@ -13,7 +13,7 @@ connectionStringArray = ["","udp:127.0.0.1:14551"] #["","udp:10.0.0.2:6000","udp
 connectionArray=[None ,None]
 actionArray=[]
 MAX_DISTANCE=1000 #max distance allowed in a single command
-
+ 
 logging.basicConfig(level=logging.DEBUG)
 def applyHeadders():
     logging.debug('Applying HTTP headers')
