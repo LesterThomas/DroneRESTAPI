@@ -9,9 +9,10 @@ import os
 import web
 import logging
 
-connectionStringArray = ["","udp:127.0.0.1:14551"] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
+connectionStringArray = [""] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
 connectionArray=[None ,None]
 actionArray=[]
+authorizedZoneArray=[{}]
 MAX_DISTANCE=1000 #max distance allowed in a single command
  
 logging.basicConfig(level=logging.DEBUG)
@@ -455,10 +456,12 @@ class vehicleIndex:
         logging.debug( connection)
         connectionStringArray.append(connection)
         connectionArray.append(None)
+        authorizedZoneArray.append({})
         outputObj={}
         outputObj["connection"]=connection
         outputObj["id"]=len(connectionStringArray)-1
         return json.dumps(outputObj)
+
 
 class action:     
     def OPTIONS(self, vehicleId):
@@ -726,6 +729,50 @@ class missionActions:
         return output
 
 
+
+
+
+
+
+
+
+
+
+class authorizedZone:        
+
+    def POST(self,vehicleId):
+        logging.info( "#####################################################################")
+        logging.info( "Method POST of authorizedZone")
+        logging.info( "#####################################################################")
+        logging.debug( "vehicleId = '"+vehicleId+"'")
+        applyHeadders()
+        try:
+            inVehicle=connectVehicle(vehicleId)   
+        except:
+            return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
+        vehicleStatus=getVehicleStatus(inVehicle)
+        logging.info(vehicleStatus)
+        data = json.loads(web.data())
+        zone = data["zone"]
+        #validate and enrich data
+        if (zone["shape"]["name"]=="circle"):
+            if (zone.get("lat",-1)==-1): #if there is no lat,lon add current location as default
+                zone["shape"]["lat"]=vehicleStatus["global_frame"]["lat"]
+                zone["shape"]["lon"]=vehicleStatus["global_frame"]["lon"]
+        outputObj={}
+        outputObj["zone"]=zone
+        authorizedZoneArray[int(vehicleId)]=zone
+        return json.dumps(outputObj)
+
+
+
+
+
+
+
+
+
+
 def getSimulatorParams(vehicleId) :
     try:
         inVehicle=connectVehicle(vehicleId)   
@@ -817,6 +864,8 @@ class vehicleStatus:
         except:
         	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
         vehicleStatus=getVehicleStatus(inVehicle)
+        vehicleStatus["zone"]=authorizedZoneArray[int(vehicleId)]
+
         vehicleStatus['id']=int(vehicleId)
         outputObj['_links']={};
         outputObj['_links']["self"]={"href": homeDomain+"/vehicle/"+str(vehicleId)+"/", "operations":[{"method":"GET","description":"Get status for vehicle "+str(vehicleId)+"."}]};
@@ -871,6 +920,7 @@ urls = (
     '/', 'index',
     '/vehicle/(.*)/action', 'action',
     '/vehicle/(.*)/missionActions', 'missionActions',
+    '/vehicle/(.*)/authorizedZone', 'authorizedZone',
     '/vehicle/(.*)/simulator', 'simulator',
     '/vehicle', 'vehicleIndex',
     '/vehicle/(.*)/(.*)', 'vehicleStatus',
