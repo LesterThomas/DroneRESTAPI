@@ -1,6 +1,6 @@
  #!/bin/bash
 
- sleep 15
+ #sleep 15
  sleep $1
  let PORT=14551+$1*10
  echo $PORT

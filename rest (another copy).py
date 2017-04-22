@@ -8,26 +8,14 @@ import math
 import os
 import web
 import logging
-import redis
-import uuid
-logging.basicConfig(level=logging.DEBUG)
 
-redisdB = redis.Redis(host='localhost', port=6379)
-redisdB.set('foo', 'bar')
-value = redisdB.get('foo')
-if (value=='bar'):
-    logging.info("Connected to Redis dB")
-else:
-    logging.error("Can not connect to Redis dB")
-    raise Exception('Can not connect to Redis dB on port 6379')
-
-
-#connectionStringArray = [""] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
-connectionDict={}
-actionArrayDict={}
-authorizedZoneDict={}
+connectionStringArray = [""] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
+connectionArray=[None ,None]
+actionArray=[]
+authorizedZoneArray=[{}]
 MAX_DISTANCE=1000 #max distance allowed in a single command
  
+logging.basicConfig(level=logging.DEBUG)
 def applyHeadders():
     logging.debug('Applying HTTP headers')
     web.header('Content-Type', 'application/json')
@@ -38,32 +26,28 @@ def applyHeadders():
     return
 
 def connectVehicle(inVehicleId):
-    #global connectionStringArray
-    global redisdB
-    global connectionDict
-    global actionArrayDict
+    global connectionStringArray
+    global connectionArray
+    logging.debug( "connectVehicle called with inVehicleId = " + str(inVehicleId))
     try:
-        logging.debug( "connectVehicle called with inVehicleId = " + str(inVehicleId))
-        #connectionString=connectionStringArray[inVehicleId]
-        connectionString=redisdB.get('connectionString:' + str(inVehicleId))
-        logging.info("connection string for vehicle " + str(inVehicleId) + "='" + connectionString + "'")
-        # Connect to the Vehicle.
-        if not connectionDict.get(inVehicleId):
-            logging.info("connectionString: %s" % (connectionString,))
-            logging.info("Connecting to vehicle on: %s" % (connectionString,))
-            connectionDict[inVehicleId] = connect(connectionString, wait_ready=True)
-            actionArrayDict[inVehicleId]=[] #create empty action array
+        connectionString=connectionStringArray[int(inVehicleId)]
+    except ValueError:
+        logging.warn( inVehicleId + " is not an Integer")
+        return 
+    # Connect to the Vehicle.
+    if not connectionArray[int(inVehicleId)]:
+        logging.info("connectionString: %s" % (connectionString,))
+        logging.info("Connecting to vehicle on: %s" % (connectionString,))
+        connectionArray[int(inVehicleId)] = connect(connectionString, wait_ready=True)
+    else:
+    	if connectionArray[int(inVehicleId)].last_heartbeat<5 :
+        	logging.debug( "Already connected to vehicle" )
         else:
-            logging.debug( "Already connected to vehicle")
-        
-    except Exception as inst:
-        logging.warn( "Unexpected error in connectVehicle:")
-        logging.warn( "VehicleId=")
-        logging.warn( inVehicleId)
-        logging.warn( "Exception=")
-        logging.warn( inst)
-        raise Exception('Unexpected error connecting to vehicle ' + inVehicleId) 
-    return connectionDict[inVehicleId]
+        	logging.debug( "Connection - no heartbeat for > 5 seconds, try to re-connect" )
+        	connectionArray[int(inVehicleId)].close()
+        	logging.info("Re-connecting to vehicle on: %s" % (connectionString,))
+        	connectionArray[int(inVehicleId)] = connect(connectionString, wait_ready=True)
+    return connectionArray[int(inVehicleId)]
 
 def latLonAltObj(inObj):
     output={}
@@ -388,13 +372,8 @@ def getVehicleStatus(inVehicle):
 
     return outputObj
 
-def updateActionStatus(inVehicle, inVehicleId):
-    #test to see whether the vehicle is at the target location of the action
-    actionArray=actionArrayDict[inVehicleId]
-
-
-    logging.debug(actionArray)
-
+def updateActionStatus(inVehicle):
+    #test to see whether the vehicle is at the target location of them action
     if (len(actionArray)>0):
         latestAction=actionArray[len(actionArray)-1]
 
@@ -402,37 +381,28 @@ def updateActionStatus(inVehicle, inVehicleId):
             latestAction['complete']=False
             latestAction['completeStatus']='Error'
             return
-        logging.debug("Latest Action:" + latestAction['action']['name'])
 
-        if (latestAction['action']['name']=='Start-Mission'):
-            #cant monitor progress at the moment
-            logging.info("Cant monitor progress for mission")
+        targetCoordinates=latestAction['action']['coordinate'] #array with lat,lon,alt
+        logging.info(inVehicle)
+        vehicleCoordinates=inVehicle.location.global_relative_frame #object with lat,lon,alt attributes
+        #Return-to-launch uses global_frame (alt is absolute)
+        if (latestAction['action']['name']=='Return-to-Launch'):
+            vehicleCoordinates=inVehicle.location.global_frame #object with lat,lon,alt attributes
+
+        horizontalDistance=distanceInMeters(targetCoordinates[0],targetCoordinates[1],vehicleCoordinates.lat,vehicleCoordinates.lon)
+        verticalDistance=abs(targetCoordinates[2]-vehicleCoordinates.alt)
+        latestAction['horizontalDistance']=round(horizontalDistance,2)
+        latestAction['verticalDistance']=round(verticalDistance,2)
+        if ((horizontalDistance<5) and (verticalDistance<1)):
+            latestAction['complete']=True
+            latestAction['completeStatus']='Complete'
         else:
-            logging.debug("Monitoring progress for action '" + latestAction['action']['name'] + "'")
-
-            targetCoordinates=latestAction['action']['coordinate'] #array with lat,lon,alt
-            logging.info(inVehicle)
-            vehicleCoordinates=inVehicle.location.global_relative_frame #object with lat,lon,alt attributes
-            #Return-to-launch uses global_frame (alt is absolute)
-            
-            if (latestAction['action']['name']=='Return-to-Launch'):
-                vehicleCoordinates=inVehicle.location.global_frame #object with lat,lon,alt attributes
-
-            horizontalDistance=distanceInMeters(targetCoordinates[0],targetCoordinates[1],vehicleCoordinates.lat,vehicleCoordinates.lon)
-            verticalDistance=abs(targetCoordinates[2]-vehicleCoordinates.alt)
-            latestAction['horizontalDistance']=round(horizontalDistance,2)
-            latestAction['verticalDistance']=round(verticalDistance,2)
-            if ((horizontalDistance<5) and (verticalDistance<1)):
-                latestAction['complete']=True
-                latestAction['completeStatus']='Complete'
-            else:
-                latestAction['completeStatus']='In progress'
-                latestAction['complete']=False
-            #region of interest is special case
-            if (latestAction['action']['name']=='Region-of-Interest'):
-                latestAction['complete']=True
-                latestAction['completeStatus']='Complete'
-
+            latestAction['completeStatus']='In progress'
+            latestAction['complete']=False
+        #region of interest is special case
+        if (latestAction['action']['name']=='Region-of-Interest'):
+            latestAction['complete']=True
+            latestAction['completeStatus']='Complete'
     if (len(actionArray)>1): #check if previous actions completed or were interrupted
         previousAction=actionArray[len(actionArray)-2]
         if (previousAction.get('complete',False)==False):
@@ -467,30 +437,18 @@ class index:
 
 class vehicleIndex:        
     def GET(self):
-        global redisdB
         logging.info( "#####################################################################")
         logging.info( "Method GET of vehicleIndex")
         logging.info( "#####################################################################")
         applyHeadders()
         outputObj=[]
-
-        keys=redisdB.keys("connectionString:*")
-        for key in keys:
-            value=redisdB.get(key)
-            droneId=key[17:]
-
-            outputObj.append( {
-                    "operations":[{"method":"GET","href":homeDomain+"/vehicle/"+str(droneId)+"/","description":"Get status for vehicle " + str(droneId)},
-                        {"method":"DELETE","href":homeDomain+"/vehicle/"+str(droneId)+"/","description":"Delete connection to vehicle " + str(droneId)}],
-                        "id":droneId,"connection":value})
-
-
-
+        for i in range (1,len(connectionStringArray)) :
+            outputObj.append( {"id":i,
+                    "details":{"method":"GET","href":homeDomain+"/vehicle/"+str(i)+"/","description":"Get status for vehicle " + str(i),"connection":connectionStringArray[i]}})
         output=json.dumps(outputObj)    
         return output
 
     def POST(self):
-        global redisdB
         logging.info( "#####################################################################")
         logging.info( "Method POST of vehicleIndex")
         logging.info( "#####################################################################")
@@ -498,18 +456,12 @@ class vehicleIndex:
         data = json.loads(web.data())
         connection = data["connection"]
         logging.debug( connection)
-
-        uuidVal=uuid.uuid4()
-        key=str(uuidVal)[:8]
-        logging.info("adding connectionString to Redis db with key '"+"connectionString:"+str(key)+"'")
-        redisdB.set("connectionString:"+key,connection)
-
-        #connectionStringArray.append(connection)
-        #connectionDict.append(None)
-        #authorizedZoneDict.append({})
+        connectionStringArray.append(connection)
+        connectionArray.append(None)
+        authorizedZoneArray.append({})
         outputObj={}
         outputObj["connection"]=connection
-        outputObj["id"]=key
+        outputObj["id"]=len(connectionStringArray)-1
         return json.dumps(outputObj)
 
 
@@ -533,11 +485,8 @@ class action:
         applyHeadders()
         try:
             inVehicle=connectVehicle(vehicleId)   
-        except Exception as inst:
-            logging.warn( "Unexpected error:")
-            logging.warn( inVehicle)
-            logging.warn( str(inst))
-            return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
+        except:
+        	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
 
         vehicleStatus=getVehicleStatus(inVehicle)
         outputObj={}
@@ -602,8 +551,8 @@ class action:
                 "samplePayload":{"name":"Takeoff","height":30}
             })
         outputObj['availableActions']=availableActions
-        updateActionStatus(inVehicle, vehicleId);
-        outputObj['actions']=actionArrayDict[vehicleId]
+        updateActionStatus(inVehicle);
+        outputObj['actions']=actionArray
         output=json.dumps(outputObj)   
         return output
 
@@ -678,7 +627,7 @@ class action:
             outputObj["action"]=roi(inVehicle,locationObj)
         else:
             outputObj["action"]={"status":"error", "name":value, "error":"No action found with name '" + value+ "'." }
-        actionArray=actionArrayDict[vehicleId]
+
         if (len(actionArray)==0):
             outputObj['action']['id']=0;
         else:
@@ -814,7 +763,7 @@ class authorizedZone:
                 zone["shape"]["lon"]=vehicleStatus["global_frame"]["lon"]
         outputObj={}
         outputObj["zone"]=zone
-        authorizedZoneDict[vehicleId]=zone
+        authorizedZoneArray[int(vehicleId)]=zone
         return json.dumps(outputObj)
 
 
@@ -905,31 +854,27 @@ class vehicleStatus:
         applyHeadders()
         outputObj={}
         #test if vehicleId is an integer 1-4
-        #try:
-        #    vehId=int(vehicleId)
-        #except ValueError:
-        #    stringArray=vehicleId.split('/')
-        #    vehicleId=stringArray[0]
-        #    statusVal=stringArray[1]
-        #logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
+        try:
+            vehId=int(vehicleId)
+        except ValueError:
+            stringArray=vehicleId.split('/')
+            vehicleId=stringArray[0]
+            statusVal=stringArray[1]
+        logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
         try:
             inVehicle=connectVehicle(vehicleId)   
         except:
         	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
         vehicleStatus=getVehicleStatus(inVehicle)
 
-        vehicleStatus["zone"]=authorizedZoneDict.get(vehicleId)
-        if not vehicleStatus["zone"]: #if no authorizedZone then set default
-            vehicleStatus["zone"]={"shape":{"name":"circle","lat":vehicleStatus["global_frame"]["lat"],"lon":vehicleStatus["global_frame"]["lon"]}}
-
-
+        vehicleStatus["zone"]=authorizedZoneArray[int(vehicleId)]
         #check if vehicle still in zone
         distance=distanceInMeters(vehicleStatus["zone"]["shape"]["lat"],vehicleStatus["zone"]["shape"]["lon"],vehicleStatus["global_frame"]["lat"],vehicleStatus["global_frame"]["lon"])
         if (distance>500):
             rtl(inVehicle)
 
 
-        vehicleStatus['id']=vehicleId
+        vehicleStatus['id']=int(vehicleId)
         outputObj['_links']={};
         outputObj['_links']["self"]={"href": homeDomain+"/vehicle/"+str(vehicleId)+"/", "operations":[{"method":"GET","description":"Get status for vehicle "+str(vehicleId)+"."}]};
         outputObj['_links']['homeLocation']={"href":homeDomain + "/vehicle/" + str(vehicleId) + "/homelocation","operations":[{"method":"GET","description":"Get the home location for this vehicle"}]};
@@ -959,21 +904,6 @@ class vehicleStatus:
             outputObj["vehicleStatus"]={statusVal: vehicleStatus.get(statusVal,{"error":"Vehicle status '"+statusVal+"' not found. Try getting all using "+homeDomain+"/vehicle/"+vehicleId+"/"})}
             output = json.dumps(outputObj)
         return output
-
-    def DELETE(self, vehicleId, statusVal):
-        logging.info( "#####################################################################")
-        logging.info( "Method DELETE of vehicleStatus ")
-        logging.info( "#####################################################################")
-        logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
-        applyHeadders()
-        redisdB.delete("connectionString:"+vehicleId)
-        connectionDict.pop("connectionString:"+vehicleId, None)
-
-        outputObj={"status":"success"}
-        output = json.dumps(outputObj)
-        return output
-       
-
 
 class catchAll:
     def GET(self, user):
@@ -1005,7 +935,7 @@ urls = (
     '/(.*)', 'catchAll'
 )
 
-defaultHomeDomain='http://localhost:1235' #'http://sail.vodafone.com/drone'
+defaultHomeDomain='http://sail.vodafone.com/drone'
 homeDomain = os.getenv('HOME_DOMAIN', defaultHomeDomain)
 logging.debug( "Home Domain:"  + homeDomain)
 
