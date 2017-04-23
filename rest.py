@@ -13,14 +13,13 @@ import uuid
 logging.basicConfig(level=logging.DEBUG)
 
 redisdB = redis.Redis(host='redis', port=6379)
-#redisdB.set('foo', 'bar')
-#value = redisdB.get('foo')
-#if (value=='bar'):
-#    logging.info("Connected to Redis dB")
-#else:
-#    logging.error("Can not connect to Redis dB")
-#    raise Exception('Can not connect to Redis dB on port 6379')
-
+redisdB.set('foo', 'bar')
+value = redisdB.get('foo')
+if (value=='bar'):
+    logging.info("Connected to Redis dB")
+else:
+    logging.error("Can not connect to Redis dB")
+    raise Exception('Can not connect to Redis dB on port 6379')
 
 #connectionStringArray = [""] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
 connectionDict={}
@@ -42,13 +41,6 @@ def connectVehicle(inVehicleId):
     global redisdB
     global connectionDict
     global actionArrayDict
-    redisdB.set('foo', 'bar')
-    value = redisdB.get('foo')
-    if (value=='bar'):
-        logging.info("Connected to Redis dB")
-    else:
-        logging.error("Can not connect to Redis dB")
-        raise Exception('Can not connect to Redis dB on port 6379')
 
 
 

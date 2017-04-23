@@ -30,6 +30,7 @@ RUN apt-get install -y python-pip
 RUN apt-get install -y python-dev
 RUN pip install dronekit
 RUN pip install web.py
+RUN pip install redis
 
 
 COPY rest.py /

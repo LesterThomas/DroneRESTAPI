@@ -1,6 +1,5 @@
 FROM lesterthomas/sitlbase:1.0
 
-RUN pip install redis
 COPY rest.py /
 COPY static /arducopter/ArduCopter/static/
 RUN chmod -R 777 /arducopter/ArduCopter/static
