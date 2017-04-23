@@ -12,14 +12,14 @@ import redis
 import uuid
 logging.basicConfig(level=logging.DEBUG)
 
-redisdB = redis.Redis(host='localhost', port=6379)
-redisdB.set('foo', 'bar')
-value = redisdB.get('foo')
-if (value=='bar'):
-    logging.info("Connected to Redis dB")
-else:
-    logging.error("Can not connect to Redis dB")
-    raise Exception('Can not connect to Redis dB on port 6379')
+redisdB = redis.Redis(host='redis', port=6379)
+#redisdB.set('foo', 'bar')
+#value = redisdB.get('foo')
+#if (value=='bar'):
+#    logging.info("Connected to Redis dB")
+#else:
+#    logging.error("Can not connect to Redis dB")
+#    raise Exception('Can not connect to Redis dB on port 6379')
 
 
 #connectionStringArray = [""] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
@@ -42,6 +42,16 @@ def connectVehicle(inVehicleId):
     global redisdB
     global connectionDict
     global actionArrayDict
+    redisdB.set('foo', 'bar')
+    value = redisdB.get('foo')
+    if (value=='bar'):
+        logging.info("Connected to Redis dB")
+    else:
+        logging.error("Can not connect to Redis dB")
+        raise Exception('Can not connect to Redis dB on port 6379')
+
+
+
     try:
         logging.debug( "connectVehicle called with inVehicleId = " + str(inVehicleId))
         #connectionString=connectionStringArray[inVehicleId]
@@ -73,18 +83,18 @@ def latLonAltObj(inObj):
     return output
 
 def distanceInMeters(lat1,lon1,lat2,lon2):
-	# approximate radius of earth in km
-	R = 6373.0
-	lat1 = math.radians(lat1)
-	lon1 = math.radians(lon1)
-	lat2 = math.radians(lat2)
-	lon2 = math.radians(lon2)
-	dlon = lon2 - lon1
-	dlat = lat2 - lat1
-	a = (math.sin(dlat/2))**2 + math.cos(lat1) * math.cos(lat2) * (math.sin(dlon/2))**2
-	c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-	distance = R * c
-	return distance*1000
+    # approximate radius of earth in km
+    R = 6373.0
+    lat1 = math.radians(lat1)
+    lon1 = math.radians(lon1)
+    lat2 = math.radians(lat2)
+    lon2 = math.radians(lon2)
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = (math.sin(dlat/2))**2 + math.cos(lat1) * math.cos(lat2) * (math.sin(dlon/2))**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    distance = R * c
+    return distance*1000
 
 #methods to support the different actions
 def rtl(inVehicle):        
@@ -186,27 +196,27 @@ def goto(inVehicle, dNorth, dEast, dDown):
     """
     outputObj={}
     if inVehicle.armed:
-    	distance=round(math.sqrt(dNorth*dNorth+dEast*dEast))
-    	logging.info("Goto a distance of " + str(distance) + "m.")
-    	if distance>MAX_DISTANCE:
+        distance=round(math.sqrt(dNorth*dNorth+dEast*dEast))
+        logging.info("Goto a distance of " + str(distance) + "m.")
+        if distance>MAX_DISTANCE:
             outputObj["status"]="Error"
             outputObj["error"]="Can not go more than " + str(MAX_DISTANCE) + "m in single command. Action was to go " + str(distance) + " m."
             outputObj["name"]="Max-Distance-Error"
         else:
-	        outputObj["name"]="Goto-Relative-Current"
-	        outputObj["status"]="success"
-	        inVehicle.mode = VehicleMode("GUIDED")
-	        currentLocation = inVehicle.location.global_relative_frame
-	        targetLocation = get_location_metres(currentLocation, dNorth, dEast)
-	        targetLocation.alt=targetLocation.alt-dDown
-	        #coodinates are target
-	        outputObj["coordinate"]=[targetLocation.lat, targetLocation.lon, targetLocation.alt]
-	        outputObj["param0"]=0
-	        outputObj["param1"]=0
-	        outputObj["param2"]=0
-	        outputObj["param3"]=0
-	        outputObj["command"]=16
-	        inVehicle.simple_goto(targetLocation, groundspeed=10)
+            outputObj["name"]="Goto-Relative-Current"
+            outputObj["status"]="success"
+            inVehicle.mode = VehicleMode("GUIDED")
+            currentLocation = inVehicle.location.global_relative_frame
+            targetLocation = get_location_metres(currentLocation, dNorth, dEast)
+            targetLocation.alt=targetLocation.alt-dDown
+            #coodinates are target
+            outputObj["coordinate"]=[targetLocation.lat, targetLocation.lon, targetLocation.alt]
+            outputObj["param0"]=0
+            outputObj["param1"]=0
+            outputObj["param2"]=0
+            outputObj["param3"]=0
+            outputObj["command"]=16
+            inVehicle.simple_goto(targetLocation, groundspeed=10)
     else:    
         outputObj["name"]="Goto-Relative-Current"
         outputObj["status"]="Error"
@@ -254,19 +264,19 @@ def gotoRelative(inVehicle, north, east, down):
         targetLocation = get_location_metres(homeLocation, north, east)
         targetLocation.alt=homeLocation.alt-down
         distance=round(distanceInMeters(targetLocation.lat,targetLocation.lon,inVehicle.location.global_frame.lat,inVehicle.location.global_frame.lon))
-    	if distance>MAX_DISTANCE:
+        if distance>MAX_DISTANCE:
             outputObj["status"]="Error"
             outputObj["error"]="Can not go more than " + str(MAX_DISTANCE) + "m in single command. Action was to go " + str(distance) + " m."
             outputObj["name"]="Max-Distance-Error"
-    	else:
-	        #coodinates are target
-	        outputObj["coordinate"]=[targetLocation.lat, targetLocation.lon, -down]
-	        outputObj["param0"]=0
-	        outputObj["param1"]=0
-	        outputObj["param2"]=0
-	        outputObj["param3"]=0
-	        outputObj["command"]=16  
-	        inVehicle.simple_goto(targetLocation, groundspeed=10)
+        else:
+            #coodinates are target
+            outputObj["coordinate"]=[targetLocation.lat, targetLocation.lon, -down]
+            outputObj["param0"]=0
+            outputObj["param1"]=0
+            outputObj["param2"]=0
+            outputObj["param3"]=0
+            outputObj["command"]=16  
+            inVehicle.simple_goto(targetLocation, groundspeed=10)
     else:    
         outputObj["name"]="Goto-Relative-Home"
         outputObj["status"]="Error"
@@ -284,21 +294,21 @@ def gotoAbsolute(inVehicle, inLocation):
         logging.debug( "lat" + str(inLocation['lat']))
 
         distance=round(distanceInMeters(inLocation['lat'], inLocation['lon'],inVehicle.location.global_frame.lat,inVehicle.location.global_frame.lon))
-    	if distance>MAX_DISTANCE:
+        if distance>MAX_DISTANCE:
             outputObj["status"]="Error"
             outputObj["error"]="Can not go more than " + str(MAX_DISTANCE) + "m in single command. Action was to go " + str(distance) + " m."
             outputObj["name"]="Max-Distance-Error"
-    	else:
-	        inVehicle.mode = VehicleMode("GUIDED")
-	        #coodinates are target
-	        outputObj["coordinate"]=[inLocation['lat'], inLocation['lon'], inLocation['alt']]
-	        outputObj["param0"]=0
-	        outputObj["param1"]=0
-	        outputObj["param2"]=0
-	        outputObj["param3"]=0
-	        outputObj["command"]=16
+        else:
+            inVehicle.mode = VehicleMode("GUIDED")
+            #coodinates are target
+            outputObj["coordinate"]=[inLocation['lat'], inLocation['lon'], inLocation['alt']]
+            outputObj["param0"]=0
+            outputObj["param1"]=0
+            outputObj["param2"]=0
+            outputObj["param3"]=0
+            outputObj["command"]=16
 
-	        inVehicle.simple_goto(LocationGlobal(inLocation['lat'],inLocation['lon'],inLocation['alt']), groundspeed=10)
+            inVehicle.simple_goto(LocationGlobal(inLocation['lat'],inLocation['lon'],inLocation['alt']), groundspeed=10)
     else:    
         outputObj["name"]="Goto-Absolute"
         outputObj["status"]="Error"
@@ -614,7 +624,7 @@ class action:
         try:
             inVehicle=connectVehicle(vehicleId)   
         except:
-        	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
+            return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
         applyHeadders()
         data = json.loads(web.data())
         #get latest data (inc homeLocation from vehicle)
@@ -694,7 +704,7 @@ def getMissionActions(vehicleId) :
     try:
         inVehicle=connectVehicle(vehicleId)   
     except:
-    	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
+        return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
     vehicleStatus=getVehicleStatus(inVehicle)
     outputObj={}
     availableActions=[]
@@ -915,7 +925,7 @@ class vehicleStatus:
         try:
             inVehicle=connectVehicle(vehicleId)   
         except:
-        	return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
+            return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
         vehicleStatus=getVehicleStatus(inVehicle)
 
         vehicleStatus["zone"]=authorizedZoneDict.get(vehicleId)
@@ -1013,7 +1023,6 @@ app = web.application(urls, globals())
 
 if __name__ == "__main__":
     app.run()
-
 
 
 
