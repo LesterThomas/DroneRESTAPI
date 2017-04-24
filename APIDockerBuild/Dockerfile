@@ -31,6 +31,11 @@ RUN apt-get install -y python-dev
 RUN pip install dronekit
 RUN pip install web.py
 RUN pip install redis
+RUN pip install --upgrade requests
+RUN pip install boto3
+RUN apt-get update -y
+RUN apt-get install -y awscli
+
 
 
 COPY rest.py /

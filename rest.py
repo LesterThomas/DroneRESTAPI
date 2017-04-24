@@ -10,9 +10,12 @@ import web
 import logging
 import redis
 import uuid
+import time
+import boto3
+
 logging.basicConfig(level=logging.DEBUG)
 
-redisdB = redis.Redis(host='redis', port=6379)
+redisdB = redis.Redis(host='redis', port=6379) #redis or localhost
 redisdB.set('foo', 'bar')
 value = redisdB.get('foo')
 if (value=='bar'):
@@ -460,8 +463,9 @@ class index:
                     {"method":"GET",
                     "description":"Return the collection of available vehicles."},
                     {"method":"POST",
-                    "description":"Add a connection to a new vehicle. It will return the id of the vehicle.",
-                    "samplePayload":{"connection":"udp:10.0.0.2:6000"}}],
+                    "description":"Add a connection to a new vehicle. Type is 'real' or 'simulated' (conection string is automatic for simulated vehicle). It will return the id of the vehicle. ",
+                    "samplePayload":{"type":"real","connection":"udp:10.0.0.2:6000"},
+                    "samplePayload2":{"type":"simulated"}}],
                     "href": homeDomain+"/vehicle" }}
         outputObj['id']="EntryPoint"
         output=json.dumps(outputObj)    
@@ -498,7 +502,41 @@ class vehicleIndex:
         logging.info( "#####################################################################")
         applyHeadders()
         data = json.loads(web.data())
-        connection = data["connection"]
+        droneType=data["type"]
+        connection=None
+        if (droneType=="simulated"):
+            #build simulted drone using aws
+
+            #test how many non-terminated instances there are
+            ec2client = boto3.client('ec2')
+            response = ec2client.describe_instances()
+            #print(response)
+            instances=[]
+
+            for reservation in response["Reservations"]:
+                for instance in reservation["Instances"]:
+                    # This sample print will output entire Dictionary object
+                    #print(instance)
+                    # This will print will output the value of the Dictionary key 'InstanceId'
+                    if (instance["State"]["Name"]!="terminated"):
+                        instances.append(instance["InstanceId"])
+                        
+            logging.debug("Non terminated instances=")
+            logging.debug(len(instances))
+            if (len(instances)>10):
+                outputObj={}
+                outputObj["status"]="Error: can't launch more than 10 drones"
+                return json.dumps(outputObj)
+
+
+            logging.info("Creating new AWS image")
+            ec2resource = boto3.resource('ec2')
+            createresponse=ec2resource.create_instances(ImageId='ami-5be0f43f', MinCount=1, MaxCount=1,InstanceType='t2.micro',SecurityGroupIds=['sg-fd0c8394'])
+            logging.info(createresponse[0].private_ip_address)
+            connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
+        else:
+            connection = data["connection"]
+        
         logging.debug( connection)
 
         uuidVal=uuid.uuid4()
@@ -968,6 +1006,41 @@ class vehicleStatus:
         logging.info( "#####################################################################")
         logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
         applyHeadders()
+
+        connectionString=redisdB.get('connectionString:' + str(vehicleId))
+        ipAddress=connectionString[4:-6]
+
+        #terminate any AWS instances with that private IP address
+        ec2client = boto3.client('ec2')
+        response = ec2client.describe_instances()
+        #print(response)
+        instances=[]
+
+        for reservation in response["Reservations"]:
+            for instance in reservation["Instances"]:
+                # This sample print will output entire Dictionary object
+                #print(instance)
+                # This will print will output the value of the Dictionary key 'InstanceId'
+                if (instance["State"]["Name"]!="terminated"):
+                    if (instance.get("PrivateIpAddress",None)==ipAddress):
+                        #logging.debug(instance)
+                        logging.debug(instance["PrivateIpAddress"],instance["InstanceId"],instance["InstanceType"],instance["State"]["Name"])
+                        instances.append(instance["InstanceId"])
+                    
+        logging.debug("instances to terminate")
+        logging.debug(instances)
+
+        if (len(instances)>0):  
+            #startresp=ec2client.start_instances(InstanceIds=["i-094270016448e61e2"])
+            stopresp=ec2client.terminate_instances(InstanceIds=instances)
+            logging.debug("Terminated instance")
+
+
+
+
+
+        logging.info("connectionString="+connectionString)
+        logging.info("ipAddress="+ipAddress)
         redisdB.delete("connectionString:"+vehicleId)
         connectionDict.pop("connectionString:"+vehicleId, None)
 
@@ -1007,7 +1080,7 @@ urls = (
     '/(.*)', 'catchAll'
 )
 
-defaultHomeDomain='http://localhost:1235' #'http://sail.vodafone.com/drone'
+defaultHomeDomain='http://droneapi.ddns.net:1235' #'http://sail.vodafone.com/drone'
 homeDomain = os.getenv('HOME_DOMAIN', defaultHomeDomain)
 logging.debug( "Home Domain:"  + homeDomain)
 
