@@ -12,10 +12,11 @@ import redis
 import uuid
 import time
 import boto3
+from collections import OrderedDict
 
 logging.basicConfig(level=logging.DEBUG)
 
-redisdB = redis.Redis(host='redis', port=6379) #redis or localhost
+redisdB = redis.Redis(host='localhost', port=6379) #redis or localhost
 redisdB.set('foo', 'bar')
 value = redisdB.get('foo')
 if (value=='bar'):
@@ -459,15 +460,10 @@ class index:
         outputObj['_links']={
             'self':{"href": homeDomain},
             'vehicle': {
-                'operations':  [
-                    {"method":"GET",
-                    "description":"Return the collection of available vehicles."},
-                    {"method":"POST",
-                    "description":"Add a connection to a new vehicle. Type is 'real' or 'simulated' (conection string is automatic for simulated vehicle). It will return the id of the vehicle. ",
-                    "samplePayload":{"type":"real","connection":"udp:10.0.0.2:6000"},
-                    "samplePayload2":{"type":"simulated"}}],
-                    "href": homeDomain+"/vehicle" }}
-        outputObj['id']="EntryPoint"
+                    "title":"Return the collection of available vehicles.",
+                    "href": homeDomain+"/vehicle" }
+                    }
+
         output=json.dumps(outputObj)    
         return output
 
@@ -485,15 +481,17 @@ class vehicleIndex:
             value=redisdB.get(key)
             droneId=key[17:]
 
-            outputObj.append( {
-                    "operations":[{"method":"GET","href":homeDomain+"/vehicle/"+str(droneId)+"/","description":"Get status for vehicle " + str(droneId)},
-                        {"method":"DELETE","href":homeDomain+"/vehicle/"+str(droneId)+"/","description":"Delete connection to vehicle " + str(droneId)}],
-                        "id":droneId,"connection":value})
+            outputObj.append( {"_links":[{"href":homeDomain+"/vehicle/"+str(droneId)+"/","title":"Get status for vehicle " + str(droneId)}],
+                    "id":str(droneId)})
 
-
-
-        output=json.dumps(outputObj)    
-        return output
+        actions='[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + homeDomain+ '/vehicle",\n"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}] }]\n'
+        logging.info("actions")
+        logging.info(actions)
+        jsonResponse='{"vehicle":'+json.dumps(outputObj)+',"_actions":'+actions+'}'
+        logging.info("jsonResponse")
+        logging.info(jsonResponse)
+                            
+        return jsonResponse
 
     def POST(self):
         global redisdB
@@ -502,7 +500,7 @@ class vehicleIndex:
         logging.info( "#####################################################################")
         applyHeadders()
         data = json.loads(web.data())
-        droneType=data["type"]
+        droneType=data["vehicleType"]
         connection=None
         if (droneType=="simulated"):
             #build simulted drone using aws
@@ -535,7 +533,7 @@ class vehicleIndex:
             logging.info(createresponse[0].private_ip_address)
             connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
         else:
-            connection = data["connection"]
+            connection = data["connectionString"]
         
         logging.debug( connection)
 
@@ -944,6 +942,8 @@ class vehicleStatus:
         logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
         applyHeadders()
         outputObj={}
+        actions=[{"method":"DELETE","href":homeDomain+"/vehicle/"+str(vehicleId)+"/","description":"Delete connection to vehicle " + str(vehicleId)}]
+
         #test if vehicleId is an integer 1-4
         #try:
         #    vehId=int(vehicleId)
@@ -955,7 +955,8 @@ class vehicleStatus:
         try:
             inVehicle=connectVehicle(vehicleId)   
         except:
-            return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
+            logging.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
+            return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId), "_actions": actions}) 
         vehicleStatus=getVehicleStatus(inVehicle)
 
         vehicleStatus["zone"]=authorizedZoneDict.get(vehicleId)
@@ -980,7 +981,8 @@ class vehicleStatus:
         if statusVal=="/":
             statusVal=""            
         if statusVal=="":
-            outputObj["vehicleStatus"]=vehicleStatus
+            outputObj=vehicleStatus
+            outputObj["_actions"]=actions
             output = json.dumps(outputObj)
         elif statusVal=="homelocation":
             cmds = inVehicle.commands
@@ -989,15 +991,22 @@ class vehicleStatus:
             logging.debug( " Home Location: %s" % inVehicle.home_location     )
             output = json.dumps({"home_location":latLonAltObj(inVehicle.home_location)}   )   
         elif statusVal=="action":
-            outputObj["vehicleStatus"]={"error":"Use "+homeDomain+"/vehicle/1/action  (with no / at the end)."}
+            outputObj={"error":"Use "+homeDomain+"/vehicle/1/action  (with no / at the end)."}
+            outputObj["_actions"]=actions
             output = json.dumps(outputObj)
         else:
             statusLen=len(statusVal)
             logging.debug( statusLen)
             #statusVal=statusVal[1:]
             logging.debug( statusVal)
-            outputObj["vehicleStatus"]={statusVal: vehicleStatus.get(statusVal,{"error":"Vehicle status '"+statusVal+"' not found. Try getting all using "+homeDomain+"/vehicle/"+vehicleId+"/"})}
+            outputObj={statusVal: vehicleStatus.get(statusVal,{"error":"Vehicle status '"+statusVal+"' not found. Try getting all using "+homeDomain+"/vehicle/"+vehicleId+"/"})}
+            outputObj["_actions"]=actions
             output = json.dumps(outputObj)
+
+
+
+
+
         return output
 
     def DELETE(self, vehicleId, statusVal):
