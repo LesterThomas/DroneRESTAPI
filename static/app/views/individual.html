@@ -1,14 +1,8 @@
 
-
 <div  class="col-lg-6 col-sm-12 " style="padding-right:0; padding-left:0;">	 
+
+
 	<div  class="col-lg-12 col-sm-12">	 
-		<div class="panel panel-default panel-primary">
-			<div class="panel-heading">Config</div>
-			<div class="panel-body">
-				<Label>API Source</Label><input type="text" class=" form-control" name="apiURL" ng-model="apiURL" />
-				<Label>Drone #</Label><input type="text" class="form-control" name="currentDrone" ng-model="currentDrone" />
-			</div>
-		</div>
 	 	<div style="padding-top: 70%; position:relative;">
 			<div class="panel panel-default panel-primary" style="position: absolute; top: 0;    left: 0;    bottom: 0;    right: 0;">
 				<div class="panel-heading">Map</div>
@@ -161,8 +155,33 @@
 				<table class="table table-striped">
 
 					<tr  ng-repeat="actionItem in actionLog.items" >
-						<th >{{actionItem.name}}</th>
+
+						<th ><span ng-style="actionItem.status === 'Error' ? { color:'red' } : { color:'black' }">{{actionItem.name}}</span></th>
 						<td >{{actionItem.textDescription}}</td>
+					</tr>
+				</table>
+			</p>
+			</div>
+		</div>
+	</div>	
+
+	<div  class="col-lg-12 col-sm-12">			
+		<div class="panel panel-default panel-primary">
+			<div class="panel-heading">Simulator Environment parameters </div>
+			<div class="panel-body">
+				<table class="table table-striped">
+
+					<tr  >
+						<th >Wind Speed</th>
+						<td ><input type="text" class=" form-control" name="simEnvironment.SIM_WIND_SPD" ng-model="simEnvironment.SIM_WIND_SPD" /></td>
+					</tr>
+					<tr  >
+						<th >Wind Direction</th>
+						<td ><input type="text" class=" form-control" name="simEnvironment.SIM_WIND_DIR" ng-model="simEnvironment.SIM_WIND_DIR" /></td>
+					</tr>
+					<tr  >
+						<th >Number of Satellites</th>
+						<td ><input type="text" class=" form-control" name="simEnvironment.SIM_GPS_NUMSATS" ng-model="simEnvironment.SIM_GPS_NUMSATS" /></td>
 					</tr>
 				</table>
 			</p>

@@ -12,12 +12,13 @@ angular.module('droneFrontendApp')
   .controller('IndividualCtrl', ['$scope', '$http','NgMap','$interval','$location','individualDrone',function ($scope,$http,NgMap,$interval,$location,individualDrone) {
 	  	  
   	console.log('Started controller'); 
-  	$scope.apiURL='http://localhost:1235/'; //http://sail.vodafone.com/drone/';
-
-	$scope.status='Loading';
+    $scope.apiURL=individualDrone.apiURL;
+    $scope.status='Loading';
 	$scope.mission={};
 	$scope.actions={availableActions:{}};
 	$scope.actionLog={items:[]};
+	$scope.simEnvironment=[];
+	$scope.zones=null;
 
     $scope.droneIcon = {
       path: 'M 0 0 L -35 -100 L 35 -100 z',
@@ -136,6 +137,77 @@ angular.module('droneFrontendApp')
 	$scope.markers=[];
 	$scope.flightPath=null;
 	//console.log('Calling API'); 
+	getSimEnvironment();
+	function getSimEnvironment() {
+	$http.get($scope.apiURL + 'vehicle/'+individualDrone.droneId+'/simulator').
+	    then(function(data, status, headers, config) {
+				console.log('getSimEnvironment API get success',data,status);	
+				$scope.simEnvironment=data.data.simulatorParams;
+			},
+				function(data, status, headers, config) {
+				  // log error
+					console.log('getSimEnvironment API get error',data, status, headers, config);
+				});
+			}
+
+	function updateSimEnvironment(key, value){
+		console.log('simEnvironment.' + key + ' value changed to ',value);	
+		var payload={"parameter":key,"value":value};
+		console.log('Sending POST with payload ',payload);
+
+		$http.post($scope.apiURL + 'vehicle/'+individualDrone.droneId+'/simulator',payload,{
+		    headers : {
+		        'Content-Type' : 'application/json; charset=UTF-8'
+		    }
+			}).then(function(data, status, headers, config) {
+					var actionItem=data.data.action;
+					console.log('API  action POST success',data,status);
+				},
+				function(data, status, headers, config) {
+				  	// log error
+					console.log('API actions POST error',data, status, headers, config);
+				});
+
+
+	}
+
+	$scope.$watch("simEnvironment.SIM_WIND_SPD", function (newValue) {
+		if (isNaN(newValue) || (newValue=="")) {
+			console.warn("SIM_WIND_SPD of'" + newValue + "' is not a number");
+		} else {
+			if ((newValue>=0) && (newValue<50)) {
+				updateSimEnvironment('SIM_WIND_SPD',newValue);
+			} else {
+				console.warn("SIM_WIND_SPD of'" + newValue + "' is out of bounds");
+			}
+		}
+
+	});
+
+	$scope.$watch("simEnvironment.SIM_WIND_DIR", function (newValue) {
+		if (isNaN(newValue) || (newValue=="")) {
+			console.warn("SIM_WIND_DIR of'" + newValue + "' is not a number");
+		} else {
+			if ((newValue>=0) && (newValue<=360)) {
+				updateSimEnvironment('SIM_WIND_DIR',newValue);
+			} else {
+				console.warn("SIM_WIND_DIR of'" + newValue + "' is out of bounds");
+			}
+		}
+	});
+
+	$scope.$watch("simEnvironment.SIM_GPS_NUMSATS", function (newValue) {
+		if (isNaN(newValue) || (newValue=="")) {
+			console.warn("SIM_GPS_NUMSATS of'" + newValue + "' is not a number");
+		} else {
+			if ((newValue>=0) && (newValue<=20)) {
+				updateSimEnvironment('SIM_GPS_NUMSATS',newValue);
+			} else {
+				console.warn("SIM_GPS_NUMSATS of'" + newValue + "' is out of bounds");
+			}
+		}
+	});
+
 	var intervalTimer = $interval(updateDrone, 500);
 	var intervalActionsTimer = $interval(updateActions, 2000);
 	updateActions();
@@ -143,7 +215,7 @@ angular.module('droneFrontendApp')
 		$http.get($scope.apiURL + 'vehicle/'+individualDrone.droneId+'/').
 		    then(function(data, status, headers, config) {
 					//console.log('API get success',data,status);	
-					$scope.vehicleStatus=data.data.vehicleStatus;
+					$scope.vehicleStatus=data.data;
 					//manipulate the model
 					$scope.vehicleStatus.altitude=-$scope.vehicleStatus.local_frame.down;
 					if ($scope.vehicleStatus.armed==true) {
@@ -192,7 +264,17 @@ angular.module('droneFrontendApp')
 						$scope.markers[0].setMap(map);
 					}
 					$scope.markers[0].setPosition(new google.maps.LatLng($scope.vehicleStatus.global_frame.lat, $scope.vehicleStatus.global_frame.lon));
-					
+			        //draw authorized fly zones
+					if ($scope.zones) {
+				        //console.log('Zone already exists');
+			        } else
+    				{
+    					if ($scope.vehicleStatus.zone.shape) {
+        					var center={lat:$scope.vehicleStatus.zone.shape.lat,lng:$scope.vehicleStatus.zone.shape.lon};
+					        $scope.zones = new google.maps.Circle({strokeColor:'#22FF22', strokeOpacity:0.8,fillColor:'#00FF00',fillOpacity:0.10,center:center ,radius: $scope.vehicleStatus.zone.shape.radius,map:map}); 
+					    }
+					}
+			
 
 
 
@@ -230,7 +312,7 @@ angular.module('droneFrontendApp')
 	function setActionText(inAction) {
 		var latLonAltText='';
 		if (inAction.coordinate){
-			latLonAltText="lat '" + Math.round(inAction.coordinate[0]*10000)/10000 + "' lon '"+ Math.round(inAction.coordinate[1]*10000)/10000 + "' alt '"+ Math.round(inAction.coordinate[2]*100)/100; 
+			latLonAltText="lat '" + Math.round(inAction.coordinate[0]*10000)/10000 + "' lon '"+ Math.round(inAction.coordinate[1]*10000)/10000 + "' alt '"+ Math.round(inAction.coordinate[2]*100)/100 + "'"; 
 		} else {
 			latLonAltText="No lat/lon/alt info";
 		}
@@ -238,7 +320,7 @@ angular.module('droneFrontendApp')
 
 		//Navigate to waypoint
 		if (inAction.command==16){
-			textDescription="Navigate to waypoint at "+ latLonAltText + "'.";
+			textDescription="Navigate to waypoint at "+ latLonAltText + ".";
 			if (inAction.param1>0){
 				textDescription+=" Loiter for " + inAction.param1 + " seconds.";
 			}
@@ -252,8 +334,8 @@ angular.module('droneFrontendApp')
 			textDescription="Return to Launch.";
 		}
 		//Land
-		if (inAction.command==21){
-			textDescription="Land.";
+		if (inAction.command==23){
+			textDescription="Land at " + latLonAltText + ".";
 		}
 		//Takeoff
 		if (inAction.command==22){
@@ -277,11 +359,16 @@ angular.module('droneFrontendApp')
 				textDescription+=" Loiter for " + inAction.param1 + " seconds.";
 			}
 		}
+		//error
+		if (inAction.status=='Error'){
+			textDescription=inAction.error;
+		}
+
 		return textDescription
 	}
 			
 	$scope.getMission = function() {
-		$http.get($scope.apiURL + 'vehicle/'+individualDrone.droneId+'/missionActions').
+		$http.get($scope.apiURL + 'vehicle/'+individualDrone.droneId+'/mission').
 		    then(function(data, status, headers, config) {
 					console.log('API mission get success',data,status);	
 					$scope.mission=data.data;
@@ -300,6 +387,10 @@ angular.module('droneFrontendApp')
 							var flightPlanCoordinates = [];
 							for(var actionIndex in $scope.mission.items) {
 								var missionAction=$scope.mission.items[actionIndex];
+								if (missionAction.command==20) {  
+									//return-to-home so draw to planned home
+									missionAction.coordinate=$scope.mission.plannedHomePosition.coordinate;
+								}
 								flightPlanCoordinates.push({lat:missionAction.coordinate[0],lng:missionAction.coordinate[1]});
 							}
 							if ($scope.flightPath) {
@@ -366,23 +457,27 @@ angular.module('droneFrontendApp')
 					console.log('API action get success',data,status);	
 					//add or delete actions - if unchanged then leave model unchanged
 					
-					//$scope.actions.availableActions=data.data.availableActions;
+					//$scope.actions.availableActions=data.data._actions;
 					
 					//manipulate the model
-					for(var action in data.data.availableActions) {
-						var actionName=data.data.availableActions[action].name;
+					for(var action in data.data._actions) {
+						var actionName=data.data._actions[action].name;
 						if ($scope.actions.availableActions[actionName]) {  //if action already exists, do nothing
 						} else
 						{
-							$scope.actions.availableActions[actionName]=data.data.availableActions[action];
+							$scope.actions.availableActions[actionName]=data.data._actions[action];
 							
 							
 							$scope.actions.availableActions[actionName].attributes=[];
-							for(var i in $scope.actions.availableActions[actionName].samplePayload) {
-								if (i!='name'){//do not push the name attribute
-									$scope.actions.availableActions[actionName].attributes.push({name:i,value:$scope.actions.availableActions[actionName].samplePayload[i]});
-									console.log (i,$scope.actions.availableActions[actionName].samplePayload[i]);
+							for(var i in $scope.actions.availableActions[actionName].fields) {
+								if ($scope.actions.availableActions[actionName].fields[i]['name']!='name') {//do not push the name attribute
+									console.log ($scope.actions.availableActions[actionName].fields[i]['name'],$scope.actions.availableActions[actionName].fields[i]['value']);
+									$scope.actions.availableActions[actionName].attributes.push({name:$scope.actions.availableActions[actionName].fields[i]['name'],value:$scope.actions.availableActions[actionName].fields[i]['value'] })
 								}
+								//if (i!='name'){//do not push the name attribute
+								//	$scope.actions.availableActions[actionName].attributes.push({name:i,value:$scope.actions.availableActions[actionName].samplePayload[i]});
+								//	console.log (i,$scope.actions.availableActions[actionName].samplePayload[i]);
+								//}
 							}
 						}
 					}
@@ -390,8 +485,8 @@ angular.module('droneFrontendApp')
 					for(var action in $scope.actions.availableActions) {
 						var actionName=$scope.actions.availableActions[action].name;
 						var found=false;
-						for (var index in data.data.availableActions) {
-							if (data.data.availableActions[index].name==actionName) {
+						for (var index in data.data._actions) {
+							if (data.data._actions[index].name==actionName) {
 								found=true;
 							}
 						}
@@ -409,11 +504,20 @@ angular.module('droneFrontendApp')
 					console.log('API actions get error',data, status, headers, config);
 				});
 			}
+	$scope.$on('$destroy', function() {
+	  // clean up stuff
+	  	console.log('###################################################'); 
+	  	console.log('Unloading Individual Controller'); 
+		$interval.cancel(intervalTimer);
+		$interval.cancel(intervalActionsTimer);
+		if ($scope.markers.length>0) {
+			$scope.markers[0].setMap(null);
+			$scope.markers.splice(0, 1);
+		}
+		individualDrone.apiURL=$scope.apiURL;
+	})		
 	
 	console.log('Finished calling APIs'); 
-	
-
-
   
 
   }]);

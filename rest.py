@@ -481,7 +481,7 @@ class vehicleIndex:
             value=redisdB.get(key)
             droneId=key[17:]
 
-            outputObj.append( {"_links":[{"href":homeDomain+"/vehicle/"+str(droneId)+"/","title":"Get status for vehicle " + str(droneId)}],
+            outputObj.append( {"_links":[{"href":homeDomain+"/vehicle/"+str(droneId),"title":"Get status for vehicle " + str(droneId)}],
                     "id":str(droneId)})
 
         actions='[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + homeDomain+ '/vehicle",\n"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}] }]\n'
@@ -550,6 +550,16 @@ class vehicleIndex:
         outputObj["id"]=key
         return json.dumps(outputObj)
 
+    def OPTIONS(self):
+        logging.info( "#####################################################################")
+        logging.info( "Method OPTIONS of vehicleIndex - just here to suppor the CORS Cross-Origin security")
+        logging.info( "#####################################################################")
+        applyHeadders()
+
+        outputObj={}
+        output=json.dumps(outputObj)   
+        return output
+
 
 class action:     
     def OPTIONS(self, vehicleId):
@@ -584,62 +594,62 @@ class action:
         if vehicleStatus["armed"]:
             availableActions.append({   
                 "name":"Region-of-Interest",
-                "description":"Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
+                "title":"Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"Region-of-Interest","lat":51.3946,"lon":-1.299,"alt":105}
+                "fields":[{"name":"name","type":"string","value":"Region-of-Interest"},{"name":"lat","type":"float","value":51.3946},{"name":"lon","type":"float","value":-1.299},{"name":"alt","type":"float","value":105}]
             })
             availableActions.append({   
                 "name":"Land",
-                "description":"Land at current location",
+                "title":"Land at current location",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"Land"}
+                "fields":[{"name":"name","type":"string","value":"Land"}]
             })
             availableActions.append({   
                 "name":"Return-to-Launch",
-                "description":"Return to launch: Return to the home location and land.",
+                "title":"Return to launch: Return to the home location and land.",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"Return-to-Launch"}
+                "fields":[{"name":"name","type":"string","value":"Return-to-Launch"}]
             })
             availableActions.append({   
                 "name":"Start-Mission",
-                "description":"Begin the pre-defined mission.",
+                "title":"Begin the pre-defined mission.",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"Start-Mission"}
+                "fields":[{"name":"name","type":"string","value":"Start-Mission"}]
             })
             availableActions.append({   
                 "name":"Goto-Absolute",
-                "description":"Go to the location at latitude <lat>, longitude <lon> and altitude <alt> (above sea level).",
+                "title":"Go to the location at latitude <lat>, longitude <lon> and altitude <alt> (above sea level).",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"Goto-Absolute","lat":51.3946,"lon":-1.299,"alt":105} 
+                "fields":[{"name":"name","type":"string","value":"Goto-Absolute"},{"name":"lat","type":"float","value":51.3946},{"name":"lon","type":"float","value":-1.299},{"name":"alt","type":"float","value":105}]
             })
             availableActions.append({   
                 "name":"Goto-Relative-Home",
-                "description":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the home location.",
+                "title":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the home location.",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"Goto-Relative-Home","north":30,"east":30,"up":10}
+                "fields":[{"name":"name","type":"string","value":"Goto-Relative-Home"},{"name":"north","type":"float","value":30},{"name":"east","type":"float","value":30},{"name":"up","type":"float","value":10}]
             })
             availableActions.append({   
                 "name":"Goto-Relative-Current",
-                "description":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the current location.",
+                "title":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the current location.",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"Goto-Relative-Current","north":30,"east":30,"up":10}
+                "fields":[{"name":"name","type":"string","value":"Goto-Relative-Current"},{"name":"north","type":"float","value":30},{"name":"east","type":"float","value":30},{"name":"up","type":"float","value":10}]
             })
         else :
             availableActions.append({   
                 "name":"Takeoff",
-                "description":"Arm and takeoff in GUIDED mode to height of <height> (default 20m).",
+                "title":"Arm and takeoff in GUIDED mode to height of <height> (default 20m).",
                 "href":homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                 "method":"POST",
-                "samplePayload":{"name":"Takeoff","height":30}
+                "fields":[{"name":"name","type":"string","value":"Takeoff"},{"name":"height","type":"float","value":30}]
             })
-        outputObj['availableActions']=availableActions
+        outputObj['_actions']=availableActions
         updateActionStatus(inVehicle, vehicleId);
         outputObj['actions']=actionArrayDict[vehicleId]
         output=json.dumps(outputObj)   
@@ -734,8 +744,9 @@ def getMissionActions(vehicleId) :
     except:
         return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
     vehicleStatus=getVehicleStatus(inVehicle)
-    outputObj={}
-    availableActions=[]
+    outputObj={"_actions":[{"name":"upload mission","method":"POST","title":"Upload a new mission to the vehicle. The mission is a collection of mission actions with <command>, <coordinate[lat,lon,alt]> and command specific <param1>,<param2>,<param3>,<param4>. The command-set is described at https://pixhawk.ethz.ch/mavlink/", 
+            "fields": [{"name":"coordinate", "type":"array","value":[51.3957,-1.3441,30]},{"name":"command","type":"integer","value":16},
+            {"name":"param1","type":"integer"},{"name":"param2","type":"integer"},{"name":"param3","type":"integer"},{"name":"param4","type":"integer"}]}]}
     cmds = inVehicle.commands
     cmds.download()
     cmds.wait_ready()
@@ -748,23 +759,23 @@ def getMissionActions(vehicleId) :
         autoContinue=True
         if (cmd.autocontinue==0):
             autoContinue=False
-        missionlist.append({'id':cmd.seq,"autoContinue": autoContinue ,"command": cmd.command,"coordinate": [cmd.x,cmd.y,cmd.z],'frame':cmd.frame,'param1':cmd.param1,'param2':cmd.param2,'param3':cmd.param3,'param4':cmd.param4,"type": "missionItem"})
+        missionlist.append({'id':cmd.seq,"autoContinue": autoContinue ,"command": cmd.command,"coordinate": [cmd.x,cmd.y,cmd.z],'frame':cmd.frame,'param1':cmd.param1,'param2':cmd.param2,'param3':cmd.param3,'param4':cmd.param4})
         logging.debug( cmd)
     logging.debug( missionlist)
     outputObj['items']=missionlist
-    outputObj['plannedHomePosition']={'id':0,'autoContinue':True,'command':16,"coordinate": [inVehicle.home_location.lat,inVehicle.home_location.lon,0], 'frame':0,'param1':0,'param2':0,'param3':0,'param4':0,'type':'missionItem'}
+    outputObj['plannedHomePosition']={'id':0,'autoContinue':True,'command':16,"coordinate": [inVehicle.home_location.lat,inVehicle.home_location.lon,0], 'frame':0,'param1':0,'param2':0,'param3':0,'param4':0}
     outputObj['version']='1.0'
     outputObj['MAV_AUTOPILOT']=3
     outputObj['complexItems']=[]
     outputObj['groundStation']='QGroundControl'
-    #outputObj['missionActions']=cmds
+    #outputObj['mission']=cmds
     output=json.dumps(outputObj)   
     return output
 
-class missionActions:        
+class mission:        
     def GET(self, vehicleId):
         logging.info( "#####################################################################")
-        logging.info( "Method GET of missionActions ")
+        logging.info( "Method GET of mission ")
         logging.info( "#####################################################################")
         logging.debug( "vehicleId = '"+vehicleId+"'")
         applyHeadders()
@@ -773,7 +784,7 @@ class missionActions:
 
     def POST(self, vehicleId):
         logging.info( "#####################################################################")
-        logging.info( "Method POST of missionActions")
+        logging.info( "Method POST of mission")
         logging.info( "#####################################################################")
         applyHeadders()
         try:
@@ -811,7 +822,7 @@ class missionActions:
 
     def OPTIONS(self, vehicleId):
         logging.info( "#####################################################################")
-        logging.info( "Method OPTIONS of missionActions - just here to suppor the CORS Cross-Origin security")
+        logging.info( "Method OPTIONS of mission - just here to suppor the CORS Cross-Origin security")
         logging.info( "#####################################################################")
         applyHeadders()
 
@@ -870,7 +881,8 @@ def getSimulatorParams(vehicleId) :
     except:
         return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
     vehicleStatus=getVehicleStatus(inVehicle)
-    outputObj={}
+    outputObj={"_actions":[{"method":"POST","title":"Upload a new simulator paramater to the simulator. ", "fields":[ {"name":"parameter","value":"SIM_WIND_SPD","type":"string"},{"name":"value","type":"integer","float":10}]}]};
+
     simulatorParams={}
 
     logging.info( "#####################################################################")
@@ -885,7 +897,7 @@ def getSimulatorParams(vehicleId) :
             simulatorParams[key]=inVehicle.parameters[key]
 
     outputObj['simulatorParams']=simulatorParams
-    #outputObj['missionActions']=cmds
+    #outputObj['mission']=cmds
     output=json.dumps(outputObj)   
     return output
 
@@ -934,15 +946,40 @@ class simulator:
 
 
 
-class vehicleStatus:        
-    def GET(self, vehicleId, statusVal):
+class homeLocation:        
+    def GET(self, vehicleId):
         logging.info( "#####################################################################")
-        logging.info( "Method GET of vehicleStatus ")
+        logging.info( "Method GET of homeLocation ")
         logging.info( "#####################################################################")
+        statusVal=''  #removed statusVal which used to have the fields) from the URL because of the trailing / issue
         logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
         applyHeadders()
         outputObj={}
-        actions=[{"method":"DELETE","href":homeDomain+"/vehicle/"+str(vehicleId)+"/","description":"Delete connection to vehicle " + str(vehicleId)}]
+        try:
+            inVehicle=connectVehicle(vehicleId)   
+        except:
+            logging.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
+            return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId), "_actions": actions}) 
+        vehicleStatus=getVehicleStatus(inVehicle)
+        cmds = inVehicle.commands
+        cmds.download()
+        cmds.wait_ready()
+        logging.debug( " Home Location: %s" % inVehicle.home_location     )
+        output = json.dumps({"home_location":latLonAltObj(inVehicle.home_location)}   )   
+        return output
+
+
+class vehicleStatus:        
+    def GET(self, vehicleId):
+        logging.info( "#####################################################################")
+        logging.info( "Method GET of vehicleStatus ")
+        logging.info( "#####################################################################")
+        statusVal=''  #removed statusVal which used to have the fields) from the URL because of the trailing / issue
+        logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
+        applyHeadders()
+        outputObj={}
+
+        actions=[{"method":"DELETE","href":homeDomain+"/vehicle/"+str(vehicleId)+"/","title":"Delete connection to vehicle " + str(vehicleId)}]
 
         #test if vehicleId is an integer 1-4
         #try:
@@ -971,12 +1008,12 @@ class vehicleStatus:
 
 
         vehicleStatus['id']=vehicleId
-        outputObj['_links']={};
-        outputObj['_links']["self"]={"href": homeDomain+"/vehicle/"+str(vehicleId)+"/", "operations":[{"method":"GET","description":"Get status for vehicle "+str(vehicleId)+"."}]};
-        outputObj['_links']['homeLocation']={"href":homeDomain + "/vehicle/" + str(vehicleId) + "/homelocation","operations":[{"method":"GET","description":"Get the home location for this vehicle"}]};
-        outputObj['_links']['availableActions']={"href":homeDomain+ "/vehicle/" + str(vehicleId) +"/action","operations":[{"method":"GET","description":"Get the actions available for this vehicle."}]};
-        outputObj['_links']['missionActions']={"href":homeDomain+ "/vehicle/" + str(vehicleId) +"/missionActions","operations":[{"method":"GET","description":"Get the current mission commands from the vehicle."},{"method":"POST","description":"Upload a new mission to the vehicle. The mission is a collection of mission actions with <command>, <coordinate[lat,lon,alt]> and command specific <param1>,<param2>,<param3>,<param4>. The command-set is described at https://pixhawk.ethz.ch/mavlink/", "samplePayload": [{"coordinate":[51.3957,-1.3441,30],"command":16,"param1":0,"param2":0,"param3":0,"param4":0}]}]};
-        outputObj['_links']['simulator']={"href":homeDomain+ "/vehicle/" + str(vehicleId) +"/simulator","operations":[{"method":"GET","description":"Get the current simulator parameters from the vehicle."},{"method":"POST","description":"Upload a new simulator paramater to the simulator. ", "samplePayload": {"parameter":"SIM_WIND_SPD","value":10}}]};
+        vehicleStatus['_links']={};
+        vehicleStatus['_links']["self"]={"href": homeDomain+"/vehicle/"+str(vehicleId)+"/", "title":"Get status for vehicle "+str(vehicleId)+"."}
+        vehicleStatus['_links']['homeLocation']={"href":homeDomain + "/vehicle/" + str(vehicleId) + "/homeLocation","title":"Get the home location for this vehicle"}
+        vehicleStatus['_links']['action']={"href":homeDomain+ "/vehicle/" + str(vehicleId) +"/action","title":"Get the actions  for this vehicle."}
+        vehicleStatus['_links']['mission']={"href":homeDomain+ "/vehicle/" + str(vehicleId) +"/mission","title":"Get the current mission commands from the vehicle."}
+        vehicleStatus['_links']['simulator']={"href":homeDomain+ "/vehicle/" + str(vehicleId) +"/simulator","title":"Get the current simulator parameters from the vehicle."}
         output=""
         if statusVal=="/":
             statusVal=""            
@@ -1009,43 +1046,51 @@ class vehicleStatus:
 
         return output
 
-    def DELETE(self, vehicleId, statusVal):
+    def DELETE(self, vehicleId,):
         logging.info( "#####################################################################")
         logging.info( "Method DELETE of vehicleStatus ")
         logging.info( "#####################################################################")
+        statusVal=''  #removed statusVal which used to have the fields) from the URL because of the trailing / issue
         logging.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
         applyHeadders()
 
         connectionString=redisdB.get('connectionString:' + str(vehicleId))
         ipAddress=connectionString[4:-6]
 
-        #terminate any AWS instances with that private IP address
-        ec2client = boto3.client('ec2')
-        response = ec2client.describe_instances()
-        #print(response)
-        instances=[]
 
-        for reservation in response["Reservations"]:
-            for instance in reservation["Instances"]:
-                # This sample print will output entire Dictionary object
-                #print(instance)
-                # This will print will output the value of the Dictionary key 'InstanceId'
-                if (instance["State"]["Name"]!="terminated"):
-                    if (instance.get("PrivateIpAddress",None)==ipAddress):
-                        #logging.debug(instance)
-                        logging.debug(instance["PrivateIpAddress"],instance["InstanceId"],instance["InstanceType"],instance["State"]["Name"])
-                        instances.append(instance["InstanceId"])
-                    
-        logging.debug("instances to terminate")
-        logging.debug(instances)
+        try:
+            #terminate any AWS instances with that private IP address
+            ec2client = boto3.client('ec2')
+            response = ec2client.describe_instances()
+            #print(response)
+            instances=[]
 
-        if (len(instances)>0):  
-            #startresp=ec2client.start_instances(InstanceIds=["i-094270016448e61e2"])
-            stopresp=ec2client.terminate_instances(InstanceIds=instances)
-            logging.debug("Terminated instance")
+            for reservation in response["Reservations"]:
+                for instance in reservation["Instances"]:
+                    # This sample print will output entire Dictionary object
+                    #print(instance)
+                    # This will print will output the value of the Dictionary key 'InstanceId'
+                    if (instance["State"]["Name"]!="terminated"):
+                        if (instance.get("PrivateIpAddress",None)==ipAddress):
+                            #logging.debug(instance)
+                            logging.debug(instance["PrivateIpAddress"],instance["InstanceId"],instance["InstanceType"],instance["State"]["Name"])
+                            instances.append(instance["InstanceId"])
+                        
+            logging.debug("instances to terminate")
+            logging.debug(instances)
 
+            if (len(instances)>0):  
+                #startresp=ec2client.start_instances(InstanceIds=["i-094270016448e61e2"])
+                stopresp=ec2client.terminate_instances(InstanceIds=instances)
+                logging.debug("Terminated instance")
 
-
+        except Exception as inst:
+            logging.error( "Error conneting to AWS:")
+            logging.error( "VehicleId=")
+            logging.error( vehicleId)
+            logging.error( "Exception=")
+            logging.error( inst)
+            #ignore error and continue
 
 
         logging.info("connectionString="+connectionString)
@@ -1066,7 +1111,7 @@ class catchAll:
         logging.info( "#####################################################################")
         applyHeadders()
         logging.debug( homeDomain)
-        outputObj={"Error":"No API endpoint found. Try navigating to "+homeDomain+"/vehicle for list of vehicles or to "+homeDomain+"/vehicle/1/ for the status of vehicle #1 or to "+homeDomain+"/vehicle/1/action for the list of actions available for vehicle #1." }
+        outputObj={"Error":"No API endpoint found. Try navigating to "+homeDomain+"/vehicle for list of vehicles or to "+homeDomain+"/vehicle/<vehicleId> for the status of vehicle #1 or to "+homeDomain+"/vehicle/<vehicleId>/action for the list of actions available for vehicle <vehicleId>." }
         return json.dumps(outputObj)
 
     def POST(self, user):
@@ -1074,22 +1119,23 @@ class catchAll:
         logging.info( "Method POST of catchAll")
         logging.info( "#####################################################################")
         applyHeadders()
-        outputObj={"Error":"No API endpoint found. Try navigating to "+homeDomain+"/vehicle for list of vehicles or to "+homeDomain+"/vehicle/1/ for the status of vehicle #1 or to "+homeDomain+"/vehicle/1/action for the list of actions available for vehicle #1." }
+        outputObj={"Error":"No API endpoint found. Try navigating to "+homeDomain+"/vehicle for list of vehicles or to "+homeDomain+"/vehicle/<vehicleId> for the status of vehicle #1 or to "+homeDomain+"/vehicle/<vehicleId>/action for the list of actions available for vehicle <vehicleId>." }
         return json.dumps(outputObj)
 
 
 urls = (
     '/', 'index',
     '/vehicle/(.*)/action', 'action',
-    '/vehicle/(.*)/missionActions', 'missionActions',
+    '/vehicle/(.*)/homeLocation', 'homeLocation',
+    '/vehicle/(.*)/mission', 'mission',
     '/vehicle/(.*)/authorizedZone', 'authorizedZone',
     '/vehicle/(.*)/simulator', 'simulator',
     '/vehicle', 'vehicleIndex',
-    '/vehicle/(.*)/(.*)', 'vehicleStatus',
+    '/vehicle/(.*)', 'vehicleStatus', #was     '/vehicle/(.*)/(.*)', 'vehicleStatus',
     '/(.*)', 'catchAll'
 )
 
-defaultHomeDomain='http://droneapi.ddns.net:1235' #'http://sail.vodafone.com/drone'
+defaultHomeDomain='http://localhost:1235' #droneapi.ddns.net
 homeDomain = os.getenv('HOME_DOMAIN', defaultHomeDomain)
 logging.debug( "Home Domain:"  + homeDomain)
 
