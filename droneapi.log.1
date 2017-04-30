@@ -1,0 +1,28 @@
+2017-05-01 00:12:28,315 - INFO - {"vehicle":[{"_links": [{"href": "http://localhost:1235/vehicle/7d4c8599", "title": "Get status for vehicle 7d4c8599"}], "id": "7d4c8599"}],"_actions":[{"name":"Add vehicle",
+"method":"POST",
+"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",
+"href": "http://localhost:1235/vehicle",
+"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}] }]
+}
+2017-05-01 00:12:31,732 - INFO - #### Method GET of vehicleStatus ####
+2017-05-01 00:12:31,732 - WARNING - Unexpected error in connectVehicle:
+2017-05-01 00:12:31,734 - WARNING - vehicleStatus:GET Cant connect to vehicle
+2017-05-01 00:12:45,673 - INFO - #### Method GET of vehicleIndex #####
+2017-05-01 00:12:45,673 - INFO - actions
+2017-05-01 00:12:45,674 - INFO - [{"name":"Add vehicle",
+"method":"POST",
+"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",
+"href": "http://localhost:1235/vehicle",
+"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}] }]
+
+2017-05-01 00:12:45,674 - INFO - jsonResponse
+2017-05-01 00:12:45,674 - INFO - {"vehicle":[{"_links": [{"href": "http://localhost:1235/vehicle/7d4c8599", "title": "Get status for vehicle 7d4c8599"}], "id": "7d4c8599"}],"_actions":[{"name":"Add vehicle",
+"method":"POST",
+"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",
+"href": "http://localhost:1235/vehicle",
+"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}] }]
+}
+2017-05-01 00:12:50,953 - INFO - #### Method GET of vehicleStatus ####
+2017-05-01 00:12:50,954 - INFO - connection string for vehicle 7d4c8599='udp:127.0.0.1:14561'
+2017-05-01 00:12:50,954 - INFO - connectionString: udp:127.0.0.1:14561
+2017-05-01 00:12:50,954 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
