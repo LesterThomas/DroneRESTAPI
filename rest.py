@@ -24,7 +24,7 @@ LOG_FILENAME = 'droneapi.log'
 
 # Set up a specific logger with our desired output level
 my_logger = logging.getLogger('MyLogger')
-my_logger.setLevel(logging.INFO)
+my_logger.setLevel(logging.DEBUG)
 # Add the log message handler to the logger
 handler = logging.handlers.RotatingFileHandler(
               LOG_FILENAME, maxBytes=20000, backupCount=5)
@@ -81,13 +81,21 @@ def connectVehicle(inVehicleId):
     try:
         my_logger.debug( "connectVehicle called with inVehicleId = " + str(inVehicleId))
         #connectionString=connectionStringArray[inVehicleId]
-        connectionString=redisdB.get('connectionString:' + str(inVehicleId))
+        jsonObjStr=redisdB.get('connectionString:' + str(inVehicleId))
+        my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
+        jsonObj=json.loads(jsonObjStr)
+        connectionString=jsonObj['connectionString']
+        vehicleName=jsonObj['name']
+        vehicleType=jsonObj['vehicleType']
+
         my_logger.info("connection string for vehicle " + str(inVehicleId) + "='" + connectionString + "'")
         # Connect to the Vehicle.
         if not connectionDict.get(inVehicleId):
             my_logger.info("connectionString: %s" % (connectionString,))
             my_logger.info("Connecting to vehicle on: %s" % (connectionString,))
             connectionDict[inVehicleId] = connect(connectionString, wait_ready=True)
+            connectionDict[inVehicleId]['name']=vehicleName
+            connectionDict[inVehicleId]['vehicleType']=vehicleType
             actionArrayDict[inVehicleId]=[] #create empty action array
         else:
             my_logger.debug( "Already connected to vehicle")
@@ -129,10 +137,10 @@ def rtl(inVehicle):
         #coodinates are same as home
         homeLocation=inVehicle.home_location
         outputObj["coordinate"]=[homeLocation.lat, homeLocation.lon, homeLocation.alt]
-        outputObj["param0"]=0
         outputObj["param1"]=0
         outputObj["param2"]=0
         outputObj["param3"]=0
+        outputObj["param4"]=0
         outputObj["command"]=20
         my_logger.info( "Returning to Launch")
         inVehicle.mode = VehicleMode("RTL")
@@ -153,10 +161,10 @@ def takeoff(inVehicle, inHeight):
         #coodinates are same as current + height
         currentLocation=inVehicle.location.global_relative_frame
         outputObj["coordinate"]=[currentLocation.lat, currentLocation.lon, inHeight]
-        outputObj["param0"]=0
         outputObj["param1"]=0
         outputObj["param2"]=0
         outputObj["param3"]=0
+        outputObj["param4"]=0
         outputObj["command"]=22
         my_logger.info( "Arming motors")
         # Copter should arm in GUIDED mode
@@ -200,10 +208,10 @@ def land(inVehicle):
         #coodinates are same as current 
         currentLocation=inVehicle.location.global_relative_frame
         outputObj["coordinate"]=[currentLocation.lat, currentLocation.lon, 0]
-        outputObj["param0"]=0
         outputObj["param1"]=0
         outputObj["param2"]=0
         outputObj["param3"]=0
+        outputObj["param4"]=0
         outputObj["command"]=23
         my_logger.info( "Landing")
         inVehicle.mode = VehicleMode("LAND")
@@ -234,10 +242,10 @@ def goto(inVehicle, dNorth, dEast, dDown):
             targetLocation.alt=targetLocation.alt-dDown
             #coodinates are target
             outputObj["coordinate"]=[targetLocation.lat, targetLocation.lon, targetLocation.alt]
-            outputObj["param0"]=0
             outputObj["param1"]=0
             outputObj["param2"]=0
             outputObj["param3"]=0
+            outputObj["param4"]=0
             outputObj["command"]=16
             inVehicle.simple_goto(targetLocation, groundspeed=10)
     else:    
@@ -294,10 +302,10 @@ def gotoRelative(inVehicle, north, east, down):
         else:
             #coodinates are target
             outputObj["coordinate"]=[targetLocation.lat, targetLocation.lon, -down]
-            outputObj["param0"]=0
             outputObj["param1"]=0
             outputObj["param2"]=0
             outputObj["param3"]=0
+            outputObj["param4"]=0
             outputObj["command"]=16  
             inVehicle.simple_goto(targetLocation, groundspeed=10)
     else:    
@@ -325,10 +333,10 @@ def gotoAbsolute(inVehicle, inLocation):
             inVehicle.mode = VehicleMode("GUIDED")
             #coodinates are target
             outputObj["coordinate"]=[inLocation['lat'], inLocation['lon'], inLocation['alt']]
-            outputObj["param0"]=0
             outputObj["param1"]=0
             outputObj["param2"]=0
             outputObj["param3"]=0
+            outputObj["param4"]=0
             outputObj["command"]=16
 
             inVehicle.simple_goto(LocationGlobal(inLocation['lat'],inLocation['lon'],inLocation['alt']), groundspeed=10)
@@ -347,10 +355,10 @@ def roi(inVehicle, inLocation):
     my_logger.debug( "lat" + str(inLocation['lat']))
     #coodinates are target
     outputObj["coordinate"]=[inLocation['lat'],inLocation['lon'],inLocation['alt']]
-    outputObj["param0"]=0
     outputObj["param1"]=0
     outputObj["param2"]=0
     outputObj["param3"]=0
+    outputObj["param4"]=0
     outputObj["command"]=80  
     set_roi(inVehicle, inLocation)
     return outputObj
@@ -483,8 +491,9 @@ class index:
             my_logger.info( "#### Method GET of index #####")
             applyHeadders()
             outputObj={}
+            outputObj['description']='Welcome to the Drone API homepage. WARNING: This API is experimental - use at your own discression. The API allows you to interact with simulated or real drones through a simple hypermedia REST API.'
             outputObj['_links']={
-                'self':{"href": homeDomain},
+                'self':{"href": homeDomain, "title":"Home-page (or EntryPoint) of the API"},
                 'vehicle': {
                         "title":"Return the collection of available vehicles.",
                         "href": homeDomain+"/vehicle" }
@@ -509,18 +518,25 @@ class vehicleIndex:
 
             keys=redisdB.keys("connectionString:*")
             for key in keys:
-                value=redisdB.get(key)
+                my_logger.debug( "key = '"+key+"'")
+                jsonObjStr=redisdB.get(key)
+                my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
+                jsonObj=json.loads(jsonObjStr)
+                connectionString=jsonObj['connectionString']
+                vehicleName=jsonObj['name']
+                vehicleType=jsonObj['vehicleType']
                 droneId=key[17:]
 
-                outputObj.append( {"_links":[{"href":homeDomain+"/vehicle/"+str(droneId),"title":"Get status for vehicle " + str(droneId)}],
-                        "id":str(droneId)})
+                outputObj.append( {"_links":{"self":{"href":homeDomain+"/vehicle/"+str(droneId),"title":"Get status for vehicle " + str(droneId)}},
+                        "id":str(droneId),"name":vehicleName,"vehicleType":vehicleType})
 
-            actions='[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + homeDomain+ '/vehicle",\n"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}] }]\n'
-            my_logger.info("actions")
-            my_logger.info(actions)
-            jsonResponse='{"vehicle":'+json.dumps(outputObj)+',"_actions":'+actions+'}'
-            my_logger.info("jsonResponse")
-            my_logger.info(jsonResponse)
+            actions='[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + homeDomain+ '/vehicle",\n"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}, {"name":"name","type":"string"}] }]\n'
+            self={"self":{"title":"Return the collection of available vehicles.","href": homeDomain+"/vehicle" }}
+            my_logger.debug("actions")
+            my_logger.debug(actions)
+            jsonResponse='{"_embedded":{"vehicle":'+json.dumps(outputObj)+'},"_actions":'+actions+',"_links":'+ json.dumps(self)+'}'
+            my_logger.debug("jsonResponse")
+            my_logger.debug(jsonResponse)
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -534,8 +550,11 @@ class vehicleIndex:
         try:
             my_logger.info( "#### Method POST of vehicleIndex #####")
             applyHeadders()
-            data = json.loads(web.data())
+            dataStr=web.data()
+            my_logger.info( dataStr)            
+            data = json.loads(dataStr)
             droneType=data["vehicleType"]
+            vehicleName=data["name"]
             connection=None
             if (droneType=="simulated"):
                 #build simulted drone using aws
@@ -575,7 +594,7 @@ class vehicleIndex:
             uuidVal=uuid.uuid4()
             key=str(uuidVal)[:8]
             my_logger.info("adding connectionString to Redis db with key '"+"connectionString:"+str(key)+"'")
-            redisdB.set("connectionString:"+key,connection)
+            redisdB.set("connectionString:"+key,json.dumps({"connectionString":connection,"name":vehicleName,"vehicleType":droneType}))
 
             #connectionStringArray.append(connection)
             #connectionDict.append(None)
@@ -636,6 +655,7 @@ class action:
 
             vehicleStatus=getVehicleStatus(inVehicle)
             outputObj={}
+            outputObj["_links"]={"self":{"href":homeDomain+"/vehicle/"+str(vehicleId)+"/action","title":"Get the actions for this vehicle."}}
             availableActions=[]
             #available when armed
             if vehicleStatus["armed"]:
@@ -823,6 +843,8 @@ def getMissionActions(vehicleId) :
         outputObj['MAV_AUTOPILOT']=3
         outputObj['complexItems']=[]
         outputObj['groundStation']='QGroundControl'
+        outputObj["_links"]={"self":{"href":homeDomain+"/vehicle/"+str(vehicleId)+"/mission","title":"Get the current mission commands from the vehicle."}}
+
         #outputObj['mission']=cmds
         output=json.dumps(outputObj)   
     except Exception as e: 
@@ -955,6 +977,11 @@ def getSimulatorParams(vehicleId) :
                 simulatorParams[key]=inVehicle.parameters[key]
 
         outputObj['simulatorParams']=simulatorParams
+        outputObj["_links"]={"self":{"href":homeDomain+"/vehicle/"+str(vehicleId)+"/simulator","title":"Get the current simulator parameters from the vehicle."},
+            "parent":{"href":homeDomain+"/vehicle/"+str(vehicleId),"title":"Get status for parent vehicle."}}
+
+
+ 
         #outputObj['mission']=cmds
         output=json.dumps(outputObj)   
     except Exception as e: 
@@ -1039,7 +1066,7 @@ class homeLocation:
             cmds.download()
             cmds.wait_ready()
             my_logger.debug( " Home Location: %s" % inVehicle.home_location     )
-            output = json.dumps({"home_location":latLonAltObj(inVehicle.home_location)}   )   
+            output = json.dumps({"_links":{"self":{"href":homeDomain+"/vehicle/"+str(vehicleId)+"/homeLocation","title":"Get the home location for this vehicle"}},"home_location":latLonAltObj(inVehicle.home_location)}   )   
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -1057,7 +1084,7 @@ class vehicleStatus:
             applyHeadders()
             outputObj={}
 
-            actions=[{"method":"DELETE","href":homeDomain+"/vehicle/"+str(vehicleId)+"/","title":"Delete connection to vehicle " + str(vehicleId)}]
+            actions=[{"method":"DELETE","href":homeDomain+"/vehicle/"+str(vehicleId),"title":"Delete connection to vehicle " + str(vehicleId)}]
 
             #test if vehicleId is an integer 1-4
             #try:
@@ -1131,7 +1158,10 @@ class vehicleStatus:
             my_logger.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
             applyHeadders()
 
-            connectionString=redisdB.get('connectionString:' + str(vehicleId))
+            jsonObjStr=redisdB.get('connectionString:' + str(vehicleId))
+            my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
+            jsonObj=json.loads(jsonObjStr)
+            connectionString=jsonObj['connectionString']
             ipAddress=connectionString[4:-6]
 
 

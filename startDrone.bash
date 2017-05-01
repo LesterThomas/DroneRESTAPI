@@ -4,7 +4,7 @@
  sleep $1
  let PORT=14551+$1*10
  echo $PORT
- connectionString='{"vehicleType":"real","connectionString":"udp:127.0.0.1:'$PORT'"}' 
+ connectionString='{"vehicleType":"real","connectionString":"udp:127.0.0.1:'$PORT'","name":"drone_'$1'"}' 
  echo $connectionString
  sleep 1
  echo ""
