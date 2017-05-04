@@ -37,13 +37,14 @@ my_logger.propegate=False
 
 versionDev=True #prod
 defaultHomeDomain='http://droneapi.ddns.net:1235' 
-redisdB = redis.Redis(host='localhost', port=6379) #redis or localhost
+redisdB = None
 if (versionDev):
     redisdB = redis.Redis(host='localhost', port=6379) #redis or localhost
     defaultHomeDomain='http://localhost:1235' #droneapi.ddns.net
     my_logger.info("Dev version connected to Redis at " + str(redisdB) + " and home domain of " + str(defaultHomeDomain))
 else:
     my_logger.info("Prod version connected to Redis at " + str(redisdB) + " and home domain of " + str(defaultHomeDomain))
+    redisdB = redis.Redis(host='redis', port=6379) #redis or localhost
 
 #test the redis dB
 
@@ -60,6 +61,7 @@ else:
 
 #connectionStringArray = [""] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
 connectionDict={}
+connectionNameTypeDict={}
 actionArrayDict={}
 authorizedZoneDict={}
 MAX_DISTANCE=1000 #max distance allowed in a single command
@@ -69,7 +71,7 @@ def applyHeadders():
     web.header('Content-Type', 'application/json')
     web.header('Access-Control-Allow-Origin',      '*')
     web.header('Access-Control-Allow-Credentials', 'true')        
-    web.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')   
+    web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')   
     web.header('Access-Control-Allow-Headers', 'Content-Type')      
     return
 
@@ -94,15 +96,18 @@ def connectVehicle(inVehicleId):
             my_logger.info("connectionString: %s" % (connectionString,))
             my_logger.info("Connecting to vehicle on: %s" % (connectionString,))
             connectionDict[inVehicleId] = connect(connectionString, wait_ready=True)
-            connectionDict[inVehicleId]['name']=vehicleName
-            connectionDict[inVehicleId]['vehicleType']=vehicleType
+            connectionNameTypeDict[inVehicleId]={"name":vehicleName,"vehicleType":vehicleType}
             actionArrayDict[inVehicleId]=[] #create empty action array
+            my_logger.info("actionArrayDict")
+            my_logger.info(actionArrayDict)
         else:
             my_logger.debug( "Already connected to vehicle")
-    except Exception as inst:
+    except Exception as e:
         my_logger.warn( "Unexpected error in connectVehicle:")
         my_logger.warn( "VehicleId=",inVehicleId)
-        my_logger.warn( "Exception=",inst)
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")   
         raise Exception('Unexpected error connecting to vehicle ' + inVehicleId) 
     return connectionDict[inVehicleId]
 
@@ -431,10 +436,18 @@ def getVehicleStatus(inVehicle):
 
 def updateActionStatus(inVehicle, inVehicleId):
     #test to see whether the vehicle is at the target location of the action
+    my_logger.info("############# in updateActionStatus")
+
+    my_logger.info("inVehicleId")
+    my_logger.info(inVehicleId)
+    my_logger.info("actionArrayDict")
+    my_logger.info(actionArrayDict)
+    my_logger.info("#############")
+
     actionArray=actionArrayDict[inVehicleId]
 
 
-    my_logger.debug(actionArray)
+    my_logger.info(actionArray)
 
     if (len(actionArray)>0):
         latestAction=actionArray[len(actionArray)-1]
@@ -491,7 +504,7 @@ class index:
             my_logger.info( "#### Method GET of index #####")
             applyHeadders()
             outputObj={}
-            outputObj['description']='Welcome to the Drone API homepage. WARNING: This API is experimental - use at your own discression. The API allows you to interact with simulated or real drones through a simple hypermedia REST API.'
+            outputObj['description']='Welcome to the Drone API homepage. WARNING: This API is experimental - use at your own discression. The API allows you to interact with simulated or real drones through a simple hypermedia REST API. There is a HAL API Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test client at http://droneapi.ddns.net:1235/static/app  The API is maintained at https://github.com/lesterthomas/DroneRESTAPI'
             outputObj['_links']={
                 'self':{"href": homeDomain, "title":"Home-page (or EntryPoint) of the API"},
                 'vehicle': {
@@ -649,7 +662,7 @@ class action:
                 inVehicle=connectVehicle(vehicleId)   
             except Exception as inst:
                 my_logger.warn( "Unexpected error:")
-                my_logger.warn( inVehicle)
+                my_logger.warn( vehicleId)
                 my_logger.warn( str(inst))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
 
@@ -717,6 +730,7 @@ class action:
                     "fields":[{"name":"name","type":"string","value":"Takeoff"},{"name":"height","type":"float","value":30}]
                 })
             outputObj['_actions']=availableActions
+            my_logger.debug(outputObj)
             updateActionStatus(inVehicle, vehicleId);
             outputObj['actions']=actionArrayDict[vehicleId]
             output=json.dumps(outputObj)   
@@ -978,7 +992,7 @@ def getSimulatorParams(vehicleId) :
 
         outputObj['simulatorParams']=simulatorParams
         outputObj["_links"]={"self":{"href":homeDomain+"/vehicle/"+str(vehicleId)+"/simulator","title":"Get the current simulator parameters from the vehicle."},
-            "parent":{"href":homeDomain+"/vehicle/"+str(vehicleId),"title":"Get status for parent vehicle."}}
+            "up":{"href":homeDomain+"/vehicle/"+str(vehicleId),"title":"Get status for parent vehicle."}}
 
 
  
@@ -1100,6 +1114,8 @@ class vehicleStatus:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId), "_actions": actions}) 
             vehicleStatus=getVehicleStatus(inVehicle)
+            vehicleStatus["name"]=connectionNameTypeDict[vehicleId]['name']
+            vehicleStatus["vehicleType"]=connectionNameTypeDict[vehicleId]['vehicleType']
 
             vehicleStatus["zone"]=authorizedZoneDict.get(vehicleId)
             if not vehicleStatus["zone"]: #if no authorizedZone then set default
@@ -1151,7 +1167,7 @@ class vehicleStatus:
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
         return output
 
-    def DELETE(self, vehicleId,):
+    def DELETE(self, vehicleId):
         try:
             my_logger.info( "#### Method DELETE of vehicleStatus ####")
             statusVal=''  #removed statusVal which used to have the fields) from the URL because of the trailing / issue
@@ -1207,6 +1223,20 @@ class vehicleStatus:
 
             outputObj={"status":"success"}
             output = json.dumps(outputObj)
+        except Exception as e: 
+            my_logger.exception(e)
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")   
+            return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
+        return output
+
+    def OPTIONS(self,vehicleId):
+        try:
+            my_logger.info( "#### OPTIONS of vehicleStatus - just here to suppor the CORS Cross-Origin security #####")
+            applyHeadders()
+
+            outputObj={}
+            output=json.dumps(outputObj)   
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()

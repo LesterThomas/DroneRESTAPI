@@ -1,21 +1,206 @@
-{"vehicle":[{"_links": [{"href": "http://localhost:1235/vehicle/7d4c8599", "title": "Get status for vehicle 7d4c8599"}], "id": "7d4c8599"}],"_actions":[{"name":"Add vehicle",
-"method":"POST",
-"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",
-"href": "http://localhost:1235/vehicle",
-"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}] }]
-}
-#### Method GET of vehicleIndex #####
-actions
-[{"name":"Add vehicle",
-"method":"POST",
-"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",
-"href": "http://localhost:1235/vehicle",
-"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}] }]
-
-jsonResponse
-{"vehicle":[{"_links": [{"href": "http://localhost:1235/vehicle/7d4c8599", "title": "Get status for vehicle 7d4c8599"}], "id": "7d4c8599"}],"_actions":[{"name":"Add vehicle",
-"method":"POST",
-"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",
-"href": "http://localhost:1235/vehicle",
-"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}] }]
-}
+2017-05-04 12:16:44,043 - DEBUG - Attitude: Attitude:pitch=-0.203799083829,yaw=0.784937083721,roll=0.170329704881
+2017-05-04 12:16:44,043 - DEBUG - Velocity: [0.06, -0.01, 0.0]
+2017-05-04 12:16:44,043 - DEBUG - GPS: GPSInfo:fix=3,num_sat=8
+2017-05-04 12:16:44,043 - DEBUG - Groundspeed: 0.062871016562
+2017-05-04 12:16:44,043 - DEBUG - Airspeed: 0.0
+2017-05-04 12:16:44,043 - DEBUG - Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
+2017-05-04 12:16:44,043 - DEBUG - Battery: Battery:voltage=12.193,current=28.74,level=-68
+2017-05-04 12:16:44,044 - DEBUG - EKF OK?: True
+2017-05-04 12:16:44,044 - DEBUG - Last Heartbeat: 0.153104222001
+2017-05-04 12:16:44,044 - DEBUG - Rangefinder: Rangefinder: distance=None, voltage=None
+2017-05-04 12:16:44,044 - DEBUG - Heading: 44
+2017-05-04 12:16:44,044 - DEBUG - Is Armable?: True
+2017-05-04 12:16:44,044 - DEBUG - System status: ACTIVE
+2017-05-04 12:16:44,044 - DEBUG - Mode: GUIDED
+2017-05-04 12:16:44,044 - DEBUG - Armed: True
+2017-05-04 12:16:44,545 - INFO - #### Method GET of action ####
+2017-05-04 12:16:44,545 - DEBUG - Applying HTTP headers
+2017-05-04 12:16:44,545 - DEBUG - connectVehicle called with inVehicleId = 4d63a1a5
+2017-05-04 12:16:44,546 - DEBUG - redisDbObj = '{"connectionString": "udp:127.0.0.1:14561", "name": "drone_1", "vehicleType": "real"}'
+2017-05-04 12:16:44,546 - INFO - connection string for vehicle 4d63a1a5='udp:127.0.0.1:14561'
+2017-05-04 12:16:44,546 - DEBUG - Already connected to vehicle
+2017-05-04 12:16:44,546 - DEBUG - Autopilot Firmware version: APM:Copter-3.5.0-dev0
+2017-05-04 12:16:44,546 - DEBUG - Global Location: LocationGlobal:lat=51.3960602,lon=-1.3437646,alt=145.09
+2017-05-04 12:16:44,546 - DEBUG - Global Location (relative altitude): LocationGlobalRelative:lat=51.3960602,lon=-1.3437646,alt=40.0
+2017-05-04 12:16:44,547 - INFO - #### Method GET of vehicleStatus ####
+2017-05-04 12:16:44,547 - DEBUG - Local Location: LocationLocal:north=30.0753822327,east=29.9541702271,down=-39.9922370911
+2017-05-04 12:16:44,547 - DEBUG - vehicleId = '4d63a1a5', statusVal = ''
+2017-05-04 12:16:44,547 - DEBUG - Attitude: Attitude:pitch=-0.202930808067,yaw=0.784991025925,roll=0.170794725418
+2017-05-04 12:16:44,547 - DEBUG - Applying HTTP headers
+2017-05-04 12:16:44,547 - DEBUG - Velocity: [0.05, -0.01, 0.0]
+2017-05-04 12:16:44,548 - DEBUG - connectVehicle called with inVehicleId = 4d63a1a5
+2017-05-04 12:16:44,548 - DEBUG - GPS: GPSInfo:fix=3,num_sat=8
+2017-05-04 12:16:44,548 - DEBUG - Groundspeed: 0.0623003207147
+2017-05-04 12:16:44,548 - DEBUG - redisDbObj = '{"connectionString": "udp:127.0.0.1:14561", "name": "drone_1", "vehicleType": "real"}'
+2017-05-04 12:16:44,548 - DEBUG - Airspeed: 0.0
+2017-05-04 12:16:44,548 - INFO - connection string for vehicle 4d63a1a5='udp:127.0.0.1:14561'
+2017-05-04 12:16:44,549 - DEBUG - Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
+2017-05-04 12:16:44,549 - DEBUG - Already connected to vehicle
+2017-05-04 12:16:44,549 - DEBUG - Battery: Battery:voltage=12.193,current=28.74,level=-68
+2017-05-04 12:16:44,549 - DEBUG - Autopilot Firmware version: APM:Copter-3.5.0-dev0
+2017-05-04 12:16:44,549 - DEBUG - EKF OK?: True
+2017-05-04 12:16:44,549 - DEBUG - Global Location: LocationGlobal:lat=51.3960602,lon=-1.3437646,alt=145.09
+2017-05-04 12:16:44,550 - DEBUG - Last Heartbeat: 0.661274710001
+2017-05-04 12:16:44,550 - DEBUG - Rangefinder: Rangefinder: distance=None, voltage=None
+2017-05-04 12:16:44,550 - DEBUG - Global Location (relative altitude): LocationGlobalRelative:lat=51.3960602,lon=-1.3437646,alt=40.0
+2017-05-04 12:16:44,550 - DEBUG - Heading: 44
+2017-05-04 12:16:44,550 - DEBUG - Local Location: LocationLocal:north=30.0753822327,east=29.9541702271,down=-39.9922370911
+2017-05-04 12:16:44,550 - DEBUG - Is Armable?: True
+2017-05-04 12:16:44,550 - DEBUG - Attitude: Attitude:pitch=-0.202930808067,yaw=0.784991025925,roll=0.170794725418
+2017-05-04 12:16:44,551 - DEBUG - System status: ACTIVE
+2017-05-04 12:16:44,551 - DEBUG - Velocity: [0.05, -0.01, 0.0]
+2017-05-04 12:16:44,551 - DEBUG - Mode: GUIDED
+2017-05-04 12:16:44,551 - DEBUG - GPS: GPSInfo:fix=3,num_sat=8
+2017-05-04 12:16:44,551 - DEBUG - Armed: True
+2017-05-04 12:16:44,551 - DEBUG - Groundspeed: 0.0623003207147
+2017-05-04 12:16:44,551 - DEBUG - {'_actions': [{'method': 'POST', 'href': 'http://localhost:1235/vehicle/4d63a1a5/action', 'name': 'Region-of-Interest', 'fields': [{'type': 'string', 'name': 'name', 'value': 'Region-of-Interest'}, {'type': 'float', 'name': 'lat', 'value': 51.3946}, {'type': 'float', 'name': 'lon', 'value': -1.299}, {'type': 'float', 'name': 'alt', 'value': 105}], 'title': 'Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)'}, {'method': 'POST', 'href': 'http://localhost:1235/vehicle/4d63a1a5/action', 'name': 'Land', 'fields': [{'type': 'string', 'name': 'name', 'value': 'Land'}], 'title': 'Land at current location'}, {'method': 'POST', 'href': 'http://localhost:1235/vehicle/4d63a1a5/action', 'name': 'Return-to-Launch', 'fields': [{'type': 'string', 'name': 'name', 'value': 'Return-to-Launch'}], 'title': 'Return to launch: Return to the home location and land.'}, {'method': 'POST', 'href': 'http://localhost:1235/vehicle/4d63a1a5/action', 'name': 'Start-Mission', 'fields': [{'type': 'string', 'name': 'name', 'value': 'Start-Mission'}], 'title': 'Begin the pre-defined mission.'}, {'method': 'POST', 'href': 'http://localhost:1235/vehicle/4d63a1a5/action', 'name': 'Goto-Absolute', 'fields': [{'type': 'string', 'name': 'name', 'value': 'Goto-Absolute'}, {'type': 'float', 'name': 'lat', 'value': 51.3946}, {'type': 'float', 'name': 'lon', 'value': -1.299}, {'type': 'float', 'name': 'alt', 'value': 105}], 'title': 'Go to the location at latitude <lat>, longitude <lon> and altitude <alt> (above sea level).'}, {'method': 'POST', 'href': 'http://localhost:1235/vehicle/4d63a1a5/action', 'name': 'Goto-Relative-Home', 'fields': [{'type': 'string', 'name': 'name', 'value': 'Goto-Relative-Home'}, {'type': 'float', 'name': 'north', 'value': 30}, {'type': 'float', 'name': 'east', 'value': 30}, {'type': 'float', 'name': 'up', 'value': 10}], 'title': 'Go to the location <north> meters North, <east> meters East and <up> meters vertically from the home location.'}, {'method': 'POST', 'href': 'http://localhost:1235/vehicle/4d63a1a5/action', 'name': 'Goto-Relative-Current', 'fields': [{'type': 'string', 'name': 'name', 'value': 'Goto-Relative-Current'}, {'type': 'float', 'name': 'north', 'value': 30}, {'type': 'float', 'name': 'east', 'value': 30}, {'type': 'float', 'name': 'up', 'value': 10}], 'title': 'Go to the location <north> meters North, <east> meters East and <up> meters vertically from the current location.'}], '_links': {'self': {'href': 'http://localhost:1235/vehicle/4d63a1a5/action', 'title': 'Get the actions for this vehicle.'}}}
+2017-05-04 12:16:44,552 - DEBUG - Airspeed: 0.0
+2017-05-04 12:16:44,552 - INFO - ############# in updateActionStatus
+2017-05-04 12:16:44,552 - DEBUG - Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
+2017-05-04 12:16:44,552 - INFO - inVehicleId
+2017-05-04 12:16:44,552 - DEBUG - Battery: Battery:voltage=12.193,current=28.74,level=-68
+2017-05-04 12:16:44,553 - INFO - 4d63a1a5
+2017-05-04 12:16:44,553 - DEBUG - EKF OK?: True
+2017-05-04 12:16:44,553 - INFO - actionArrayDict
+2017-05-04 12:16:44,553 - DEBUG - Last Heartbeat: 0.661274710001
+2017-05-04 12:16:44,553 - INFO - {u'6681cb0f': [], u'4d63a1a5': [{'action': {'status': 'Error', 'id': 0, 'name': 'Takeoff', 'error': 'vehicle not armable'}, 'complete': False, 'completeStatus': 'Error'}, {'action': {'status': 'success', 'name': 'Takeoff', 'height': 30, 'param4': 0, 'param3': 0, 'param2': 0, 'param1': 0, 'coordinate': [51.3957908, -1.3441971, 30], 'command': 22, 'id': 1}, 'verticalDistance': 0.0, 'horizontalDistance': 0.03, 'completeStatus': 'Complete', 'complete': True}, {'action': {'status': 'success', 'name': 'Goto-Relative-Current', 'param4': 0, 'param3': 0, 'param2': 0, 'param1': 0, 'coordinate': [51.39606019458523, -1.3437648740511017, 40.0], 'command': 16, 'id': 2}, 'verticalDistance': 0.0, 'horizontalDistance': 0.02, 'completeStatus': 'Complete', 'complete': True}], u'e547756c': [], u'b4a12977': []}
+2017-05-04 12:16:44,553 - DEBUG - Rangefinder: Rangefinder: distance=None, voltage=None
+2017-05-04 12:16:44,554 - INFO - #############
+2017-05-04 12:16:44,554 - DEBUG - Heading: 44
+2017-05-04 12:16:44,554 - INFO - [{'action': {'status': 'Error', 'id': 0, 'name': 'Takeoff', 'error': 'vehicle not armable'}, 'complete': False, 'completeStatus': 'Error'}, {'action': {'status': 'success', 'name': 'Takeoff', 'height': 30, 'param4': 0, 'param3': 0, 'param2': 0, 'param1': 0, 'coordinate': [51.3957908, -1.3441971, 30], 'command': 22, 'id': 1}, 'verticalDistance': 0.0, 'horizontalDistance': 0.03, 'completeStatus': 'Complete', 'complete': True}, {'action': {'status': 'success', 'name': 'Goto-Relative-Current', 'param4': 0, 'param3': 0, 'param2': 0, 'param1': 0, 'coordinate': [51.39606019458523, -1.3437648740511017, 40.0], 'command': 16, 'id': 2}, 'verticalDistance': 0.0, 'horizontalDistance': 0.02, 'completeStatus': 'Complete', 'complete': True}]
+2017-05-04 12:16:44,554 - DEBUG - Is Armable?: True
+2017-05-04 12:16:44,554 - DEBUG - Latest Action:Goto-Relative-Current
+2017-05-04 12:16:44,554 - DEBUG - System status: ACTIVE
+2017-05-04 12:16:44,555 - DEBUG - Monitoring progress for action 'Goto-Relative-Current'
+2017-05-04 12:16:44,555 - DEBUG - Mode: GUIDED
+2017-05-04 12:16:44,555 - INFO - <dronekit.Vehicle object at 0x7f61eef35ed0>
+2017-05-04 12:16:44,555 - DEBUG - Armed: True
+2017-05-04 12:16:45,037 - INFO - #### Method GET of vehicleStatus ####
+2017-05-04 12:16:45,037 - DEBUG - vehicleId = '4d63a1a5', statusVal = ''
+2017-05-04 12:16:45,037 - DEBUG - Applying HTTP headers
+2017-05-04 12:16:45,037 - DEBUG - connectVehicle called with inVehicleId = 4d63a1a5
+2017-05-04 12:16:45,037 - DEBUG - redisDbObj = '{"connectionString": "udp:127.0.0.1:14561", "name": "drone_1", "vehicleType": "real"}'
+2017-05-04 12:16:45,038 - INFO - connection string for vehicle 4d63a1a5='udp:127.0.0.1:14561'
+2017-05-04 12:16:45,038 - DEBUG - Already connected to vehicle
+2017-05-04 12:16:45,038 - DEBUG - Autopilot Firmware version: APM:Copter-3.5.0-dev0
+2017-05-04 12:16:45,038 - DEBUG - Global Location: LocationGlobal:lat=51.3960602,lon=-1.3437646,alt=145.09
+2017-05-04 12:16:45,038 - DEBUG - Global Location (relative altitude): LocationGlobalRelative:lat=51.3960602,lon=-1.3437646,alt=40.0
+2017-05-04 12:16:45,038 - DEBUG - Local Location: LocationLocal:north=30.0769557953,east=29.9543361664,down=-39.9926071167
+2017-05-04 12:16:45,038 - DEBUG - Attitude: Attitude:pitch=-0.202822029591,yaw=0.784847557545,roll=0.170828729868
+2017-05-04 12:16:45,038 - DEBUG - Velocity: [0.05, -0.01, 0.0]
+2017-05-04 12:16:45,038 - DEBUG - GPS: GPSInfo:fix=3,num_sat=8
+2017-05-04 12:16:45,038 - DEBUG - Groundspeed: 0.0590036846697
+2017-05-04 12:16:45,039 - DEBUG - Airspeed: 0.0
+2017-05-04 12:16:45,039 - DEBUG - Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
+2017-05-04 12:16:45,039 - DEBUG - Battery: Battery:voltage=12.193,current=28.74,level=-68
+2017-05-04 12:16:45,039 - DEBUG - EKF OK?: True
+2017-05-04 12:16:45,039 - DEBUG - Last Heartbeat: 0.152393971999
+2017-05-04 12:16:45,039 - DEBUG - Rangefinder: Rangefinder: distance=None, voltage=None
+2017-05-04 12:16:45,039 - DEBUG - Heading: 44
+2017-05-04 12:16:45,039 - DEBUG - Is Armable?: True
+2017-05-04 12:16:45,039 - DEBUG - System status: ACTIVE
+2017-05-04 12:16:45,039 - DEBUG - Mode: GUIDED
+2017-05-04 12:16:45,039 - DEBUG - Armed: True
+2017-05-04 12:16:45,540 - INFO - #### Method GET of vehicleStatus ####
+2017-05-04 12:16:45,540 - DEBUG - vehicleId = '4d63a1a5', statusVal = ''
+2017-05-04 12:16:45,540 - DEBUG - Applying HTTP headers
+2017-05-04 12:16:45,540 - DEBUG - connectVehicle called with inVehicleId = 4d63a1a5
+2017-05-04 12:16:45,540 - DEBUG - redisDbObj = '{"connectionString": "udp:127.0.0.1:14561", "name": "drone_1", "vehicleType": "real"}'
+2017-05-04 12:16:45,540 - INFO - connection string for vehicle 4d63a1a5='udp:127.0.0.1:14561'
+2017-05-04 12:16:45,541 - DEBUG - Already connected to vehicle
+2017-05-04 12:16:45,541 - DEBUG - Autopilot Firmware version: APM:Copter-3.5.0-dev0
+2017-05-04 12:16:45,541 - DEBUG - Global Location: LocationGlobal:lat=51.3960602,lon=-1.3437646,alt=145.09
+2017-05-04 12:16:45,541 - DEBUG - Global Location (relative altitude): LocationGlobalRelative:lat=51.3960602,lon=-1.3437646,alt=40.0
+2017-05-04 12:16:45,541 - DEBUG - Local Location: LocationLocal:north=30.0771903992,east=29.9494438171,down=-39.9914665222
+2017-05-04 12:16:45,541 - DEBUG - Attitude: Attitude:pitch=-0.204543963075,yaw=0.784834861755,roll=0.170431435108
+2017-05-04 12:16:45,541 - DEBUG - Velocity: [0.05, -0.01, 0.0]
+2017-05-04 12:16:45,541 - DEBUG - GPS: GPSInfo:fix=3,num_sat=8
+2017-05-04 12:16:45,541 - DEBUG - Groundspeed: 0.0602819025517
+2017-05-04 12:16:45,541 - DEBUG - Airspeed: 0.00999999977648
+2017-05-04 12:16:45,542 - DEBUG - Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
+2017-05-04 12:16:45,542 - DEBUG - Battery: Battery:voltage=12.193,current=28.74,level=-68
+2017-05-04 12:16:45,542 - DEBUG - EKF OK?: True
+2017-05-04 12:16:45,542 - DEBUG - Last Heartbeat: 0.660448182
+2017-05-04 12:16:45,542 - DEBUG - Rangefinder: Rangefinder: distance=None, voltage=None
+2017-05-04 12:16:45,542 - DEBUG - Heading: 44
+2017-05-04 12:16:45,542 - DEBUG - Is Armable?: True
+2017-05-04 12:16:45,542 - DEBUG - System status: ACTIVE
+2017-05-04 12:16:45,542 - DEBUG - Mode: GUIDED
+2017-05-04 12:16:45,542 - DEBUG - Armed: True
+2017-05-04 12:16:46,037 - INFO - #### Method GET of vehicleStatus ####
+2017-05-04 12:16:46,037 - DEBUG - vehicleId = '4d63a1a5', statusVal = ''
+2017-05-04 12:16:46,037 - DEBUG - Applying HTTP headers
+2017-05-04 12:16:46,037 - DEBUG - connectVehicle called with inVehicleId = 4d63a1a5
+2017-05-04 12:16:46,037 - DEBUG - redisDbObj = '{"connectionString": "udp:127.0.0.1:14561", "name": "drone_1", "vehicleType": "real"}'
+2017-05-04 12:16:46,038 - INFO - connection string for vehicle 4d63a1a5='udp:127.0.0.1:14561'
+2017-05-04 12:16:46,038 - DEBUG - Already connected to vehicle
+2017-05-04 12:16:46,038 - DEBUG - Autopilot Firmware version: APM:Copter-3.5.0-dev0
+2017-05-04 12:16:46,038 - DEBUG - Global Location: LocationGlobal:lat=51.3960603,lon=-1.3437647,alt=145.09
+2017-05-04 12:16:46,038 - DEBUG - Global Location (relative altitude): LocationGlobalRelative:lat=51.3960603,lon=-1.3437647,alt=40.0
+2017-05-04 12:16:46,038 - DEBUG - Local Location: LocationLocal:north=30.0785198212,east=29.9478034973,down=-39.9911880493
+2017-05-04 12:16:46,038 - DEBUG - Attitude: Attitude:pitch=-0.203934788704,yaw=0.785073578358,roll=0.170998126268
+2017-05-04 12:16:46,038 - DEBUG - Velocity: [0.05, -0.01, 0.0]
+2017-05-04 12:16:46,038 - DEBUG - GPS: GPSInfo:fix=3,num_sat=8
+2017-05-04 12:16:46,038 - DEBUG - Groundspeed: 0.0588725954294
+2017-05-04 12:16:46,038 - DEBUG - Airspeed: 0.0
+2017-05-04 12:16:46,038 - DEBUG - Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
+2017-05-04 12:16:46,038 - DEBUG - Battery: Battery:voltage=12.193,current=28.74,level=-68
+2017-05-04 12:16:46,039 - DEBUG - EKF OK?: True
+2017-05-04 12:16:46,039 - DEBUG - Last Heartbeat: 0.150965092
+2017-05-04 12:16:46,039 - DEBUG - Rangefinder: Rangefinder: distance=None, voltage=None
+2017-05-04 12:16:46,039 - DEBUG - Heading: 44
+2017-05-04 12:16:46,039 - DEBUG - Is Armable?: True
+2017-05-04 12:16:46,039 - DEBUG - System status: ACTIVE
+2017-05-04 12:16:46,039 - DEBUG - Mode: GUIDED
+2017-05-04 12:16:46,039 - DEBUG - Armed: True
+2017-05-04 12:16:46,546 - INFO - #### Method GET of vehicleStatus ####
+2017-05-04 12:16:46,546 - DEBUG - vehicleId = '4d63a1a5', statusVal = ''
+2017-05-04 12:16:46,546 - DEBUG - Applying HTTP headers
+2017-05-04 12:16:46,546 - DEBUG - connectVehicle called with inVehicleId = 4d63a1a5
+2017-05-04 12:16:46,547 - INFO - #### Method GET of action ####
+2017-05-04 12:16:46,547 - DEBUG - redisDbObj = '{"connectionString": "udp:127.0.0.1:14561", "name": "drone_1", "vehicleType": "real"}'
+2017-05-04 12:16:46,547 - DEBUG - Applying HTTP headers
+2017-05-04 12:16:46,547 - INFO - connection string for vehicle 4d63a1a5='udp:127.0.0.1:14561'
+2017-05-04 12:16:46,547 - DEBUG - connectVehicle called with inVehicleId = 4d63a1a5
+2017-05-04 12:16:46,547 - DEBUG - Already connected to vehicle
+2017-05-04 12:16:46,548 - DEBUG - Autopilot Firmware version: APM:Copter-3.5.0-dev0
+2017-05-04 12:16:46,548 - DEBUG - redisDbObj = '{"connectionString": "udp:127.0.0.1:14561", "name": "drone_1", "vehicleType": "real"}'
+2017-05-04 12:16:46,548 - DEBUG - Global Location: LocationGlobal:lat=51.3960603,lon=-1.3437647,alt=145.09
+2017-05-04 12:16:46,548 - INFO - connection string for vehicle 4d63a1a5='udp:127.0.0.1:14561'
+2017-05-04 12:16:46,549 - DEBUG - Global Location (relative altitude): LocationGlobalRelative:lat=51.3960603,lon=-1.3437647,alt=40.0
+2017-05-04 12:16:46,549 - DEBUG - Already connected to vehicle
+2017-05-04 12:16:46,549 - DEBUG - Local Location: LocationLocal:north=30.078371048,east=29.9456501007,down=-39.9902114868
+2017-05-04 12:16:46,549 - DEBUG - Autopilot Firmware version: APM:Copter-3.5.0-dev0
+2017-05-04 12:16:46,549 - DEBUG - Attitude: Attitude:pitch=-0.203693464398,yaw=0.784830331802,roll=0.170311957598
+2017-05-04 12:16:46,549 - DEBUG - Global Location: LocationGlobal:lat=51.3960603,lon=-1.3437647,alt=145.09
+2017-05-04 12:16:46,549 - DEBUG - Velocity: [0.05, -0.01, 0.0]
+2017-05-04 12:16:46,549 - DEBUG - Global Location (relative altitude): LocationGlobalRelative:lat=51.3960603,lon=-1.3437647,alt=40.0
+2017-05-04 12:16:46,550 - DEBUG - GPS: GPSInfo:fix=3,num_sat=8
+2017-05-04 12:16:46,550 - DEBUG - Local Location: LocationLocal:north=30.078371048,east=29.9456501007,down=-39.9902114868
+2017-05-04 12:16:46,550 - DEBUG - Groundspeed: 0.0594253577292
+2017-05-04 12:16:46,550 - DEBUG - Attitude: Attitude:pitch=-0.203693464398,yaw=0.784830331802,roll=0.170311957598
+2017-05-04 12:16:46,550 - DEBUG - Airspeed: 0.00999999977648
+2017-05-04 12:16:46,550 - DEBUG - Velocity: [0.05, -0.01, 0.0]
+2017-05-04 12:16:46,550 - DEBUG - Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
+2017-05-04 12:16:46,550 - DEBUG - GPS: GPSInfo:fix=3,num_sat=8
+2017-05-04 12:16:46,551 - DEBUG - Battery: Battery:voltage=12.193,current=28.74,level=-68
+2017-05-04 12:16:46,551 - DEBUG - Groundspeed: 0.0594253577292
+2017-05-04 12:16:46,551 - DEBUG - EKF OK?: True
+2017-05-04 12:16:46,551 - DEBUG - Airspeed: 0.00999999977648
+2017-05-04 12:16:46,551 - DEBUG - Last Heartbeat: 0.660381944999
+2017-05-04 12:16:46,551 - DEBUG - Gimbal status: Gimbal: pitch=None, roll=None, yaw=None
+2017-05-04 12:16:46,551 - DEBUG - Rangefinder: Rangefinder: distance=None, voltage=None
+2017-05-04 12:16:46,551 - DEBUG - Battery: Battery:voltage=12.193,current=28.74,level=-68
+2017-05-04 12:16:46,551 - DEBUG - Heading: 44
+2017-05-04 12:16:46,552 - DEBUG - EKF OK?: True
+2017-05-04 12:16:46,552 - DEBUG - Is Armable?: True
+2017-05-04 12:16:46,552 - DEBUG - Last Heartbeat: 0.660381944999
+2017-05-04 12:16:46,552 - DEBUG - System status: ACTIVE
+2017-05-04 12:16:46,552 - DEBUG - Rangefinder: Rangefinder: distance=None, voltage=None
+2017-05-04 12:16:46,552 - DEBUG - Mode: GUIDED
+2017-05-04 12:16:46,552 - DEBUG - Heading: 44
+2017-05-04 12:16:46,553 - DEBUG - Armed: True
+2017-05-04 12:16:46,553 - DEBUG - Is Armable?: True
+2017-05-04 12:16:46,553 - DEBUG - System status: ACTIVE
+2017-05-04 12:16:46,553 - DEBUG - Mode: GUIDED
+2017-05-04 12:16:46,553 - DEBUG - Armed: True
