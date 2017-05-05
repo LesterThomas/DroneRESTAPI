@@ -18,6 +18,8 @@ angular.module('droneFrontendApp')
 	$scope.actions={availableActions:{}};
 	$scope.actionLog={items:[]};
 	$scope.simEnvironment=[];
+	$scope.simParamSelected='';
+	$scope.simParamValue='';
 	$scope.zones=null;
 
     $scope.droneIcon = {
@@ -171,48 +173,22 @@ angular.module('droneFrontendApp')
 
 	}
 
-	$scope.$watch("simEnvironment.SIM_WIND_SPD", function (newValue) {
-		if (isNaN(newValue) || (newValue=="")) {
-			console.warn("SIM_WIND_SPD of'" + newValue + "' is not a number");
-		} else {
-			if ((newValue>=0) && (newValue<50)) {
-				updateSimEnvironment('SIM_WIND_SPD',newValue);
-			} else {
-				console.warn("SIM_WIND_SPD of'" + newValue + "' is out of bounds");
-			}
-		}
+	$scope.simParamUpdateButton = function(){
+		console.log("Setting simulator parameter '"+$scope.simParamSelected+"' to '" + $scope.simParamValue + "'.");
 
-	});
+		updateSimEnvironment($scope.simParamSelected,$scope.simParamValue);
 
-	$scope.$watch("simEnvironment.SIM_WIND_DIR", function (newValue) {
-		if (isNaN(newValue) || (newValue=="")) {
-			console.warn("SIM_WIND_DIR of'" + newValue + "' is not a number");
-		} else {
-			if ((newValue>=0) && (newValue<=360)) {
-				updateSimEnvironment('SIM_WIND_DIR',newValue);
-			} else {
-				console.warn("SIM_WIND_DIR of'" + newValue + "' is out of bounds");
-			}
-		}
-	});
+	}
 
-	$scope.$watch("simEnvironment.SIM_GPS_NUMSATS", function (newValue) {
-		if (isNaN(newValue) || (newValue=="")) {
-			console.warn("SIM_GPS_NUMSATS of'" + newValue + "' is not a number");
-		} else {
-			if ((newValue>=0) && (newValue<=20)) {
-				updateSimEnvironment('SIM_GPS_NUMSATS',newValue);
-			} else {
-				console.warn("SIM_GPS_NUMSATS of'" + newValue + "' is out of bounds");
-			}
-		}
+	$scope.$watch("simParamSelected", function (newValue) {			
+		$scope.simParamValue=$scope.simEnvironment[newValue];
 	});
 
 	var intervalTimer = $interval(updateDrone, 500);
 	var intervalActionsTimer = $interval(updateActions, 2000);
 	updateActions();
 	function updateDrone() {
-		$http.get($scope.apiURL + 'vehicle/'+individualDrone.droneId+'/').
+		$http.get($scope.apiURL + 'vehicle/'+individualDrone.droneId).
 		    then(function(data, status, headers, config) {
 					//console.log('API get success',data,status);	
 					$scope.vehicleStatus=data.data;
@@ -421,7 +397,25 @@ angular.module('droneFrontendApp')
 
 	}
 
+	$scope.disconnectDelete = function() {
+		console.log('disconnectDelete Button Clicked');
 
+		if (confirm('Confirm disconnect?')){
+			//delete
+			console.log('disconnectDelete confirmed');
+			$http.delete($scope.apiURL + 'vehicle/'+individualDrone.droneId,{
+			    headers : {
+			        'Content-Type' : 'application/json; charset=UTF-8'
+			    }}).then(function(data, status, headers, config) {
+				console.log('API  action DELETE success',data,status);
+				window.location='/';
+			},
+			function(data, status, headers, config) {
+			  // log error
+				console.log('API actions DELETE error',data, status, headers, config);
+			});
+		} 
+	}
 	  
 	$scope.actionButton = function(inAction) {
 		console.log('Button Clicked',inAction);

@@ -24,7 +24,7 @@ LOG_FILENAME = 'droneapi.log'
 
 # Set up a specific logger with our desired output level
 my_logger = logging.getLogger('MyLogger')
-my_logger.setLevel(logging.DEBUG)
+my_logger.setLevel(logging.INFO)
 # Add the log message handler to the logger
 handler = logging.handlers.RotatingFileHandler(
               LOG_FILENAME, maxBytes=20000, backupCount=5)
@@ -35,7 +35,7 @@ my_logger.addHandler(handler)
 my_logger.info("Starting DroneAPI server")
 my_logger.propegate=False
 
-versionDev=True #prod
+versionDev=False #prod
 defaultHomeDomain='http://droneapi.ddns.net:1235' 
 redisdB = None
 if (versionDev):
@@ -95,16 +95,23 @@ def connectVehicle(inVehicleId):
         if not connectionDict.get(inVehicleId):
             my_logger.info("connectionString: %s" % (connectionString,))
             my_logger.info("Connecting to vehicle on: %s" % (connectionString,))
-            connectionDict[inVehicleId] = connect(connectionString, wait_ready=True)
             connectionNameTypeDict[inVehicleId]={"name":vehicleName,"vehicleType":vehicleType}
             actionArrayDict[inVehicleId]=[] #create empty action array
+            connectionDict[inVehicleId]="Pending"
+            connectionDict[inVehicleId] = connect(connectionString, wait_ready=True)
             my_logger.info("actionArrayDict")
             my_logger.info(actionArrayDict)
         else:
-            my_logger.debug( "Already connected to vehicle")
+            if (connectionDict[inVehicleId]=="Pending"):
+                my_logger.warn( "Waiting for existing connection") 
+                raise Exception('Waiting for existing connection for vehicle ' + inVehicleId) 
+            else:  
+                my_logger.debug( "Already connected to vehicle")
     except Exception as e:
         my_logger.warn( "Unexpected error in connectVehicle:")
         my_logger.warn( "VehicleId=",inVehicleId)
+        if (connectionDict[inVehicleId]!="Pending"):
+            del connectionDict[inVehicleId]
         my_logger.exception(e)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")   
@@ -504,7 +511,7 @@ class index:
             my_logger.info( "#### Method GET of index #####")
             applyHeadders()
             outputObj={}
-            outputObj['description']='Welcome to the Drone API homepage. WARNING: This API is experimental - use at your own discression. The API allows you to interact with simulated or real drones through a simple hypermedia REST API. There is a HAL API Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test client at http://droneapi.ddns.net:1235/static/app  The API is maintained at https://github.com/lesterthomas/DroneRESTAPI'
+            outputObj['description']='Welcome to the Drone API homepage. WARNING: This API is experimental - use at your own discression. The API allows you to interact with simulated or real drones through a simple hypermedia REST API. There is a HAL API Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test client at http://droneapi.ddns.net:1235/static/app  The API is maintained at https://github.com/lesterthomas/DroneRESTAPI. This experimental API is part of the TM Forum Anything-as-a-Service Catalyst  https://projects.tmforum.org/wiki/display/PCT/A+Platform+for+IoT+and+Anything+as+a+Service+Catalyst '
             outputObj['_links']={
                 'self':{"href": homeDomain, "title":"Home-page (or EntryPoint) of the API"},
                 'vehicle': {

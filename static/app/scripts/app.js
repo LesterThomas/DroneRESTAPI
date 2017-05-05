@@ -17,7 +17,8 @@ angular
     'ngSanitize',
     'ngTouch',
 	'ngMap',
-	'chart.js'
+	'chart.js',
+  'angularModalService'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -26,10 +27,20 @@ angular
         controller: 'IndividualCtrl',
         controllerAs: 'individual'
       })
+      .when('/new', {
+        templateUrl: 'views/new.html',
+        controller: 'NewCtrl',
+        controllerAs: 'new'
+      })
       .when('/', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
         controllerAs: 'main'
+      })
+      .when('/modal', {
+        templateUrl: 'views/modal.html',
+        controller: 'ModalCtrl',
+        controllerAs: 'modal'
       })
       .otherwise({
         redirectTo: '/'

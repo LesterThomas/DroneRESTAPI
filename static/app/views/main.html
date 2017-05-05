@@ -10,6 +10,8 @@
 	 
 				<table class="table table-striped">
 					<tr>
+						<th>name</th>
+						<th>type</th>
 						<th>id</th>
 						<th>Status</th>
 						<th>Mode</th>
@@ -22,6 +24,8 @@
 						<th>Alt</th>
 					</tr>
 					<tr ng-click="selectIndividual(drone)" ng-repeat="drone in droneDetails" >
+						<td >{{drone.name}}</td>
+						<td >{{drone.vehicleType}}</td>
 						<td >{{drone.id}}</td>
 						<td >{{drone.armed_status}}</td>
 						<td >{{drone.mode}}</td>

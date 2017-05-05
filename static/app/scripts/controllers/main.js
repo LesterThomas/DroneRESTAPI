@@ -19,26 +19,27 @@ angular.module('droneFrontendApp')
 	$scope.markers=[];
 	$scope.zones=[];
 
-	var intervalTimer = $interval(updateDrones, 1000);
+	var intervalTimer = $interval(updateDrones, 500);
 	updateDrones();
 	function updateDrones() {
-		$http.get($scope.apiURL + 'vehicle').
-		    then(function(data, status, headers, config) {
-					console.log('API get success',data,status);	
-					$scope.drones=data.data.vehicle;
-					
-				},
-				function(data, status, headers, config) {
-				  // log error
-					console.log('API get error',data, status, headers, config);
-				});
-			
+		if ($scope.droneIndex<2) {
+			$http.get($scope.apiURL + 'vehicle').
+			    then(function(data, status, headers, config) {
+						console.log('API get success',data,status);	
+						$scope.drones=data.data._embedded.vehicle;
+						
+					},
+					function(data, status, headers, config) {
+					  // log error
+						console.log('API get error',data, status, headers, config);
+					});
+			}
 		if ($scope.drones.length>0) {
 			if ($scope.droneIndex>=$scope.drones.length) {
 				$scope.droneIndex=0;
 				}
 			console.log('Get detailed status for drone ' + $scope.droneIndex);
-			$http.get($scope.apiURL + 'vehicle/'+$scope.drones[$scope.droneIndex].id+'/').
+			$http.get($scope.apiURL + 'vehicle/'+$scope.drones[$scope.droneIndex].id).
 			    then(function(data, status, headers, config) {
 						console.log('API get success',data,status);	
 						var vehicleStatus=data.data;
