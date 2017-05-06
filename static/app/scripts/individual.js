@@ -13,8 +13,6 @@ angular.module('droneFrontendApp')
 	  	  
   	console.log('Started controller'); 
     $scope.apiURL=individualDrone.apiURL;
-    $scope.consoleRootURL=individualDrone.consoleRootURL;
-
     $scope.status='Loading';
 	$scope.mission={};
 	$scope.actions={availableActions:{}};
@@ -417,7 +415,7 @@ angular.module('droneFrontendApp')
 			        'Content-Type' : 'application/json; charset=UTF-8'
 			    }}).then(function(data, status, headers, config) {
 				console.log('API  action DELETE success',data,status);
-				window.location=$scope.consoleRootURL;
+				window.location='/';
 			},
 			function(data, status, headers, config) {
 			  // log error

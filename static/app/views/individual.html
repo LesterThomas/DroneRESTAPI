@@ -16,7 +16,7 @@
 							</td>
 							<td>					
 								<button type="button" class="btn btn-primary" ng-if="vehicleStatus.vehicleType=='real'" ng-click="disconnectDelete()">Disconnect from Drone</button>
-								<button type="button" class="btn btn-primary" ng-if="vehicleStatus.vehicleType=='simulated'" ng-click='actionButton(action)'>Delete Drone</button>
+								<button type="button" class="btn btn-primary" ng-if="vehicleStatus.vehicleType=='simulated'" ng-click='disconnectDelete(action)'>Delete Drone</button>
 							</td>
 						</tr>
 					</table>
@@ -144,7 +144,7 @@
 						<th>Satellites visible</th>
 						<td>{{vehicleStatus.gps_0.satellites_visible | number : 0}}</td>
 						<th>Satellite fix type</th>
-						<td>{{vehicleStatus.gps_0.fix_type | number : 0}} &deg;</td>
+						<td>{{vehicleStatus.gps_0.fix_type}} </td>
 					</tr>
 					<tr>
 						<th>Heartbeat</th>

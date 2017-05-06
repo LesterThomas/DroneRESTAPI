@@ -16,8 +16,8 @@ angular.module('droneFrontendApp')
     $scope.apiURL=individualDrone.apiURL;
     $scope.consoleRootURL=individualDrone.consoleRootURL;
 
-	$scope.progress=[false,false,false,false]
-	$scope.progressClass=['alert-warning','','',''],''
+	$scope.progress=[false,false,false,false,false,false,false]
+	$scope.progressClass=['alert-warning','','','','','','']
 	$scope.progressMessage=['Connecting to Cloud Service']
 	$scope.progressIndex=0;
 	$scope.progressFinished=false;
@@ -33,7 +33,7 @@ angular.module('droneFrontendApp')
 		$scope.progress[0]=true;
 		$scope.progressClass[0]='alert-success';
 		$scope.progressClass[1]='alert-warning';
-		var intervalTimer = $interval(updateProgress, 10000);
+		var intervalTimer = $interval(updateProgress, 20000);
 
 	},
 	function(data, status, headers, config) {
@@ -52,7 +52,7 @@ angular.module('droneFrontendApp')
 		$scope.progressClass[$scope.progressIndex]='alert-success';
 		$scope.progressClass[$scope.progressIndex+1]='alert-warning';
 		$scope.progressIndex++;
-		if ($scope.progressIndex==4){
+		if ($scope.progressIndex==6){
 			$scope.progressFinished=true;
 		}
 	}

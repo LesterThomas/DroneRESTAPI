@@ -2,9 +2,8 @@
 
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative, Command, mavutil, APIException
-import time
-import json
-import math
+from collections import OrderedDict
+import time, json, math, warnings
 import os
 import web
 import logging
@@ -15,28 +14,25 @@ import time
 import boto3
 import traceback
 
-from collections import OrderedDict
 
 
-#logging.basicConfig(filename='droneapi.log',level=logging.DEBUG, maxBytes=5*1024*1024, format='%(asctime)s %(levelname)s:%(message)s')
 
+#Set logging framework
 LOG_FILENAME = 'droneapi.log'
-
-# Set up a specific logger with our desired output level
 my_logger = logging.getLogger('MyLogger')
 my_logger.setLevel(logging.INFO)
-# Add the log message handler to the logger
-handler = logging.handlers.RotatingFileHandler(
-              LOG_FILENAME, maxBytes=20000, backupCount=5)
+handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=200000, backupCount=5)
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-# add formatter
 handler.setFormatter(formatter)
 my_logger.addHandler(handler)
-my_logger.info("Starting DroneAPI server")
 my_logger.propegate=False
 
-versionDev=False #prod
-defaultHomeDomain='http://droneapi.ddns.net:1235' 
+my_logger.info("##################################################################################")
+my_logger.info("Starting DroneAPI server")
+my_logger.info("##################################################################################")
+
+versionDev=True #prod
+defaultHomeDomain='' 
 redisdB = None
 if (versionDev):
     redisdB = redis.Redis(host='localhost', port=6379) #redis or localhost
@@ -44,10 +40,10 @@ if (versionDev):
     my_logger.info("Dev version connected to Redis at " + str(redisdB) + " and home domain of " + str(defaultHomeDomain))
 else:
     my_logger.info("Prod version connected to Redis at " + str(redisdB) + " and home domain of " + str(defaultHomeDomain))
+    defaultHomeDomain='http://droneapi.ddns.net:1235' 
     redisdB = redis.Redis(host='redis', port=6379) #redis or localhost
 
 #test the redis dB
-
 redisdB.set('foo', 'bar')
 value = redisdB.get('foo')
 if (value=='bar'):
@@ -57,14 +53,11 @@ else:
     raise Exception('Can not connect to Redis dB on port 6379')
 
 
-
-
-#connectionStringArray = [""] #["","udp:10.0.0.2:6000","udp:127.0.0.1:14561","udp:127.0.0.1:14571","udp:127.0.0.1:14581"]  #for drones 1-4
-connectionDict={}
-connectionNameTypeDict={}
-actionArrayDict={}
-authorizedZoneDict={}
-MAX_DISTANCE=1000 #max distance allowed in a single command
+connectionDict={} #holds a dictionary of DroneKit connection objects
+connectionNameTypeDict={} #holds the additonal name, type and starttime for the conections
+actionArrayDict={} #holds recent actions executied by each drone
+authorizedZoneDict={} #holds zone authorizations for each drone
+MAX_DISTANCE=1000 #max distance (m) allowed in a single command
  
 def applyHeadders():
     my_logger.debug('Applying HTTP headers')
@@ -89,6 +82,13 @@ def connectVehicle(inVehicleId):
         connectionString=jsonObj['connectionString']
         vehicleName=jsonObj['name']
         vehicleType=jsonObj['vehicleType']
+        vehicleStartTime=jsonObj['startTime']
+        currentTime = time.time()
+        timeSinceStart=currentTime-vehicleStartTime
+        my_logger.info("timeSinceStart= " + str(timeSinceStart) )
+        if (timeSinceStart<120): #less than two mins so throw Exception
+            my_logger.warn( "Raising warning")
+            raise Warning('Vehicle starting up ' + inVehicleId) 
 
         my_logger.info("connection string for vehicle " + str(inVehicleId) + "='" + connectionString + "'")
         # Connect to the Vehicle.
@@ -97,25 +97,21 @@ def connectVehicle(inVehicleId):
             my_logger.info("Connecting to vehicle on: %s" % (connectionString,))
             connectionNameTypeDict[inVehicleId]={"name":vehicleName,"vehicleType":vehicleType}
             actionArrayDict[inVehicleId]=[] #create empty action array
-            connectionDict[inVehicleId]="Pending"
-            connectionDict[inVehicleId] = connect(connectionString, wait_ready=True)
+            connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
             my_logger.info("actionArrayDict")
             my_logger.info(actionArrayDict)
         else:
-            if (connectionDict[inVehicleId]=="Pending"):
-                my_logger.warn( "Waiting for existing connection") 
-                raise Exception('Waiting for existing connection for vehicle ' + inVehicleId) 
-            else:  
-                my_logger.debug( "Already connected to vehicle")
+            my_logger.debug( "Already connected to vehicle")
+    except Warning:
+        my_logger.warn( "Caught warning: Vehicle starting up")
+        raise Warning('Vehicle starting up ' + inVehicleId)
     except Exception as e:
-        my_logger.warn( "Unexpected error in connectVehicle:")
-        my_logger.warn( "VehicleId=",inVehicleId)
-        if (connectionDict[inVehicleId]!="Pending"):
-            del connectionDict[inVehicleId]
+        my_logger.warn( "Caught exceptio: Unexpected error in connectVehicle:")
+        my_logger.warn( "VehicleId="+str(inVehicleId))
         my_logger.exception(e)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")   
-        raise Exception('Unexpected error connecting to vehicle ' + inVehicleId) 
+        raise Exception('Unexpected error connecting to vehicle ' + str(inVehicleId)) 
     return connectionDict[inVehicleId]
 
 def latLonAltObj(inObj):
@@ -614,7 +610,7 @@ class vehicleIndex:
             uuidVal=uuid.uuid4()
             key=str(uuidVal)[:8]
             my_logger.info("adding connectionString to Redis db with key '"+"connectionString:"+str(key)+"'")
-            redisdB.set("connectionString:"+key,json.dumps({"connectionString":connection,"name":vehicleName,"vehicleType":droneType}))
+            redisdB.set("connectionString:"+key,json.dumps({"connectionString":connection,"name":vehicleName,"vehicleType":droneType,"startTime":time.time()}))
 
             #connectionStringArray.append(connection)
             #connectionDict.append(None)
@@ -667,10 +663,11 @@ class action:
             applyHeadders()
             try:
                 inVehicle=connectVehicle(vehicleId)   
-            except Exception as inst:
-                my_logger.warn( "Unexpected error:")
-                my_logger.warn( vehicleId)
-                my_logger.warn( str(inst))
+            except Warning:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                return json.dumps({"error":"Cant connect to vehicle - vehicle starting up "}) 
+            except Exception:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
 
             vehicleStatus=getVehicleStatus(inVehicle)
@@ -753,8 +750,12 @@ class action:
             my_logger.info( "#### Method POST of action ####")
             try:
                 inVehicle=connectVehicle(vehicleId)   
-            except:
-                return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
+            except Warning:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                return json.dumps({"error":"Cant connect to vehicle - vehicle starting up ", "_actions": actions}) 
+            except Exception:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
+                return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId), "_actions": actions}) 
             applyHeadders()
             data = json.loads(web.data())
             #get latest data (inc homeLocation from vehicle)
@@ -839,7 +840,11 @@ def getMissionActions(vehicleId) :
     try:
         try:
             inVehicle=connectVehicle(vehicleId)   
-        except:
+        except Warning:
+            my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+            return json.dumps({"error":"Cant connect to vehicle - vehicle starting up "}) 
+        except Exception:
+            my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
             return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
         vehicleStatus=getVehicleStatus(inVehicle)
         outputObj={"_actions":[{"name":"upload mission","method":"POST","title":"Upload a new mission to the vehicle. The mission is a collection of mission actions with <command>, <coordinate[lat,lon,alt]> and command specific <param1>,<param2>,<param3>,<param4>. The command-set is described at https://pixhawk.ethz.ch/mavlink/", 
@@ -895,7 +900,11 @@ class mission:
             applyHeadders()
             try:
                 inVehicle=connectVehicle(vehicleId)   
-            except:
+            except Warning:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                return json.dumps({"error":"Cant connect to vehicle - vehicle starting up "}) 
+            except Exception:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
             #download existing commands
             my_logger.info( "download existing commands")
@@ -955,7 +964,11 @@ class authorizedZone:
             applyHeadders()
             try:
                 inVehicle=connectVehicle(vehicleId)   
-            except:
+            except Warning:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                return json.dumps({"error":"Cant connect to vehicle - vehicle starting up "}) 
+            except Exception:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
             vehicleStatus=getVehicleStatus(inVehicle)
             my_logger.info(vehicleStatus)
@@ -981,7 +994,11 @@ def getSimulatorParams(vehicleId) :
     try:
         try:
             inVehicle=connectVehicle(vehicleId)   
-        except:
+        except Warning:
+            my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+            return json.dumps({"error":"Cant connect to vehicle - vehicle starting up "}) 
+        except Exception:
+            my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
             return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
         vehicleStatus=getVehicleStatus(inVehicle)
         outputObj={"_actions":[{"method":"POST","title":"Upload a new simulator paramater to the simulator. ", "fields":[ {"name":"parameter","value":"SIM_WIND_SPD","type":"string"},{"name":"value","type":"integer","float":10}]}]};
@@ -1033,7 +1050,11 @@ class simulator:
             applyHeadders()
             try:
                 inVehicle=connectVehicle(vehicleId)   
-            except:
+            except Warning:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                return json.dumps({"error":"Cant connect to vehicle - vehicle starting up "}) 
+            except Exception:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
             my_logger.info( "posting new simulator parameter")
             simulatorData = json.loads(web.data());
@@ -1079,9 +1100,12 @@ class homeLocation:
             outputObj={}
             try:
                 inVehicle=connectVehicle(vehicleId)   
-            except:
+            except Warning:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                return json.dumps({"error":"Cant connect to vehicle - vehicle starting up "}) 
+            except Exception:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
-                return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId), "_actions": actions}) 
+                return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
             vehicleStatus=getVehicleStatus(inVehicle)
             cmds = inVehicle.commands
             cmds.download()
@@ -1117,7 +1141,10 @@ class vehicleStatus:
             #my_logger.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
             try:
                 inVehicle=connectVehicle(vehicleId)   
-            except:
+            except Warning:
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                return json.dumps({"error":"Cant connect to vehicle - vehicle starting up ", "_actions": actions}) 
+            except Exception:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId), "_actions": actions}) 
             vehicleStatus=getVehicleStatus(inVehicle)

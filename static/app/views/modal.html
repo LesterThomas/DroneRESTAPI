@@ -11,8 +11,10 @@
 
                 <div ng-class="progressClass[0]" class="alert">{{progressMessage[0]}} &nbsp;<span class=" alert-success glyphicon glyphicon-ok" ng-show="progress[0]"/></div>
                 <div ng-class="progressClass[1]" class="alert ">Starting Virtual Machine &nbsp;<span class=" alert-success glyphicon glyphicon-ok" ng-show="progress[1]" /></div>
-                <div ng-class="progressClass[2]" class="alert ">Initialising Docker DroneSim Image &nbsp;<span class=" alert-success glyphicon glyphicon-ok" ng-show="progress[2]"/></div>
-                <div ng-class="progressClass[3]" class="alert ">Starting Simulator &nbsp;<span class=" alert-success glyphicon glyphicon-ok" ng-show="progress[3]"/></div>
+                <div ng-class="progressClass[2]" class="alert ">Starting OS &nbsp;<span class=" alert-success glyphicon glyphicon-ok" ng-show="progress[2]"/></div>
+                <div ng-class="progressClass[3]" class="alert ">Initialising Docker DroneSim Image &nbsp;<span class=" alert-success glyphicon glyphicon-ok" ng-show="progress[3]"/></div>
+                <div ng-class="progressClass[4]" class="alert ">Starting Simulator &nbsp;<span class=" alert-success glyphicon glyphicon-ok" ng-show="progress[4]"/></div>
+                <div ng-class="progressClass[5]" class="alert ">Connecting API &nbsp;<span class=" alert-success glyphicon glyphicon-ok" ng-show="progress[5]"/></div>
               </div>
               <div class="modal-footer">
               		<button type="button" class="btn btn-primary" ng-click='backHome()' ng-show="progressFinished">Finished</button>
