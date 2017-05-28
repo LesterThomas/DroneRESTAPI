@@ -31,7 +31,7 @@ my_logger.info("################################################################
 my_logger.info("Starting DroneAPI server")
 my_logger.info("##################################################################################")
 
-versionDev=True #prod
+versionDev=False #prod
 defaultHomeDomain='' 
 redisdB = None
 if (versionDev):
@@ -827,6 +827,8 @@ class action:
             actionArray.append(outputObj)
             if (len(actionArray)>10):
                 actionArray.pop(0)
+            outputObj['href']=homeDomain+"/vehicle/"+str(vehicleId)+"/action"
+
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
