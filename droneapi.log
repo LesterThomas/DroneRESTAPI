@@ -1,0 +1,659 @@
+2017-06-04 11:56:30,014 - INFO - ##################################################################################
+2017-06-04 11:56:30,014 - INFO - Starting DroneAPI server
+2017-06-04 11:56:30,014 - INFO - ##################################################################################
+2017-06-04 11:56:30,015 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-06-04 11:56:30,021 - INFO - Connected to Redis dB
+2017-06-04 11:57:45,260 - INFO - ##################################################################################
+2017-06-04 11:57:45,260 - INFO - ##################################################################################
+2017-06-04 11:57:45,260 - INFO - Starting DroneAPI server
+2017-06-04 11:57:45,260 - INFO - Starting DroneAPI server
+2017-06-04 11:57:45,260 - INFO - ##################################################################################
+2017-06-04 11:57:45,260 - INFO - ##################################################################################
+2017-06-04 11:57:45,261 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-06-04 11:57:45,261 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-06-04 11:57:45,262 - INFO - Connected to Redis dB
+2017-06-04 11:57:45,262 - INFO - Connected to Redis dB
+2017-06-04 11:57:45,263 - INFO - #### Method GET of index #####
+2017-06-04 11:57:45,263 - INFO - #### Method GET of index #####
+2017-06-04 11:57:45,312 - INFO - #### Method GET of catchAll ####
+2017-06-04 11:57:45,312 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:11:24,021 - INFO - ##################################################################################
+2017-06-04 12:11:24,022 - INFO - Starting DroneAPI server
+2017-06-04 12:11:24,022 - INFO - ##################################################################################
+2017-06-04 12:11:24,022 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-06-04 12:11:24,023 - INFO - Connected to Redis dB
+2017-06-04 12:11:29,282 - INFO - ##################################################################################
+2017-06-04 12:11:29,282 - INFO - ##################################################################################
+2017-06-04 12:11:29,282 - INFO - Starting DroneAPI server
+2017-06-04 12:11:29,282 - INFO - Starting DroneAPI server
+2017-06-04 12:11:29,282 - INFO - ##################################################################################
+2017-06-04 12:11:29,282 - INFO - ##################################################################################
+2017-06-04 12:11:29,283 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-06-04 12:11:29,283 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-06-04 12:11:29,284 - INFO - Connected to Redis dB
+2017-06-04 12:11:29,284 - INFO - Connected to Redis dB
+2017-06-04 12:11:29,284 - INFO - #### Method GET of index #####
+2017-06-04 12:11:29,284 - INFO - #### Method GET of index #####
+2017-06-04 12:11:29,307 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:11:29,307 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:11:44,310 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:11:44,310 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:12:36,010 - INFO - ##################################################################################
+2017-06-04 12:12:36,011 - INFO - Starting DroneAPI server
+2017-06-04 12:12:36,011 - INFO - ##################################################################################
+2017-06-04 12:12:36,011 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:12:36,012 - INFO - Connected to Redis dB
+2017-06-04 12:12:42,742 - INFO - ##################################################################################
+2017-06-04 12:12:42,742 - INFO - ##################################################################################
+2017-06-04 12:12:42,743 - INFO - Starting DroneAPI server
+2017-06-04 12:12:42,743 - INFO - Starting DroneAPI server
+2017-06-04 12:12:42,743 - INFO - ##################################################################################
+2017-06-04 12:12:42,743 - INFO - ##################################################################################
+2017-06-04 12:12:42,743 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:12:42,743 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:12:42,744 - INFO - Connected to Redis dB
+2017-06-04 12:12:42,744 - INFO - Connected to Redis dB
+2017-06-04 12:12:42,745 - INFO - #### Method GET of index #####
+2017-06-04 12:12:42,745 - INFO - #### Method GET of index #####
+2017-06-04 12:12:42,768 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:12:42,768 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:12:45,483 - INFO - #### Method GET of vehicleIndex #####
+2017-06-04 12:12:45,483 - INFO - #### Method GET of vehicleIndex #####
+2017-06-04 12:12:45,514 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:12:45,514 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:13:26,826 - INFO - #### Method POST of vehicleIndex #####
+2017-06-04 12:13:26,826 - INFO - #### Method POST of vehicleIndex #####
+2017-06-04 12:13:26,826 - INFO - {"vehicleType":"real","connectionString":"udp:127.0.0.1:14561","name":"drone_1"}
+2017-06-04 12:13:26,826 - INFO - {"vehicleType":"real","connectionString":"udp:127.0.0.1:14561","name":"drone_1"}
+2017-06-04 12:13:26,827 - INFO - adding connectionString to Redis db with key 'connectionString:dc19f9c0'
+2017-06-04 12:13:26,827 - INFO - adding connectionString to Redis db with key 'connectionString:dc19f9c0'
+2017-06-04 12:14:10,242 - INFO - #### Method GET of vehicleIndex #####
+2017-06-04 12:14:10,242 - INFO - #### Method GET of vehicleIndex #####
+2017-06-04 12:14:22,806 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:14:22,806 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:14:22,807 - INFO - timeSinceStart= 584077.564935
+2017-06-04 12:14:22,807 - INFO - timeSinceStart= 584077.564935
+2017-06-04 12:14:22,807 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:14:22,807 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:14:22,807 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:14:22,807 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:14:22,808 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:14:22,808 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:14:24,139 - INFO - actionArrayDict
+2017-06-04 12:14:24,139 - INFO - actionArrayDict
+2017-06-04 12:14:24,139 - INFO - {u'c61f071e': []}
+2017-06-04 12:14:24,139 - INFO - {u'c61f071e': []}
+2017-06-04 12:15:25,485 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:15:25,485 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:17:38,636 - INFO - ##################################################################################
+2017-06-04 12:17:38,637 - INFO - Starting DroneAPI server
+2017-06-04 12:17:38,637 - INFO - ##################################################################################
+2017-06-04 12:17:38,637 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:17:38,638 - INFO - Connected to Redis dB
+2017-06-04 12:17:44,140 - INFO - ##################################################################################
+2017-06-04 12:17:44,140 - INFO - ##################################################################################
+2017-06-04 12:17:44,140 - INFO - Starting DroneAPI server
+2017-06-04 12:17:44,140 - INFO - Starting DroneAPI server
+2017-06-04 12:17:44,140 - INFO - ##################################################################################
+2017-06-04 12:17:44,140 - INFO - ##################################################################################
+2017-06-04 12:17:44,141 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:17:44,141 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:17:44,142 - INFO - Connected to Redis dB
+2017-06-04 12:17:44,142 - INFO - Connected to Redis dB
+2017-06-04 12:17:44,243 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:17:44,243 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:20:51,016 - INFO - ##################################################################################
+2017-06-04 12:20:51,016 - INFO - Starting DroneAPI server
+2017-06-04 12:20:51,016 - INFO - ##################################################################################
+2017-06-04 12:20:51,016 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:20:51,017 - INFO - Connected to Redis dB
+2017-06-04 12:20:55,759 - INFO - ##################################################################################
+2017-06-04 12:20:55,759 - INFO - ##################################################################################
+2017-06-04 12:20:55,760 - INFO - Starting DroneAPI server
+2017-06-04 12:20:55,760 - INFO - Starting DroneAPI server
+2017-06-04 12:20:55,760 - INFO - ##################################################################################
+2017-06-04 12:20:55,760 - INFO - ##################################################################################
+2017-06-04 12:20:55,760 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:20:55,760 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:20:55,761 - INFO - Connected to Redis dB
+2017-06-04 12:20:55,761 - INFO - Connected to Redis dB
+2017-06-04 12:20:55,875 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:20:55,875 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:25:55,080 - INFO - ##################################################################################
+2017-06-04 12:25:55,080 - INFO - Starting DroneAPI server
+2017-06-04 12:25:55,080 - INFO - ##################################################################################
+2017-06-04 12:25:55,080 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:25:55,081 - INFO - Connected to Redis dB
+2017-06-04 12:25:55,082 - INFO - ##################################################################################
+2017-06-04 12:25:55,082 - INFO - ##################################################################################
+2017-06-04 12:25:55,082 - INFO - Starting DroneAPI server
+2017-06-04 12:25:55,082 - INFO - Starting DroneAPI server
+2017-06-04 12:25:55,082 - INFO - ##################################################################################
+2017-06-04 12:25:55,082 - INFO - ##################################################################################
+2017-06-04 12:25:55,082 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:25:55,082 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:25:55,083 - INFO - Connected to Redis dB
+2017-06-04 12:25:55,083 - INFO - Connected to Redis dB
+2017-06-04 12:25:58,633 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:25:58,633 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:27:23,316 - INFO - ##################################################################################
+2017-06-04 12:27:23,316 - INFO - Starting DroneAPI server
+2017-06-04 12:27:23,316 - INFO - ##################################################################################
+2017-06-04 12:27:23,316 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:27:23,317 - INFO - Connected to Redis dB
+2017-06-04 12:27:27,880 - INFO - ##################################################################################
+2017-06-04 12:27:27,880 - INFO - ##################################################################################
+2017-06-04 12:27:27,880 - INFO - Starting DroneAPI server
+2017-06-04 12:27:27,880 - INFO - Starting DroneAPI server
+2017-06-04 12:27:27,881 - INFO - ##################################################################################
+2017-06-04 12:27:27,881 - INFO - ##################################################################################
+2017-06-04 12:27:27,881 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:27:27,881 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:27:27,882 - INFO - Connected to Redis dB
+2017-06-04 12:27:27,882 - INFO - Connected to Redis dB
+2017-06-04 12:27:27,883 - INFO - #### Method GET of simulator ####
+2017-06-04 12:27:27,883 - INFO - #### Method GET of simulator ####
+2017-06-04 12:27:27,884 - ERROR - global name 'applyHeadders' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 11, in GET
+    applyHeadders()
+NameError: global name 'applyHeadders' is not defined
+2017-06-04 12:27:27,884 - ERROR - global name 'applyHeadders' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 11, in GET
+    applyHeadders()
+NameError: global name 'applyHeadders' is not defined
+2017-06-04 12:27:27,982 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:27:27,982 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:27:29,230 - INFO - #### Method GET of simulator ####
+2017-06-04 12:27:29,230 - INFO - #### Method GET of simulator ####
+2017-06-04 12:27:29,230 - ERROR - global name 'applyHeadders' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 11, in GET
+    applyHeadders()
+NameError: global name 'applyHeadders' is not defined
+2017-06-04 12:27:29,230 - ERROR - global name 'applyHeadders' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 11, in GET
+    applyHeadders()
+NameError: global name 'applyHeadders' is not defined
+2017-06-04 12:27:29,279 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:27:29,279 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:28:04,055 - INFO - ##################################################################################
+2017-06-04 12:28:04,056 - INFO - Starting DroneAPI server
+2017-06-04 12:28:04,056 - INFO - ##################################################################################
+2017-06-04 12:28:04,056 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:28:04,057 - INFO - Connected to Redis dB
+2017-06-04 12:28:07,088 - INFO - ##################################################################################
+2017-06-04 12:28:07,088 - INFO - ##################################################################################
+2017-06-04 12:28:07,088 - INFO - Starting DroneAPI server
+2017-06-04 12:28:07,088 - INFO - Starting DroneAPI server
+2017-06-04 12:28:07,089 - INFO - ##################################################################################
+2017-06-04 12:28:07,089 - INFO - ##################################################################################
+2017-06-04 12:28:07,089 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:28:07,089 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:28:07,090 - INFO - Connected to Redis dB
+2017-06-04 12:28:07,090 - INFO - Connected to Redis dB
+2017-06-04 12:28:07,092 - INFO - #### Method GET of simulator ####
+2017-06-04 12:28:07,092 - INFO - #### Method GET of simulator ####
+2017-06-04 12:28:07,093 - ERROR - global name 'applyHeadders' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 11, in GET
+    applyHeadders()
+NameError: global name 'applyHeadders' is not defined
+2017-06-04 12:28:07,093 - ERROR - global name 'applyHeadders' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 11, in GET
+    applyHeadders()
+NameError: global name 'applyHeadders' is not defined
+2017-06-04 12:28:07,222 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:28:07,222 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:28:29,449 - INFO - ##################################################################################
+2017-06-04 12:28:29,449 - INFO - Starting DroneAPI server
+2017-06-04 12:28:29,450 - INFO - ##################################################################################
+2017-06-04 12:28:29,450 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:28:29,451 - INFO - Connected to Redis dB
+2017-06-04 12:28:33,733 - INFO - ##################################################################################
+2017-06-04 12:28:33,733 - INFO - ##################################################################################
+2017-06-04 12:28:33,733 - INFO - Starting DroneAPI server
+2017-06-04 12:28:33,733 - INFO - Starting DroneAPI server
+2017-06-04 12:28:33,733 - INFO - ##################################################################################
+2017-06-04 12:28:33,733 - INFO - ##################################################################################
+2017-06-04 12:28:33,733 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:28:33,733 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:28:33,735 - INFO - Connected to Redis dB
+2017-06-04 12:28:33,735 - INFO - Connected to Redis dB
+2017-06-04 12:28:33,736 - INFO - #### Method GET of simulator ####
+2017-06-04 12:28:33,736 - INFO - #### Method GET of simulator ####
+2017-06-04 12:28:33,736 - ERROR - global name 'applyHeadders' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 11, in GET
+    applyHeadders()
+NameError: global name 'applyHeadders' is not defined
+2017-06-04 12:28:33,736 - ERROR - global name 'applyHeadders' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 11, in GET
+    applyHeadders()
+NameError: global name 'applyHeadders' is not defined
+2017-06-04 12:28:33,760 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:28:33,760 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:29:56,977 - INFO - ##################################################################################
+2017-06-04 12:29:56,977 - INFO - Starting DroneAPI server
+2017-06-04 12:29:56,977 - INFO - ##################################################################################
+2017-06-04 12:29:56,978 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:29:56,979 - INFO - Connected to Redis dB
+2017-06-04 12:29:56,979 - INFO - ##################################################################################
+2017-06-04 12:29:56,979 - INFO - ##################################################################################
+2017-06-04 12:29:56,979 - INFO - Starting DroneAPI server
+2017-06-04 12:29:56,979 - INFO - Starting DroneAPI server
+2017-06-04 12:29:56,979 - INFO - ##################################################################################
+2017-06-04 12:29:56,979 - INFO - ##################################################################################
+2017-06-04 12:29:56,979 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:29:56,979 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:29:56,980 - INFO - Connected to Redis dB
+2017-06-04 12:29:56,980 - INFO - Connected to Redis dB
+2017-06-04 12:29:58,922 - INFO - #### Method GET of simulator ####
+2017-06-04 12:29:58,922 - INFO - #### Method GET of simulator ####
+2017-06-04 12:29:58,922 - ERROR - global name 'getSimulatorParams' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 14, in GET
+    output=getSimulatorParams(vehicleId)
+NameError: global name 'getSimulatorParams' is not defined
+2017-06-04 12:29:58,922 - ERROR - global name 'getSimulatorParams' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 14, in GET
+    output=getSimulatorParams(vehicleId)
+NameError: global name 'getSimulatorParams' is not defined
+2017-06-04 12:29:58,944 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:29:58,944 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:31:17,859 - INFO - ##################################################################################
+2017-06-04 12:31:17,859 - INFO - Starting DroneAPI server
+2017-06-04 12:31:17,859 - INFO - ##################################################################################
+2017-06-04 12:31:17,859 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:31:17,860 - INFO - Connected to Redis dB
+2017-06-04 12:31:17,860 - INFO - ##################################################################################
+2017-06-04 12:31:17,860 - INFO - ##################################################################################
+2017-06-04 12:31:17,860 - INFO - Starting DroneAPI server
+2017-06-04 12:31:17,860 - INFO - Starting DroneAPI server
+2017-06-04 12:31:17,861 - INFO - ##################################################################################
+2017-06-04 12:31:17,861 - INFO - ##################################################################################
+2017-06-04 12:31:17,861 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:31:17,861 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:31:17,861 - INFO - Connected to Redis dB
+2017-06-04 12:31:17,861 - INFO - Connected to Redis dB
+2017-06-04 12:31:20,592 - INFO - #### Method GET of simulator ####
+2017-06-04 12:31:20,592 - INFO - #### Method GET of simulator ####
+2017-06-04 12:31:20,593 - ERROR - global name 'getSimulatorParams' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 14, in GET
+    output=getSimulatorParams(vehicleId)
+NameError: global name 'getSimulatorParams' is not defined
+2017-06-04 12:31:20,593 - ERROR - global name 'getSimulatorParams' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 14, in GET
+    output=getSimulatorParams(vehicleId)
+NameError: global name 'getSimulatorParams' is not defined
+2017-06-04 12:31:20,615 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:31:20,615 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:31:42,055 - INFO - ##################################################################################
+2017-06-04 12:31:42,055 - INFO - Starting DroneAPI server
+2017-06-04 12:31:42,056 - INFO - ##################################################################################
+2017-06-04 12:31:42,056 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:31:42,057 - INFO - Connected to Redis dB
+2017-06-04 12:31:42,057 - INFO - ##################################################################################
+2017-06-04 12:31:42,057 - INFO - ##################################################################################
+2017-06-04 12:31:42,057 - INFO - Starting DroneAPI server
+2017-06-04 12:31:42,057 - INFO - Starting DroneAPI server
+2017-06-04 12:31:42,057 - INFO - ##################################################################################
+2017-06-04 12:31:42,057 - INFO - ##################################################################################
+2017-06-04 12:31:42,058 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:31:42,058 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:31:42,058 - INFO - Connected to Redis dB
+2017-06-04 12:31:42,058 - INFO - Connected to Redis dB
+2017-06-04 12:31:43,928 - INFO - #### Method GET of simulator ####
+2017-06-04 12:31:43,928 - INFO - #### Method GET of simulator ####
+2017-06-04 12:31:43,929 - WARNING - vehicleStatus:GET Cant connect to vehiclec61f071e
+2017-06-04 12:31:43,929 - WARNING - vehicleStatus:GET Cant connect to vehiclec61f071e
+2017-06-04 12:31:43,950 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:31:43,950 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:31:52,313 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:31:52,313 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:31:52,313 - INFO - timeSinceStart= 585127.071489
+2017-06-04 12:31:52,313 - INFO - timeSinceStart= 585127.071489
+2017-06-04 12:31:52,314 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:31:52,314 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:31:52,314 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:31:52,314 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:31:52,314 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:31:52,314 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:31:53,620 - INFO - actionArrayDict
+2017-06-04 12:31:53,620 - INFO - actionArrayDict
+2017-06-04 12:31:53,621 - INFO - {u'c61f071e': []}
+2017-06-04 12:31:53,621 - INFO - {u'c61f071e': []}
+2017-06-04 12:31:53,645 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:31:53,645 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:31:56,737 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:31:56,737 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:31:56,738 - INFO - timeSinceStart= 585131.495729
+2017-06-04 12:31:56,738 - INFO - timeSinceStart= 585131.495729
+2017-06-04 12:31:56,738 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:31:56,738 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:31:56,762 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:31:56,762 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:33:12,313 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:33:12,313 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:33:12,314 - INFO - timeSinceStart= 585207.072302
+2017-06-04 12:33:12,314 - INFO - timeSinceStart= 585207.072302
+2017-06-04 12:33:12,314 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:33:12,314 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:33:12,345 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:33:12,345 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:33:23,731 - INFO - ##################################################################################
+2017-06-04 12:33:23,731 - INFO - Starting DroneAPI server
+2017-06-04 12:33:23,731 - INFO - ##################################################################################
+2017-06-04 12:33:23,731 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:33:23,732 - INFO - Connected to Redis dB
+2017-06-04 12:33:23,733 - INFO - ##################################################################################
+2017-06-04 12:33:23,733 - INFO - ##################################################################################
+2017-06-04 12:33:23,733 - INFO - Starting DroneAPI server
+2017-06-04 12:33:23,733 - INFO - Starting DroneAPI server
+2017-06-04 12:33:23,733 - INFO - ##################################################################################
+2017-06-04 12:33:23,733 - INFO - ##################################################################################
+2017-06-04 12:33:23,733 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:33:23,733 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:33:23,734 - INFO - Connected to Redis dB
+2017-06-04 12:33:23,734 - INFO - Connected to Redis dB
+2017-06-04 12:33:45,537 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:33:45,537 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:33:45,538 - INFO - timeSinceStart= 585240.295609
+2017-06-04 12:33:45,538 - INFO - timeSinceStart= 585240.295609
+2017-06-04 12:33:45,538 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:33:45,538 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:33:45,538 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:33:45,538 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:33:45,538 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:33:45,538 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:33:46,744 - INFO - actionArrayDict
+2017-06-04 12:33:46,744 - INFO - actionArrayDict
+2017-06-04 12:33:46,744 - INFO - {u'c61f071e': []}
+2017-06-04 12:33:46,744 - INFO - {u'c61f071e': []}
+2017-06-04 12:33:46,767 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:33:46,767 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:33:54,444 - INFO - #### Method GET of action ####
+2017-06-04 12:33:54,444 - INFO - #### Method GET of action ####
+2017-06-04 12:33:54,445 - INFO - timeSinceStart= 585249.202805
+2017-06-04 12:33:54,445 - INFO - timeSinceStart= 585249.202805
+2017-06-04 12:33:54,445 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:33:54,445 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:33:54,445 - INFO - ############# in updateActionStatus
+2017-06-04 12:33:54,445 - INFO - ############# in updateActionStatus
+2017-06-04 12:33:54,446 - INFO - inVehicleId
+2017-06-04 12:33:54,446 - INFO - inVehicleId
+2017-06-04 12:33:54,446 - INFO - c61f071e
+2017-06-04 12:33:54,446 - INFO - c61f071e
+2017-06-04 12:33:54,446 - INFO - actionArrayDict
+2017-06-04 12:33:54,446 - INFO - actionArrayDict
+2017-06-04 12:33:54,446 - INFO - {u'c61f071e': []}
+2017-06-04 12:33:54,446 - INFO - {u'c61f071e': []}
+2017-06-04 12:33:54,446 - INFO - #############
+2017-06-04 12:33:54,446 - INFO - #############
+2017-06-04 12:33:54,446 - INFO - []
+2017-06-04 12:33:54,446 - INFO - []
+2017-06-04 12:33:54,473 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:33:54,473 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:33:57,808 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:33:57,808 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:34:00,028 - INFO - #### Method GET of simulator ####
+2017-06-04 12:34:00,028 - INFO - #### Method GET of simulator ####
+2017-06-04 12:34:00,029 - INFO - timeSinceStart= 585254.786734
+2017-06-04 12:34:00,029 - INFO - timeSinceStart= 585254.786734
+2017-06-04 12:34:00,029 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:34:00,029 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:34:00,029 - ERROR - global name 'getVehicleStatus' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 76, in getSimulatorParams
+    vehicleStatus=getVehicleStatus(inVehicle)
+NameError: global name 'getVehicleStatus' is not defined
+2017-06-04 12:34:00,029 - ERROR - global name 'getVehicleStatus' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 76, in getSimulatorParams
+    vehicleStatus=getVehicleStatus(inVehicle)
+NameError: global name 'getVehicleStatus' is not defined
+2017-06-04 12:34:00,051 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:34:00,051 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:34:03,934 - INFO - #### Method GET of simulator ####
+2017-06-04 12:34:03,934 - INFO - #### Method GET of simulator ####
+2017-06-04 12:34:03,935 - INFO - timeSinceStart= 585258.693238
+2017-06-04 12:34:03,935 - INFO - timeSinceStart= 585258.693238
+2017-06-04 12:34:03,935 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:34:03,935 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:34:03,936 - ERROR - global name 'getVehicleStatus' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 76, in getSimulatorParams
+    vehicleStatus=getVehicleStatus(inVehicle)
+NameError: global name 'getVehicleStatus' is not defined
+2017-06-04 12:34:03,936 - ERROR - global name 'getVehicleStatus' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 76, in getSimulatorParams
+    vehicleStatus=getVehicleStatus(inVehicle)
+NameError: global name 'getVehicleStatus' is not defined
+2017-06-04 12:34:03,957 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:34:03,957 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:35:04,169 - INFO - ##################################################################################
+2017-06-04 12:35:04,169 - INFO - Starting DroneAPI server
+2017-06-04 12:35:04,169 - INFO - ##################################################################################
+2017-06-04 12:35:04,169 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:35:04,171 - INFO - Connected to Redis dB
+2017-06-04 12:35:04,171 - INFO - ##################################################################################
+2017-06-04 12:35:04,171 - INFO - ##################################################################################
+2017-06-04 12:35:04,171 - INFO - Starting DroneAPI server
+2017-06-04 12:35:04,171 - INFO - Starting DroneAPI server
+2017-06-04 12:35:04,171 - INFO - ##################################################################################
+2017-06-04 12:35:04,171 - INFO - ##################################################################################
+2017-06-04 12:35:04,171 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:35:04,171 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:35:04,172 - INFO - Connected to Redis dB
+2017-06-04 12:35:04,172 - INFO - Connected to Redis dB
+2017-06-04 12:35:14,303 - INFO - #### Method GET of simulator ####
+2017-06-04 12:35:14,303 - INFO - #### Method GET of simulator ####
+2017-06-04 12:35:14,304 - INFO - timeSinceStart= 585329.061625
+2017-06-04 12:35:14,304 - INFO - timeSinceStart= 585329.061625
+2017-06-04 12:35:14,304 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:35:14,304 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:35:14,304 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:35:14,304 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:35:14,304 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:35:14,304 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:35:15,710 - INFO - actionArrayDict
+2017-06-04 12:35:15,710 - INFO - actionArrayDict
+2017-06-04 12:35:15,710 - INFO - {u'c61f071e': []}
+2017-06-04 12:35:15,710 - INFO - {u'c61f071e': []}
+2017-06-04 12:35:15,731 - ERROR - global name 'homeDomain' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 91, in getSimulatorParams
+    outputObj["_links"]={"self":{"href":homeDomain+"/vehicle/"+str(vehicleId)+"/simulator","title":"Get the current simulator parameters from the vehicle."},
+NameError: global name 'homeDomain' is not defined
+2017-06-04 12:35:15,731 - ERROR - global name 'homeDomain' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/droneAPISimulator.py", line 91, in getSimulatorParams
+    outputObj["_links"]={"self":{"href":homeDomain+"/vehicle/"+str(vehicleId)+"/simulator","title":"Get the current simulator parameters from the vehicle."},
+NameError: global name 'homeDomain' is not defined
+2017-06-04 12:35:15,762 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:35:15,762 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:35:50,843 - INFO - ##################################################################################
+2017-06-04 12:35:50,843 - INFO - Starting DroneAPI server
+2017-06-04 12:35:50,843 - INFO - ##################################################################################
+2017-06-04 12:35:50,843 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:35:50,844 - INFO - Connected to Redis dB
+2017-06-04 12:35:50,845 - INFO - ##################################################################################
+2017-06-04 12:35:50,845 - INFO - ##################################################################################
+2017-06-04 12:35:50,845 - INFO - Starting DroneAPI server
+2017-06-04 12:35:50,845 - INFO - Starting DroneAPI server
+2017-06-04 12:35:50,845 - INFO - ##################################################################################
+2017-06-04 12:35:50,845 - INFO - ##################################################################################
+2017-06-04 12:35:50,845 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:35:50,845 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:35:50,846 - INFO - Connected to Redis dB
+2017-06-04 12:35:50,846 - INFO - Connected to Redis dB
+2017-06-04 12:35:56,238 - INFO - #### Method GET of simulator ####
+2017-06-04 12:35:56,238 - INFO - #### Method GET of simulator ####
+2017-06-04 12:35:56,239 - INFO - timeSinceStart= 585370.997406
+2017-06-04 12:35:56,239 - INFO - timeSinceStart= 585370.997406
+2017-06-04 12:35:56,240 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:35:56,240 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:35:56,240 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:35:56,240 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:35:56,240 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:35:56,240 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:35:57,846 - INFO - actionArrayDict
+2017-06-04 12:35:57,846 - INFO - actionArrayDict
+2017-06-04 12:35:57,847 - INFO - {u'c61f071e': []}
+2017-06-04 12:35:57,847 - INFO - {u'c61f071e': []}
+2017-06-04 12:35:57,894 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:35:57,894 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:36:27,642 - INFO - ##################################################################################
+2017-06-04 12:36:27,642 - INFO - Starting DroneAPI server
+2017-06-04 12:36:27,642 - INFO - ##################################################################################
+2017-06-04 12:36:27,642 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:36:27,643 - INFO - Connected to Redis dB
+2017-06-04 12:36:27,644 - INFO - ##################################################################################
+2017-06-04 12:36:27,644 - INFO - ##################################################################################
+2017-06-04 12:36:27,644 - INFO - Starting DroneAPI server
+2017-06-04 12:36:27,644 - INFO - Starting DroneAPI server
+2017-06-04 12:36:27,644 - INFO - ##################################################################################
+2017-06-04 12:36:27,644 - INFO - ##################################################################################
+2017-06-04 12:36:27,644 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:36:27,644 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:36:27,645 - INFO - Connected to Redis dB
+2017-06-04 12:36:27,645 - INFO - Connected to Redis dB
+2017-06-04 12:36:40,430 - INFO - ##################################################################################
+2017-06-04 12:36:40,430 - INFO - Starting DroneAPI server
+2017-06-04 12:36:40,430 - INFO - ##################################################################################
+2017-06-04 12:36:40,431 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:36:40,432 - INFO - Connected to Redis dB
+2017-06-04 12:36:40,432 - INFO - ##################################################################################
+2017-06-04 12:36:40,432 - INFO - ##################################################################################
+2017-06-04 12:36:40,432 - INFO - Starting DroneAPI server
+2017-06-04 12:36:40,432 - INFO - Starting DroneAPI server
+2017-06-04 12:36:40,432 - INFO - ##################################################################################
+2017-06-04 12:36:40,432 - INFO - ##################################################################################
+2017-06-04 12:36:40,433 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:36:40,433 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:36:40,433 - INFO - Connected to Redis dB
+2017-06-04 12:36:40,433 - INFO - Connected to Redis dB
+2017-06-04 12:36:51,673 - INFO - ##################################################################################
+2017-06-04 12:36:51,673 - INFO - Starting DroneAPI server
+2017-06-04 12:36:51,673 - INFO - ##################################################################################
+2017-06-04 12:36:51,673 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:36:51,674 - INFO - Connected to Redis dB
+2017-06-04 12:36:51,674 - INFO - ##################################################################################
+2017-06-04 12:36:51,674 - INFO - ##################################################################################
+2017-06-04 12:36:51,674 - INFO - Starting DroneAPI server
+2017-06-04 12:36:51,674 - INFO - Starting DroneAPI server
+2017-06-04 12:36:51,675 - INFO - ##################################################################################
+2017-06-04 12:36:51,675 - INFO - ##################################################################################
+2017-06-04 12:36:51,675 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:36:51,675 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:36:51,675 - INFO - Connected to Redis dB
+2017-06-04 12:36:51,675 - INFO - Connected to Redis dB
+2017-06-04 12:37:27,857 - INFO - ##################################################################################
+2017-06-04 12:37:27,857 - INFO - Starting DroneAPI server
+2017-06-04 12:37:27,858 - INFO - ##################################################################################
+2017-06-04 12:37:27,858 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:37:27,859 - INFO - Connected to Redis dB
+2017-06-04 12:37:27,859 - INFO - ##################################################################################
+2017-06-04 12:37:27,859 - INFO - ##################################################################################
+2017-06-04 12:37:27,859 - INFO - Starting DroneAPI server
+2017-06-04 12:37:27,859 - INFO - Starting DroneAPI server
+2017-06-04 12:37:27,860 - INFO - ##################################################################################
+2017-06-04 12:37:27,860 - INFO - ##################################################################################
+2017-06-04 12:37:27,860 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:37:27,860 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:37:27,861 - INFO - Connected to Redis dB
+2017-06-04 12:37:27,861 - INFO - Connected to Redis dB
+2017-06-04 12:37:38,753 - INFO - ##################################################################################
+2017-06-04 12:37:38,753 - INFO - Starting DroneAPI server
+2017-06-04 12:37:38,754 - INFO - ##################################################################################
+2017-06-04 12:37:38,754 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:37:38,755 - INFO - Connected to Redis dB
+2017-06-04 12:37:38,755 - INFO - ##################################################################################
+2017-06-04 12:37:38,755 - INFO - ##################################################################################
+2017-06-04 12:37:38,755 - INFO - Starting DroneAPI server
+2017-06-04 12:37:38,755 - INFO - Starting DroneAPI server
+2017-06-04 12:37:38,756 - INFO - ##################################################################################
+2017-06-04 12:37:38,756 - INFO - ##################################################################################
+2017-06-04 12:37:38,756 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:37:38,756 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:37:38,756 - INFO - Connected to Redis dB
+2017-06-04 12:37:38,756 - INFO - Connected to Redis dB
+2017-06-04 12:37:44,408 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:37:44,408 - INFO - #### Method GET of vehicleStatus ####
+2017-06-04 12:37:44,409 - INFO - timeSinceStart= 585479.16727
+2017-06-04 12:37:44,409 - INFO - timeSinceStart= 585479.16727
+2017-06-04 12:37:44,409 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:37:44,409 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:37:44,410 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:37:44,410 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:37:44,410 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:37:44,410 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:37:45,815 - INFO - actionArrayDict
+2017-06-04 12:37:45,815 - INFO - actionArrayDict
+2017-06-04 12:37:45,816 - INFO - {u'c61f071e': []}
+2017-06-04 12:37:45,816 - INFO - {u'c61f071e': []}
+2017-06-04 12:37:45,840 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:37:45,840 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:37:58,284 - INFO - #### Method GET of simulator ####
+2017-06-04 12:37:58,284 - INFO - #### Method GET of simulator ####
+2017-06-04 12:37:58,284 - INFO - timeSinceStart= 585493.042513
+2017-06-04 12:37:58,284 - INFO - timeSinceStart= 585493.042513
+2017-06-04 12:37:58,285 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:37:58,285 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:37:58,329 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:37:58,329 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:38:00,600 - INFO - #### Method GET of simulator ####
+2017-06-04 12:38:00,600 - INFO - #### Method GET of simulator ####
+2017-06-04 12:38:00,601 - INFO - timeSinceStart= 585495.359084
+2017-06-04 12:38:00,601 - INFO - timeSinceStart= 585495.359084
+2017-06-04 12:38:00,602 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:38:00,602 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:38:00,648 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:38:00,648 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:38:12,263 - INFO - ##################################################################################
+2017-06-04 12:38:12,264 - INFO - Starting DroneAPI server
+2017-06-04 12:38:12,264 - INFO - ##################################################################################
+2017-06-04 12:38:12,264 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:38:12,265 - INFO - Connected to Redis dB
+2017-06-04 12:38:12,265 - INFO - ##################################################################################
+2017-06-04 12:38:12,265 - INFO - ##################################################################################
+2017-06-04 12:38:12,265 - INFO - Starting DroneAPI server
+2017-06-04 12:38:12,265 - INFO - Starting DroneAPI server
+2017-06-04 12:38:12,265 - INFO - ##################################################################################
+2017-06-04 12:38:12,265 - INFO - ##################################################################################
+2017-06-04 12:38:12,266 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:38:12,266 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://192.168.1.67:1235
+2017-06-04 12:38:12,266 - INFO - Connected to Redis dB
+2017-06-04 12:38:12,266 - INFO - Connected to Redis dB
+2017-06-04 12:38:15,852 - INFO - #### Method GET of simulator ####
+2017-06-04 12:38:15,852 - INFO - #### Method GET of simulator ####
+2017-06-04 12:38:15,853 - INFO - timeSinceStart= 585510.61088
+2017-06-04 12:38:15,853 - INFO - timeSinceStart= 585510.61088
+2017-06-04 12:38:15,853 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:38:15,853 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:38:15,853 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:38:15,853 - INFO - connectionString: udp:127.0.0.1:14561
+2017-06-04 12:38:15,853 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:38:15,853 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-06-04 12:38:16,959 - INFO - actionArrayDict
+2017-06-04 12:38:16,959 - INFO - actionArrayDict
+2017-06-04 12:38:16,959 - INFO - {u'c61f071e': []}
+2017-06-04 12:38:16,959 - INFO - {u'c61f071e': []}
+2017-06-04 12:38:17,006 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:38:17,006 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:38:19,375 - INFO - #### Method GET of simulator ####
+2017-06-04 12:38:19,375 - INFO - #### Method GET of simulator ####
+2017-06-04 12:38:19,376 - INFO - timeSinceStart= 585514.13361
+2017-06-04 12:38:19,376 - INFO - timeSinceStart= 585514.13361
+2017-06-04 12:38:19,376 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:38:19,376 - INFO - connection string for vehicle c61f071e='udp:127.0.0.1:14561'
+2017-06-04 12:38:19,420 - INFO - #### Method GET of catchAll ####
+2017-06-04 12:38:19,420 - INFO - #### Method GET of catchAll ####
