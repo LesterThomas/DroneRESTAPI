@@ -1,6 +1,7 @@
-FROM lesterthomas/sitlbase:1.0
+FROM lesterthomas/sitlbase:1.1
 
 WORKDIR "/arducopter/ArduCopter"
 EXPOSE 14550
-CMD sleep infinity | python /arducopter/Tools/autotest/sim_vehicle.py -N -w -L NewburyEMH  --out=tcpin:0.0.0.0:14550
+CMD sleep infinity | python /arducopter/Tools/autotest/sim_vehicle.py -N -w -L SOUTHAMPTON  --out=tcpin:0.0.0.0:14550
 
+	

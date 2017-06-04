@@ -33,6 +33,7 @@ RUN echo 'export PATH=$PATH:/Documents/ardupilot/Tools/autotest' >> ~/.bashrc
 RUN echo 'export PATH=/usr/lib/ccache:$PATH' >> ~/.bashrc
 RUN . ~/.bashrc
 RUN echo 'NewburyEMH=51.4049426,-1.3049351,105,0' >> /arducopter/Tools/autotest/locations.txt 
+RUN echo 'SOUTHAMPTON=50.905515,-1.428529,5,0' >> /arducopter/Tools/autotest/locations.txt 
 
 RUN apt-get install -y python-pip
 RUN apt-get install -y python-dev

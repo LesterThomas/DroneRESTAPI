@@ -1119,3 +1119,685 @@ error: [Errno 110] Connection timed out
 2017-05-06 11:55:51,511 - INFO - #### Method GET of catchAll ####
 2017-05-06 11:56:18,983 - INFO - #### Method GET of catchAll ####
 2017-05-06 11:56:18,983 - INFO - #### Method GET of catchAll ####
+2017-05-13 11:06:23,901 - INFO - ##################################################################################
+2017-05-13 11:06:23,940 - INFO - Starting DroneAPI server
+2017-05-13 11:06:23,940 - INFO - ##################################################################################
+2017-05-13 11:06:23,940 - INFO - Prod version connected to Redis at None and home domain of 
+2017-05-13 11:07:02,139 - INFO - ##################################################################################
+2017-05-13 11:07:02,139 - INFO - Starting DroneAPI server
+2017-05-13 11:07:02,139 - INFO - ##################################################################################
+2017-05-13 11:07:02,139 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-13 11:07:02,209 - INFO - Connected to Redis dB
+2017-05-13 11:08:03,760 - INFO - ##################################################################################
+2017-05-13 11:08:03,760 - INFO - ##################################################################################
+2017-05-13 11:08:03,760 - INFO - Starting DroneAPI server
+2017-05-13 11:08:03,760 - INFO - Starting DroneAPI server
+2017-05-13 11:08:03,760 - INFO - ##################################################################################
+2017-05-13 11:08:03,760 - INFO - ##################################################################################
+2017-05-13 11:08:03,760 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-13 11:08:03,760 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-13 11:08:03,761 - INFO - Connected to Redis dB
+2017-05-13 11:08:03,761 - INFO - Connected to Redis dB
+2017-05-13 11:08:03,762 - INFO - #### Method GET of vehicleIndex #####
+2017-05-13 11:08:03,762 - INFO - #### Method GET of vehicleIndex #####
+2017-05-13 11:08:31,278 - INFO - #### Method GET of vehicleStatus ####
+2017-05-13 11:08:31,278 - INFO - #### Method GET of vehicleStatus ####
+2017-05-13 11:08:31,279 - INFO - timeSinceStart= 602101.754683
+2017-05-13 11:08:31,279 - INFO - timeSinceStart= 602101.754683
+2017-05-13 11:08:31,279 - INFO - connection string for vehicle e51cebb0='tcp:172.31.14.199:14550'
+2017-05-13 11:08:31,279 - INFO - connection string for vehicle e51cebb0='tcp:172.31.14.199:14550'
+2017-05-13 11:08:31,279 - INFO - connectionString: tcp:172.31.14.199:14550
+2017-05-13 11:08:31,279 - INFO - connectionString: tcp:172.31.14.199:14550
+2017-05-13 11:08:31,279 - INFO - Connecting to vehicle on: tcp:172.31.14.199:14550
+2017-05-13 11:08:31,279 - INFO - Connecting to vehicle on: tcp:172.31.14.199:14550
+2017-05-13 11:08:33,394 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-13 11:08:33,394 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-13 11:08:33,395 - WARNING - VehicleId=e51cebb0
+2017-05-13 11:08:33,395 - WARNING - VehicleId=e51cebb0
+2017-05-13 11:08:33,395 - ERROR - [Errno 101] Network is unreachable
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1209, in mavlink_connection
+    return mavtcp(device[4:], source_system=source_system, retries=retries, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 945, in __init__
+    self.port.connect(self.destination_addr)
+  File "/usr/lib/python2.7/socket.py", line 224, in meth
+    return getattr(self._sock,name)(*args)
+error: [Errno 101] Network is unreachable
+2017-05-13 11:08:33,395 - ERROR - [Errno 101] Network is unreachable
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1209, in mavlink_connection
+    return mavtcp(device[4:], source_system=source_system, retries=retries, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 945, in __init__
+    self.port.connect(self.destination_addr)
+  File "/usr/lib/python2.7/socket.py", line 224, in meth
+    return getattr(self._sock,name)(*args)
+error: [Errno 101] Network is unreachable
+2017-05-13 11:08:33,464 - WARNING - vehicleStatus:GET Cant connect to vehiclee51cebb0
+2017-05-13 11:08:33,464 - WARNING - vehicleStatus:GET Cant connect to vehiclee51cebb0
+2017-05-13 11:08:41,393 - INFO - #### Method DELETE of vehicleStatus ####
+2017-05-13 11:08:41,393 - INFO - #### Method DELETE of vehicleStatus ####
+2017-05-13 11:08:49,279 - INFO - #### Method GET of vehicleStatus ####
+2017-05-13 11:08:49,279 - INFO - #### Method GET of vehicleStatus ####
+2017-05-13 11:08:49,280 - INFO - timeSinceStart= 603725.130435
+2017-05-13 11:08:49,280 - INFO - timeSinceStart= 603725.130435
+2017-05-13 11:08:49,280 - INFO - connection string for vehicle b377165f='udp:127.0.0.1:14561'
+2017-05-13 11:08:49,280 - INFO - connection string for vehicle b377165f='udp:127.0.0.1:14561'
+2017-05-13 11:08:49,280 - INFO - connectionString: udp:127.0.0.1:14561
+2017-05-13 11:08:49,280 - INFO - connectionString: udp:127.0.0.1:14561
+2017-05-13 11:08:49,280 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-05-13 11:08:49,280 - INFO - Connecting to vehicle on: udp:127.0.0.1:14561
+2017-05-13 11:08:54,943 - ERROR - Error conneting to AWS:
+2017-05-13 11:08:54,943 - ERROR - Error conneting to AWS:
+2017-05-13 11:08:54,944 - ERROR - VehicleId=
+2017-05-13 11:08:54,944 - ERROR - VehicleId=
+2017-05-13 11:08:54,944 - ERROR - e51cebb0
+2017-05-13 11:08:54,944 - ERROR - e51cebb0
+2017-05-13 11:08:54,944 - ERROR - Exception=
+2017-05-13 11:08:54,944 - ERROR - Exception=
+2017-05-13 11:08:54,944 - ERROR - Could not connect to the endpoint URL: "https://ec2.eu-west-2.amazonaws.com/"
+2017-05-13 11:08:54,944 - ERROR - Could not connect to the endpoint URL: "https://ec2.eu-west-2.amazonaws.com/"
+2017-05-13 11:08:54,945 - INFO - connectionString=tcp:172.31.14.199:14550
+2017-05-13 11:08:54,945 - INFO - connectionString=tcp:172.31.14.199:14550
+2017-05-13 11:08:54,945 - INFO - ipAddress=172.31.14.199
+2017-05-13 11:08:54,945 - INFO - ipAddress=172.31.14.199
+2017-05-13 11:08:59,299 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-13 11:08:59,299 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-13 11:08:59,299 - WARNING - VehicleId=b377165f
+2017-05-13 11:08:59,299 - WARNING - VehicleId=b377165f
+2017-05-13 11:08:59,299 - ERROR - Timeout in initializing connection.
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2827, in connect
+    vehicle.initialize(rate=rate, heartbeat_timeout=heartbeat_timeout)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2100, in initialize
+    raise APIException('Timeout in initializing connection.')
+APIException: Timeout in initializing connection.
+2017-05-13 11:08:59,299 - ERROR - Timeout in initializing connection.
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2827, in connect
+    vehicle.initialize(rate=rate, heartbeat_timeout=heartbeat_timeout)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2100, in initialize
+    raise APIException('Timeout in initializing connection.')
+APIException: Timeout in initializing connection.
+2017-05-13 11:08:59,299 - WARNING - vehicleStatus:GET Cant connect to vehicleb377165f
+2017-05-13 11:08:59,299 - WARNING - vehicleStatus:GET Cant connect to vehicleb377165f
+2017-05-13 11:09:13,543 - INFO - #### Method DELETE of vehicleStatus ####
+2017-05-13 11:09:13,543 - INFO - #### Method DELETE of vehicleStatus ####
+2017-05-13 11:09:22,742 - ERROR - Error conneting to AWS:
+2017-05-13 11:09:22,742 - ERROR - Error conneting to AWS:
+2017-05-13 11:09:22,743 - ERROR - VehicleId=
+2017-05-13 11:09:22,743 - ERROR - VehicleId=
+2017-05-13 11:09:22,743 - ERROR - b377165f
+2017-05-13 11:09:22,743 - ERROR - b377165f
+2017-05-13 11:09:22,743 - ERROR - Exception=
+2017-05-13 11:09:22,743 - ERROR - Exception=
+2017-05-13 11:09:22,743 - ERROR - Could not connect to the endpoint URL: "https://ec2.eu-west-2.amazonaws.com/"
+2017-05-13 11:09:22,743 - ERROR - Could not connect to the endpoint URL: "https://ec2.eu-west-2.amazonaws.com/"
+2017-05-13 11:09:22,743 - INFO - connectionString=udp:127.0.0.1:14561
+2017-05-13 11:09:22,743 - INFO - connectionString=udp:127.0.0.1:14561
+2017-05-13 11:09:22,743 - INFO - ipAddress=127.0.0.1
+2017-05-13 11:09:22,743 - INFO - ipAddress=127.0.0.1
+2017-05-13 11:11:35,945 - INFO - ##################################################################################
+2017-05-13 11:11:35,945 - INFO - Starting DroneAPI server
+2017-05-13 11:11:35,945 - INFO - ##################################################################################
+2017-05-13 11:11:35,946 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-13 11:11:35,946 - INFO - Connected to Redis dB
+2017-05-13 11:11:39,449 - INFO - ##################################################################################
+2017-05-13 11:11:39,449 - INFO - ##################################################################################
+2017-05-13 11:11:39,449 - INFO - Starting DroneAPI server
+2017-05-13 11:11:39,449 - INFO - Starting DroneAPI server
+2017-05-13 11:11:39,449 - INFO - ##################################################################################
+2017-05-13 11:11:39,449 - INFO - ##################################################################################
+2017-05-13 11:11:39,449 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-13 11:11:39,449 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-13 11:11:39,450 - INFO - Connected to Redis dB
+2017-05-13 11:11:39,450 - INFO - Connected to Redis dB
+2017-05-13 11:11:39,451 - INFO - #### Method GET of vehicleIndex #####
+2017-05-13 11:11:39,451 - INFO - #### Method GET of vehicleIndex #####
+2017-05-14 14:35:55,854 - INFO - ##################################################################################
+2017-05-14 14:35:55,870 - INFO - Starting DroneAPI server
+2017-05-14 14:35:55,870 - INFO - ##################################################################################
+2017-05-14 14:35:55,870 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-14 14:35:55,871 - INFO - Connected to Redis dB
+2017-05-14 14:36:39,644 - INFO - ##################################################################################
+2017-05-14 14:36:39,644 - INFO - ##################################################################################
+2017-05-14 14:36:39,644 - INFO - Starting DroneAPI server
+2017-05-14 14:36:39,644 - INFO - Starting DroneAPI server
+2017-05-14 14:36:39,644 - INFO - ##################################################################################
+2017-05-14 14:36:39,644 - INFO - ##################################################################################
+2017-05-14 14:36:39,644 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-14 14:36:39,644 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-14 14:36:39,646 - INFO - Connected to Redis dB
+2017-05-14 14:36:39,646 - INFO - Connected to Redis dB
+2017-05-14 14:36:39,647 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:36:39,647 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:36:44,355 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:36:44,355 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:36:58,411 - INFO - #### Method GET of index #####
+2017-05-14 14:36:58,411 - INFO - #### Method GET of index #####
+2017-05-14 14:36:58,461 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:36:58,461 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:37:02,677 - INFO - #### Method GET of vehicleIndex #####
+2017-05-14 14:37:02,677 - INFO - #### Method GET of vehicleIndex #####
+2017-05-14 14:37:02,740 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:37:02,740 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:37:12,651 - INFO - #### Method GET of vehicleIndex #####
+2017-05-14 14:37:12,651 - INFO - #### Method GET of vehicleIndex #####
+2017-05-14 14:37:12,687 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:37:12,687 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:37:16,516 - INFO - #### Method GET of vehicleIndex #####
+2017-05-14 14:37:16,516 - INFO - #### Method GET of vehicleIndex #####
+2017-05-14 14:37:16,554 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:37:16,554 - INFO - #### Method GET of catchAll ####
+2017-05-14 14:37:43,017 - INFO - #### Method POST of vehicleIndex #####
+2017-05-14 14:37:43,017 - INFO - #### Method POST of vehicleIndex #####
+2017-05-14 14:37:43,017 - INFO - {"vehicleType":"simulated","name":"test"}
+2017-05-14 14:37:43,017 - INFO - {"vehicleType":"simulated","name":"test"}
+2017-05-14 14:37:43,838 - ERROR - 'dict' object has no attribute 'maxSimulatedDrones'
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 598, in POST
+    if (len(instances)>config.maxSimulatedDrones):
+AttributeError: 'dict' object has no attribute 'maxSimulatedDrones'
+2017-05-14 14:37:43,838 - ERROR - 'dict' object has no attribute 'maxSimulatedDrones'
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 598, in POST
+    if (len(instances)>config.maxSimulatedDrones):
+AttributeError: 'dict' object has no attribute 'maxSimulatedDrones'
+2017-05-14 14:38:38,091 - INFO - ##################################################################################
+2017-05-14 14:38:38,091 - INFO - Starting DroneAPI server
+2017-05-14 14:38:38,091 - INFO - ##################################################################################
+2017-05-14 14:38:38,092 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-14 14:38:38,092 - INFO - Connected to Redis dB
+2017-05-14 14:38:42,632 - INFO - ##################################################################################
+2017-05-14 14:38:42,632 - INFO - ##################################################################################
+2017-05-14 14:38:42,632 - INFO - Starting DroneAPI server
+2017-05-14 14:38:42,632 - INFO - Starting DroneAPI server
+2017-05-14 14:38:42,632 - INFO - ##################################################################################
+2017-05-14 14:38:42,632 - INFO - ##################################################################################
+2017-05-14 14:38:42,633 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-14 14:38:42,633 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-14 14:38:42,635 - INFO - Connected to Redis dB
+2017-05-14 14:38:42,635 - INFO - Connected to Redis dB
+2017-05-14 14:38:42,636 - INFO - #### Method POST of vehicleIndex #####
+2017-05-14 14:38:42,636 - INFO - #### Method POST of vehicleIndex #####
+2017-05-14 14:38:42,636 - INFO - {"vehicleType":"simulated","name":"test"}
+2017-05-14 14:38:42,636 - INFO - {"vehicleType":"simulated","name":"test"}
+2017-05-14 14:38:43,167 - INFO - Creating new AWS image
+2017-05-14 14:38:43,167 - INFO - Creating new AWS image
+2017-05-14 14:38:43,306 - ERROR - 'dict' object has no attribute 'droneSimImage'
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 606, in POST
+    createresponse=ec2resource.create_instances(ImageId=config.droneSimImage, MinCount=1, MaxCount=1,InstanceType='t2.micro',SecurityGroupIds=[config.droneSimSecurityGroup])
+AttributeError: 'dict' object has no attribute 'droneSimImage'
+2017-05-14 14:38:43,306 - ERROR - 'dict' object has no attribute 'droneSimImage'
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 606, in POST
+    createresponse=ec2resource.create_instances(ImageId=config.droneSimImage, MinCount=1, MaxCount=1,InstanceType='t2.micro',SecurityGroupIds=[config.droneSimSecurityGroup])
+AttributeError: 'dict' object has no attribute 'droneSimImage'
+2017-05-14 14:41:04,914 - INFO - ##################################################################################
+2017-05-14 14:41:04,914 - INFO - Starting DroneAPI server
+2017-05-14 14:41:04,914 - INFO - ##################################################################################
+2017-05-14 14:41:04,914 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-14 14:41:04,915 - INFO - Connected to Redis dB
+2017-05-14 14:41:39,209 - INFO - ##################################################################################
+2017-05-14 14:41:39,209 - INFO - Starting DroneAPI server
+2017-05-14 14:41:39,209 - INFO - ##################################################################################
+2017-05-14 14:41:39,209 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-14 14:41:39,210 - INFO - Connected to Redis dB
+2017-05-14 14:41:45,881 - INFO - ##################################################################################
+2017-05-14 14:41:45,881 - INFO - ##################################################################################
+2017-05-14 14:41:45,881 - INFO - Starting DroneAPI server
+2017-05-14 14:41:45,881 - INFO - Starting DroneAPI server
+2017-05-14 14:41:45,881 - INFO - ##################################################################################
+2017-05-14 14:41:45,881 - INFO - ##################################################################################
+2017-05-14 14:41:45,881 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-14 14:41:45,881 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-14 14:41:45,882 - INFO - Connected to Redis dB
+2017-05-14 14:41:45,882 - INFO - Connected to Redis dB
+2017-05-14 14:41:45,882 - INFO - #### Method POST of vehicleIndex #####
+2017-05-14 14:41:45,882 - INFO - #### Method POST of vehicleIndex #####
+2017-05-14 14:41:45,883 - INFO - {"vehicleType":"simulated","name":"test"}
+2017-05-14 14:41:45,883 - INFO - {"vehicleType":"simulated","name":"test"}
+2017-05-14 14:41:46,404 - INFO - Creating new AWS image
+2017-05-14 14:41:46,404 - INFO - Creating new AWS image
+2017-05-14 14:41:47,546 - INFO - 172.31.1.136
+2017-05-14 14:41:47,546 - INFO - 172.31.1.136
+2017-05-14 14:41:47,546 - INFO - adding connectionString to Redis db with key 'connectionString:980cd22b'
+2017-05-14 14:41:47,546 - INFO - adding connectionString to Redis db with key 'connectionString:980cd22b'
+2017-05-14 14:41:58,780 - INFO - #### Method GET of vehicleIndex #####
+2017-05-14 14:41:58,780 - INFO - #### Method GET of vehicleIndex #####
+2017-05-14 14:42:06,884 - INFO - #### Method GET of vehicleIndex #####
+2017-05-14 14:42:06,884 - INFO - #### Method GET of vehicleIndex #####
+2017-05-14 14:42:14,699 - INFO - #### Method GET of vehicleStatus ####
+2017-05-14 14:42:14,699 - INFO - #### Method GET of vehicleStatus ####
+2017-05-14 14:42:14,699 - INFO - timeSinceStart= 27.152712822
+2017-05-14 14:42:14,699 - INFO - timeSinceStart= 27.152712822
+2017-05-14 14:42:14,699 - WARNING - Raising warning
+2017-05-14 14:42:14,699 - WARNING - Raising warning
+2017-05-14 14:42:14,700 - WARNING - Caught warning: Vehicle starting up
+2017-05-14 14:42:14,700 - WARNING - Caught warning: Vehicle starting up
+2017-05-14 14:42:14,700 - WARNING - vehicleStatus:GET Cant connect to vehicle - vehicle starting up980cd22b
+2017-05-14 14:42:14,700 - WARNING - vehicleStatus:GET Cant connect to vehicle - vehicle starting up980cd22b
+2017-05-14 14:42:27,963 - INFO - #### Method DELETE of vehicleStatus ####
+2017-05-14 14:42:27,963 - INFO - #### Method DELETE of vehicleStatus ####
+2017-05-14 14:42:29,058 - INFO - connectionString=tcp:172.31.1.136:14550
+2017-05-14 14:42:29,058 - INFO - connectionString=tcp:172.31.1.136:14550
+2017-05-14 14:42:29,059 - INFO - ipAddress=172.31.1.136
+2017-05-14 14:42:29,059 - INFO - ipAddress=172.31.1.136
+2017-05-15 16:58:24,552 - INFO - ##################################################################################
+2017-05-15 16:58:24,552 - INFO - Starting DroneAPI server
+2017-05-15 16:58:24,552 - INFO - ##################################################################################
+2017-05-15 16:58:24,552 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 16:58:24,553 - INFO - Connected to Redis dB
+2017-05-15 16:58:58,775 - INFO - ##################################################################################
+2017-05-15 16:58:58,775 - INFO - ##################################################################################
+2017-05-15 16:58:58,776 - INFO - Starting DroneAPI server
+2017-05-15 16:58:58,776 - INFO - Starting DroneAPI server
+2017-05-15 16:58:58,776 - INFO - ##################################################################################
+2017-05-15 16:58:58,776 - INFO - ##################################################################################
+2017-05-15 16:58:58,776 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 16:58:58,776 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 16:58:58,777 - INFO - Connected to Redis dB
+2017-05-15 16:58:58,777 - INFO - Connected to Redis dB
+2017-05-15 16:58:58,778 - INFO - #### Method GET of vehicleIndex #####
+2017-05-15 16:58:58,778 - INFO - #### Method GET of vehicleIndex #####
+2017-05-15 16:59:22,827 - INFO - #### Method POST of vehicleIndex #####
+2017-05-15 16:59:22,827 - INFO - #### Method POST of vehicleIndex #####
+2017-05-15 16:59:22,828 - INFO - {"vehicleType":"real","connectionString":"udp:127.0.0.1:","name":"drone_"}
+2017-05-15 16:59:22,828 - INFO - {"vehicleType":"real","connectionString":"udp:127.0.0.1:","name":"drone_"}
+2017-05-15 16:59:22,828 - INFO - adding connectionString to Redis db with key 'connectionString:aee129b5'
+2017-05-15 16:59:22,828 - INFO - adding connectionString to Redis db with key 'connectionString:aee129b5'
+2017-05-15 16:59:31,299 - INFO - #### Method GET of vehicleIndex #####
+2017-05-15 16:59:31,299 - INFO - #### Method GET of vehicleIndex #####
+2017-05-15 17:00:21,637 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:00:21,637 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:00:21,639 - INFO - timeSinceStart= 58.8105530739
+2017-05-15 17:00:21,639 - INFO - timeSinceStart= 58.8105530739
+2017-05-15 17:00:21,639 - WARNING - Raising warning
+2017-05-15 17:00:21,639 - WARNING - Raising warning
+2017-05-15 17:00:21,639 - WARNING - Caught warning: Vehicle starting up
+2017-05-15 17:00:21,639 - WARNING - Caught warning: Vehicle starting up
+2017-05-15 17:00:21,639 - WARNING - vehicleStatus:GET Cant connect to vehicle - vehicle starting upaee129b5
+2017-05-15 17:00:21,639 - WARNING - vehicleStatus:GET Cant connect to vehicle - vehicle starting upaee129b5
+2017-05-15 17:01:00,235 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:01:00,235 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:01:00,236 - INFO - timeSinceStart= 97.4078631401
+2017-05-15 17:01:00,236 - INFO - timeSinceStart= 97.4078631401
+2017-05-15 17:01:00,236 - WARNING - Raising warning
+2017-05-15 17:01:00,236 - WARNING - Raising warning
+2017-05-15 17:01:00,236 - WARNING - Caught warning: Vehicle starting up
+2017-05-15 17:01:00,236 - WARNING - Caught warning: Vehicle starting up
+2017-05-15 17:01:00,236 - WARNING - vehicleStatus:GET Cant connect to vehicle - vehicle starting upaee129b5
+2017-05-15 17:01:00,236 - WARNING - vehicleStatus:GET Cant connect to vehicle - vehicle starting upaee129b5
+2017-05-15 17:01:40,653 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:01:40,653 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:01:40,653 - INFO - timeSinceStart= 137.824963093
+2017-05-15 17:01:40,653 - INFO - timeSinceStart= 137.824963093
+2017-05-15 17:01:40,653 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:01:40,653 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:01:40,653 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:01:40,653 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:01:40,654 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:01:40,654 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:01:40,654 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:01:40,654 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:01:40,654 - WARNING - VehicleId=aee129b5
+2017-05-15 17:01:40,654 - WARNING - VehicleId=aee129b5
+2017-05-15 17:01:40,654 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:01:40,654 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:01:40,828 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5
+2017-05-15 17:01:40,828 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5
+2017-05-15 17:01:40,828 - ERROR - global name 'inVehicleId' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 1153, in GET
+    jsonObjStr=redisdB.get('connectionString:' + str(inVehicleId))
+NameError: global name 'inVehicleId' is not defined
+2017-05-15 17:01:40,828 - ERROR - global name 'inVehicleId' is not defined
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 1153, in GET
+    jsonObjStr=redisdB.get('connectionString:' + str(inVehicleId))
+NameError: global name 'inVehicleId' is not defined
+2017-05-15 17:02:16,356 - INFO - ##################################################################################
+2017-05-15 17:02:16,357 - INFO - Starting DroneAPI server
+2017-05-15 17:02:16,357 - INFO - ##################################################################################
+2017-05-15 17:02:16,357 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:02:16,358 - INFO - Connected to Redis dB
+2017-05-15 17:02:20,698 - INFO - ##################################################################################
+2017-05-15 17:02:20,698 - INFO - ##################################################################################
+2017-05-15 17:02:20,698 - INFO - Starting DroneAPI server
+2017-05-15 17:02:20,698 - INFO - Starting DroneAPI server
+2017-05-15 17:02:20,698 - INFO - ##################################################################################
+2017-05-15 17:02:20,698 - INFO - ##################################################################################
+2017-05-15 17:02:20,698 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:02:20,698 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:02:20,699 - INFO - Connected to Redis dB
+2017-05-15 17:02:20,699 - INFO - Connected to Redis dB
+2017-05-15 17:02:20,700 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:02:20,700 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:02:20,700 - INFO - timeSinceStart= 177.872081041
+2017-05-15 17:02:20,700 - INFO - timeSinceStart= 177.872081041
+2017-05-15 17:02:20,700 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:02:20,700 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:02:20,701 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:02:20,701 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:02:20,701 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:02:20,701 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:02:20,701 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:02:20,701 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:02:20,701 - WARNING - VehicleId=aee129b5
+2017-05-15 17:02:20,701 - WARNING - VehicleId=aee129b5
+2017-05-15 17:02:20,701 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:02:20,701 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:02:20,702 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5
+2017-05-15 17:02:20,702 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5
+2017-05-15 17:03:03,065 - INFO - ##################################################################################
+2017-05-15 17:03:03,065 - INFO - Starting DroneAPI server
+2017-05-15 17:03:03,065 - INFO - ##################################################################################
+2017-05-15 17:03:03,065 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:03:03,066 - INFO - Connected to Redis dB
+2017-05-15 17:03:07,718 - INFO - ##################################################################################
+2017-05-15 17:03:07,718 - INFO - ##################################################################################
+2017-05-15 17:03:07,718 - INFO - Starting DroneAPI server
+2017-05-15 17:03:07,718 - INFO - Starting DroneAPI server
+2017-05-15 17:03:07,718 - INFO - ##################################################################################
+2017-05-15 17:03:07,718 - INFO - ##################################################################################
+2017-05-15 17:03:07,718 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:03:07,718 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:03:07,719 - INFO - Connected to Redis dB
+2017-05-15 17:03:07,719 - INFO - Connected to Redis dB
+2017-05-15 17:03:07,721 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:03:07,721 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:03:07,721 - INFO - timeSinceStart= 224.892872095
+2017-05-15 17:03:07,721 - INFO - timeSinceStart= 224.892872095
+2017-05-15 17:03:07,721 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:03:07,721 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:03:07,721 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:03:07,721 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:03:07,722 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:03:07,722 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:03:07,722 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:03:07,722 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:03:07,722 - WARNING - VehicleId=aee129b5
+2017-05-15 17:03:07,722 - WARNING - VehicleId=aee129b5
+2017-05-15 17:03:07,722 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:03:07,722 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:03:07,724 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5
+2017-05-15 17:03:07,724 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5
+2017-05-15 17:03:07,724 - ERROR - string indices must be integers, not str
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 1154, in GET
+    return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId) + "with connectionString " + jsonObjStr['connectionString'], "_actions": actions})
+TypeError: string indices must be integers, not str
+2017-05-15 17:03:07,724 - ERROR - string indices must be integers, not str
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 1154, in GET
+    return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId) + "with connectionString " + jsonObjStr['connectionString'], "_actions": actions})
+TypeError: string indices must be integers, not str
+2017-05-15 17:03:32,169 - INFO - ##################################################################################
+2017-05-15 17:03:32,169 - INFO - Starting DroneAPI server
+2017-05-15 17:03:32,169 - INFO - ##################################################################################
+2017-05-15 17:03:32,169 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:03:32,170 - INFO - Connected to Redis dB
+2017-05-15 17:03:34,260 - INFO - ##################################################################################
+2017-05-15 17:03:34,260 - INFO - ##################################################################################
+2017-05-15 17:03:34,260 - INFO - Starting DroneAPI server
+2017-05-15 17:03:34,260 - INFO - Starting DroneAPI server
+2017-05-15 17:03:34,260 - INFO - ##################################################################################
+2017-05-15 17:03:34,260 - INFO - ##################################################################################
+2017-05-15 17:03:34,261 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:03:34,261 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:03:34,261 - INFO - Connected to Redis dB
+2017-05-15 17:03:34,261 - INFO - Connected to Redis dB
+2017-05-15 17:03:34,262 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:03:34,262 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:03:34,263 - INFO - timeSinceStart= 251.434435129
+2017-05-15 17:03:34,263 - INFO - timeSinceStart= 251.434435129
+2017-05-15 17:03:34,263 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:03:34,263 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:03:34,263 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:03:34,263 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:03:34,263 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:03:34,263 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:03:34,263 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:03:34,263 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:03:34,263 - WARNING - VehicleId=aee129b5
+2017-05-15 17:03:34,263 - WARNING - VehicleId=aee129b5
+2017-05-15 17:03:34,263 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:03:34,263 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:03:34,264 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5
+2017-05-15 17:03:34,264 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5
+2017-05-15 17:03:34,265 - ERROR - 'str' object has no attribute 'connectionString'
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 1154, in GET
+    return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId) + "with connectionString " + jsonObjStr.connectionString, "_actions": actions})
+AttributeError: 'str' object has no attribute 'connectionString'
+2017-05-15 17:03:34,265 - ERROR - 'str' object has no attribute 'connectionString'
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 1154, in GET
+    return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId) + "with connectionString " + jsonObjStr.connectionString, "_actions": actions})
+AttributeError: 'str' object has no attribute 'connectionString'
+2017-05-15 17:04:03,848 - INFO - ##################################################################################
+2017-05-15 17:04:03,848 - INFO - Starting DroneAPI server
+2017-05-15 17:04:03,848 - INFO - ##################################################################################
+2017-05-15 17:04:03,849 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:04:03,849 - INFO - Connected to Redis dB
+2017-05-15 17:04:08,409 - INFO - ##################################################################################
+2017-05-15 17:04:08,409 - INFO - ##################################################################################
+2017-05-15 17:04:08,409 - INFO - Starting DroneAPI server
+2017-05-15 17:04:08,409 - INFO - Starting DroneAPI server
+2017-05-15 17:04:08,409 - INFO - ##################################################################################
+2017-05-15 17:04:08,409 - INFO - ##################################################################################
+2017-05-15 17:04:08,409 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:04:08,409 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:04:08,410 - INFO - Connected to Redis dB
+2017-05-15 17:04:08,410 - INFO - Connected to Redis dB
+2017-05-15 17:04:08,411 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:04:08,411 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:04:08,412 - INFO - timeSinceStart= 285.58348012
+2017-05-15 17:04:08,412 - INFO - timeSinceStart= 285.58348012
+2017-05-15 17:04:08,412 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:04:08,412 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:04:08,412 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:04:08,412 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:04:08,412 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:04:08,412 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:04:08,412 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:04:08,412 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:04:08,412 - WARNING - VehicleId=aee129b5
+2017-05-15 17:04:08,412 - WARNING - VehicleId=aee129b5
+2017-05-15 17:04:08,412 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:04:08,412 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:04:08,413 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5
+2017-05-15 17:04:08,413 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5
+2017-05-15 17:04:40,074 - INFO - ##################################################################################
+2017-05-15 17:04:40,074 - INFO - Starting DroneAPI server
+2017-05-15 17:04:40,074 - INFO - ##################################################################################
+2017-05-15 17:04:40,074 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:04:40,075 - INFO - Connected to Redis dB
+2017-05-15 17:04:42,587 - INFO - ##################################################################################
+2017-05-15 17:04:42,587 - INFO - ##################################################################################
+2017-05-15 17:04:42,588 - INFO - Starting DroneAPI server
+2017-05-15 17:04:42,588 - INFO - Starting DroneAPI server
+2017-05-15 17:04:42,588 - INFO - ##################################################################################
+2017-05-15 17:04:42,588 - INFO - ##################################################################################
+2017-05-15 17:04:42,588 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:04:42,588 - INFO - Dev version connected to Redis at Redis<ConnectionPool<Connection<host=localhost,port=6379,db=0>>> and home domain of http://localhost:1235
+2017-05-15 17:04:42,589 - INFO - Connected to Redis dB
+2017-05-15 17:04:42,589 - INFO - Connected to Redis dB
+2017-05-15 17:04:42,591 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:04:42,591 - INFO - #### Method GET of vehicleStatus ####
+2017-05-15 17:04:42,591 - INFO - timeSinceStart= 319.763030052
+2017-05-15 17:04:42,591 - INFO - timeSinceStart= 319.763030052
+2017-05-15 17:04:42,592 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:04:42,592 - INFO - connection string for vehicle aee129b5='udp:127.0.0.1:'
+2017-05-15 17:04:42,592 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:04:42,592 - INFO - connectionString: udp:127.0.0.1:
+2017-05-15 17:04:42,592 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:04:42,592 - INFO - Connecting to vehicle on: udp:127.0.0.1:
+2017-05-15 17:04:42,593 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:04:42,593 - WARNING - Caught exceptio: Unexpected error in connectVehicle:
+2017-05-15 17:04:42,593 - WARNING - VehicleId=aee129b5
+2017-05-15 17:04:42,593 - WARNING - VehicleId=aee129b5
+2017-05-15 17:04:42,593 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:04:42,593 - ERROR - invalid literal for int() with base 10: ''
+Traceback (most recent call last):
+  File "/home/lester/Documents/DroneRESTAPI/rest.py", line 100, in connectVehicle
+    connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/__init__.py", line 2817, in connect
+    handler = MAVConnection(ip, baud=baud, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/dronekit/mavlink.py", line 128, in __init__
+    self.master = mavutil.mavlink_connection(ip, baud=baud, source_system=source_system)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 1220, in mavlink_connection
+    return mavudp(device[4:], input=input, source_system=source_system, use_native=use_native)
+  File "/usr/local/lib/python2.7/dist-packages/pymavlink/mavutil.py", line 879, in __init__
+    self.port.bind((a[0], int(a[1])))
+ValueError: invalid literal for int() with base 10: ''
+2017-05-15 17:04:42,595 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5
+2017-05-15 17:04:42,595 - WARNING - vehicleStatus:GET Cant connect to vehicleaee129b5

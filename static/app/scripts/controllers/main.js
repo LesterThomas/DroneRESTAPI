@@ -19,7 +19,7 @@ angular.module('droneFrontendApp')
 	$scope.markers=[];
 	$scope.zones=[];
 
-	var intervalTimer = $interval(updateDrones, 500);
+	var intervalTimer = $interval(updateDrones, 1000);
 	updateDrones();
 	function updateDrones() {
 		if ($scope.droneIndex<2) {

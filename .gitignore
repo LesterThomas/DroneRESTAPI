@@ -3,4 +3,7 @@
 /.tmp
 /.sass-cache
 /bower_components
+*.log*
+*.pyc
+*.raw
 

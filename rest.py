@@ -14,6 +14,7 @@ import time
 import boto3
 import traceback
 
+config={"maxSimulatedDrones":20, "maxDistance":1000, "groundSpeed":10,"droneSimImage":"ami-5be0f43f", "droneSimSecurityGroup":"sg-fd0c8394"}
 
 
 
@@ -31,7 +32,7 @@ my_logger.info("################################################################
 my_logger.info("Starting DroneAPI server")
 my_logger.info("##################################################################################")
 
-versionDev=True #prod
+versionDev=False #prod
 defaultHomeDomain='' 
 redisdB = None
 if (versionDev):
@@ -57,7 +58,6 @@ connectionDict={} #holds a dictionary of DroneKit connection objects
 connectionNameTypeDict={} #holds the additonal name, type and starttime for the conections
 actionArrayDict={} #holds recent actions executied by each drone
 authorizedZoneDict={} #holds zone authorizations for each drone
-MAX_DISTANCE=1000 #max distance (m) allowed in a single command
  
 def applyHeadders():
     my_logger.debug('Applying HTTP headers')
@@ -233,13 +233,14 @@ def goto(inVehicle, dNorth, dEast, dDown):
     """
     Moves the vehicle to a position dNorth metres North and dEast metres East of the current position.
     """
+    global config
     outputObj={}
     if inVehicle.armed:
         distance=round(math.sqrt(dNorth*dNorth+dEast*dEast))
         my_logger.info("Goto a distance of " + str(distance) + "m.")
-        if distance>MAX_DISTANCE:
+        if distance>1000:
             outputObj["status"]="Error"
-            outputObj["error"]="Can not go more than " + str(MAX_DISTANCE) + "m in single command. Action was to go " + str(distance) + " m."
+            outputObj["error"]="Can not go more than " + str(1000) + "m in single command. Action was to go " + str(distance) + " m."
             outputObj["name"]="Max-Distance-Error"
         else:
             outputObj["name"]="Goto-Relative-Current"
@@ -291,6 +292,7 @@ def get_location_metres(original_location, dNorth, dEast):
     return targetlocation;
 
 def gotoRelative(inVehicle, north, east, down):
+    global config
     outputObj={}
     if inVehicle.armed:
         outputObj["name"]="Goto-Relative-Home"
@@ -303,9 +305,9 @@ def gotoRelative(inVehicle, north, east, down):
         targetLocation = get_location_metres(homeLocation, north, east)
         targetLocation.alt=homeLocation.alt-down
         distance=round(distanceInMeters(targetLocation.lat,targetLocation.lon,inVehicle.location.global_frame.lat,inVehicle.location.global_frame.lon))
-        if distance>MAX_DISTANCE:
+        if distance>1000:
             outputObj["status"]="Error"
-            outputObj["error"]="Can not go more than " + str(MAX_DISTANCE) + "m in single command. Action was to go " + str(distance) + " m."
+            outputObj["error"]="Can not go more than " + str(1000) + "m in single command. Action was to go " + str(distance) + " m."
             outputObj["name"]="Max-Distance-Error"
         else:
             #coodinates are target
@@ -324,6 +326,7 @@ def gotoRelative(inVehicle, north, east, down):
 
 
 def gotoAbsolute(inVehicle, inLocation):        
+    global config
     outputObj={}
     if inVehicle.armed:
         outputObj["name"]="Goto-Absolute"
@@ -333,9 +336,9 @@ def gotoAbsolute(inVehicle, inLocation):
         my_logger.debug( "lat" + str(inLocation['lat']))
 
         distance=round(distanceInMeters(inLocation['lat'], inLocation['lon'],inVehicle.location.global_frame.lat,inVehicle.location.global_frame.lon))
-        if distance>MAX_DISTANCE:
+        if distance>1000:
             outputObj["status"]="Error"
-            outputObj["error"]="Can not go more than " + str(MAX_DISTANCE) + "m in single command. Action was to go " + str(distance) + " m."
+            outputObj["error"]="Can not go more than " + str(1000) + "m in single command. Action was to go " + str(distance) + " m."
             outputObj["name"]="Max-Distance-Error"
         else:
             inVehicle.mode = VehicleMode("GUIDED")
@@ -563,6 +566,7 @@ class vehicleIndex:
 
     def POST(self):
         global redisdB
+        global config
         try:
             my_logger.info( "#### Method POST of vehicleIndex #####")
             applyHeadders()
@@ -591,9 +595,9 @@ class vehicleIndex:
                             
                 my_logger.debug("Non terminated instances=")
                 my_logger.debug(len(instances))
-                if (len(instances)>10):
+                if (len(instances)>20):
                     outputObj={}
-                    outputObj["status"]="Error: can't launch more than 10 drones"
+                    outputObj["status"]="Error: can't launch more than "+str(20)+" drones"
                     return json.dumps(outputObj)
 
 
@@ -1146,7 +1150,8 @@ class vehicleStatus:
                 return json.dumps({"error":"Cant connect to vehicle - vehicle starting up ", "_actions": actions}) 
             except Exception:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
-                return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId), "_actions": actions}) 
+                jsonObjStr=redisdB.get('connectionString:' + str(vehicleId))
+                return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId) + "with connection " + jsonObjStr, "_actions": actions}) 
             vehicleStatus=getVehicleStatus(inVehicle)
             vehicleStatus["name"]=connectionNameTypeDict[vehicleId]['name']
             vehicleStatus["vehicleType"]=connectionNameTypeDict[vehicleId]['vehicleType']
