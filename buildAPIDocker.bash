@@ -1,0 +1,2 @@
+docker build -f APIDockerBuild/Dockerfile -t lesterthomas/droneapi:1.7.0 .
+docker run -p 1235:1234 --link redis:redis -e "DRONE_URL='http://localhost:1235'" --name droneapi lesterthomas/droneapi:1.7.0 &

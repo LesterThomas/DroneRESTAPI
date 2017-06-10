@@ -26,17 +26,9 @@ my_logger.info("################################################################
 my_logger.info("Starting DroneAPI server")
 my_logger.info("##################################################################################")
 
-versionDev=True#prod
-defaultHomeDomain='' 
-redisdB = None
-if (versionDev):
-    redisdB = redis.Redis(host='localhost', port=6379) #redis or localhost
-    defaultHomeDomain='http://localhost:1235' #droneapi.ddns.net
-    my_logger.info("Dev version connected to Redis at " + str(redisdB) + " and home domain of " + str(defaultHomeDomain))
-else:
-    my_logger.info("Prod version connected to Redis at " + str(redisdB) + " and home domain of " + str(defaultHomeDomain))
-    defaultHomeDomain='http://droneapi.ddns.net:1235' 
-    redisdB = redis.Redis(host='redis', port=6379) #redis or localhost
+
+defaultHomeDomain=os.environ['DRONE_URL']
+redisdB = redis.Redis(host='redis', port=6379) #redis or localhost
 
 #test the redis dB
 redisdB.set('foo', 'bar')

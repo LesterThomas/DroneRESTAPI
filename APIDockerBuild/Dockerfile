@@ -38,9 +38,10 @@ RUN apt-get install -y awscli
 
 
 
-COPY rest.py /
+COPY *.py /
 COPY static static/
 RUN chmod -R 777 /static
 EXPOSE 1234
-CMD python /rest.py 1234 
+ENV DRONE_URL="http://droneapi.ddns.net:1235"
+CMD python /droneAPIMain.py 1234 
 
