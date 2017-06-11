@@ -43,5 +43,6 @@ COPY static static/
 RUN chmod -R 777 /static
 EXPOSE 1234
 ENV DRONE_URL="http://droneapi.ddns.net:1235"
+ENV DOCKER_URL="http://172.17.42.1:4243"
 CMD python /droneAPIMain.py 1234 
 

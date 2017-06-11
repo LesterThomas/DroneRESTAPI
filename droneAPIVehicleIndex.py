@@ -56,8 +56,20 @@ class vehicleIndex:
             vehicleName=data["name"]
             connection=None
             if (droneType=="simulated"):
-                #build simulted drone using aws
+                
+                
+                #build simulated drone via Docker
+                #docker api available on host at
+                #http://172.17.42.1:4243/containers/json
+                #2 steps to to create a drone
+                #curl -X POST -H "Content-Type: application/json" -d '{"Image": "lesterthomas/dronesim:1.7", "ExposedPorts": { "14550/tcp": {} }}' http://172.17.42.1:4243/containers/create
+                #returns {"Id":"269c290ad5da6ad15b2d8ed44f5a8d59caba4333bfedbca9795b1c0fc716f6d4","Warnings":null}
+                #2nd step
+                #curl -X POST -H "Content-Type: application/json" -d '{"PortBindings": { "14550/tcp": [{ "HostPort": "14550" }] }}' http://172.17.42.1:4243/containers/7005495cc1b47884089e64cf7e6c9fe45112c1cf1e5be5f2514ac1342b415ee4/start
 
+
+
+                #build simulted drone using aws
                 #test how many non-terminated instances there are
                 ec2client = boto3.client('ec2')
                 response = ec2client.describe_instances()
@@ -85,6 +97,8 @@ class vehicleIndex:
                 createresponse=ec2resource.create_instances(ImageId='ami-5be0f43f', MinCount=1, MaxCount=1,InstanceType='t2.micro',SecurityGroupIds=['sg-fd0c8394'])
                 my_logger.info(createresponse[0].private_ip_address)
                 connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
+                    
+
             else:
                 connection = data["connectionString"]
             
