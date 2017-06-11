@@ -6,10 +6,10 @@ This project provides a simple hypermedia REST API on top of the Python SDK (htt
 
 ###Simple installation
 
-This is available as a single Docker image containing the API and a ArduCopter flight-controller running in a simulator (SITL). On a Docker environment, simply run the following command (which will install the image if not already installed).
+This is available as a two Docker images containing the API and a Drone simulator (ArduCopter flight-controller running in a simulator-SITL). On a Docker environment, simply run the following command (which will install the image if not already installed).
 
 ```
-docker run -p 1235:1234 lesterthomas/dronesim:1.5
+docker run -p 1235:1234 lesterthomas/droneapi:1.7
 ```
 
 The docker image will expose the API on port `1235`. Test the API in a browser or POSTMAN by going to the root of the API `http://localhost:1235/`.
@@ -19,11 +19,13 @@ There is a static HTML5 web page built on top of the API that gives a simple dem
 
 ###Detailed installation
 
-To install the API and simulator outside of Docker, you can follow the commands in the two Dockerfiles (the instructions are based on  http://python.dronekit.io/guide/quick_start.html#installation). 
+To install the API and simulator outside of Docker, you can follow the commands in the three Dockerfiles (the instructions are based on  http://python.dronekit.io/guide/quick_start.html#installation). 
 
-The first Dockerfile is for the baseline installation of python development environment, MAVProxy, dronekit and Ardupilot. 
+The first Dockerfile (baselineDockerfile/Dockerfile) is for the baseline installation of python development environment, MAVProxy, dronekit and Ardupilot. 
 
-The second Dockerfile installs the API (which is a single Python script in rest.py) and the static HTML5 client.
+The second Dockerfile (APIDockerBuild/Dockerfile) installs the API (which is a single Python script in rest.py) and the static HTML5 client.
+
+The third Dockerfile (DroneSIMDockerBuild) installs a drone simulator
 
 
 ##Using API
