@@ -33,6 +33,7 @@ RUN pip install web.py
 RUN pip install redis
 RUN pip install --upgrade requests
 RUN pip install boto3
+RUN pip install docker
 RUN apt-get update -y
 RUN apt-get install -y awscli
 
@@ -43,6 +44,6 @@ COPY static static/
 RUN chmod -R 777 /static
 EXPOSE 1234
 ENV DRONE_URL="http://droneapi.ddns.net:1235"
-ENV DOCKER_URL="http://172.17.42.1:4243"
+ENV DOCKER_URL="http://172.17.42.1:4243" #should this be DOCKER_HOST ?
 CMD python /droneAPIMain.py 1234 
 

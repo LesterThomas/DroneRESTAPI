@@ -39,6 +39,22 @@ else:
     my_logger.error("Can not connect to Redis dB")
     raise Exception('Can not connect to Redis dB on port 6379')
 
+#print out the relavant redisdB data
+keys=redisdB.keys("connectionString:*")
+for key in keys:
+    my_logger.info( "key = '"+key+"'")
+    jsonObjStr=redisdB.get(key)
+    my_logger.info( "redisDbObj = '"+jsonObjStr+"'")
+keys=redisdB.keys("dockerHostsArray")
+for key in keys:
+    my_logger.info( "key = '"+key+"'")
+    jsonObjStr=redisdB.get(key)
+    my_logger.info( "redisDbObj = '"+jsonObjStr+"'")
+if (len(keys)==0):
+    dockerHostsArray=[{"internalIP":"localhost","usedPorts":[]}]
+    dockerHostsArrayString=json.dumps(dockerHostsArray)
+    redisdB.set("dockerHostsArray",dockerHostsArrayString)
+
 
 connectionDict={} #holds a dictionary of DroneKit connection objects
 connectionNameTypeDict={} #holds the additonal name, type and starttime for the conections

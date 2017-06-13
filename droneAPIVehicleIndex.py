@@ -2,14 +2,21 @@
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative, Command, mavutil, APIException
 
-import web, logging, traceback, json, time, math, uuid
+import web, logging, traceback, json, time, math, uuid, docker, redis
 import droneAPIMain, droneAPIUtils
 
 my_logger = droneAPIMain.my_logger
 
 
 
-class vehicleIndex:        
+class vehicleIndex:   
+
+
+
+ 
+
+
+ 
     def GET(self):
         try:
             my_logger.info( "#### Method GET of vehicleIndex #####")
@@ -68,36 +75,12 @@ class vehicleIndex:
                 #curl -X POST -H "Content-Type: application/json" -d '{"PortBindings": { "14550/tcp": [{ "HostPort": "14550" }] }}' http://172.17.42.1:4243/containers/7005495cc1b47884089e64cf7e6c9fe45112c1cf1e5be5f2514ac1342b415ee4/start
 
 
-
-                #build simulted drone using aws
-                #test how many non-terminated instances there are
-                ec2client = boto3.client('ec2')
-                response = ec2client.describe_instances()
-                #print(response)
-                instances=[]
-
-                for reservation in response["Reservations"]:
-                    for instance in reservation["Instances"]:
-                        # This sample print will output entire Dictionary object
-                        #print(instance)
-                        # This will print will output the value of the Dictionary key 'InstanceId'
-                        if (instance["State"]["Name"]!="terminated"):
-                            instances.append(instance["InstanceId"])
-                            
-                my_logger.debug("Non terminated instances=")
-                my_logger.debug(len(instances))
-                if (len(instances)>20):
-                    outputObj={}
-                    outputObj["status"]="Error: can't launch more than "+str(20)+" drones"
-                    return json.dumps(outputObj)
-
-
-                my_logger.info("Creating new AWS image")
-                ec2resource = boto3.resource('ec2')
-                createresponse=ec2resource.create_instances(ImageId='ami-5be0f43f', MinCount=1, MaxCount=1,InstanceType='t2.micro',SecurityGroupIds=['sg-fd0c8394'])
-                my_logger.info(createresponse[0].private_ip_address)
-                connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
-                    
+                #private_ip_address=this.launchCloudImage('ami-5be0f43f', 't2.micro', ['sg-fd0c8394'])            
+                #connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
+                imageAndPort=self.getNextImageAndPort() 
+                dockerClient = docker.from_env(version='1.27')
+                dockerClient.containers.run('lesterthomas/dronesim:1.7', detach=True, ports={'14550/tcp': imageAndPort['port']} )
+                connection="tcp:"+imageAndPort['image']+":"+str(imageAndPort['port']) 
 
             else:
                 connection = data["connectionString"]
@@ -135,4 +118,57 @@ class vehicleIndex:
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
         return output
+
+    def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
+        #build simulted drone using aws
+        #test how many non-terminated instances there are
+        ec2client = boto3.client('ec2')
+        response = ec2client.describe_instances()
+        #print(response)
+        instances=[]
+
+        for reservation in response["Reservations"]:
+            for instance in reservation["Instances"]:
+                # This sample print will output entire Dictionary object
+                #print(instance)
+                # This will print will output the value of the Dictionary key 'InstanceId'
+                if (instance["State"]["Name"]!="terminated"):
+                    instances.append(instance["InstanceId"])
+                    
+        my_logger.debug("Non terminated instances=")
+        my_logger.debug(len(instances))
+        if (len(instances)>20):
+            outputObj={}
+            outputObj["status"]="Error: can't launch more than "+str(20)+" cloud images"
+            return json.dumps(outputObj)
+
+
+        my_logger.info("Creating new AWS image")
+        ec2resource = boto3.resource('ec2')
+        createresponse=ec2resource.create_instances(ImageId=ImageId, MinCount=1, MaxCount=1,InstanceType=InstanceType,SecurityGroupIds=SecurityGroupIds)
+        my_logger.info(createresponse[0].private_ip_address)
+        return private_ip_address
+
+    #get the next image and port to launch dronesim docker image (create new image if necessary)
+    def getNextImageAndPort(self):
+        firstFreePort=0
+        my_logger.info("dockerHostsArray")
+        keys=droneAPIMain.redisdB.keys("dockerHostsArray")
+        dockerHostsArray=json.loads(droneAPIMain.redisdB.get(keys[0]))
+        my_logger.info(dockerHostsArray)
+
+        #initially always use current image
+        for i in range(14550,14560):
+            #find first unused port
+            portList=dockerHostsArray[0]['usedPorts'] # [{"internalIP":"localhost","usedPorts":[]}]
+            if not(i in portList):
+                firstFreePort=i
+                break
+        dockerHostsArray[0]['usedPorts'].append(i)
+        my_logger.info("First unassigned port:"+ str(firstFreePort))
+
+        droneAPIMain.redisdB.set("dockerHostsArray",json.dumps(dockerHostsArray))
+        return {"image":"localhost","port":firstFreePort}
+
+
 
