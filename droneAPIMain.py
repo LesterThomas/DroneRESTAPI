@@ -4,63 +4,67 @@
 from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative, Command, mavutil, APIException
 # Import external modules
 from collections import OrderedDict
-import time, json, math, warnings, os, web, logging, logging.handlers, redis, uuid, time, boto3, traceback
+import time, json, math, warnings, os, web, logging, logging.handlers, redis, uuid, time, boto3, traceback, docker
 
 my_logger = logging.getLogger('MyLogger')
 
 # Import  modules that are part of this app
 import droneAPISimulator, droneAPIUtils, droneAPIAction, droneAPIMission
 
+def validateRedisData(redisdB):
+    #test the redis dB
+    #remove any old entries (and any old docker containers)
+    dockerHostsArray=[]
+    redisdB.set('foo', 'bar')
+    value = redisdB.get('foo')
+    if (value=='bar'):
+        my_logger.info("Connected to Redis dB")
+    else:
+        my_logger.error("Can not connect to Redis dB")
+        raise Exception('Can not connect to Redis dB on port 6379')
 
+    #print out the relavant redisdB data
+    droneObjKeys=redisdB.keys("connectionString:*")
+    for key in droneObjKeys:
+        jsonObjStr=redisdB.get(key)
+        my_logger.info( "removing key = '"+key+"'" + ",redisDbObj = '"+jsonObjStr+"'")
+        redisdB.delete(key)
 
-#Set logging framework
-LOG_FILENAME = 'droneapi.log'
-my_logger.setLevel(logging.INFO)
-handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=200000, backupCount=5)
-formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-handler.setFormatter(formatter)
-my_logger.addHandler(handler)
-my_logger.propegate=False
+    dockerHostsArray=json.loads(redisdB.get("dockerHostsArray"))
 
-my_logger.info("##################################################################################")
-my_logger.info("Starting DroneAPI server")
-my_logger.info("##################################################################################")
+    #check that I can access Docker on each host and to delete any existing containers
+    index=-1
+    for dockerHost in dockerHostsArray:
+        index=index+1
+        canAccessHost=True
+        try :
+            my_logger.info( "dockerHost = '"+dockerHost['internalIP']+"'")
+            dockerClient = docker.DockerClient(version='1.27',base_url='unix://var/run/docker.sock')
+            #dockerClient = docker.from_env()
+            for container in dockerClient.containers.list():
+                imageName=str(container.image)
+                my_logger.info(container.id + " "+ container.name + " '" + imageName +"'")
+                if (imageName=="<Image: 'lesterthomas/dronesim:1.7'>"):
+                    my_logger.warn("stopping container "+container.id )
+                    container.stop()
+                    dockerClient.containers.prune(filters=None)
 
+        except Exception as e: 
+            my_logger.warn( "Can not connect to host: "+dockerHost['internalIP'])
+            canAccessHost=False
+            dockerHostsArray.pop(index)
 
-defaultHomeDomain=os.environ['DRONE_URL']
-redisdB = redis.Redis(host='redis', port=6379) #redis or localhost
-
-#test the redis dB
-redisdB.set('foo', 'bar')
-value = redisdB.get('foo')
-if (value=='bar'):
-    my_logger.info("Connected to Redis dB")
-else:
-    my_logger.error("Can not connect to Redis dB")
-    raise Exception('Can not connect to Redis dB on port 6379')
-
-#print out the relavant redisdB data
-keys=redisdB.keys("connectionString:*")
-for key in keys:
-    my_logger.info( "key = '"+key+"'")
-    jsonObjStr=redisdB.get(key)
-    my_logger.info( "redisDbObj = '"+jsonObjStr+"'")
-keys=redisdB.keys("dockerHostsArray")
-for key in keys:
-    my_logger.info( "key = '"+key+"'")
-    jsonObjStr=redisdB.get(key)
-    my_logger.info( "redisDbObj = '"+jsonObjStr+"'")
-if (len(keys)==0):
     dockerHostsArray=[{"internalIP":"localhost","usedPorts":[]}]
     dockerHostsArrayString=json.dumps(dockerHostsArray)
     redisdB.set("dockerHostsArray",dockerHostsArrayString)
 
+    my_logger.info("dockerHostsArray")
+    my_logger.info(dockerHostsArray)
 
-connectionDict={} #holds a dictionary of DroneKit connection objects
-connectionNameTypeDict={} #holds the additonal name, type and starttime for the conections
-actionArrayDict={} #holds recent actions executied by each drone
-authorizedZoneDict={} #holds zone authorizations for each drone
- 
+    redisdB.set("dockerHostsArray",json.dumps(dockerHostsArray))
+
+
+    return
 
 
 
@@ -115,6 +119,38 @@ class catchAll:
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
         return json.dumps(outputObj)
+
+
+#Set logging framework
+LOG_FILENAME = 'droneapi.log'
+my_logger.setLevel(logging.INFO)
+handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=200000, backupCount=5)
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+my_logger.addHandler(handler)
+my_logger.propegate=False
+
+my_logger.info("##################################################################################")
+my_logger.info("Starting DroneAPI server")
+my_logger.info("##################################################################################")
+
+try:
+    defaultHomeDomain=os.environ['DRONE_URL']
+except Exception as e: 
+    my_logger.error("Can't get environment variable DRONE_URL")
+    my_logger.exception(e)
+    tracebackStr = traceback.format_exc()
+    traceLines = tracebackStr.split("\n")   
+
+connectionDict={} #holds a dictionary of DroneKit connection objects
+connectionNameTypeDict={} #holds the additonal name, type and starttime for the conections
+actionArrayDict={} #holds recent actions executied by each drone
+authorizedZoneDict={} #holds zone authorizations for each drone
+redisdB = redis.Redis(host='redis', port=6379) #redis or localhost
+validateRedisData(redisdB)
+
+
+
 
 
 urls = (
