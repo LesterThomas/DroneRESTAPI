@@ -2,7 +2,7 @@
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative, Command, mavutil, APIException
 
-import web, logging, traceback, json, time, math
+import web, logging, traceback, json, time, math, docker
 import droneAPIMain, droneAPIUtils
 
 my_logger = droneAPIMain.my_logger
@@ -95,56 +95,38 @@ class vehicleStatus:
     def DELETE(self, vehicleId):
         try:
             my_logger.info( "#### Method DELETE of vehicleStatus ####")
-            statusVal=''  #removed statusVal which used to have the fields) from the URL because of the trailing / issue
-            my_logger.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
-            droneAPIUtils.applyHeadders()
-
+            #delete docker container for this vehicle
             jsonObjStr=droneAPIMain.redisdB.get('connectionString:' + str(vehicleId))
             my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
             jsonObj=json.loads(jsonObjStr)
             connectionString=jsonObj['connectionString']
-            ipAddress=connectionString[4:-6]
 
-
-            try:
-                #terminate any AWS instances with that private IP address
-                ec2client = boto3.client('ec2')
-                response = ec2client.describe_instances()
-                #print(response)
-                instances=[]
-
-                for reservation in response["Reservations"]:
-                    for instance in reservation["Instances"]:
-                        # This sample print will output entire Dictionary object
-                        #print(instance)
-                        # This will print will output the value of the Dictionary key 'InstanceId'
-                        if (instance["State"]["Name"]!="terminated"):
-                            if (instance.get("PrivateIpAddress",None)==ipAddress):
-                                #my_logger.debug(instance)
-                                my_logger.debug(instance["PrivateIpAddress"],instance["InstanceId"],instance["InstanceType"],instance["State"]["Name"])
-                                instances.append(instance["InstanceId"])
-                            
-                my_logger.debug("instances to terminate")
-                my_logger.debug(instances)
-
-                if (len(instances)>0):  
-                    #startresp=ec2client.start_instances(InstanceIds=["i-094270016448e61e2"])
-                    stopresp=ec2client.terminate_instances(InstanceIds=instances)
-                    my_logger.debug("Terminated instance")
-
-            except Exception as inst:
-                my_logger.error( "Error conneting to AWS:")
-                my_logger.error( "VehicleId=")
-                my_logger.error( vehicleId)
-                my_logger.error( "Exception=")
-                my_logger.error( inst)
-                #ignore error and continue
-
-
-            my_logger.info("connectionString="+connectionString)
-            my_logger.info("ipAddress="+ipAddress)
             droneAPIMain.redisdB.delete("connectionString:"+vehicleId)
             droneAPIMain.connectionDict.pop("connectionString:"+vehicleId, None)
+            dockerHostsArray=json.loads(droneAPIMain.redisdB.get("dockerHostsArray"))
+
+
+            ipAddress=connectionString[4:-6]
+            connectionStringLength=len(connectionString)
+            my_logger.info( "connectionStringLength="+ str(connectionStringLength))
+            port=connectionString[connectionStringLength-5:]
+            index=-1
+            for port in dockerHostsArray[0]['usedPorts']:
+                index=index+1
+                if (dockerHostsArray[0]['usedPorts'][index]==int(port)):
+                    dockerHostsArray[0]['usedPorts'].pop(index)
+
+            droneAPIMain.redisdB.set("dockerHostsArray",json.dumps(dockerHostsArray))
+
+            dockerContainerId=jsonObj['dockerContainerId']
+            my_logger.info( "Deleting container")
+            my_logger.info( "dockerHost = '"+ipAddress+"'")
+            my_logger.info( "port = '"+str(port)+"'")
+            my_logger.info( "containerId = '"+dockerContainerId+"'")
+            dockerClient = docker.DockerClient(version='1.27',base_url='unix://var/run/docker.sock')
+            container=dockerClient.containers.get(dockerContainerId)
+            container.stop()
+            dockerClient.containers.prune(filters=None)
 
             outputObj={"status":"success"}
             output = json.dumps(outputObj)
@@ -169,3 +151,46 @@ class vehicleStatus:
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
         return output
        
+    def terminateCloudInstance(vehicleId):
+        jsonObjStr=droneAPIMain.redisdB.get('connectionString:' + str(vehicleId))
+        my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
+        jsonObj=json.loads(jsonObjStr)
+        connectionString=jsonObj['connectionString']
+        ipAddress=connectionString[4:-6]
+
+
+        try:
+            #terminate any AWS instances with that private IP address
+            ec2client = boto3.client('ec2')
+            response = ec2client.describe_instances()
+            #print(response)
+            instances=[]
+
+            for reservation in response["Reservations"]:
+                for instance in reservation["Instances"]:
+                    # This sample print will output entire Dictionary object
+                    #print(instance)
+                    # This will print will output the value of the Dictionary key 'InstanceId'
+                    if (instance["State"]["Name"]!="terminated"):
+                        if (instance.get("PrivateIpAddress",None)==ipAddress):
+                            #my_logger.debug(instance)
+                            my_logger.debug(instance["PrivateIpAddress"],instance["InstanceId"],instance["InstanceType"],instance["State"]["Name"])
+                            instances.append(instance["InstanceId"])
+                        
+            my_logger.debug("instances to terminate")
+            my_logger.debug(instances)
+
+            if (len(instances)>0):  
+                #startresp=ec2client.start_instances(InstanceIds=["i-094270016448e61e2"])
+                stopresp=ec2client.terminate_instances(InstanceIds=instances)
+                my_logger.debug("Terminated instance")
+
+        except Exception as inst:
+            my_logger.error( "Error conneting to AWS:")
+            my_logger.error( "VehicleId=")
+            my_logger.error( vehicleId)
+            my_logger.error( "Exception=")
+            my_logger.error( inst)
+            #ignore error and continue
+        
+        return
