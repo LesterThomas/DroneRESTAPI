@@ -2,10 +2,140 @@
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative, Command, mavutil, APIException
 
-import web, logging, traceback, json, time, math
-import droneAPIMain, droneAPIUtils
+import web, logging, traceback, json, time, math, os, redis, docker
 
-my_logger = droneAPIMain.my_logger
+#define global variables
+my_logger = None
+connectionDict=None
+connectionNameTypeDict=None
+actionArrayDict=None
+authorizedZoneDict=None 
+defaultDockerHost=""
+dronesimImage=""
+homeDomain=""
+
+redisdB = None
+
+
+def startup():
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, actionArrayDict, authorizedZoneDict, redisdB, my_logger
+
+    #Set logging framework
+    my_logger = logging.getLogger('MyLogger')
+    LOG_FILENAME = 'droneapi.log'
+    my_logger.setLevel(logging.INFO)
+    handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=200000, backupCount=5)
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    handler.setFormatter(formatter)
+    my_logger.addHandler(handler)
+    my_logger.propegate=False
+
+    my_logger.info("##################################################################################")
+    my_logger.info("Starting DroneAPI at  "+str(time.time()))
+    my_logger.info("##################################################################################")
+
+    #Set environment variables
+    homeDomain=getEnvironmentVariable('DRONEAPI_URL')
+    dronesimImage=getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
+    defaultDockerHost=getEnvironmentVariable('DOCKER_HOST_IP')
+
+    #set global variables
+    connectionDict={} #holds a dictionary of DroneKit connection objects
+    connectionNameTypeDict={} #holds the additonal name, type and starttime for the conections
+    actionArrayDict={} #holds recent actions executied by each drone
+    authorizedZoneDict={} #holds zone authorizations for each drone
+    redisdB = redis.Redis(host='redis', port=6379) #redis or localhost
+
+    #refresh the running containers based on redis data
+    validateAndRefreshContainers(redisdB)
+
+    return
+
+
+def getEnvironmentVariable(inVariable):
+    try:
+        envVariable=os.environ[inVariable]
+        my_logger.info("Env variable "+inVariable+"="+envVariable)
+        return envVariable
+    except Exception as e: 
+        my_logger.error("Can't get environment variable "+inVariable)
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n") 
+        my_logger.exception(traceLines)
+    return ""
+
+def validateAndRefreshContainers(redisdB):
+    #test the redis dB
+    #remove any old entries (and any old docker containers)
+    my_logger.info("Connecting to Redis dB and removing any existing entries and stopping any existing containers at "+str(time.time()))
+
+    dockerHostsArray=[]
+    redisdB.set('foo', 'bar')
+    value = redisdB.get('foo')
+    if (value=='bar'):
+        my_logger.info("Connected to Redis dB")
+    else:
+        my_logger.error("Can not connect to Redis dB")
+        raise Exception('Can not connect to Redis dB on port 6379')
+
+    #print out the relavant redisdB data
+    #droneObjKeys=redisdB.keys("connectionString:*")
+    #for key in droneObjKeys:
+    #    jsonObjStr=redisdB.get(key)
+    #    my_logger.info( "removing key = '"+key+"'" + ",redisDbObj = '"+jsonObjStr+"'")
+    #    redisdB.delete(key)
+
+    dockerHostsArray=json.loads(redisdB.get("dockerHostsArray"))
+    my_logger.info("dockerHostsArray fron Redis before validation")
+    my_logger.info(dockerHostsArray)
+
+    #check that I can access Docker on each host and to delete any existing containers
+    index=-1
+    for dockerHost in dockerHostsArray:
+        index=index+1
+        canAccessHost=True
+        try :
+            my_logger.info( "dockerHost = '"+dockerHost['internalIP']+"'")
+            dockerClient = docker.DockerClient(version='1.27',base_url='tcp://'+dockerHost['internalIP']+':4243') #docker.from_env(version='1.27') 
+
+            for container in dockerClient.containers.list():
+                imageName=str(container.image)
+                my_logger.info(container.id + " "+ container.name + " '" + imageName +"'")
+                if (imageName=="<Image: '"+dronesimImage+"'>"):
+                    my_logger.warn("stopping container "+container.id )
+                    container.stop()
+                    dockerClient.containers.prune(filters=None)
+
+            #restart all the docker containers based on the usedPorts
+            for port in dockerHost['usedPorts']:
+                dockerContainer=dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port} )
+                dockerContainerId=dockerContainer.id
+                my_logger.info( "New container for port "+str(port)+"=" + str(dockerContainerId))
+
+
+
+
+        except Exception as e: 
+            my_logger.warn( "Can not connect to host: "+ str(dockerHost['internalIP']))
+            canAccessHost=False
+            dockerHostsArray.pop(index)
+            my_logger.exception(e)
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n") 
+            my_logger.exception(traceLines)
+    
+    my_logger.info("dockerHostsArray")
+    my_logger.info(dockerHostsArray)
+
+    if (len(dockerHostsArray)==0):
+        my_logger.warn( "Docker host array is empty: adding default: "+ defaultDockerHost)
+        dockerHostsArray=[{"internalIP":defaultDockerHost,"usedPorts":[]}]
+
+    #add the updated dockerHostArray to Redis    
+    redisdB.set("dockerHostsArray",json.dumps(dockerHostsArray))
+    
+    return    
 
 def applyHeadders():
     my_logger.debug('Applying HTTP headers')
@@ -24,7 +154,7 @@ def connectVehicle(inVehicleId):
     try:
         my_logger.debug( "connectVehicle called with inVehicleId = " + str(inVehicleId))
         #connectionString=connectionStringArray[inVehicleId]
-        jsonObjStr=droneAPIMain.redisdB.get('connectionString:' + str(inVehicleId))
+        jsonObjStr=redisdB.get('connectionString:' + str(inVehicleId))
         my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
         jsonObj=json.loads(jsonObjStr)
         connectionString=jsonObj['connectionString']
@@ -40,14 +170,14 @@ def connectVehicle(inVehicleId):
 
         my_logger.info("connection string for vehicle " + str(inVehicleId) + "='" + connectionString + "'")
         # Connect to the Vehicle.
-        if not droneAPIMain.connectionDict.get(inVehicleId):
+        if not connectionDict.get(inVehicleId):
             my_logger.info("connectionString: %s" % (connectionString,))
             my_logger.info("Connecting to vehicle on: %s" % (connectionString,))
-            droneAPIMain.connectionNameTypeDict[inVehicleId]={"name":vehicleName,"vehicleType":vehicleType}
-            droneAPIMain.actionArrayDict[inVehicleId]=[] #create empty action array
-            droneAPIMain.connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
-            my_logger.info("droneAPIMain.actionArrayDict")
-            my_logger.info(droneAPIMain.actionArrayDict)
+            connectionNameTypeDict[inVehicleId]={"name":vehicleName,"vehicleType":vehicleType}
+            actionArrayDict[inVehicleId]=[] #create empty action array
+            connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+            my_logger.info("actionArrayDict")
+            my_logger.info(actionArrayDict)
         else:
             my_logger.debug( "Already connected to vehicle")
     except Warning:
@@ -60,7 +190,7 @@ def connectVehicle(inVehicleId):
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")   
         raise Exception('Unexpected error connecting to vehicle ' + str(inVehicleId)) 
-    return droneAPIMain.connectionDict[inVehicleId]
+    return connectionDict[inVehicleId]
 
 
 def latLonAltObj(inObj):
@@ -92,10 +222,10 @@ def getVehicleStatus(inVehicle):
     my_logger.debug( "Autopilot Firmware version: %s" % inVehicle.version)
     outputObj["version"]=str(inVehicle.version)
     my_logger.debug( "Global Location: %s" % inVehicle.location.global_frame)
-    global_frame=droneAPIUtils.latLonAltObj(inVehicle.location.global_frame)
+    global_frame=latLonAltObj(inVehicle.location.global_frame)
     outputObj["global_frame"]=global_frame
     my_logger.debug( "Global Location (relative altitude): %s" % inVehicle.location.global_relative_frame)
-    global_relative_frame=droneAPIUtils.latLonAltObj(inVehicle.location.global_relative_frame)
+    global_relative_frame=latLonAltObj(inVehicle.location.global_relative_frame)
     outputObj["global_relative_frame"]=global_relative_frame
     my_logger.debug( "Local Location: %s" % inVehicle.location.local_frame)    #NED
     local_frame={}
@@ -138,3 +268,5 @@ def getVehicleStatus(inVehicle):
     return outputObj
 
 
+print("Starting up at "+str(time.time()))
+startup()

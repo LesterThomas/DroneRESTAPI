@@ -3,21 +3,20 @@
 from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative, Command, mavutil, APIException
 
 import web, logging, traceback, json, time, math
-import droneAPIMain, droneAPIUtils
+import  droneAPIUtils
 
-my_logger = droneAPIMain.my_logger
 
 
 class action:     
     def OPTIONS(self, vehicleId):
         try:
-            my_logger.info( "#### Method OPTIONS of action - just here to suppor the CORS Cross-Origin security ####")
+            droneAPIUtils.my_logger.info( "#### Method OPTIONS of action - just here to suppor the CORS Cross-Origin security ####")
             droneAPIUtils.applyHeadders()
 
             outputObj={}
             output=json.dumps(outputObj)   
         except Exception as e: 
-            my_logger.exception(e)
+            droneAPIUtils.my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
@@ -26,70 +25,70 @@ class action:
 
     def GET(self, vehicleId):
         try:
-            my_logger.info( "#### Method GET of action ####")
+            droneAPIUtils.my_logger.info( "#### Method GET of action ####")
 
             droneAPIUtils.applyHeadders()
             try:
                 inVehicle=droneAPIUtils.connectVehicle(vehicleId)   
             except Warning:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                droneAPIUtils.my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle - vehicle starting up "}) 
             except Exception:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
+                droneAPIUtils.my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
 
             vehicleStatus=droneAPIUtils.getVehicleStatus(inVehicle)
             outputObj={}
-            outputObj["_links"]={"self":{"href":droneAPIMain.homeDomain+"/vehicle/"+str(vehicleId)+"/action","title":"Get the actions for this vehicle."}}
+            outputObj["_links"]={"self":{"href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action","title":"Get the actions for this vehicle."}}
             availableActions=[]
             #available when armed
             if vehicleStatus["armed"]:
                 availableActions.append({   
                     "name":"Region-of-Interest",
                     "title":"Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
-                    "href":droneAPIMain.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
+                    "href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                     "method":"POST",
                     "fields":[{"name":"name","type":"string","value":"Region-of-Interest"},{"name":"lat","type":"float","value":51.3946},{"name":"lon","type":"float","value":-1.299},{"name":"alt","type":"float","value":105}]
                 })
                 availableActions.append({   
                     "name":"Land",
                     "title":"Land at current location",
-                    "href":droneAPIMain.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
+                    "href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                     "method":"POST",
                     "fields":[{"name":"name","type":"string","value":"Land"}]
                 })
                 availableActions.append({   
                     "name":"Return-to-Launch",
                     "title":"Return to launch: Return to the home location and land.",
-                    "href":droneAPIMain.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
+                    "href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                     "method":"POST",
                     "fields":[{"name":"name","type":"string","value":"Return-to-Launch"}]
                 })
                 availableActions.append({   
                     "name":"Start-Mission",
                     "title":"Begin the pre-defined mission.",
-                    "href":droneAPIMain.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
+                    "href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                     "method":"POST",
                     "fields":[{"name":"name","type":"string","value":"Start-Mission"}]
                 })
                 availableActions.append({   
                     "name":"Goto-Absolute",
                     "title":"Go to the location at latitude <lat>, longitude <lon> and altitude <alt> (above sea level).",
-                    "href":droneAPIMain.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
+                    "href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                     "method":"POST",
                     "fields":[{"name":"name","type":"string","value":"Goto-Absolute"},{"name":"lat","type":"float","value":51.3946},{"name":"lon","type":"float","value":-1.299},{"name":"alt","type":"float","value":105}]
                 })
                 availableActions.append({   
                     "name":"Goto-Relative-Home",
                     "title":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the home location.",
-                    "href":droneAPIMain.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
+                    "href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                     "method":"POST",
                     "fields":[{"name":"name","type":"string","value":"Goto-Relative-Home"},{"name":"north","type":"float","value":30},{"name":"east","type":"float","value":30},{"name":"up","type":"float","value":10}]
                 })
                 availableActions.append({   
                     "name":"Goto-Relative-Current",
                     "title":"Go to the location <north> meters North, <east> meters East and <up> meters vertically from the current location.",
-                    "href":droneAPIMain.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
+                    "href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                     "method":"POST",
                     "fields":[{"name":"name","type":"string","value":"Goto-Relative-Current"},{"name":"north","type":"float","value":30},{"name":"east","type":"float","value":30},{"name":"up","type":"float","value":10}]
                 })
@@ -97,17 +96,17 @@ class action:
                 availableActions.append({   
                     "name":"Takeoff",
                     "title":"Arm and takeoff in GUIDED mode to height of <height> (default 20m).",
-                    "href":droneAPIMain.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
+                    "href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                     "method":"POST",
                     "fields":[{"name":"name","type":"string","value":"Takeoff"},{"name":"height","type":"float","value":30}]
                 })
             outputObj['_actions']=availableActions
-            my_logger.debug(outputObj)
+            droneAPIUtils.my_logger.debug(outputObj)
             updateActionStatus(inVehicle, vehicleId);
-            outputObj['actions']=droneAPIMain.actionArrayDict[vehicleId]
+            outputObj['actions']=droneAPIUtils.actionArrayDict[vehicleId]
             output=json.dumps(outputObj)   
         except Exception as e: 
-            my_logger.exception(e)
+            droneAPIUtils.my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
@@ -115,39 +114,39 @@ class action:
 
     def POST(self, vehicleId):
         try:
-            my_logger.info( "#### Method POST of action ####")
+            droneAPIUtils.my_logger.info( "#### Method POST of action ####")
             try:
                 inVehicle=droneAPIUtils.connectVehicle(vehicleId)   
             except Warning:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                droneAPIUtils.my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle - vehicle starting up ", "_actions": actions}) 
             except Exception:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
+                droneAPIUtils.my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId), "_actions": actions}) 
             droneAPIUtils.applyHeadders()
             data = json.loads(web.data())
             #get latest data (inc homeLocation from vehicle)
-            my_logger.debug( "Getting commands:")
+            droneAPIUtils.my_logger.debug( "Getting commands:")
 
             cmds = inVehicle.commands
-            my_logger.debug( "Download:")
+            droneAPIUtils.my_logger.debug( "Download:")
 
             cmds.download()
-            my_logger.debug( "Wait until ready:")
+            droneAPIUtils.my_logger.debug( "Wait until ready:")
             cmds.wait_ready() 
 
 
-            my_logger.debug( "Data:")
-            my_logger.debug( data)
+            droneAPIUtils.my_logger.debug( "Data:")
+            droneAPIUtils.my_logger.debug( data)
             value = data["name"]
-            my_logger.debug( "Value:")
-            my_logger.debug( value)
+            droneAPIUtils.my_logger.debug( "Value:")
+            droneAPIUtils.my_logger.debug( value)
             outputObj={}
             if value=="Return-to-Launch":
                 outputObj["action"]=rtl(inVehicle)
             elif value=="Takeoff":
                 height=data.get("height",20) #get height - default to 20
-                my_logger.debug( "Taking off to height of " + str(height))
+                droneAPIUtils.my_logger.debug( "Taking off to height of " + str(height))
                 outputObj["action"]=takeoff(inVehicle,height)
             elif value=="Start-Mission":
                 outputObj["action"]=auto(inVehicle)
@@ -155,7 +154,7 @@ class action:
                 outputObj["action"]=land(inVehicle)
             elif value=="Goto-Absolute":
                 defaultLocation=inVehicle.location.global_frame #default to current position
-                my_logger.debug( "Global Frame" + str(defaultLocation))
+                droneAPIUtils.my_logger.debug( "Global Frame" + str(defaultLocation))
                 inLat=data.get("lat",defaultLocation.lat)
                 inLon=data.get("lon",defaultLocation.lon)
                 inAlt=data.get("alt",defaultLocation.alt)
@@ -165,10 +164,10 @@ class action:
                 inNorth=float(data.get("north",0))
                 inEast=float(data.get("east",0))
                 inDown=-float(data.get("up",0))
-                my_logger.debug( "Goto-Relative-Home" )
-                my_logger.debug( inNorth)
-                my_logger.debug( inEast)
-                my_logger.debug( inDown)
+                droneAPIUtils.my_logger.debug( "Goto-Relative-Home" )
+                droneAPIUtils.my_logger.debug( inNorth)
+                droneAPIUtils.my_logger.debug( inEast)
+                droneAPIUtils.my_logger.debug( inDown)
                 outputObj["action"]=gotoRelative(inVehicle,inNorth,inEast,inDown)
             elif value=="Goto-Relative-Current":
                 inNorth=float(data.get("north",0))
@@ -187,7 +186,7 @@ class action:
                 outputObj["action"]=roi(inVehicle,locationObj)
             else:
                 outputObj["action"]={"status":"error", "name":value, "error":"No action found with name '" + value+ "'." }
-            actionArray=droneAPIMain.actionArrayDict[vehicleId]
+            actionArray=droneAPIUtils.actionArrayDict[vehicleId]
             if (len(actionArray)==0):
                 outputObj['action']['id']=0;
             else:
@@ -195,10 +194,10 @@ class action:
             actionArray.append(outputObj)
             if (len(actionArray)>10):
                 actionArray.pop(0)
-            outputObj['href']=droneAPIMain.homeDomain+"/vehicle/"+str(vehicleId)+"/action"
+            outputObj['href']=droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action"
 
         except Exception as e: 
-            my_logger.exception(e)
+            droneAPIUtils.my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
@@ -223,13 +222,13 @@ def rtl(inVehicle):
         outputObj["param3"]=0
         outputObj["param4"]=0
         outputObj["command"]=20
-        my_logger.info( "Returning to Launch")
+        droneAPIUtils.my_logger.info( "Returning to Launch")
         inVehicle.mode = VehicleMode("RTL")
     else:
         outputObj["name"]="Return-to-Launch"
         outputObj["status"]="Error"
         outputObj["error"]="Vehicle not armed"
-        my_logger.warn( "RTL error - Vehicle not armed")
+        droneAPIUtils.my_logger.warn( "RTL error - Vehicle not armed")
 
     return outputObj  
 
@@ -247,21 +246,21 @@ def takeoff(inVehicle, inHeight):
         outputObj["param3"]=0
         outputObj["param4"]=0
         outputObj["command"]=22
-        my_logger.info( "Arming motors")
+        droneAPIUtils.my_logger.info( "Arming motors")
         # Copter should arm in GUIDED mode
         inVehicle.mode    = VehicleMode("GUIDED")
         inVehicle.armed   = True
         # Confirm vehicle armed before attempting to take off
         while not inVehicle.armed:
-            my_logger.info( " Waiting for arming..."  )
+            droneAPIUtils.my_logger.info( " Waiting for arming..."  )
             time.sleep(1)
-        my_logger.info( "Taking off!")
+        droneAPIUtils.my_logger.info( "Taking off!")
         inVehicle.simple_takeoff(inHeight) # Take off to target altitude
     else:
         outputObj["name"] = "Takeoff"
         outputObj["status"] = "Error"
         outputObj["error"] = "vehicle not armable"
-        my_logger.warn( "vehicle not armable")
+        droneAPIUtils.my_logger.warn( "vehicle not armable")
     return outputObj
 
 def auto(inVehicle):        
@@ -269,7 +268,7 @@ def auto(inVehicle):
     if inVehicle.armed:
         outputObj["name"]="Start-Mission"
         outputObj["status"]="success"
-        my_logger.info( "Auto mission")
+        droneAPIUtils.my_logger.info( "Auto mission")
         if inVehicle.mode.name=="AUTO":
             #vehicle already in auto mode - swap it into GUIDED first.
             inVehicle.mode    = VehicleMode("GUIDED")
@@ -294,7 +293,7 @@ def land(inVehicle):
         outputObj["param3"]=0
         outputObj["param4"]=0
         outputObj["command"]=23
-        my_logger.info( "Landing")
+        droneAPIUtils.my_logger.info( "Landing")
         inVehicle.mode = VehicleMode("LAND")
     else:    
         outputObj["name"]="Land"
@@ -310,7 +309,7 @@ def goto(inVehicle, dNorth, dEast, dDown):
     outputObj={}
     if inVehicle.armed:
         distance=round(math.sqrt(dNorth*dNorth+dEast*dEast))
-        my_logger.info("Goto a distance of " + str(distance) + "m.")
+        droneAPIUtils.my_logger.info("Goto a distance of " + str(distance) + "m.")
         if distance>1000:
             outputObj["status"]="Error"
             outputObj["error"]="Can not go more than " + str(1000) + "m in single command. Action was to go " + str(distance) + " m."
@@ -345,8 +344,8 @@ def get_location_metres(original_location, dNorth, dEast):
     The function is useful when you want to move the vehicle around specifying locations relative to 
     the current vehicle position.
     """
-    my_logger.debug( "lat:" + str(original_location.lat) + " lon:" + str(original_location.lon))
-    my_logger.debug( "north:" + str(dNorth) + " east:" + str(dEast))
+    droneAPIUtils.my_logger.debug( "lat:" + str(original_location.lat) + " lon:" + str(original_location.lon))
+    droneAPIUtils.my_logger.debug( "north:" + str(dNorth) + " east:" + str(dEast))
      
     earth_radius = 6378137.0 #Radius of "spherical" earth
     #Coordinate offsets in radians
@@ -404,9 +403,9 @@ def gotoAbsolute(inVehicle, inLocation):
     if inVehicle.armed:
         outputObj["name"]="Goto-Absolute"
         outputObj["status"]="success"
-        my_logger.debug( " Goto Location: %s" % inLocation   )  
+        droneAPIUtils.my_logger.debug( " Goto Location: %s" % inLocation   )  
         output = {"global_frame":inLocation}
-        my_logger.debug( "lat" + str(inLocation['lat']))
+        droneAPIUtils.my_logger.debug( "lat" + str(inLocation['lat']))
 
         distance=round(droneAPIUtils.distanceInMeters(inLocation['lat'], inLocation['lon'],inVehicle.location.global_frame.lat,inVehicle.location.global_frame.lon))
         if distance>1000:
@@ -434,9 +433,9 @@ def roi(inVehicle, inLocation):
     outputObj={}
     outputObj["name"]="Region-of-Interest"
     outputObj["status"]="success"
-    my_logger.debug( " Home Location: %s" % inLocation     )
+    droneAPIUtils.my_logger.debug( " Home Location: %s" % inLocation     )
     output = {"home_location":inLocation}
-    my_logger.debug( "lat" + str(inLocation['lat']))
+    droneAPIUtils.my_logger.debug( "lat" + str(inLocation['lat']))
     #coodinates are target
     outputObj["coordinate"]=[inLocation['lat'],inLocation['lon'],inLocation['alt']]
     outputObj["param1"]=0
@@ -465,18 +464,18 @@ def set_roi(inVehicle, location):
 
 def updateActionStatus(inVehicle, inVehicleId):
     #test to see whether the vehicle is at the target location of the action
-    my_logger.info("############# in updateActionStatus")
+    droneAPIUtils.my_logger.info("############# in updateActionStatus")
 
-    my_logger.info("inVehicleId")
-    my_logger.info(inVehicleId)
-    my_logger.info("droneAPIMain.actionArrayDict")
-    my_logger.info(droneAPIMain.actionArrayDict)
-    my_logger.info("#############")
+    droneAPIUtils.my_logger.info("inVehicleId")
+    droneAPIUtils.my_logger.info(inVehicleId)
+    droneAPIUtils.my_logger.info("droneAPIUtils.actionArrayDict")
+    droneAPIUtils.my_logger.info(droneAPIUtils.actionArrayDict)
+    droneAPIUtils.my_logger.info("#############")
 
-    actionArray=droneAPIMain.actionArrayDict[inVehicleId]
+    actionArray=droneAPIUtils.actionArrayDict[inVehicleId]
 
 
-    my_logger.info(actionArray)
+    droneAPIUtils.my_logger.info(actionArray)
 
     if (len(actionArray)>0):
         latestAction=actionArray[len(actionArray)-1]
@@ -485,16 +484,16 @@ def updateActionStatus(inVehicle, inVehicleId):
             latestAction['complete']=False
             latestAction['completeStatus']='Error'
             return
-        my_logger.debug("Latest Action:" + latestAction['action']['name'])
+        droneAPIUtils.my_logger.debug("Latest Action:" + latestAction['action']['name'])
 
         if (latestAction['action']['name']=='Start-Mission'):
             #cant monitor progress at the moment
-            my_logger.info("Cant monitor progress for mission")
+            droneAPIUtils.my_logger.info("Cant monitor progress for mission")
         else:
-            my_logger.debug("Monitoring progress for action '" + latestAction['action']['name'] + "'")
+            droneAPIUtils.my_logger.debug("Monitoring progress for action '" + latestAction['action']['name'] + "'")
 
             targetCoordinates=latestAction['action']['coordinate'] #array with lat,lon,alt
-            my_logger.info(inVehicle)
+            droneAPIUtils.my_logger.info(inVehicle)
             vehicleCoordinates=inVehicle.location.global_relative_frame #object with lat,lon,alt attributes
             #Return-to-launch uses global_frame (alt is absolute)
             
