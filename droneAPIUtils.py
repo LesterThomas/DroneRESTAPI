@@ -72,7 +72,10 @@ def validateAndRefreshContainers(redisdB):
 
     dockerHostsArray=[]
     redisdB.set('foo', 'bar')
+    my_logger.info("RedisSet "+str(time.time()))
+
     value = redisdB.get('foo')
+    my_logger.info("RedisGet "+str(time.time()))
     if (value=='bar'):
         my_logger.info("Connected to Redis dB")
     else:
@@ -85,8 +88,13 @@ def validateAndRefreshContainers(redisdB):
     #    jsonObjStr=redisdB.get(key)
     #    my_logger.info( "removing key = '"+key+"'" + ",redisDbObj = '"+jsonObjStr+"'")
     #    redisdB.delete(key)
-
-    dockerHostsArray=json.loads(redisdB.get("dockerHostsArray"))
+    dockerHostsString=redisdB.get("dockerHostsArray")
+    dockerHostsArray=None
+    if (dockerHostsString==None):
+    	dockerHostsArray=[{"internalIP":defaultDockerHost,"usedPorts":[]}]
+    else :
+    	dockerHostsArray=json.loads(dockerHostsString)
+    	
     my_logger.info("dockerHostsArray fron Redis before validation")
     my_logger.info(dockerHostsArray)
 
