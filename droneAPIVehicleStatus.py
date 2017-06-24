@@ -13,29 +13,19 @@ my_logger = logging.getLogger("DroneAPIServer."+str(__name__))
 class vehicleStatus:        
     def GET(self, vehicleId):
         try:
-            my_logger.info( "#### Method GET of vehicleStatus ####")
-            statusVal=''  #removed statusVal which used to have the fields) from the URL because of the trailing / issue
-            my_logger.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
+            my_logger.info("GET: vehicleId="+str(vehicleId))
             droneAPIUtils.applyHeadders()
             outputObj={}
 
             actions=[{"method":"DELETE","href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId),"title":"Delete connection to vehicle " + str(vehicleId)}]
 
-            #test if vehicleId is an integer 1-4
-            #try:
-            #    vehId=int(vehicleId)
-            #except ValueError:
-            #    stringArray=vehicleId.split('/')
-            #    vehicleId=stringArray[0]
-            #    statusVal=stringArray[1]
-            #my_logger.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
             try:
                 inVehicle=droneAPIUtils.connectVehicle(vehicleId)   
-            except Warning:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
-                return json.dumps({"error":"Cant connect to vehicle - vehicle starting up ", "_actions": actions}) 
-            except Exception:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
+            except Warning as w:
+                my_logger.warn("Cant connect to vehicle: " + str(w) + " for vehicle with id " + str(vehicleId))
+                return json.dumps({"error":"Cant connect to vehicle: " + str(w) + " for vehicle with id " + str(vehicleId), "_actions": actions}) 
+            except Exception as e:
+                my_logger.warn("Cant connect to vehicle:" + str(e) + " for vehicle with id "+ str(vehicleId))
                 jsonObjStr=droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId) + "with connection " + jsonObjStr, "_actions": actions}) 
             vehicleStatus=droneAPIUtils.getVehicleStatus(inVehicle)
@@ -61,30 +51,11 @@ class vehicleStatus:
             vehicleStatus['_links']['mission']={"href":droneAPIUtils.homeDomain+ "/vehicle/" + str(vehicleId) +"/mission","title":"Get the current mission commands from the vehicle."}
             vehicleStatus['_links']['simulator']={"href":droneAPIUtils.homeDomain+ "/vehicle/" + str(vehicleId) +"/simulator","title":"Get the current simulator parameters from the vehicle."}
             output=""
-            if statusVal=="/":
-                statusVal=""            
-            if statusVal=="":
-                outputObj=vehicleStatus
-                outputObj["_actions"]=actions
-                output = json.dumps(outputObj)
-            elif statusVal=="homelocation":
-                cmds = inVehicle.commands
-                cmds.download()
-                cmds.wait_ready()
-                my_logger.debug( " Home Location: %s" % inVehicle.home_location     )
-                output = json.dumps({"home_location":droneAPIUtils.latLonAltObj(inVehicle.home_location)}   )   
-            elif statusVal=="action":
-                outputObj={"error":"Use "+droneAPIUtils.homeDomain+"/vehicle/1/action  (with no / at the end)."}
-                outputObj["_actions"]=actions
-                output = json.dumps(outputObj)
-            else:
-                statusLen=len(statusVal)
-                my_logger.debug( statusLen)
-                #statusVal=statusVal[1:]
-                my_logger.debug( statusVal)
-                outputObj={statusVal: vehicleStatus.get(statusVal,{"error":"Vehicle status '"+statusVal+"' not found. Try getting all using "+droneAPIUtils.homeDomain+"/vehicle/"+vehicleId+"/"})}
-                outputObj["_actions"]=actions
-                output = json.dumps(outputObj)
+            outputObj=vehicleStatus
+            outputObj["_actions"]=actions
+            output = json.dumps(outputObj)
+            my_logger.info( "Return: ="+output )
+
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -94,7 +65,7 @@ class vehicleStatus:
 
     def DELETE(self, vehicleId):
         try:
-            my_logger.info( "#### Method DELETE of vehicleStatus ####")
+            my_logger.info( "DELETE: vehicleId="+str(vehicleId) )
             #delete docker container for this vehicle
             jsonObjStr=droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
             my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
@@ -108,7 +79,7 @@ class vehicleStatus:
 
             ipAddress=connectionString[4:-6]
             connectionStringLength=len(connectionString)
-            my_logger.info( "connectionStringLength="+ str(connectionStringLength))
+            my_logger.debug( "connectionStringLength="+ str(connectionStringLength))
             port=connectionString[connectionStringLength-5:]
             index=-1
             for port in dockerHostsArray[0]['usedPorts']:
@@ -129,7 +100,10 @@ class vehicleStatus:
             dockerClient.containers.prune(filters=None)
 
             outputObj={"status":"success"}
+
             output = json.dumps(outputObj)
+            my_logger.info( "Return: ="+output )
+
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -139,11 +113,13 @@ class vehicleStatus:
 
     def OPTIONS(self,vehicleId):
         try:
-            my_logger.info( "#### OPTIONS of vehicleStatus - just here to suppor the CORS Cross-Origin security #####")
+            my_logger.info( "OPTIONS: vehicleId="+str(vehicleId))
             droneAPIUtils.applyHeadders()
 
             outputObj={}
             output=json.dumps(outputObj)   
+            my_logger.info( "Return: ="+output )
+
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()

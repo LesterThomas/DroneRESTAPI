@@ -12,7 +12,7 @@ my_logger = logging.getLogger("DroneAPIServer."+str(__name__))
 class homeLocation:        
     def GET(self, vehicleId):
         try:
-            my_logger.info( "#### Method GET of homeLocation ####")
+            my_logger.info("GET: vehicleId="+str(vehicleId))
             statusVal=''  #removed statusVal which used to have the fields) from the URL because of the trailing / issue
             my_logger.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
             droneAPIUtils.applyHeadders()
@@ -31,6 +31,7 @@ class homeLocation:
             cmds.wait_ready()
             my_logger.debug( " Home Location: %s" % inVehicle.home_location     )
             output = json.dumps({"_links":{"self":{"href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/homeLocation","title":"Get the home location for this vehicle"}},"home_location":droneAPIUtils.latLonAltObj(inVehicle.home_location)}   )   
+            my_logger.info( "Return: ="+output )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()

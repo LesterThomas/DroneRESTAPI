@@ -12,10 +12,11 @@ my_logger = logging.getLogger("DroneAPIServer."+str(__name__))
 class mission:        
     def GET(self, vehicleId):
         try:
-            my_logger.info( "#### Method GET of mission ####")
+            my_logger.info("GET: vehicleId="+str(vehicleId))
             my_logger.debug( "vehicleId = '"+vehicleId+"'")
             droneAPIUtils.applyHeadders()
             output=getMissionActions(vehicleId) 
+            my_logger.info( "Return: ="+output )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -25,7 +26,7 @@ class mission:
 
     def POST(self, vehicleId):
         try:
-            my_logger.info( "#### Method POST of mission ####")
+            my_logger.info( "POST: vehicleId="+str(vehicleId))
             droneAPIUtils.applyHeadders()
             try:
                 inVehicle=droneAPIUtils.connectVehicle(vehicleId)   
@@ -62,6 +63,7 @@ class mission:
             inVehicle.flush()
             my_logger.info( "Command added")
             output=getMissionActions(vehicleId) 
+            my_logger.info( "Return: ="+output )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -71,11 +73,12 @@ class mission:
 
     def OPTIONS(self, vehicleId):
         try:
-            my_logger.info( "#### Method OPTIONS of mission - just here to suppor the CORS Cross-Origin security ####")
+            my_logger.info( "OPTIONS: vehicleId="+str(vehicleId))
             droneAPIUtils.applyHeadders()
 
             outputObj={}
             output=json.dumps(outputObj)   
+            my_logger.info( "Return: ="+output )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()

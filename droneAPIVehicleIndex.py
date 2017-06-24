@@ -19,7 +19,7 @@ class vehicleIndex:
  
     def GET(self):
         try:
-            my_logger.info( "#### Method GET of vehicleIndex #####")
+            my_logger.info("GET")
             droneAPIUtils.applyHeadders()
             outputObj=[]
 
@@ -42,8 +42,7 @@ class vehicleIndex:
             my_logger.debug("actions")
             my_logger.debug(actions)
             jsonResponse='{"_embedded":{"vehicle":'+json.dumps(outputObj)+'},"_actions":'+actions+',"_links":'+ json.dumps(self)+'}'
-            my_logger.debug("jsonResponse")
-            my_logger.debug(jsonResponse)
+            my_logger.info( "Return: ="+jsonResponse )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -54,7 +53,7 @@ class vehicleIndex:
 
     def POST(self):
         try:
-            my_logger.info( "#### Method POST of vehicleIndex #####")
+            my_logger.info( "POST:")
             droneAPIUtils.applyHeadders()
             dataStr=web.data()
             my_logger.info( dataStr)            
@@ -95,6 +94,7 @@ class vehicleIndex:
             outputObj={}
             outputObj["connection"]=connection
             outputObj["id"]=key
+            my_logger.info( "Return: ="+json.dumps(outputObj) )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -104,11 +104,12 @@ class vehicleIndex:
 
     def OPTIONS(self):
         try:
-            my_logger.info( "#### OPTIONS of vehicleIndex - just here to suppor the CORS Cross-Origin security #####")
+            my_logger.info( "OPTIONS: vehicleId="+str(vehicleId))
             droneAPIUtils.applyHeadders()
 
             outputObj={}
             output=json.dumps(outputObj)   
+            my_logger.info( "Return: ="+output )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()

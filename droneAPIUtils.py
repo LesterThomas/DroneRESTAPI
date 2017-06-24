@@ -41,6 +41,7 @@ def startup():
     my_logger.info("##################################################################################")
     my_logger.info("Starting DroneAPI at  "+str(time.time()))
     my_logger.info("##################################################################################")
+    my_logger.info("Logging level:"+str(logging.INFO))
 
     #Set environment variables
     homeDomain=getEnvironmentVariable('DRONEAPI_URL')
@@ -171,6 +172,10 @@ def connectVehicle(inVehicleId):
         my_logger.debug( "connectVehicle called with inVehicleId = " + str(inVehicleId))
         #connectionString=connectionStringArray[inVehicleId]
         jsonObjStr=redisdB.get('connectionString:' + str(inVehicleId))
+        my_logger.info("Redis returns '"+str(jsonObjStr)+"'")
+        if (jsonObjStr is None):
+            my_logger.info("Raising Vehicle not found warning")
+            raise Warning('Vehicle not found ') 
         my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
         jsonObj=json.loads(jsonObjStr)
         connectionString=jsonObj['connectionString']
@@ -181,8 +186,8 @@ def connectVehicle(inVehicleId):
         timeSinceStart=currentTime-vehicleStartTime
         my_logger.info("timeSinceStart= " + str(timeSinceStart) )
         if (timeSinceStart<10): #less than 10 seconds so throw Exception
-            my_logger.warn( "Raising warning")
-            raise Warning('Vehicle starting up ' + inVehicleId) 
+            my_logger.warn( "Raising Vehicle starting up warning")
+            raise Warning('Vehicle starting up ') 
 
         my_logger.info("connection string for vehicle " + str(inVehicleId) + "='" + connectionString + "'")
         # Connect to the Vehicle.
@@ -196,9 +201,9 @@ def connectVehicle(inVehicleId):
             my_logger.info(actionArrayDict)
         else:
             my_logger.debug( "Already connected to vehicle")
-    except Warning:
-        my_logger.warn( "Caught warning: Vehicle starting up")
-        raise Warning('Vehicle starting up ' + inVehicleId)
+    except Warning as w:
+        my_logger.warn( "Caught warning: "+ str(w))
+        raise Warning(str(w))
     except Exception as e:
         my_logger.warn( "Caught exceptio: Unexpected error in connectVehicle:")
         my_logger.warn( "VehicleId="+str(inVehicleId))

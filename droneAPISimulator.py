@@ -9,10 +9,11 @@ my_logger = logging.getLogger("DroneAPIServer."+str(__name__))
 class simulator:        
     def GET(self, vehicleId):
         try:
-            my_logger.info( "#### Method GET of simulator ####")
+            my_logger.info("GET: vehicleId="+str(vehicleId))
             my_logger.debug( "vehicleId = '"+vehicleId+"'")
             droneAPIUtils.applyHeadders()
             output=getSimulatorParams(vehicleId) 
+            my_logger.info( "Return: ="+output )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -22,7 +23,7 @@ class simulator:
 
     def POST(self, vehicleId):
         try:
-            my_logger.info( "#### Method POST of simulator ####")
+            my_logger.info( "POST: vehicleId="+str(vehicleId))
             droneAPIUtils.applyHeadders()
             try:
                 inVehicle=droneAPIUtils.connectVehicle(vehicleId)   
@@ -32,17 +33,18 @@ class simulator:
             except Exception:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId)}) 
-            my_logger.info( "posting new simulator parameter")
+            my_logger.debug( "posting new simulator parameter")
             simulatorData = json.loads(web.data());
-            my_logger.info(simulatorData);
+            my_logger.debug(simulatorData);
             simKey=str(simulatorData['parameter'])
             simValue=simulatorData['value']
-            my_logger.info(simKey);
-            my_logger.info(simValue);
+            my_logger.debug(simKey);
+            my_logger.debug(simValue);
             inVehicle.parameters[simKey]=simValue;
-            my_logger.info('Updated parameter');
+            my_logger.debug('Updated parameter');
            
             output=getSimulatorParams(vehicleId) 
+            my_logger.info( "Return: ="+output )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -52,11 +54,13 @@ class simulator:
 
     def OPTIONS(self, vehicleId):
         try:
-            my_logger.info( "#### Method OPTIONS of simulator - just here to suppor the CORS Cross-Origin security ####")
+            my_logger.info( "OPTIONS: vehicleId="+str(vehicleId))
+            #just here to suppor the CORS Cross-Origin security
             droneAPIUtils.applyHeadders()
 
             outputObj={}
             output=json.dumps(outputObj)   
+            my_logger.info( "Return: ="+output )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()

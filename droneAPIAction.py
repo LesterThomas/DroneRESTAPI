@@ -11,11 +11,13 @@ my_logger = logging.getLogger("DroneAPIServer."+str(__name__))
 class action:     
     def OPTIONS(self, vehicleId):
         try:
-            my_logger.info( "#### Method OPTIONS of action - just here to suppor the CORS Cross-Origin security ####")
+            my_logger.info( "OPTIONS: vehicleId="+str(vehicleId))
             droneAPIUtils.applyHeadders()
 
             outputObj={}
             output=json.dumps(outputObj)   
+            my_logger.info( "Return: ="+output )
+
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -26,7 +28,7 @@ class action:
 
     def GET(self, vehicleId):
         try:
-            my_logger.info( "#### Method GET of action ####")
+            my_logger.info("GET: vehicleId="+str(vehicleId))
 
             droneAPIUtils.applyHeadders()
             try:
@@ -106,6 +108,7 @@ class action:
             updateActionStatus(inVehicle, vehicleId);
             outputObj['actions']=droneAPIUtils.actionArrayDict[vehicleId]
             output=json.dumps(outputObj)   
+            my_logger.info( "Return: ="+output )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
@@ -115,7 +118,7 @@ class action:
 
     def POST(self, vehicleId):
         try:
-            my_logger.info( "#### Method POST of action ####")
+            my_logger.info( "POST: vehicleId="+str(vehicleId))
             try:
                 inVehicle=droneAPIUtils.connectVehicle(vehicleId)   
             except Warning:
@@ -196,6 +199,7 @@ class action:
             if (len(actionArray)>10):
                 actionArray.pop(0)
             outputObj['href']=droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action"
+            my_logger.info( "Return: ="+json.dumps(outputObj) )
 
         except Exception as e: 
             my_logger.exception(e)

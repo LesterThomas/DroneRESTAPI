@@ -14,7 +14,7 @@ class authorizedZone:
 
     def POST(self,vehicleId):
         try:
-            my_logger.info( "#### Method POST of authorizedZone ####")
+            my_logger.info( "POST: vehicleId="+str(vehicleId))
             my_logger.debug( "vehicleId = '"+vehicleId+"'")
             droneAPIUtils.applyHeadders()
             try:
@@ -38,6 +38,7 @@ class authorizedZone:
             outputObj={}
             outputObj["zone"]=zone
             droneAPIUtils.authorizedZoneDict[vehicleId]=zone
+            my_logger.info( "Return: ="+json.dumps(outputObj) )
         except Exception as e: 
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
