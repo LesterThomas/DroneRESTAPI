@@ -20,6 +20,7 @@ RUN pip install redis
 RUN pip install --upgrade requests
 RUN pip install boto3
 RUN pip install docker
+RUN pip install watchtower
 
 RUN apt-get install -y awscli
 COPY *.py /

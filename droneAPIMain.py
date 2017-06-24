@@ -6,6 +6,7 @@ from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative
 from collections import OrderedDict
 import time, json, math, warnings, os, web, logging, logging.handlers, redis, uuid, boto3, traceback, docker
 
+my_logger = logging.getLogger("DroneAPIServer."+str(__name__))
 
 
 
@@ -13,7 +14,7 @@ import time, json, math, warnings, os, web, logging, logging.handlers, redis, uu
 class index:        
     def GET(self):
         try:
-            droneAPIUtils.my_logger.info( "#### Method GET of index #####")
+            my_logger.info( "#### Method GET of index #####")
             droneAPIUtils.applyHeadders()
             outputObj={}
             outputObj['description']='Welcome to the Drone API homepage. WARNING: This API is experimental - use at your own discression. The API allows you to interact with simulated or real drones through a simple hypermedia REST API. There is a HAL API Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test client at http://droneapi.ddns.net:1235/static/app  The API is maintained at https://github.com/lesterthomas/DroneRESTAPI. This experimental API is part of the TM Forum Anything-as-a-Service Catalyst  https://projects.tmforum.org/wiki/display/PCT/A+Platform+for+IoT+and+Anything+as+a+Service+Catalyst '
@@ -25,7 +26,7 @@ class index:
                         }
             output=json.dumps(outputObj)
         except Exception as e: 
-            droneAPIUtils.my_logger.exception(e)
+            my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
@@ -38,12 +39,12 @@ class index:
 class catchAll:
     def GET(self, user):
         try:
-            droneAPIUtils.my_logger.info( "#### Method GET of catchAll ####")
+            my_logger.info( "#### Method GET of catchAll ####")
             droneAPIUtils.applyHeadders()
-            droneAPIUtils.my_logger.debug( droneAPIUtils.homeDomain)
+            my_logger.debug( droneAPIUtils.homeDomain)
             outputObj={"Error":"No API endpoint found. Try navigating to "+droneAPIUtils.homeDomain+"/vehicle for list of vehicles or to "+droneAPIUtils.homeDomain+"/vehicle/<vehicleId> for the status of vehicle #1 or to "+droneAPIUtils.homeDomain+"/vehicle/<vehicleId>/action for the list of actions available for vehicle <vehicleId>." }
         except Exception as e: 
-            droneAPIUtils.my_logger.exception(e)
+            my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
@@ -51,11 +52,11 @@ class catchAll:
 
     def POST(self, user):
         try:
-            droneAPIUtils.my_logger.info( "#### Method POST of catchAll ####")
+            my_logger.info( "#### Method POST of catchAll ####")
             droneAPIUtils.applyHeadders()
             outputObj={"Error":"No API endpoint found. Try navigating to "+droneAPIUtils.homeDomain+"/vehicle for list of vehicles or to "+droneAPIUtils.homeDomain+"/vehicle/<vehicleId> for the status of vehicle #1 or to "+droneAPIUtils.homeDomain+"/vehicle/<vehicleId>/action for the list of actions available for vehicle <vehicleId>." }
         except Exception as e: 
-            droneAPIUtils.my_logger.exception(e)
+            my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             

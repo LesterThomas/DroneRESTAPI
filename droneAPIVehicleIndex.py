@@ -6,6 +6,7 @@ import web, logging, traceback, json, time, math, uuid, docker, redis
 import  droneAPIUtils
 
 
+my_logger = logging.getLogger("DroneAPIServer."+str(__name__))
 
 
 class vehicleIndex:   
@@ -18,15 +19,15 @@ class vehicleIndex:
  
     def GET(self):
         try:
-            droneAPIUtils.my_logger.info( "#### Method GET of vehicleIndex #####")
+            my_logger.info( "#### Method GET of vehicleIndex #####")
             droneAPIUtils.applyHeadders()
             outputObj=[]
 
             keys=droneAPIUtils.redisdB.keys("connectionString:*")
             for key in keys:
-                droneAPIUtils.my_logger.debug( "key = '"+key+"'")
+                my_logger.debug( "key = '"+key+"'")
                 jsonObjStr=droneAPIUtils.redisdB.get(key)
-                droneAPIUtils.my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
+                my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
                 jsonObj=json.loads(jsonObjStr)
                 connectionString=jsonObj['connectionString']
                 vehicleName=jsonObj['name']
@@ -38,13 +39,13 @@ class vehicleIndex:
 
             actions='[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + droneAPIUtils.homeDomain+ '/vehicle",\n"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}, {"name":"name","type":"string"}] }]\n'
             self={"self":{"title":"Return the collection of available vehicles.","href": droneAPIUtils.homeDomain+"/vehicle" }}
-            droneAPIUtils.my_logger.debug("actions")
-            droneAPIUtils.my_logger.debug(actions)
+            my_logger.debug("actions")
+            my_logger.debug(actions)
             jsonResponse='{"_embedded":{"vehicle":'+json.dumps(outputObj)+'},"_actions":'+actions+',"_links":'+ json.dumps(self)+'}'
-            droneAPIUtils.my_logger.debug("jsonResponse")
-            droneAPIUtils.my_logger.debug(jsonResponse)
+            my_logger.debug("jsonResponse")
+            my_logger.debug(jsonResponse)
         except Exception as e: 
-            droneAPIUtils.my_logger.exception(e)
+            my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
@@ -53,10 +54,10 @@ class vehicleIndex:
 
     def POST(self):
         try:
-            droneAPIUtils.my_logger.info( "#### Method POST of vehicleIndex #####")
+            my_logger.info( "#### Method POST of vehicleIndex #####")
             droneAPIUtils.applyHeadders()
             dataStr=web.data()
-            droneAPIUtils.my_logger.info( dataStr)            
+            my_logger.info( dataStr)            
             data = json.loads(dataStr)
             droneType=data["vehicleType"]
             vehicleName=data["name"]
@@ -76,7 +77,7 @@ class vehicleIndex:
 
                 dockerContainer=dockerClient.containers.run('lesterthomas/dronesim:1.7', detach=True, ports={'14550/tcp': hostAndPort['port']} )
                 dockerContainerId=dockerContainer.id
-                droneAPIUtils.my_logger.info( "container Id=" + str(dockerContainerId))
+                my_logger.info( "container Id=" + str(dockerContainerId))
 
 
                 connection="tcp:"+hostAndPort['image']+":"+str(hostAndPort['port']) 
@@ -84,18 +85,18 @@ class vehicleIndex:
             else:
                 connection = data["connectionString"]
             
-            droneAPIUtils.my_logger.debug( connection)
+            my_logger.debug( connection)
 
             uuidVal=uuid.uuid4()
             key=str(uuidVal)[:8]
-            droneAPIUtils.my_logger.info("adding connectionString to Redis db with key '"+"connectionString:"+str(key)+"'")
+            my_logger.info("adding connectionString to Redis db with key '"+"connectionString:"+str(key)+"'")
             droneAPIUtils.redisdB.set("connectionString:"+key,json.dumps({"connectionString":connection,"name":vehicleName,"vehicleType":droneType,"startTime":time.time(),"dockerContainerId":dockerContainerId}))
 
             outputObj={}
             outputObj["connection"]=connection
             outputObj["id"]=key
         except Exception as e: 
-            droneAPIUtils.my_logger.exception(e)
+            my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
@@ -103,13 +104,13 @@ class vehicleIndex:
 
     def OPTIONS(self):
         try:
-            droneAPIUtils.my_logger.info( "#### OPTIONS of vehicleIndex - just here to suppor the CORS Cross-Origin security #####")
+            my_logger.info( "#### OPTIONS of vehicleIndex - just here to suppor the CORS Cross-Origin security #####")
             droneAPIUtils.applyHeadders()
 
             outputObj={}
             output=json.dumps(outputObj)   
         except Exception as e: 
-            droneAPIUtils.my_logger.exception(e)
+            my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
@@ -131,18 +132,18 @@ class vehicleIndex:
                 if (instance["State"]["Name"]!="terminated"):
                     instances.append(instance["InstanceId"])
                     
-        droneAPIUtils.my_logger.debug("Non terminated instances=")
-        droneAPIUtils.my_logger.debug(len(instances))
+        my_logger.debug("Non terminated instances=")
+        my_logger.debug(len(instances))
         if (len(instances)>20):
             outputObj={}
             outputObj["status"]="Error: can't launch more than "+str(20)+" cloud images"
             return json.dumps(outputObj)
 
 
-        droneAPIUtils.my_logger.info("Creating new AWS image")
+        my_logger.info("Creating new AWS image")
         ec2resource = boto3.resource('ec2')
         createresponse=ec2resource.create_instances(ImageId=ImageId, MinCount=1, MaxCount=1,InstanceType=InstanceType,SecurityGroupIds=SecurityGroupIds)
-        droneAPIUtils.my_logger.info(createresponse[0].private_ip_address)
+        my_logger.info(createresponse[0].private_ip_address)
         return private_ip_address
 
     #get the next image and port to launch dronesim docker image (create new image if necessary)
@@ -150,8 +151,8 @@ class vehicleIndex:
         firstFreePort=0
         keys=droneAPIUtils.redisdB.keys("dockerHostsArray")
         dockerHostsArray=json.loads(droneAPIUtils.redisdB.get(keys[0]))
-        droneAPIUtils.my_logger.info("dockerHostsArray")
-        droneAPIUtils.my_logger.info(dockerHostsArray)
+        my_logger.info("dockerHostsArray")
+        my_logger.info(dockerHostsArray)
 
         #initially always use current image
         for i in range(14550,14560):
@@ -161,7 +162,7 @@ class vehicleIndex:
                 firstFreePort=i
                 break
         dockerHostsArray[0]['usedPorts'].append(i)
-        droneAPIUtils.my_logger.info("First unassigned port:"+ str(firstFreePort))
+        my_logger.info("First unassigned port:"+ str(firstFreePort))
 
         droneAPIUtils.redisdB.set("dockerHostsArray",json.dumps(dockerHostsArray))
         return {"image":dockerHostsArray[0]['internalIP'],"port":firstFreePort}

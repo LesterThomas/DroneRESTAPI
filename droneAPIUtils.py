@@ -2,7 +2,7 @@
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal,LocationGlobalRelative, Command, mavutil, APIException
 
-import web, logging, traceback, json, time, math, os, redis, docker
+import web, logging, watchtower, traceback, json, time, math, os, redis, docker
 
 #define global variables
 my_logger = None
@@ -21,14 +21,22 @@ def startup():
     global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, actionArrayDict, authorizedZoneDict, redisdB, my_logger
 
     #Set logging framework
-    my_logger = logging.getLogger('MyLogger')
+    main_logger = logging.getLogger("DroneAPIServer")
     LOG_FILENAME = 'droneapi.log'
-    my_logger.setLevel(logging.INFO)
+    main_logger.setLevel(logging.INFO)
     handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=200000, backupCount=5)
-    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    formatter = logging.Formatter("%(levelname)s - %(message)s")
     handler.setFormatter(formatter)
-    my_logger.addHandler(handler)
-    my_logger.propegate=False
+    main_logger.addHandler(handler)
+    main_logger.propegate=False
+
+    try:
+    	main_logger.addHandler(watchtower.CloudWatchLogHandler())
+    except:
+    	main_logger.warn("Can not add CloudWatch Log Handler")
+
+    my_logger = logging.getLogger("DroneAPIServer."+str(__name__))
+
 
     my_logger.info("##################################################################################")
     my_logger.info("Starting DroneAPI at  "+str(time.time()))

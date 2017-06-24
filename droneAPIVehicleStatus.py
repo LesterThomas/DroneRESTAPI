@@ -6,15 +6,16 @@ import web, logging, traceback, json, time, math, docker
 import  droneAPIUtils
 
 
+my_logger = logging.getLogger("DroneAPIServer."+str(__name__))
 
 
 
 class vehicleStatus:        
     def GET(self, vehicleId):
         try:
-            droneAPIUtils.my_logger.info( "#### Method GET of vehicleStatus ####")
+            my_logger.info( "#### Method GET of vehicleStatus ####")
             statusVal=''  #removed statusVal which used to have the fields) from the URL because of the trailing / issue
-            droneAPIUtils.my_logger.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
+            my_logger.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
             droneAPIUtils.applyHeadders()
             outputObj={}
 
@@ -27,14 +28,14 @@ class vehicleStatus:
             #    stringArray=vehicleId.split('/')
             #    vehicleId=stringArray[0]
             #    statusVal=stringArray[1]
-            #droneAPIUtils.my_logger.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
+            #my_logger.debug( "vehicleId = '"+vehicleId+"', statusVal = '"+statusVal+"'")
             try:
                 inVehicle=droneAPIUtils.connectVehicle(vehicleId)   
             except Warning:
-                droneAPIUtils.my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle - vehicle starting up ", "_actions": actions}) 
             except Exception:
-                droneAPIUtils.my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 jsonObjStr=droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
                 return json.dumps({"error":"Cant connect to vehicle " + str(vehicleId) + "with connection " + jsonObjStr, "_actions": actions}) 
             vehicleStatus=droneAPIUtils.getVehicleStatus(inVehicle)
@@ -70,7 +71,7 @@ class vehicleStatus:
                 cmds = inVehicle.commands
                 cmds.download()
                 cmds.wait_ready()
-                droneAPIUtils.my_logger.debug( " Home Location: %s" % inVehicle.home_location     )
+                my_logger.debug( " Home Location: %s" % inVehicle.home_location     )
                 output = json.dumps({"home_location":droneAPIUtils.latLonAltObj(inVehicle.home_location)}   )   
             elif statusVal=="action":
                 outputObj={"error":"Use "+droneAPIUtils.homeDomain+"/vehicle/1/action  (with no / at the end)."}
@@ -78,14 +79,14 @@ class vehicleStatus:
                 output = json.dumps(outputObj)
             else:
                 statusLen=len(statusVal)
-                droneAPIUtils.my_logger.debug( statusLen)
+                my_logger.debug( statusLen)
                 #statusVal=statusVal[1:]
-                droneAPIUtils.my_logger.debug( statusVal)
+                my_logger.debug( statusVal)
                 outputObj={statusVal: vehicleStatus.get(statusVal,{"error":"Vehicle status '"+statusVal+"' not found. Try getting all using "+droneAPIUtils.homeDomain+"/vehicle/"+vehicleId+"/"})}
                 outputObj["_actions"]=actions
                 output = json.dumps(outputObj)
         except Exception as e: 
-            droneAPIUtils.my_logger.exception(e)
+            my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
@@ -93,10 +94,10 @@ class vehicleStatus:
 
     def DELETE(self, vehicleId):
         try:
-            droneAPIUtils.my_logger.info( "#### Method DELETE of vehicleStatus ####")
+            my_logger.info( "#### Method DELETE of vehicleStatus ####")
             #delete docker container for this vehicle
             jsonObjStr=droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
-            droneAPIUtils.my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
+            my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
             jsonObj=json.loads(jsonObjStr)
             connectionString=jsonObj['connectionString']
 
@@ -107,7 +108,7 @@ class vehicleStatus:
 
             ipAddress=connectionString[4:-6]
             connectionStringLength=len(connectionString)
-            droneAPIUtils.my_logger.info( "connectionStringLength="+ str(connectionStringLength))
+            my_logger.info( "connectionStringLength="+ str(connectionStringLength))
             port=connectionString[connectionStringLength-5:]
             index=-1
             for port in dockerHostsArray[0]['usedPorts']:
@@ -118,10 +119,10 @@ class vehicleStatus:
             droneAPIUtils.redisdB.set("dockerHostsArray",json.dumps(dockerHostsArray))
 
             dockerContainerId=jsonObj['dockerContainerId']
-            droneAPIUtils.my_logger.info( "Deleting container")
-            droneAPIUtils.my_logger.info( "dockerHost = '"+ipAddress+"'")
-            droneAPIUtils.my_logger.info( "port = '"+str(port)+"'")
-            droneAPIUtils.my_logger.info( "containerId = '"+dockerContainerId+"'")
+            my_logger.info( "Deleting container")
+            my_logger.info( "dockerHost = '"+ipAddress+"'")
+            my_logger.info( "port = '"+str(port)+"'")
+            my_logger.info( "containerId = '"+dockerContainerId+"'")
             dockerClient = docker.DockerClient(version='1.27',base_url='tcp://'+ipAddress+':4243') #docker.from_env(version='1.27') 
             container=dockerClient.containers.get(dockerContainerId)
             container.stop()
@@ -130,7 +131,7 @@ class vehicleStatus:
             outputObj={"status":"success"}
             output = json.dumps(outputObj)
         except Exception as e: 
-            droneAPIUtils.my_logger.exception(e)
+            my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
@@ -138,13 +139,13 @@ class vehicleStatus:
 
     def OPTIONS(self,vehicleId):
         try:
-            droneAPIUtils.my_logger.info( "#### OPTIONS of vehicleStatus - just here to suppor the CORS Cross-Origin security #####")
+            my_logger.info( "#### OPTIONS of vehicleStatus - just here to suppor the CORS Cross-Origin security #####")
             droneAPIUtils.applyHeadders()
 
             outputObj={}
             output=json.dumps(outputObj)   
         except Exception as e: 
-            droneAPIUtils.my_logger.exception(e)
+            my_logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")   
             return json.dumps({"error":"An unknown Error occurred ","details":e.message, "args":e.args,"traceback":traceLines})             
@@ -152,7 +153,7 @@ class vehicleStatus:
        
     def terminateCloudInstance(vehicleId):
         jsonObjStr=droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
-        droneAPIUtils.my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
+        my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
         jsonObj=json.loads(jsonObjStr)
         connectionString=jsonObj['connectionString']
         ipAddress=connectionString[4:-6]
@@ -172,24 +173,24 @@ class vehicleStatus:
                     # This will print will output the value of the Dictionary key 'InstanceId'
                     if (instance["State"]["Name"]!="terminated"):
                         if (instance.get("PrivateIpAddress",None)==ipAddress):
-                            #droneAPIUtils.my_logger.debug(instance)
-                            droneAPIUtils.my_logger.debug(instance["PrivateIpAddress"],instance["InstanceId"],instance["InstanceType"],instance["State"]["Name"])
+                            #my_logger.debug(instance)
+                            my_logger.debug(instance["PrivateIpAddress"],instance["InstanceId"],instance["InstanceType"],instance["State"]["Name"])
                             instances.append(instance["InstanceId"])
                         
-            droneAPIUtils.my_logger.debug("instances to terminate")
-            droneAPIUtils.my_logger.debug(instances)
+            my_logger.debug("instances to terminate")
+            my_logger.debug(instances)
 
             if (len(instances)>0):  
                 #startresp=ec2client.start_instances(InstanceIds=["i-094270016448e61e2"])
                 stopresp=ec2client.terminate_instances(InstanceIds=instances)
-                droneAPIUtils.my_logger.debug("Terminated instance")
+                my_logger.debug("Terminated instance")
 
         except Exception as inst:
-            droneAPIUtils.my_logger.error( "Error conneting to AWS:")
-            droneAPIUtils.my_logger.error( "VehicleId=")
-            droneAPIUtils.my_logger.error( vehicleId)
-            droneAPIUtils.my_logger.error( "Exception=")
-            droneAPIUtils.my_logger.error( inst)
+            my_logger.error( "Error conneting to AWS:")
+            my_logger.error( "VehicleId=")
+            my_logger.error( vehicleId)
+            my_logger.error( "Exception=")
+            my_logger.error( inst)
             #ignore error and continue
         
         return
