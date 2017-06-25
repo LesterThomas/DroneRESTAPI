@@ -62,6 +62,9 @@ class vehicleIndex:
             vehicleName=data["name"]
             connection=None
             dockerContainerId="N/A"
+            uuidVal=uuid.uuid4()
+            key=str(uuidVal)[:8]
+            
             if (droneType=="simulated"):
                 
                 
@@ -72,9 +75,9 @@ class vehicleIndex:
                 #private_ip_address=this.launchCloudImage('ami-5be0f43f', 't2.micro', ['sg-fd0c8394'])            
                 #connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
                 hostAndPort=self.getNexthostAndPort() 
-                dockerClient = docker.DockerClient(version='1.27',base_url='tcp://'+hostAndPort['image']+':4243') #docker.from_env(version='1.27') 
+                dockerClient = docker.DockerClient(version='1.24',base_url='tcp://'+hostAndPort['image']+':4243') #docker.from_env(version='1.24') 
 
-                dockerContainer=dockerClient.containers.run('lesterthomas/dronesim:1.7', detach=True, ports={'14550/tcp': hostAndPort['port']} )
+                dockerContainer=dockerClient.containers.run('lesterthomas/dronesim:1.7', detach=True, ports={'14550/tcp': hostAndPort['port']} , name=key)
                 dockerContainerId=dockerContainer.id
                 my_logger.info( "container Id=" + str(dockerContainerId))
 
@@ -86,8 +89,6 @@ class vehicleIndex:
             
             my_logger.debug( connection)
 
-            uuidVal=uuid.uuid4()
-            key=str(uuidVal)[:8]
             my_logger.info("adding connectionString to Redis db with key '"+"connectionString:"+str(key)+"'")
             droneAPIUtils.redisdB.set("connectionString:"+key,json.dumps({"connectionString":connection,"name":vehicleName,"vehicleType":droneType,"startTime":time.time(),"dockerContainerId":dockerContainerId}))
 

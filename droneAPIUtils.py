@@ -114,7 +114,7 @@ def validateAndRefreshContainers(redisdB):
         canAccessHost=True
         try :
             my_logger.info( "dockerHost = '"+dockerHost['internalIP']+"'")
-            dockerClient = docker.DockerClient(version='1.27',base_url='tcp://'+dockerHost['internalIP']+':4243') #docker.from_env(version='1.27') 
+            dockerClient = docker.DockerClient(version='1.24',base_url='tcp://'+dockerHost['internalIP']+':4243') #docker.from_env(version='1.24') 
 
             for container in dockerClient.containers.list():
                 imageName=str(container.image)
