@@ -82,12 +82,8 @@ class vehicleStatus:
             my_logger.debug( "connectionStringLength="+ str(connectionStringLength))
             port=connectionString[connectionStringLength-5:]
             index=-1
-            for port in dockerHostsArray[0]['usedPorts']:
-                index=index+1
-                if (dockerHostsArray[0]['usedPorts'][index]==int(port)):
-                    dockerHostsArray[0]['usedPorts'].pop(index)
 
-            droneAPIUtils.redisdB.set("dockerHostsArray",json.dumps(dockerHostsArray))
+            droneAPIUtils.rebuildDockerHostsArray()
 
             dockerContainerId=jsonObj['dockerContainerId']
             my_logger.info( "Deleting container")

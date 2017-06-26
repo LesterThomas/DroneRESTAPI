@@ -56,7 +56,7 @@ def startup():
     redisdB = redis.Redis(host='redis', port=6379) #redis or localhost
 
     #refresh the running containers based on redis data
-    validateAndRefreshContainers(redisdB)
+    validateAndRefreshContainers()
 
     return
 
@@ -74,85 +74,119 @@ def getEnvironmentVariable(inVariable):
         my_logger.exception(traceLines)
     return ""
 
-def validateAndRefreshContainers(redisdB):
-    #test the redis dB
-    #remove any old entries (and any old docker containers)
-    my_logger.info("Connecting to Redis dB and removing any existing entries and stopping any existing containers at "+str(time.time()))
+def validateAndRefreshContainers():
+    try:
+        #test the redis dB
+        #remove any old entries (and any old docker containers)
+        my_logger.info("Connecting to Redis dB and removing any existing entries and stopping any existing containers at "+str(time.time()))
 
-    dockerHostsArray=[]
-    redisdB.set('foo', 'bar')
-    my_logger.info("RedisSet "+str(time.time()))
+        dockerHostsArray=[]
+        redisdB.set('foo', 'bar')
+        my_logger.info("RedisSet "+str(time.time()))
 
-    value = redisdB.get('foo')
-    my_logger.info("RedisGet "+str(time.time()))
-    if (value=='bar'):
-        my_logger.info("Connected to Redis dB")
-    else:
-        my_logger.error("Can not connect to Redis dB")
-        raise Exception('Can not connect to Redis dB on port 6379')
+        value = redisdB.get('foo')
+        my_logger.info("RedisGet "+str(time.time()))
+        if (value=='bar'):
+            my_logger.info("Connected to Redis dB")
+        else:
+            my_logger.error("Can not connect to Redis dB")
+            raise Exception('Can not connect to Redis dB on port 6379')
 
-    #print out the relavant redisdB data
-    #droneObjKeys=redisdB.keys("connectionString:*")
-    #for key in droneObjKeys:
-    #    jsonObjStr=redisdB.get(key)
-    #    my_logger.info( "removing key = '"+key+"'" + ",redisDbObj = '"+jsonObjStr+"'")
-    #    redisdB.delete(key)
-    dockerHostsString=redisdB.get("dockerHostsArray")
-    dockerHostsArray=None
-    if (dockerHostsString==None):
-    	dockerHostsArray=[{"internalIP":defaultDockerHost,"usedPorts":[]}]
-    else :
-    	dockerHostsArray=json.loads(dockerHostsString)
-    	
-    my_logger.info("dockerHostsArray fron Redis before validation")
-    my_logger.info(dockerHostsArray)
 
-    #check that I can access Docker on each host and to delete any existing containers
-    index=-1
-    for dockerHost in dockerHostsArray:
-        index=index+1
-        canAccessHost=True
-        try :
-            my_logger.info( "dockerHost = '"+dockerHost['internalIP']+"'")
-            dockerClient = docker.DockerClient(version='1.24',base_url='tcp://'+dockerHost['internalIP']+':4243') #docker.from_env(version='1.24') 
+        #drone reference data is in Redis database with a key for each drone
+        #there is also a dockerHostsArray that contains a simplified view of the same data for performance
+        #we will start/stop each docker container and also re-build the dockerHostsArray value
+        rebuildDockerHostsArray()
 
-            for container in dockerClient.containers.list():
-                imageName=str(container.image)
-                my_logger.info(container.id + " "+ container.name + " '" + imageName +"'")
-                if (imageName=="<Image: '"+dronesimImage+"'>"):
-                    my_logger.warn("stopping container "+container.id )
-                    container.stop()
-                    dockerClient.containers.prune(filters=None)
-
-            #restart all the docker containers based on the usedPorts
-            for port in dockerHost['usedPorts']:
-                dockerContainer=dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port} )
-                dockerContainerId=dockerContainer.id
-                my_logger.info( "New container for port "+str(port)+"=" + str(dockerContainerId))
+        keys=redisdB.keys("connectionString:*")
+        for key in keys:
+            my_logger.debug( "key = '"+key+"'")
+            jsonObjStr=redisdB.get(key)
+            my_logger.debug( "redisDbObj = '"+jsonObjStr+"'")
+            jsonObj=json.loads(jsonObjStr)
+            connectionString=jsonObj['connectionString']
+            vehicleName=jsonObj['name']
+            vehicleType=jsonObj['vehicleType']
+            dockerContainerId=jsonObj['dockerContainerId']
+            droneId=key[17:]
+            hostIp=connectionString[4:-6]
+            port=connectionString[-5:]
+            my_logger.info("connectionString:%s vehicleName:%s vehicleType:%s droneId:%s hostIp:%s port:%s ",connectionString,vehicleName,vehicleType,droneId,hostIp,port)
 
 
 
+            #stop and start this container (or start a new one if it doesn't exist)
+            dockerClient = docker.DockerClient(version='1.27',base_url='tcp://'+hostIp+':4243') #docker.from_env(version='1.27') 
+            dockerAPIClient = docker.APIClient(version='1.27',base_url='tcp://'+hostIp+':4243') #docker.from_env(version='1.27') 
+            containerFound=False
+            for container in dockerClient.containers.list(all=True):
+                if (container.id==dockerContainerId):
+                    containerFound=True
+                    my_logger.info("Container %s found - restarting",container.id)
+                    container.restart()
+            if (containerFound==False):
+                my_logger.info("Container not found - creating")
 
-        except Exception as e: 
-            my_logger.warn( "Can not connect to host: "+ str(dockerHost['internalIP']))
-            canAccessHost=False
-            dockerHostsArray.pop(index)
-            my_logger.exception(e)
-            tracebackStr = traceback.format_exc()
-            traceLines = tracebackStr.split("\n") 
-            my_logger.exception(traceLines)
-    
-    my_logger.info("dockerHostsArray")
-    my_logger.info(dockerHostsArray)
+                #check if there is a container on this host already using this port
+                containerWithPort=False
+                for container in dockerClient.containers.list():
 
-    if (len(dockerHostsArray)==0):
-        my_logger.warn( "Docker host array is empty: adding default: "+ defaultDockerHost)
-        dockerHostsArray=[{"internalIP":defaultDockerHost,"usedPorts":[]}]
+                    contPortObj = dockerAPIClient.port(container.id,14550)
+                    if (contPortObj is not None):
+                        my_logger.info("Testing Container %s port %s",container.id,contPortObj)
+                        if (contPortObj[0]['HostPort']==port):
+                            #container found. restart
+                            my_logger.info("Container found - restarting")
+                            containerWithPort=True
+                            container.restart()
+                            #update Redis with new container Id
+                            dockerContainerId=container.id
+                            redisdB.set(key,json.dumps({"connectionString":connectionString,"name":vehicleName,"vehicleType":vehicleType,"startTime":time.time(),"dockerContainerId":dockerContainerId}))
 
-    #add the updated dockerHostArray to Redis    
-    redisdB.set("dockerHostsArray",json.dumps(dockerHostsArray))
+                if (containerWithPort==False):
+                    my_logger.info("Container not found - creating new")
+
+                    dockerContainer=dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port} ,name=droneId)             
+                    dockerContainerId=dockerContainer.id
+                    #update redis
+                    redisdB.set(key,json.dumps({"connectionString":connectionString,"name":vehicleName,"vehicleType":vehicleType,"startTime":time.time(),"dockerContainerId":dockerContainerId}))
+
+
+    except Exception as e:
+        my_logger.warn( "Caught exception: Unexpected error in validateAndRefreshContainers:")
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")   
     
     return    
+
+def rebuildDockerHostsArray():
+    #reset dockerHostsArray
+    dockerHostsArray=[{"internalIP":defaultDockerHost,"usedPorts":[]}]
+    keys=redisdB.keys("connectionString:*")
+    for key in keys:
+
+        jsonObjStr=redisdB.get(key)
+        jsonObj=json.loads(jsonObjStr)
+        connectionString=jsonObj['connectionString']
+        hostIp=connectionString[4:-6]
+        port=connectionString[-5:]
+        #check if this host already exists in dockerHostsArray
+        found=False
+        for host in dockerHostsArray:
+            if (host['internalIP']==hostIp):
+                found=True
+        if (found==False):
+            dockerHostsArray.append({"internalIP":hostIp,"usedPorts":[]})
+        #add this drone to docker host
+        for host in dockerHostsArray:
+            if (host['internalIP']==hostIp):
+                host['usedPorts'].append(int(port))
+    my_logger.info("dockerHostsArray (rebuilt)")
+    my_logger.info(dockerHostsArray) 
+    redisdB.set("dockerHostsArray",json.dumps(dockerHostsArray))
+
+
 
 def applyHeadders():
     my_logger.debug('Applying HTTP headers')

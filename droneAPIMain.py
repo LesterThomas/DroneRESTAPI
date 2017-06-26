@@ -86,6 +86,7 @@ urls = (
     '/vehicle/(.*)/authorizedZone', 'droneAPIAuthorizedZone.authorizedZone',
     '/vehicle/(.*)/simulator', 'droneAPISimulator.simulator',
     '/vehicle', 'droneAPIVehicleIndex.vehicleIndex',
+    '/admin', 'droneAPIAdmin.admin',
     '/vehicle/(.*)', 'droneAPIVehicleStatus.vehicleStatus', #was     '/vehicle/(.*)/(.*)', 'vehicleStatus',
     '/(.*)', 'catchAll'
 )
