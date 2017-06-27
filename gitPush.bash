@@ -22,7 +22,7 @@ git push
 echo "Running locally"
 
 docker run -d -p 1235:1234 --link redis:redis -e "DRONEAPI_URL=http://localhost:1235" -e "DOCKER_HOST_IP=172.17.0.1" -e "DOCKER_DRONESIM_IMAGE=lesterthomas/dronesim:1.7" --name droneapi lesterthomas/droneapi:$VERSION 
-sleep 10
+sleep 20
 
 echo "Triggering Postman tests via Jenkins"
 
