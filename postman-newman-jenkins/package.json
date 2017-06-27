@@ -1,0 +1,12 @@
+{
+  "name": "postman-newman-jenkins",
+  "version": "1.0.0",
+  "description": "Project for storing Postman tests",
+  "scripts": {
+    "api-tests-production": "newman run tests/droneapi.postman_collection.json"
+  },
+  "author": "Lester Thomas",
+  "dependencies": {
+    "newman": "^3.7.2"
+  }
+}
