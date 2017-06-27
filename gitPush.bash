@@ -26,5 +26,5 @@ sleep 10
 
 echo "Triggering Postman tests via Jenkins"
 
-curl "localhost:8080/job/droneapi-test/build?token=PostmanLocal"
+curl "http://lesterthomas:Llandod1@localhost:8080/job/droneapi-test/build?token=PostmanLocal"
 
