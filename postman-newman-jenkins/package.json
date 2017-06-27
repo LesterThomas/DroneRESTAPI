@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Project for storing Postman tests",
   "scripts": {
-    "api-tests-production": "newman run -e tests/prod_environment.json tests/droneapi.postman_collection.json"
+    "api-tests-production": "newman run -e tests/prod_environment.json tests/droneapi.postman_collection.json",
+    "api-tests-local": "newman run -e tests/local_environment.json tests/droneapi.postman_collection.json"
   },
   "author": "Lester Thomas",
   "dependencies": {
