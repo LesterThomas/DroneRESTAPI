@@ -108,7 +108,8 @@
 							"",
 							"var jsonData = JSON.parse(responseBody);",
 							"if (jsonData.error){",
-							"    tests[\"Vehicle starting up\"] = jsonData.error === \"Cant connect to vehicle: Vehicle starting up  for vehicle with id {{droneId}}\";",
+							"    tests[\"Vehicle starting up\"] = responseBody.has('starting up');",
+							"    ",
 							"    postman.setNextRequest(\"http://droneapi.ddns.net:1235/vehicle\"); //if vehicle starting up then re-try",
 							"} else {",
 							"    if (jsonData.is_armable){",
@@ -138,7 +139,9 @@
 							"        tests[\"Drone not armable\"] = (true);",
 							"            postman.setNextRequest(\"http://droneapi.ddns.net:1235/vehicle\"); //if vehicle not armed yet then retry",
 							"    }",
-							"}"
+							"}",
+							"",
+							""
 						]
 					}
 				}
