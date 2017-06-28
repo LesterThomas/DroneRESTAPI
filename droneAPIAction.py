@@ -45,7 +45,8 @@ class action:
             outputObj["_links"]={"self":{"href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action","title":"Get the actions for this vehicle."}}
             availableActions=[]
             #available when armed
-            if vehicleStatus["armed"]:
+            my_logger.info("global_relative_frame.alt=%s",vehicleStatus["global_relative_frame"]["alt"])
+            if (vehicleStatus["global_relative_frame"]["alt"]>1):  #if at height of >1 m
                 availableActions.append({   
                     "name":"Region-of-Interest",
                     "title":"Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
@@ -95,13 +96,21 @@ class action:
                     "method":"POST",
                     "fields":[{"name":"name","type":"string","value":"Goto-Relative-Current"},{"name":"north","type":"float","value":30},{"name":"east","type":"float","value":30},{"name":"up","type":"float","value":10}]
                 })
-            else :
+            elif vehicleStatus["armed"]:
                 availableActions.append({   
                     "name":"Takeoff",
-                    "title":"Arm and takeoff in GUIDED mode to height of <height> (default 20m).",
+                    "title":"Takeoff in GUIDED mode to height of <height> (default 20m).",
                     "href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
                     "method":"POST",
                     "fields":[{"name":"name","type":"string","value":"Takeoff"},{"name":"height","type":"float","value":30}]
+                })
+            else :
+                availableActions.append({   
+                    "name":"Arm",
+                    "title":"Arm drone.",
+                    "href":droneAPIUtils.homeDomain+"/vehicle/"+str(vehicleId)+"/action",
+                    "method":"POST",
+                    "fields":[{"name":"name","type":"string","value":"Arm"}]
                 })
             outputObj['_actions']=availableActions
             my_logger.debug(outputObj)
@@ -148,6 +157,9 @@ class action:
             outputObj={}
             if value=="Return-to-Launch":
                 outputObj["action"]=rtl(inVehicle)
+            elif value=="Arm":
+                my_logger.debug( "Armiong")
+                outputObj["action"]=arm(inVehicle)
             elif value=="Takeoff":
                 height=data.get("height",20) #get height - default to 20
                 my_logger.debug( "Taking off to height of " + str(height))
@@ -237,15 +249,14 @@ def rtl(inVehicle):
 
     return outputObj  
 
-def takeoff(inVehicle, inHeight):        
+def arm(inVehicle,):        
     outputObj={}
     if inVehicle.is_armable:
-        outputObj["name"]="Takeoff"
-        outputObj["height"]=inHeight
+        outputObj["name"]="Arm"
         outputObj["status"]="success"
         #coodinates are same as current + height
         currentLocation=inVehicle.location.global_relative_frame
-        outputObj["coordinate"]=[currentLocation.lat, currentLocation.lon, inHeight]
+        outputObj["coordinate"]=[currentLocation.lat, currentLocation.lon, 0]
         outputObj["param1"]=0
         outputObj["param2"]=0
         outputObj["param3"]=0
@@ -259,6 +270,29 @@ def takeoff(inVehicle, inHeight):
         while not inVehicle.armed:
             my_logger.info( " Waiting for arming..."  )
             time.sleep(1)
+    else:
+        outputObj["name"] = "Arm"
+        outputObj["status"] = "Error"
+        outputObj["error"] = "vehicle not armable"
+        my_logger.warn( "vehicle not armable")
+    return outputObj
+
+def takeoff(inVehicle, inHeight):        
+    outputObj={}
+    if inVehicle.armed:
+        outputObj["name"]="Takeoff"
+        outputObj["height"]=inHeight
+        outputObj["status"]="success"
+        #coodinates are same as current + height
+        currentLocation=inVehicle.location.global_relative_frame
+        outputObj["coordinate"]=[currentLocation.lat, currentLocation.lon, inHeight]
+        outputObj["param1"]=0
+        outputObj["param2"]=0
+        outputObj["param3"]=0
+        outputObj["param4"]=0
+        outputObj["command"]=22
+        my_logger.info( "Arming motors")
+        inVehicle.mode    = VehicleMode("GUIDED")
         my_logger.info( "Taking off!")
         inVehicle.simple_takeoff(inHeight) # Take off to target altitude
     else:

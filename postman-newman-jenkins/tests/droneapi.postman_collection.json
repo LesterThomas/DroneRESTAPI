@@ -283,7 +283,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"name\":\"Takeoff\",\"height\":20}"
+					"raw": "{\"name\":\"Arm\"}"
 				},
 				"description": "POST actions 'Takeoff to a height of 20m' to vehicle 7147a58f"
 			},
