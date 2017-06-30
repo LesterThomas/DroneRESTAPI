@@ -13,8 +13,7 @@ import os
 import redis
 import docker
 
-import droneAPIVehicleStatus
-
+import droneAPIAction
 # define global variables
 my_logger = None
 connectionDict = None
@@ -352,6 +351,7 @@ def getVehicleStatus(inVehicle, inVehicleId):
                 "lat": outputObj["global_frame"]["lat"],
                 "lon": outputObj["global_frame"]["lon"],
                 "radius": 500}}
+        authorizedZoneDict[inVehicleId] = outputObj["zone"]
 
     # check if vehicle still in zone
     distance = distanceInMeters(
@@ -360,7 +360,7 @@ def getVehicleStatus(inVehicle, inVehicleId):
         outputObj["global_frame"]["lat"],
         outputObj["global_frame"]["lon"])
     if (distance > 500):
-        droneAPIVehicleStatus.rtl(inVehicle)
+        droneAPIAction.rtl(inVehicle)
 
     return outputObj
 
