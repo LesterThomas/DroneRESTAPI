@@ -25,6 +25,9 @@ class vehicleIndex:
             droneAPIUtils.applyHeadders()
             outputObj = []
 
+            # get the query parameters
+            queryParameters = web.input()
+            my_logger.info("Query parameters %s", str(queryParameters))
             keys = droneAPIUtils.redisdB.keys("connectionString:*")
             for key in keys:
                 my_logger.debug("key = '" + key + "'")
@@ -34,20 +37,32 @@ class vehicleIndex:
                 connectionString = jsonObj['connectionString']
                 vehicleName = jsonObj['name']
                 vehicleType = jsonObj['vehicleType']
-                droneId = key[17:]
-
-                outputObj.append(
-                    {
-                        "_links": {
-                            "self": {
-                                "href": droneAPIUtils.homeDomain +
-                                "/vehicle/" +
-                                str(droneId),
-                                "title": "Get status for vehicle " +
-                                str(droneId)}},
-                        "id": str(droneId),
+                vehicleId = key[17:]
+                droneDetails = {
+                    "_links": {
+                        "self": {
+                            "href": droneAPIUtils.homeDomain +
+                            "/vehicle/" +
+                            str(vehicleId),
+                            "title": "Get status for vehicle " +
+                            str(vehicleId)}},
+                    "id": str(vehicleId),
                         "name": vehicleName,
-                        "vehicleType": vehicleType})
+                        "vehicleType": vehicleType}
+                if (hasattr(queryParameters, 'details')):
+                        # try to get extra details. Ignore if this fails
+                    try:
+                        droneObj = droneAPIUtils.connectVehicle(vehicleId)
+                        droneDetails['vehicleStatus'] = droneAPIUtils.getVehicleStatus(droneObj)
+                    except Warning:
+                        my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up %s", str(vehicleId))
+                    except Exception:
+                        my_logger.warn("vehicleStatus:GET Cant connect to vehicle %s", str(vehicleId))
+                        tracebackStr = traceback.format_exc()
+                        traceLines = tracebackStr.split("\n")
+                        my_logger.warn("Trace: %s", traceLines)
+
+                outputObj.append(droneDetails)
 
             actions = '[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + \
                 droneAPIUtils.homeDomain + '/vehicle",\n"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}, {"name":"name","type":"string"}] }]\n'
