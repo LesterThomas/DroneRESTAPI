@@ -23,19 +23,19 @@
 						<th>Lon</th>
 						<th>Alt</th>
 					</tr>
-					<tr ng-click="selectIndividual(drone)" ng-repeat="drone in droneDetails" >
+					<tr ng-click="selectIndividual(drone)" ng-repeat="drone in drones" >
 						<td >{{drone.name}}</td>
 						<td >{{drone.vehicleType}}</td>
 						<td >{{drone.id}}</td>
-						<td >{{drone.armed_status}}</td>
-						<td >{{drone.mode}}</td>
-						<td >{{drone.distance_home| number : 0}}m</td>
-						<td >{{drone.heading| number : 0}}&deg;</td>
-						<td >{{drone.groundspeed| number : 0}} km/h</td>
-						<td >{{drone.heartbeat_status}}</td>
-						<td >{{drone.global_frame.lat| number : 4}}</td>
-						<td >{{drone.global_frame.lon| number : 4}}</td>
-						<td >{{-drone.local_frame.down| number : 0}}</td>
+						<td >{{drone.vehicleStatus.armed_status}}</td>
+						<td >{{drone.vehicleStatus.mode}}</td>
+						<td >{{drone.vehicleStatus.distance_home| number : 0}}m</td>
+						<td >{{drone.vehicleStatus.heading| number : 0}}&deg;</td>
+						<td >{{drone.vehicleStatus.groundspeed| number : 0}} km/h</td>
+						<td >{{drone.vehicleStatus.heartbeat_status}}</td>
+						<td >{{drone.vehicleStatus.global_frame.lat| number : 4}}</td>
+						<td >{{drone.vehicleStatus.global_frame.lon| number : 4}}</td>
+						<td >{{-drone.vehicleStatus.local_frame.down| number : 0}}</td>
 					</tr>
 				</table>
 
