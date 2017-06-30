@@ -361,6 +361,58 @@
 			"response": []
 		},
 		{
+			"name": "http://droneapi.ddns.net:1235/vehicle?details=true",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Body contains vehicle\"] = responseBody.has(\"vehicle\");",
+							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
+							"tests[\"Drone Array has at least one Drone\"] = jsonData._embedded.vehicle.length>0;",
+							"tests[\"Drone Array has vehicleStatus\"] = jsonData._embedded.vehicle[0].vehicleStatus",
+							"",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://{{url}}/vehicle?details=true",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"vehicle"
+					],
+					"query": [
+						{
+							"key": "details",
+							"value": "true",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"test\",\"vehicleType\":\"simulated\"}"
+				},
+				"description": "Return the collection of available vehicles"
+			},
+			"response": []
+		},
+		{
 			"name": "DEL-http://droneapi.ddns.net:1235/vehicle/{{droneId}}",
 			"event": [
 				{
