@@ -13,6 +13,8 @@ import os
 import redis
 import docker
 
+import droneAPIVehicleStatus
+
 # define global variables
 my_logger = None
 connectionDict = None
@@ -288,7 +290,7 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
     return distance * 1000
 
 
-def getVehicleStatus(inVehicle):
+def getVehicleStatus(inVehicle, inVehicleId):
     # inVehicle is an instance of the Vehicle class
     outputObj = {}
     web.header('Content-Type', 'application/json')
@@ -341,6 +343,24 @@ def getVehicleStatus(inVehicle):
     outputObj["mode"] = str(inVehicle.mode.name)
     my_logger.debug("Armed: %s" % inVehicle.armed)  # settable
     outputObj["armed"] = (inVehicle.armed)
+
+    outputObj["zone"] = authorizedZoneDict.get(inVehicleId)
+    if not outputObj["zone"]:  # if no authorizedZone then set default
+        outputObj["zone"] = {
+            "shape": {
+                "name": "circle",
+                "lat": outputObj["global_frame"]["lat"],
+                "lon": outputObj["global_frame"]["lon"],
+                "radius": 500}}
+
+    # check if vehicle still in zone
+    distance = distanceInMeters(
+        outputObj["zone"]["shape"]["lat"],
+        outputObj["zone"]["shape"]["lon"],
+        outputObj["global_frame"]["lat"],
+        outputObj["global_frame"]["lon"])
+    if (distance > 500):
+        droneAPIVehicleStatus.rtl(inVehicle)
 
     return outputObj
 

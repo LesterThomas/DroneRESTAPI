@@ -44,7 +44,7 @@ class action:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId)})
 
-            vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle)
+            vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
             outputObj = {}
             outputObj["_links"] = {
                 "self": {

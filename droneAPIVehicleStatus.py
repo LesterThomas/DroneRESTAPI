@@ -36,27 +36,9 @@ class vehicleStatus:
                 jsonObjStr = droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId) +
                                    "with connection " + jsonObjStr, "_actions": actions})
-            vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle)
+            vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
             vehicleStatus["name"] = droneAPIUtils.connectionNameTypeDict[vehicleId]['name']
             vehicleStatus["vehicleType"] = droneAPIUtils.connectionNameTypeDict[vehicleId]['vehicleType']
-
-            vehicleStatus["zone"] = droneAPIUtils.authorizedZoneDict.get(vehicleId)
-            if not vehicleStatus["zone"]:  # if no authorizedZone then set default
-                vehicleStatus["zone"] = {
-                    "shape": {
-                        "name": "circle",
-                        "lat": vehicleStatus["global_frame"]["lat"],
-                        "lon": vehicleStatus["global_frame"]["lon"],
-                        "radius": 500}}
-
-            # check if vehicle still in zone
-            distance = droneAPIUtils.distanceInMeters(
-                vehicleStatus["zone"]["shape"]["lat"],
-                vehicleStatus["zone"]["shape"]["lon"],
-                vehicleStatus["global_frame"]["lat"],
-                vehicleStatus["global_frame"]["lon"])
-            if (distance > 500):
-                rtl(inVehicle)
 
             vehicleStatus['id'] = vehicleId
             vehicleStatus['_links'] = {}

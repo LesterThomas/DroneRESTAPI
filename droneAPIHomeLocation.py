@@ -29,7 +29,7 @@ class homeLocation:
             except Exception:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId)})
-            vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle)
+            vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
             cmds = inVehicle.commands
             cmds.download()
             cmds.wait_ready()

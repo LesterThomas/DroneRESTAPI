@@ -53,7 +53,7 @@ class vehicleIndex:
                         # try to get extra details. Ignore if this fails
                     try:
                         droneObj = droneAPIUtils.connectVehicle(vehicleId)
-                        droneDetails['vehicleStatus'] = droneAPIUtils.getVehicleStatus(droneObj)
+                        droneDetails['vehicleStatus'] = droneAPIUtils.getVehicleStatus(droneObj, vehicleId)
                     except Warning:
                         my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up %s", str(vehicleId))
                     except Exception:

@@ -83,7 +83,7 @@ def getSimulatorParams(vehicleId):
             my_logger.exception(e)
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
             return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId)})
-        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle)
+        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
         outputObj = {"_actions": [{"method": "POST", "title": "Upload a new simulator paramater to the simulator. ", "fields": [
             {"name": "parameter", "value": "SIM_WIND_SPD", "type": "string"}, {"name": "value", "type": "integer", "float": 10}]}]};
 

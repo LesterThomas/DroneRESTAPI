@@ -101,7 +101,7 @@ def getMissionActions(vehicleId):
         except Exception:
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
             return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId)})
-        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle)
+        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
         outputObj = {"_actions": [{"name": "upload mission", "method": "POST", "title": "Upload a new mission to the vehicle. The mission is a collection of mission actions with <command>, <coordinate[lat,lon,alt]> and command specific <param1>,<param2>,<param3>,<param4>. The command-set is described at https://pixhawk.ethz.ch/mavlink/",
                                    "fields": [{"name": "coordinate", "type": "array", "value": [51.3957, -1.3441, 30]}, {"name": "command", "type": "integer", "value": 16}, {"name": "param1", "type": "integer"}, {"name": "param2", "type": "integer"}, {"name": "param3", "type": "integer"}, {"name": "param4", "type": "integer"}]}]}
         cmds = inVehicle.commands
