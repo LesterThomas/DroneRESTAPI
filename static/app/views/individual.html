@@ -11,12 +11,12 @@
 					<table width="100%">
 						<tr>
 							<td>
-								Name:<b> {{vehicleStatus.name}}</b> &nbsp; &nbsp;
-								Type:<b> {{vehicleStatus.vehicleType}}</b>
+								Name:<b> {{drones.collection[droneIndex].name}}</b> &nbsp; &nbsp;
+								Type:<b> {{drones.collection[droneIndex].vehicleType}}</b>
 							</td>
 							<td>					
-								<button type="button" class="btn btn-primary" ng-if="vehicleStatus.vehicleType=='real'" ng-click="disconnectDelete()">Disconnect from Drone</button>
-								<button type="button" class="btn btn-primary" ng-if="vehicleStatus.vehicleType=='simulated'" ng-click='actionButton(action)'>Delete Drone</button>
+								<button type="button" class="btn btn-primary" ng-if="drones.collection[droneIndex].vehicleType=='real'" ng-click="disconnectDelete()">Disconnect from Drone</button>
+								<button type="button" class="btn btn-primary" ng-if="drones.collection[droneIndex].vehicleType=='simulated'" ng-click='disconnectDelete()'>Delete Drone</button>
 							</td>
 						</tr>
 					</table>
@@ -99,58 +99,58 @@
 					<tr>
 						<th style="width:25%">Status
 						</th>
-						<td  style="width:25%" ng-style="vehicleStatus.armed_colour">{{vehicleStatus.armed_status}}
+						<td  style="width:25%" ng-style="drones.collection[droneIndex].vehicleStatus.armed_colour">{{drones.collection[droneIndex].vehicleStatus.armed_status}}
 						</td>					
 						<th  style="width:25%">Mode
 						</th>
-						<td  style="width:25%">{{vehicleStatus.mode}}
+						<td  style="width:25%">{{drones.collection[droneIndex].vehicleStatus.mode}}
 						</td>
 					</tr>					
 					<tr>
 						<th>Groundspeed
 						</th>
-						<td>{{vehicleStatus.groundspeed | number : 0}} km/h
+						<td>{{drones.collection[droneIndex].vehicleStatus.groundspeed | number : 0}} km/h
 						</td>					
 						<th>Airspeed
 						</th>
-						<td>{{vehicleStatus.airspeed | number : 0}} km/h
+						<td>{{drones.collection[droneIndex].vehicleStatus.airspeed | number : 0}} km/h
 						</td>
 					</tr>	
 					<tr>
 						<th>Height (rel home)</th>
-						<td>{{vehicleStatus.altitude | number : 2}}</td>
+						<td>{{-drones.collection[droneIndex].vehicleStatus.local_frame.down | number : 2}}</td>
 						<th>Altitude (msl)</th>
-						<td>{{vehicleStatus.global_frame.alt | number : 2}}</td>
+						<td>{{drones.collection[droneIndex].vehicleStatus.global_frame.alt | number : 2}}</td>
 					</tr>
 					<tr>
 						<th>Latitude</th>
-						<td>{{vehicleStatus.global_frame.lat | number : 4}}</td>
+						<td>{{drones.collection[droneIndex].vehicleStatus.global_frame.lat | number : 4}}</td>
 						<th>Longitude</th>
-						<td>{{vehicleStatus.global_frame.lon | number : 4}}</td>
+						<td>{{drones.collection[droneIndex].vehicleStatus.global_frame.lon | number : 4}}</td>
 					</tr>
 					<tr>
 						<th>Heading</th>
-						<td>{{vehicleStatus.heading | number : 0}} &deg;</td>
+						<td>{{drones.collection[droneIndex].vehicleStatus.heading | number : 0}} &deg;</td>
 						<th>Distance (home)</th>
-						<td>{{vehicleStatus.distance_home | number : 0}} m</td>
+						<td>{{drones.collection[droneIndex].vehicleStatus.distance_home | number : 0}} m</td>
 					</tr>
 					<tr>
 						<th>Roll</th>
-						<td>{{vehicleStatus.attitude.roll*57.2958 | number : 0}} &deg;</td>
+						<td>{{drones.collection[droneIndex].vehicleStatus.attitude.roll*57.2958 | number : 0}} &deg;</td>
 						<th>Pitch</th>
-						<td>{{vehicleStatus.attitude.pitch*57.2958 | number : 0}} &deg;</td>
+						<td>{{drones.collection[droneIndex].vehicleStatus.attitude.pitch*57.2958 | number : 0}} &deg;</td>
 					</tr>
 					<tr>
 						<th>Satellites visible</th>
-						<td>{{vehicleStatus.gps_0.satellites_visible | number : 0}}</td>
+						<td>{{drones.collection[droneIndex].vehicleStatus.gps_0.satellites_visible | number : 0}}</td>
 						<th>Satellite fix type</th>
-						<td>{{vehicleStatus.gps_0.fix_type | number : 0}} &deg;</td>
+						<td>{{drones.collection[droneIndex].vehicleStatus.gps_0.fix_type | number : 0}} &deg;</td>
 					</tr>
 					<tr>
 						<th>Heartbeat</th>
-						<td ng-style="vehicleStatus.heartbeat_colour">{{vehicleStatus.heartbeat_status}}</td>
+						<td ng-style="drones.collection[droneIndex].vehicleStatus.heartbeat_colour">{{drones.collection[droneIndex].vehicleStatus.heartbeat_status}}</td>
 						<th>EKF</th>
-						<td ng-style="vehicleStatus.ekf_colour">{{vehicleStatus.ekf_status}}</td>
+						<td ng-style="drones.collection[droneIndex].vehicleStatus.ekf_colour">{{drones.collection[droneIndex].vehicleStatus.ekf_status}}</td>
 					</tr>			
 				</table>
 			</div>

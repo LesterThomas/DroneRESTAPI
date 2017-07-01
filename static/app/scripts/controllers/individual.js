@@ -9,11 +9,18 @@
  */
    
 angular.module('droneFrontendApp')
-  .controller('IndividualCtrl', ['$scope', '$http','NgMap','$interval','$location','individualDrone',function ($scope,$http,NgMap,$interval,$location,individualDrone) {
+  .controller('IndividualCtrl', ['$scope', '$http','NgMap','$interval','$location','droneService',function ($scope,$http,NgMap,$interval,$location,droneService) {
 	  	  
-  	console.log('Started controller'); 
-    $scope.apiURL=individualDrone.apiURL;
-    $scope.consoleRootURL=individualDrone.consoleRootURL;
+  	console.log('Started individual controller'); 
+    $scope.apiURL=droneService.apiURL;
+    $scope.consoleRootURL=droneService.consoleRootURL;
+	$scope.drones=droneService.drones;
+	$scope.droneIndex=-1;
+	for (var i in $scope.drones.collection){
+		if ($scope.drones.collection[i].id==droneService.droneId){
+			$scope.droneIndex=i;
+		}
+	}
 
     $scope.status='Loading';
 	$scope.mission={};
@@ -22,7 +29,7 @@ angular.module('droneFrontendApp')
 	$scope.simEnvironment=[];
 	$scope.simParamSelected='';
 	$scope.simParamValue='';
-	$scope.zones=null;
+	$scope.zones=[];
 
     $scope.droneIcon = {
       path: 'M 0 0 L -35 -100 L 35 -100 z',
@@ -143,7 +150,7 @@ angular.module('droneFrontendApp')
 	//console.log('Calling API'); 
 	getSimEnvironment();
 	function getSimEnvironment() {
-	$http.get($scope.apiURL + 'vehicle/'+individualDrone.droneId+'/simulator').
+	$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator').
 	    then(function(data, status, headers, config) {
 				console.log('getSimEnvironment API get success',data,status);	
 				$scope.simEnvironment=data.data.simulatorParams;
@@ -159,7 +166,7 @@ angular.module('droneFrontendApp')
 		var payload={"parameter":key,"value":parseFloat(value)};
 		console.log('Sending POST with payload ',payload);
 
-		$http.post($scope.apiURL + 'vehicle/'+individualDrone.droneId+'/simulator',payload,{
+		$http.post($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator',payload,{
 		    headers : {
 		        'Content-Type' : 'application/json; charset=UTF-8'
 		    }
@@ -186,112 +193,73 @@ angular.module('droneFrontendApp')
 		$scope.simParamValue=$scope.simEnvironment[newValue];
 	});
 
-	var intervalTimer = $interval(updateDrone, 500);
+	var intervalTimer = $interval(updateDrone, 250);
 	var intervalActionsTimer = $interval(updateActions, 2000);
 	updateActions();
 	function updateDrone() {
-		$http.get($scope.apiURL + 'vehicle/'+individualDrone.droneId).
-		    then(function(data, status, headers, config) {
-					//console.log('API get success',data,status);	
-					$scope.vehicleStatus=data.data;
-					//manipulate the model
-					$scope.vehicleStatus.altitude=-$scope.vehicleStatus.local_frame.down;
-					$scope.vehicleStatus.gps_0.fix_type_text='No Fix';
-					if ($scope.vehicleStatus.gps_0.fix_type==2){
-						$scope.vehicleStatus.gps_0.fix_type_text='2D Fix';
-					} else if  ($scope.vehicleStatus.gps_0.fix_type==3){
-						$scope.vehicleStatus.gps_0.fix_type_text='3D Fix';
-					}
+						
+			NgMap.getMap().then(function(map) {
+			if ($scope.markers.length>0) {
+				//console.log('Marker already exists');
+			} else
+			{
+				$scope.markers[0] = new google.maps.Marker({ title: "Drone: " + droneService.droneId, icon: 
+						{ path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,scale: 6, fillColor: 'yellow', fillOpacity: 0.8, strokeColor: 'red', strokeWeight: 1, rotation:$scope.drones.collection[$scope.droneIndex].vehicleStatus.heading} 
+					});
 
-					if ($scope.vehicleStatus.armed==true) {
-						$scope.vehicleStatus.armed_status="ARMED";
-						$scope.vehicleStatus.armed_colour={color:'red'};
-					} else {
-						$scope.vehicleStatus.armed_status="DISARMED";
-						$scope.vehicleStatus.armed_colour={color:'green'};
-					}
-					if ($scope.vehicleStatus.last_heartbeat<1) {
-						$scope.vehicleStatus.heartbeat_status="OK";
-						$scope.vehicleStatus.heartbeat_colour={color:'green'};
-					} else {
-						$scope.vehicleStatus.heartbeat_status="Last Heartbeat " + Math.round($scope.vehicleStatus.last_heartbeat) + " s";
-						$scope.vehicleStatus.heartbeat_colour={color:'red'};
-					}
-					if ($scope.vehicleStatus.ekf_ok==true) {
-						$scope.vehicleStatus.ekf_status="OK";
-						$scope.vehicleStatus.ekf_colour={color:'green'};
-					} else {
-						$scope.vehicleStatus.ekf_status="EFK ERROR";
-						$scope.vehicleStatus.ekf_colour={color:'red'};
-					}
-					$scope.vehicleStatus.distance_home= Math.sqrt(($scope.vehicleStatus.local_frame.east)*($scope.vehicleStatus.local_frame.east)+($scope.vehicleStatus.local_frame.north)*($scope.vehicleStatus.local_frame.north));
-					
-					NgMap.getMap().then(function(map) {
-					if ($scope.markers.length>0) {
-						//console.log('Marker already exists');
-					} else
-					{
-						$scope.markers[0] = new google.maps.Marker({ title: "Drone: " + individualDrone.droneId, icon: 
-								{ path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,scale: 6, fillColor: 'yellow', fillOpacity: 0.8, strokeColor: 'red', strokeWeight: 1, rotation:$scope.vehicleStatus.heading} 
-							});
+				map.setCenter(new google.maps.LatLng( $scope.drones.collection[$scope.droneIndex].vehicleStatus.global_frame.lat, $scope.drones.collection[$scope.droneIndex].vehicleStatus.global_frame.lon ) );
+				$scope.markers[0].setMap(map);
 
-						map.setCenter(new google.maps.LatLng( $scope.vehicleStatus.global_frame.lat, $scope.vehicleStatus.global_frame.lon ) );
-						$scope.markers[0].setMap(map);
+			}
 
-					}
+			//if heading has changed, recreate icon
+			if ($scope.markers[0].icon.rotation != $scope.drones.collection[$scope.droneIndex].vehicleStatus.heading) {
+				$scope.markers[0].setMap(null);
+				$scope.markers[0] = new google.maps.Marker({ title: "Drone: " + droneService.droneId, icon: 
+						{ path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,scale: 6, fillColor: 'yellow', fillOpacity: 0.8, strokeColor: 'red', strokeWeight: 1, rotation:$scope.drones.collection[$scope.droneIndex].vehicleStatus.heading} 
+					})
+				$scope.markers[0].setMap(map);
+			}
+			$scope.markers[0].setPosition(new google.maps.LatLng($scope.drones.collection[$scope.droneIndex].vehicleStatus.global_frame.lat, $scope.drones.collection[$scope.droneIndex].vehicleStatus.global_frame.lon));
+	        //draw authorized fly zones
+			if ($scope.zones.length>0) {
+		        //console.log('Zone already exists');
+	        } else
+			{
+				if ($scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape) {
+					var center={lat:$scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape.lat,lng:$scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape.lon};
+			        $scope.zones[0] = new google.maps.Circle({strokeColor:'#22FF22', strokeOpacity:0.8,fillColor:'#00FF00',fillOpacity:0.10,center:center ,radius: $scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape.radius,map:map}); 
+			    }
+			}
+	
 
-					//if heading has changed, recreate icon
-					if ($scope.markers[0].icon.rotation != $scope.vehicleStatus.heading) {
-						$scope.markers[0].setMap(null);
-						$scope.markers[0] = new google.maps.Marker({ title: "Drone: " + individualDrone.droneId, icon: 
-								{ path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,scale: 6, fillColor: 'yellow', fillOpacity: 0.8, strokeColor: 'red', strokeWeight: 1, rotation:$scope.vehicleStatus.heading} 
-							})
-						$scope.markers[0].setMap(map);
-					}
-					$scope.markers[0].setPosition(new google.maps.LatLng($scope.vehicleStatus.global_frame.lat, $scope.vehicleStatus.global_frame.lon));
-			        //draw authorized fly zones
-					if ($scope.zones) {
-				        //console.log('Zone already exists');
-			        } else
-    				{
-    					if ($scope.vehicleStatus.zone.shape) {
-        					var center={lat:$scope.vehicleStatus.zone.shape.lat,lng:$scope.vehicleStatus.zone.shape.lon};
-					        $scope.zones = new google.maps.Circle({strokeColor:'#22FF22', strokeOpacity:0.8,fillColor:'#00FF00',fillOpacity:0.10,center:center ,radius: $scope.vehicleStatus.zone.shape.radius,map:map}); 
-					    }
-					}
+
+
+			//console.log('Marker:',$scope.markers[0]);
+			//log data for graphs
+			$scope.batteryCurrent.data[0].push($scope.drones.collection[$scope.droneIndex].vehicleStatus.battery.current);
+			$scope.batteryCurrent.data[1].push($scope.drones.collection[$scope.droneIndex].vehicleStatus.battery.voltage);
+			if ($scope.batteryCurrent.data[0].length>80) {
+				$scope.batteryCurrent.data[0].shift();
+			}
+			if ($scope.batteryCurrent.data[1].length>80) {
+				$scope.batteryCurrent.data[1].shift();
+			}
 			
+			$scope.altVel.data[0].push(Math.round($scope.drones.collection[$scope.droneIndex].vehicleStatus.groundspeed*10)/10);
+			$scope.altVel.data[1].push(-Math.round($scope.drones.collection[$scope.droneIndex].vehicleStatus.local_frame.down));
+			if ($scope.altVel.data[0].length>80) {
+				$scope.altVel.data[0].shift();
+			}
+			if ($scope.altVel.data[1].length>80) {
+				$scope.altVel.data[1].shift();
+			}
+                      
+		
+			//console.log('Map center', map.getCenter());
+		  });	
 
 
-
-					//console.log('Marker:',$scope.markers[0]);
-					//log data for graphs
-					$scope.batteryCurrent.data[0].push($scope.vehicleStatus.battery.current);
-					$scope.batteryCurrent.data[1].push($scope.vehicleStatus.battery.voltage);
-					if ($scope.batteryCurrent.data[0].length>80) {
-						$scope.batteryCurrent.data[0].shift();
-					}
-					if ($scope.batteryCurrent.data[1].length>80) {
-						$scope.batteryCurrent.data[1].shift();
-					}
-					
-					$scope.altVel.data[0].push(Math.round($scope.vehicleStatus.groundspeed*10)/10);
-					$scope.altVel.data[1].push(-Math.round($scope.vehicleStatus.local_frame.down));
-					if ($scope.altVel.data[0].length>80) {
-						$scope.altVel.data[0].shift();
-					}
-					if ($scope.altVel.data[1].length>80) {
-						$scope.altVel.data[1].shift();
-					}
-                              
-				
-					//console.log('Map center', map.getCenter());
-				  });				
-					
-				},
-				function(data, status, headers, config) {
-				  // log error
-					console.log('API get error',data, status, headers, config);
-				});
 			}
 
 	function setActionText(inAction) {
@@ -353,7 +321,7 @@ angular.module('droneFrontendApp')
 	}
 			
 	$scope.getMission = function() {
-		$http.get($scope.apiURL + 'vehicle/'+individualDrone.droneId+'/mission').
+		$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/mission').
 		    then(function(data, status, headers, config) {
 					console.log('API mission get success',data,status);	
 					$scope.mission=data.data;
@@ -412,7 +380,7 @@ angular.module('droneFrontendApp')
 		if (confirm('Confirm disconnect?')){
 			//delete
 			console.log('disconnectDelete confirmed');
-			$http.delete($scope.apiURL + 'vehicle/'+individualDrone.droneId,{
+			$http.delete($scope.apiURL + 'vehicle/'+droneService.droneId,{
 			    headers : {
 			        'Content-Type' : 'application/json; charset=UTF-8'
 			    }}).then(function(data, status, headers, config) {
@@ -435,7 +403,7 @@ angular.module('droneFrontendApp')
 		payload['name']=inAction.name;
 		console.log('Sending POST with payload ',payload);
 
-		$http.post($scope.apiURL + 'vehicle/'+individualDrone.droneId+'/action',payload,{
+		$http.post($scope.apiURL + 'vehicle/'+droneService.droneId+'/action',payload,{
     headers : {
         'Content-Type' : 'application/json; charset=UTF-8'
     }
@@ -455,7 +423,7 @@ angular.module('droneFrontendApp')
 	}
 
 	function updateActions() {
-		$http.get($scope.apiURL + 'vehicle/'+individualDrone.droneId+'/action').
+		$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/action').
 		    then(function(data, status, headers, config) {
 					console.log('API action get success',data,status);	
 					//add or delete actions - if unchanged then leave model unchanged
@@ -517,7 +485,7 @@ angular.module('droneFrontendApp')
 			$scope.markers[0].setMap(null);
 			$scope.markers.splice(0, 1);
 		}
-		individualDrone.apiURL=$scope.apiURL;
+		droneService.apiURL=$scope.apiURL;
 	})		
 	
 	console.log('Finished calling APIs'); 

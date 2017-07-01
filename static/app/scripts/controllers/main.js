@@ -9,130 +9,107 @@
  */
    
 angular.module('droneFrontendApp')
-  .controller('MainCtrl', ['$scope', '$http','NgMap','$interval','$location','individualDrone',function ($scope,$http,NgMap,$interval,$location,individualDrone) {
+  .controller('MainCtrl', ['$scope', 'NgMap','$location','$interval','droneService',function ($scope,NgMap,$location,$interval,droneService) {
 	  
   	console.log('Started Main controller'); 
-  	$scope.apiURL=individualDrone.apiURL;
-	$scope.drones=[];
+  	$scope.apiURL=droneService.apiURL;
+	$scope.drones=droneService.drones;
 	$scope.markers=[];
 	$scope.zones=[];
 
-	var intervalTimer = $interval(updateDrones, 250);
-	updateDrones();
-	function updateDrones() {
-			$http.get($scope.apiURL + 'vehicle?details=true').
-			    then(function(data, status, headers, config) {
-						console.log('API get success',data,status);	
-						$scope.drones=data.data._embedded.vehicle;
 
-						for ( var droneId in $scope.drones){
-							//manipulate the model
-							var drone=$scope.drones[droneId];
-							console.log('Drone:',drone);	
-							if (drone.vehicleStatus.armed==true) {
-								drone.vehicleStatus.armed_status="ARMED";
-								drone.vehicleStatus.armed_colour={color:'red'};
-							} else {
-								drone.vehicleStatus.armed_status="DISARMED";
-								drone.vehicleStatus.armed_colour={color:'green'};
-							}
-							if (drone.vehicleStatus.last_heartbeat<1) {
-								drone.vehicleStatus.heartbeat_status="OK";
-								drone.vehicleStatus.heartbeat_colour={color:'green'};
-							} else {
-								drone.vehicleStatus.heartbeat_status="Last Heartbeat " + Math.round(drone.vehicleStatus.last_heartbeat) + " s";
-								drone.vehicleStatus.heartbeat_colour={color:'red'};
-							}
-							if (drone.vehicleStatus.ekf_ok==true) {
-								drone.vehicleStatus.ekf_status="OK";
-								drone.vehicleStatus.ekf_colour={color:'green'};
-							} else {
-								drone.vehicleStatus.ekf_status="EFK ERROR";
-								drone.vehicleStatus.ekf_colour={color:'red'};
-							}
-							drone.vehicleStatus.distance_home= Math.sqrt((drone.vehicleStatus.local_frame.east)*(drone.vehicleStatus.local_frame.east)+(drone.vehicleStatus.local_frame.north)*(drone.vehicleStatus.local_frame.north));   
-						}
-					
-	                    NgMap.getMap().then(function(map) {
-								
-	                        var bounds=new google.maps.LatLngBounds();
+	var mapIntervalTimer = $interval(updateMap, 250);
+	var deleteMarketsTimer = $interval(deleteAllMarkers, 5000);
+	var deleteZonessTimer = $interval(deleteAllZones, 7000);
+	updateMap();
+	function updateMap() {
 
-	                        for(var droneIndex in $scope.drones) {
-	                        	bounds=bounds.extend({lat:$scope.drones[droneIndex].vehicleStatus.global_frame.lat,lng:$scope.drones[droneIndex].vehicleStatus.global_frame.lon});
-	                        }
+        NgMap.getMap().then(function(map) {
+				
+            var bounds=new google.maps.LatLngBounds();
+
+            for(var droneIndex in $scope.drones.collection) {
+            	bounds=bounds.extend({lat:$scope.drones.collection[droneIndex].vehicleStatus.global_frame.lat,lng:$scope.drones.collection[droneIndex].vehicleStatus.global_frame.lon});
+            }
 
 
-							for(var droneIndex in $scope.drones) {
+			for(var droneIndex in $scope.drones.collection) {
 
-								//draw drones (markers)
-								if ($scope.markers[droneIndex]) {
-							        //console.log('Marker already exists');
-						        } else
-		        				{
-							        $scope.markers[droneIndex] = new google.maps.Marker({ title: "Drone: " + $scope.drones[droneIndex].vehicleStatus.id, icon: 
-									{ path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,scale: 6, fillColor: 'yellow', fillOpacity: 0.8, strokeColor: 'red', strokeWeight: 1, rotation:$scope.drones[droneIndex].vehicleStatus.heading} 
-								    });
-							        //map.setCenter(new google.maps.LatLng(avgLat, avgLon ) ); //Set map based on avg  Drone location
-							        map.fitBounds(bounds);
-							        $scope.markers[droneIndex].setMap(map);
-						        }
+				//draw drones (markers)
+				if ($scope.markers[droneIndex]) {
+			        //console.log('Marker already exists');
+		        } else
+				{
+			        $scope.markers[droneIndex] = new google.maps.Marker({ title: "Drone: " + $scope.drones.collection[droneIndex].vehicleStatus.id, icon: 
+					{ path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,scale: 6, fillColor: 'yellow', fillOpacity: 0.8, strokeColor: 'red', strokeWeight: 1, rotation:$scope.drones.collection[droneIndex].vehicleStatus.heading} 
+				    });
+			        //map.setCenter(new google.maps.LatLng(avgLat, avgLon ) ); //Set map based on avg  Drone location
+			        map.fitBounds(bounds);
+			        $scope.markers[droneIndex].setMap(map);
+		        }
 
-						        //if heading has changed, recreate icon
-						        if ($scope.markers[droneIndex].icon.rotation != $scope.drones[droneIndex].vehicleStatus.heading) {
-							        $scope.markers[droneIndex].setMap(null);
-							        $scope.markers[droneIndex] = new google.maps.Marker({ title: "Drone: " + $scope.drones[droneIndex].vehicleStatus.id, icon: 
-									        { path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,scale: 6, fillColor: 'yellow', fillOpacity: 0.8, strokeColor: 'red', strokeWeight: 1, rotation:$scope.drones[droneIndex].vehicleStatus.heading} 
-								        })
-							        $scope.markers[droneIndex].setMap(map);
-						        }
-						        $scope.markers[droneIndex].setPosition(new google.maps.LatLng($scope.drones[droneIndex].vehicleStatus.global_frame.lat, $scope.drones[droneIndex].vehicleStatus.global_frame.lon));
+		        //if heading has changed, recreate icon
+		        if ($scope.markers[droneIndex].icon.rotation != $scope.drones.collection[droneIndex].vehicleStatus.heading) {
+			        $scope.markers[droneIndex].setMap(null);
+			        $scope.markers[droneIndex] = new google.maps.Marker({ title: "Drone: " + $scope.drones.collection[droneIndex].vehicleStatus.id, icon: 
+					        { path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,scale: 6, fillColor: 'yellow', fillOpacity: 0.8, strokeColor: 'red', strokeWeight: 1, rotation:$scope.drones.collection[droneIndex].vehicleStatus.heading} 
+				        })
+			        $scope.markers[droneIndex].setMap(map);
+		        }
+		        $scope.markers[droneIndex].setPosition(new google.maps.LatLng($scope.drones.collection[droneIndex].vehicleStatus.global_frame.lat, $scope.drones.collection[droneIndex].vehicleStatus.global_frame.lon));
 
-						        //draw authorized fly zones
-								if ($scope.zones[droneIndex]) {
-							        //console.log('Zone already exists');
-						        } else
-		        				{
-		        					if ($scope.drones[droneIndex].vehicleStatus.zone.shape) {
-			        					var center={lat:$scope.drones[droneIndex].vehicleStatus.zone.shape.lat,lng:$scope.drones[droneIndex].vehicleStatus.zone.shape.lon};
-								        $scope.zones[droneIndex] = new google.maps.Circle({strokeColor:'#22FF22', strokeOpacity:0.8,fillColor:'#00FF00',fillOpacity:0.10,center:center ,radius: $scope.drones[droneIndex].vehicleStatus.zone.shape.radius,map:map}); 
-								    }
-								}
+		        //draw authorized fly zones
+				if ($scope.zones[droneIndex]) {
+			        //console.log('Zone already exists');
+		        } else
+				{
+					if ($scope.drones.collection[droneIndex].vehicleStatus.zone.shape) {
+    					var center={lat:$scope.drones.collection[droneIndex].vehicleStatus.zone.shape.lat,lng:$scope.drones.collection[droneIndex].vehicleStatus.zone.shape.lon};
+				        $scope.zones[droneIndex] = new google.maps.Circle({strokeColor:'#22FF22', strokeOpacity:0.8,fillColor:'#00FF00',fillOpacity:0.10,center:center ,radius: $scope.drones.collection[droneIndex].vehicleStatus.zone.shape.radius,map:map}); 
+				    }
+				}
 
-						    }
-						});
-	                          
-					},
-					function(data, status, headers, config) {
-					  // log error
-						console.log('API get error',data, status, headers, config);
-					});
+		    }
+		});
 
+	}
+
+
+	function deleteAllMarkers() {
+		for(var droneIndex in $scope.markers) {
+		    $scope.markers[droneIndex].setMap(null);
 		}
+		$scope.markers.splice(0, $scope.markers.length);
+	}
 
-
-		$scope.selectIndividual=function(inDrone) {
-			console.log('Selected drone',inDrone);
-			individualDrone.droneId=inDrone.id;
-			$location.path('/individual')
-
+	function deleteAllZones() {
+		for(var droneIndex in $scope.zones) {
+		    $scope.zones[droneIndex].setMap(null);
 		}
+		$scope.zones.splice(0, $scope.zones.length);
+	}
+
+	$scope.selectIndividual=function(inDrone) {
+		console.log('Selected drone',inDrone);
+		droneService.droneId=inDrone.id;
+		$location.path('/individual')
+
+	}
 
 
-		$scope.$on('$destroy', function() {
-		  // clean up stuff
-		  	console.log('###################################################'); 
-		  	console.log('Unloading Main Controller'); 
-			$interval.cancel(intervalTimer);
-			individualDrone.apiURL=$scope.apiURL;
+	$scope.$on('$destroy', function() {
+	  // clean up stuff
+	  	console.log('###################################################'); 
+	  	console.log('Unloading Main Controller'); 
+		droneService.apiURL=$scope.apiURL;
+		$interval.cancel(mapIntervalTimer);
+		$interval.cancel(deleteMarketsTimer);
+		$interval.cancel(deleteZonesTimer);
 
-			for(var droneIndex in $scope.markers) {
+		deleteAllMarkers();	
+		deleteAllZones();	
 
-			    $scope.markers[droneIndex].setMap(null);
-			}
-			$scope.markers.splice(0, $scope.markers.length);
-		
-
-		})			
+	})			
 
 	}]);
 

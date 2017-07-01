@@ -33,7 +33,7 @@ angular.module('droneFrontendApp')
 		$scope.progress[0]=true;
 		$scope.progressClass[0]='alert-success';
 		$scope.progressClass[1]='alert-warning';
-		var intervalTimer = $interval(updateProgress, 20000);
+		var intervalTimer = $interval(updateProgress, 2000);
 
 	},
 	function(data, status, headers, config) {
@@ -52,7 +52,7 @@ angular.module('droneFrontendApp')
 		$scope.progressClass[$scope.progressIndex]='alert-success';
 		$scope.progressClass[$scope.progressIndex+1]='alert-warning';
 		$scope.progressIndex++;
-		if ($scope.progressIndex==6){
+		if ($scope.progressIndex==4){
 			$scope.progressFinished=true;
 		}
 	}
