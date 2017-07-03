@@ -18,7 +18,7 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 class vehicleStatus:
     def GET(self, vehicleId):
         try:
-            my_logger.info("GET: vehicleId=" + str(vehicleId))
+            my_logger.debug("GET: vehicleId=" + str(vehicleId))
             droneAPIUtils.applyHeadders()
             outputObj = {}
 
@@ -61,7 +61,7 @@ class vehicleStatus:
             outputObj = vehicleStatus
             outputObj["_actions"] = actions
             output = json.dumps(outputObj)
-            my_logger.info("Return: =" + output)
+            my_logger.debug("Return: =" + output)
 
         except Exception as e:
             my_logger.exception(e)

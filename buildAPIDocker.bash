@@ -12,7 +12,7 @@ echo $MINOR_VERSION
 VERSION="$MAJOR_VERSION.$MINOR_VERSION"
 echo "VERSION"
 echo $VERSION
-
+cp -r ../droneConsole/app static
 docker stop $(docker ps -a -q -f name=droneapi)
 docker rm $(docker ps -a -q -f name=droneapi)
 docker build -f APIDockerBuild/Dockerfile -t lesterthomas/droneapi:$VERSION .

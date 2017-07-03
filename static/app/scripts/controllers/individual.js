@@ -380,17 +380,19 @@ angular.module('droneFrontendApp')
 		if (confirm('Confirm disconnect?')){
 			//delete
 			console.log('disconnectDelete confirmed');
+
 			$http.delete($scope.apiURL + 'vehicle/'+droneService.droneId,{
 			    headers : {
 			        'Content-Type' : 'application/json; charset=UTF-8'
 			    }}).then(function(data, status, headers, config) {
 				console.log('API  action DELETE success',data,status);
-				window.location=$scope.consoleRootURL;
+				
 			},
 			function(data, status, headers, config) {
 			  // log error
 				console.log('API actions DELETE error',data, status, headers, config);
 			});
+			window.location=$scope.consoleRootURL;
 		} 
 	}
 	  

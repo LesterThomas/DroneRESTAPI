@@ -1,4 +1,4 @@
-FROM lesterthomas/sitlbase:1.2
+FROM lesterthomas/sitlbase:1.1
 
 WORKDIR "/arducopter/ArduCopter"
 EXPOSE 14550

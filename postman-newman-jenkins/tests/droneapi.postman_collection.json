@@ -57,7 +57,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"name\":\"test\",\"vehicleType\":\"simulated\"}"
+					"raw": "{\"name\":\"test\",\"vehicleType\":\"simulated\",\"lat\":51.4,\"lon\":-1.3432,\"alt\":105}"
 				},
 				"description": "Add a new simulated drone"
 			},
@@ -261,35 +261,6 @@
 			"response": []
 		},
 		{
-			"name": "POST-http://droneapi.ddns.net:1235/vehicle/{{droneId}}/action",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
-							"var jsonData = JSON.parse(responseBody);",
-							"tests[\"action value returned \"] = (jsonData.action);",
-							""
-						]
-					}
-				}
-			],
-			"request": {
-				"url": "http://{{url}}/vehicle/{{droneId}}/action",
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\"name\":\"Arm\"}"
-				},
-				"description": "POST actions 'Takeoff to a height of 20m' to vehicle 7147a58f"
-			},
-			"response": []
-		},
-		{
 			"name": "POST-http://droneapi.ddns.net:1235/vehicle/{{droneId}}/mission",
 			"event": [
 				{
@@ -321,6 +292,93 @@
 					"raw": "\r\n[{\"coordinate\":[51.405, -1.305, 30], \"command\":16,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0},\r\n{\"coordinate\":[51.4157, -1.3196, 30], \"command\":16,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0},\r\n{\"coordinate\":[51.405, -1.305, 30], \"command\":16,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0},\r\n{\"coordinate\":[51.405, -1.305, 30], \"command\":20,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0}]\r\n"
 				},
 				"description": "Upload a new misison (fly Vodafone Technology HQ to Vodafone Newbury Campus and back)."
+			},
+			"response": []
+		},
+		{
+			"name": "POST-http://droneapi.ddns.net:1235/vehicle/{{droneId}}/action - Arm",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"action value returned \"] = (jsonData.action);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{url}}/vehicle/{{droneId}}/action",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Arm\"}"
+				},
+				"description": "POST actions 'Takeoff to a height of 20m' to vehicle 7147a58f"
+			},
+			"response": []
+		},
+		{
+			"name": "POST-http://droneapi.ddns.net:1235/vehicle/{{droneId}}/action - Takeoff",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"action value returned \"] = (jsonData.action);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{url}}/vehicle/{{droneId}}/action",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Takeoff\"}"
+				},
+				"description": "POST actions 'Takeoff to a height of 20m' to vehicle 7147a58f"
+			},
+			"response": []
+		},
+		{
+			"name": "POST-http://droneapi.ddns.net:1235/vehicle/{{droneId}}/action - Start-Mission",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"action value returned \"] = (jsonData.action);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{url}}/vehicle/{{droneId}}/action",
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Start-Mission\"}"
+				},
+				"description": "POST actions 'Takeoff to a height of 20m' to vehicle 7147a58f"
 			},
 			"response": []
 		},

@@ -21,13 +21,13 @@ class vehicleIndex:
 
     def GET(self):
         try:
-            my_logger.info("GET")
+            my_logger.debug("GET")
             droneAPIUtils.applyHeadders()
             outputObj = []
 
             # get the query parameters
             queryParameters = web.input()
-            my_logger.info("Query parameters %s", str(queryParameters))
+            my_logger.debug("Query parameters %s", str(queryParameters))
             keys = droneAPIUtils.redisdB.keys("connectionString:*")
             for key in keys:
                 my_logger.debug("key = '" + key + "'")
@@ -71,7 +71,7 @@ class vehicleIndex:
             my_logger.debug(actions)
             jsonResponse = '{"_embedded":{"vehicle":' + \
                 json.dumps(outputObj) + '},"_actions":' + actions + ',"_links":' + json.dumps(self) + '}'
-            my_logger.info("Return: =" + jsonResponse)
+            my_logger.debug("Return: =" + jsonResponse)
         except Exception as e:
             my_logger.exception(e)
             tracebackStr = traceback.format_exc()
