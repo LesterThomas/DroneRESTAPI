@@ -66,6 +66,11 @@ angular.module('droneFrontendApp')
 	$scope.createSimulated = function() {
 		console.log('Create Simulated Button Clicked');
     droneService.droneName=$scope.vehicleName;
+    droneService.lat=parseFloat($scope.lat);
+    droneService.lon=parseFloat($scope.lon);
+    droneService.alt=parseFloat($scope.alt);
+    droneService.dir=parseFloat($scope.dir);
+
 		$scope.showModal();
 
 

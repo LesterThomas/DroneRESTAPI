@@ -26,6 +26,10 @@ angular.module('droneFrontendApp')
 	var payload={};
 	payload['vehicleType']="simulated";
 	payload['name']=droneService.droneName;
+    payload['lat']=droneService.lat;
+    payload['lon']=droneService.lon;
+    payload['alt']=droneService.alt;
+    payload['dir']=droneService.dir;
 
 	console.log('Sending POST with payload ',payload);
 

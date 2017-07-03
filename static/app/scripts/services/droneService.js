@@ -5,6 +5,10 @@ angular.module('droneFrontendApp')
     this.apiURL='HTTP://droneapi.ddns.net:1235/'
     this.consoleRootURL='HTTP://droneapi.ddns.net:1235/static/app'
     this.droneName='';
+    this.lat=0;
+    this.lon=0;
+    this.alt=0;
+    this.dir=0;
     this.drones={"collection":[]};
 
 
