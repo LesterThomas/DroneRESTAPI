@@ -29,6 +29,11 @@ git add .
 git commit -m "v$VERSION $1"
 git push 
 
+docker push lesterthomas/droneapi:$VERSION
+
+MINOR_VERSION=$((MINOR_VERSION+1))
+echo "$MINOR_VERSION" > "MinorVersion.txt"
+
 sleep 10
 
 echo "Triggering Postman tests via Jenkins"
