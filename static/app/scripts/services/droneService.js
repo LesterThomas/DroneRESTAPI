@@ -13,13 +13,13 @@ angular.module('droneFrontendApp')
 	function updateDrones() {
 			$http.get(self.apiURL + 'vehicle?details=true').
 			    then(function(data, status, headers, config) {
-						console.log('API get success',data,status);	
+						console.debug('API get success',data,status);	
 						self.drones.collection=data.data._embedded.vehicle;
 
 						for ( var droneId in self.drones.collection){
 							//manipulate the model
 							var drone=self.drones.collection[droneId];
-							console.log('Drone:',drone);	
+							console.debug('Drone:',drone);	
 							if (drone.vehicleStatus.armed==true) {
 								drone.vehicleStatus.armed_status="ARMED";
 								drone.vehicleStatus.armed_colour={color:'red'};

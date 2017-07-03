@@ -351,7 +351,8 @@ def getVehicleStatus(inVehicle, inVehicleId):
                 "lat": outputObj["global_frame"]["lat"],
                 "lon": outputObj["global_frame"]["lon"],
                 "radius": 500}}
-        authorizedZoneDict[inVehicleId] = outputObj["zone"]
+        if (outputObj["zone"]["shape"]["lat"] != 0):  # only automatically assign a zone if it is not 0,0,0,0
+            authorizedZoneDict[inVehicleId] = outputObj["zone"]
 
     # check if vehicle still in zone
     distance = distanceInMeters(

@@ -9,22 +9,23 @@
  */
    
 angular.module('droneFrontendApp')
-  .controller('ModalCtrl', ['$scope','$http','$interval','$location','individualDrone',function ($scope, $http, $interval, $location,individualDrone,close) {
+  .controller('ModalCtrl', ['$scope','$http','$interval','$location','droneService',function ($scope, $http, $interval, $location,droneService,close) {
 	
 
   	console.log('Started modal controller'); 
-    $scope.apiURL=individualDrone.apiURL;
-    $scope.consoleRootURL=individualDrone.consoleRootURL;
+    $scope.apiURL=droneService.apiURL;
+    $scope.consoleRootURL=droneService.consoleRootURL;
 
 	$scope.progress=[false,false,false,false,false,false,false]
 	$scope.progressClass=['alert-warning','','','','','','']
 	$scope.progressMessage=['Connecting to Cloud Service']
 	$scope.progressIndex=0;
 	$scope.progressFinished=false;
+	$scope.intervalTimer=null;
 
 	var payload={};
 	payload['vehicleType']="simulated";
-	payload['name']=individualDrone.droneName;
+	payload['name']=droneService.droneName;
 
 	console.log('Sending POST with payload ',payload);
 
@@ -33,7 +34,7 @@ angular.module('droneFrontendApp')
 		$scope.progress[0]=true;
 		$scope.progressClass[0]='alert-success';
 		$scope.progressClass[1]='alert-warning';
-		var intervalTimer = $interval(updateProgress, 2000);
+		$scope.intervalTimer = $interval(updateProgress, 2000);
 
 	},
 	function(data, status, headers, config) {
@@ -54,6 +55,7 @@ angular.module('droneFrontendApp')
 		$scope.progressIndex++;
 		if ($scope.progressIndex==4){
 			$scope.progressFinished=true;
+			$interval.cancel($scope.intervalTimer);
 		}
 	}
 

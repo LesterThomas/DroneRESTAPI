@@ -9,17 +9,21 @@
  */
    
 angular.module('droneFrontendApp')
-  .controller('NewCtrl', ['$scope', '$http','NgMap','$interval','$location','individualDrone','ModalService',function ($scope,$http,NgMap,$interval,$location,individualDrone,ModalService) {
+  .controller('NewCtrl', ['$scope', '$http','$interval','$location','droneService','ModalService',function ($scope,$http,$interval,$location,droneService,ModalService) {
 	
-    $scope.apiURL=individualDrone.apiURL;
-    $scope.consoleRootURL=individualDrone.consoleRootURL;
+    $scope.apiURL=droneService.apiURL;
+    $scope.consoleRootURL=droneService.consoleRootURL;
 
-  	console.log('Started controller'); 
+  	console.log('Started New controller'); 
     $scope.connectionString="tcp:ip_address:port";
     $scope.connectionStringIP="ip_address";
     $scope.connectionStringPort="port";
     $scope.connectionStringType="tcp";
     $scope.vehicleName="drone name";
+    $scope.lat=51.4049;
+    $scope.lon=-1.3049;
+    $scope.alt=105;
+    $scope.dir=0;
 
   $scope.updateConnectionString=function(){
         $scope.connectionString=$scope.connectionStringType+":"+$scope.connectionStringIP+":"+$scope.connectionStringPort
@@ -61,7 +65,7 @@ angular.module('droneFrontendApp')
 	}
 	$scope.createSimulated = function() {
 		console.log('Create Simulated Button Clicked');
-    individualDrone.droneName=$scope.vehicleName;
+    droneService.droneName=$scope.vehicleName;
 		$scope.showModal();
 
 

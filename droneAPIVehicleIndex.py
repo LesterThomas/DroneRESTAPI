@@ -64,8 +64,8 @@ class vehicleIndex:
 
                 outputObj.append(droneDetails)
 
-            actions = '[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + \
-                droneAPIUtils.homeDomain + '/vehicle",\n"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}, {"name":"name","type":"string"}] }]\n'
+            actions = '[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). For simulated vehicle you can also give the starting lat, lon, alt (of ground above sea level) and dir (initial direction the drone is pointing). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + \
+                droneAPIUtils.homeDomain + '/vehicle",\n"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}, {"name":"name","type":"string"}, {"name":"lat","type":"float"}, {"name":"lon","type":"float"}, {"name":"alt","type":"float"}, {"name":"dir","type":"float"}] }]\n'
             self = {"self": {"title": "Return the collection of available vehicles.", "href": droneAPIUtils.homeDomain + "/vehicle"}}
             my_logger.debug("actions")
             my_logger.debug(actions)
@@ -93,7 +93,12 @@ class vehicleIndex:
             dockerContainerId = "N/A"
             uuidVal = uuid.uuid4()
             key = str(uuidVal)[:8]
-
+            drone_lat = data.get('lat', '51.4049')
+            drone_lon = data.get('lon', '-1.3049')
+            drone_alt = data.get('alt', '105')
+            drone_dir = data.get('dir', '0')
+            environmentString = 'LOCATION=' + str(drone_lat) + ',' + str(drone_lon) + ',' + str(drone_alt) + ',' + str(drone_dir)
+            my_logger.info("Start location environement %s", environmentString)
             if (droneType == "simulated"):
 
                 # build simulated drone via Docker
@@ -110,7 +115,8 @@ class vehicleIndex:
                     ':4243')  # docker.from_env(version='1.27')
 
                 dockerContainer = dockerClient.containers.run(
-                    'lesterthomas/dronesim:1.7',
+                    'lesterthomas/dronesim:1.8',
+                    environment=[environmentString],
                     detach=True,
                     ports={
                         '14550/tcp': hostAndPort['port']},
@@ -146,7 +152,7 @@ class vehicleIndex:
 
     def OPTIONS(self):
         try:
-            my_logger.info("OPTIONS: vehicleId=" + str(vehicleId))
+            my_logger.info("OPTIONS: ")
             droneAPIUtils.applyHeadders()
 
             outputObj = {}
