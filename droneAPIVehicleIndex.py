@@ -99,35 +99,44 @@ class vehicleIndex:
             drone_dir = data.get('dir', '0')
             environmentString = 'LOCATION=' + str(drone_lat) + ',' + str(drone_lon) + ',' + str(drone_alt) + ',' + str(drone_dir)
             my_logger.info("Start location environement %s", environmentString)
+
+            # build simulated drone or proxy via Docker
+            # docker api available on host at
+            # http://172.17.0.1:4243/containers/json
+
+            #private_ip_address=this.launchCloudImage('ami-5be0f43f', 't2.micro', ['sg-fd0c8394'])
+            #connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
+            hostAndPort = self.getNexthostAndPort()
+            dockerClient = docker.DockerClient(
+                version='1.27',
+                base_url='tcp://' +
+                hostAndPort['image'] +
+                ':4243')  # docker.from_env(version='1.27')
+            dockerContainer = None
+            containerName = 'lesterthomas/droneproxy:1.0'
             if (droneType == "simulated"):
-
-                # build simulated drone via Docker
-                # docker api available on host at
-                # http://172.17.0.1:4243/containers/json
-
-                #private_ip_address=this.launchCloudImage('ami-5be0f43f', 't2.micro', ['sg-fd0c8394'])
-                #connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
-                hostAndPort = self.getNexthostAndPort()
-                dockerClient = docker.DockerClient(
-                    version='1.27',
-                    base_url='tcp://' +
-                    hostAndPort['image'] +
-                    ':4243')  # docker.from_env(version='1.27')
-
+                containerName = 'lesterthomas/dronesim:1.8'
                 dockerContainer = dockerClient.containers.run(
-                    'lesterthomas/dronesim:1.8',
+                    containerName,
                     environment=[environmentString],
                     detach=True,
                     ports={
                         '14550/tcp': hostAndPort['port']},
                     name=key)
-                dockerContainerId = dockerContainer.id
-                my_logger.info("container Id=" + str(dockerContainerId))
-
-                connection = "tcp:" + hostAndPort['image'] + ":" + str(hostAndPort['port'])
-
             else:
-                connection = data["connectionString"]
+                containerName = 'lesterthomas/droneproxy:1.0'
+                dockerContainer = dockerClient.containers.run(
+                    containerName,
+                    detach=True,
+                    ports={
+                        '14550/tcp': hostAndPort['port'] + 10,
+                        '14551/tcp': hostAndPort['port']},
+                    name=key)
+
+            dockerContainerId = dockerContainer.id
+            my_logger.info("container Id=" + str(dockerContainerId))
+
+            connection = "tcp:" + hostAndPort['image'] + ":" + str(hostAndPort['port'])
 
             my_logger.debug(connection)
 
