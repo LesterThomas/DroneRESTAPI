@@ -4,7 +4,7 @@ FROM lesterthomas/sitlbase:1.1
 EXPOSE 14550
 EXPOSE 14551
 EXPOSE 14552
-CMD python /usr/local/bin/mavproxy.py --out=tcpin:0.0.0.0:14551 --out=tcpin:0.0.0.0:14552 --master=tcpin:0.0.0.0:14550 
-#sleep infinity | 
+CMD sleep infinity | python /usr/local/bin/mavproxy.py --out=tcpin:0.0.0.0:14551 --out=tcpin:0.0.0.0:14552 --master=tcpin:0.0.0.0:14550 
+
 
 	

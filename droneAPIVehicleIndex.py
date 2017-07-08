@@ -150,6 +150,8 @@ class vehicleIndex:
 
             outputObj = {}
             outputObj["connection"] = connection
+            if (droneType == "real"):
+                outputObj["droneConnectTo"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 10)
             outputObj["id"] = key
             my_logger.info("Return: =" + json.dumps(outputObj))
         except Exception as e:
