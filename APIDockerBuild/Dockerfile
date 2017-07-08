@@ -27,5 +27,6 @@ COPY *.py /
 COPY static static/
 RUN chmod -R 777 /static
 EXPOSE 1234 
+EXPOSE 14570-14580
 CMD python /droneAPIMain.py 1234 
 
