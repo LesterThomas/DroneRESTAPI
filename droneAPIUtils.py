@@ -10,6 +10,7 @@ import json
 import time
 import math
 import os
+import uuid
 import redis
 import docker
 
@@ -159,15 +160,17 @@ def validateAndRefreshContainers():
                 if (containerWithPort == False):
                     my_logger.info("Container not found - creating new")
 
-                    dockerContainer = dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port}, name=droneId)
-                    dockerContainerId = dockerContainer.id
+                    createDrone(vehicleType, vehicleName, '51.4049', '1.3049', '105', '0')
+
+                    #dockerContainer = dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port}, name=droneId)
+                    #dockerContainerId = dockerContainer.id
                     # update redis
-                    redisdB.set(key,
-                                json.dumps({"connectionString": connectionString,
-                                            "name": vehicleName,
-                                            "vehicleType": vehicleType,
-                                            "startTime": time.time(),
-                                            "dockerContainerId": dockerContainerId}))
+                    # redisdB.set(key,
+                    #            json.dumps({"connectionString": connectionString,
+                    #                        "name": vehicleName,
+                    #                        "vehicleType": vehicleType,
+                    #                        "startTime": time.time(),
+                    #                        "dockerContainerId": dockerContainerId}))
 
     except Exception as e:
         my_logger.warn("Caught exception: Unexpected error in validateAndRefreshContainers:")
@@ -343,26 +346,109 @@ def getVehicleStatus(inVehicle, inVehicleId):
     my_logger.debug("Armed: %s" % inVehicle.armed)  # settable
     outputObj["armed"] = (inVehicle.armed)
 
-    outputObj["zone"] = authorizedZoneDict.get(inVehicleId)
-    if not outputObj["zone"]:  # if no authorizedZone then set default
-        outputObj["zone"] = {
-            "shape": {
-                "name": "circle",
-                "lat": outputObj["global_frame"]["lat"],
-                "lon": outputObj["global_frame"]["lon"],
-                "radius": 500}}
-        if (outputObj["zone"]["shape"]["lat"] != 0):  # only automatically assign a zone if it is not 0,0,0,0
-            authorizedZoneDict[inVehicleId] = outputObj["zone"]
+    zone = authorizedZoneDict.get(inVehicleId, None)
+    if (zone is not None):
+        outputObj["zone"] = authorizedZoneDict.get(inVehicleId, None)
+        # check if vehicle still in zone
+        distance = distanceInMeters(
+            outputObj["zone"]["shape"]["lat"],
+            outputObj["zone"]["shape"]["lon"],
+            outputObj["global_frame"]["lat"],
+            outputObj["global_frame"]["lon"])
+        if (distance > 500):
+            droneAPIAction.rtl(inVehicle)
 
-    # check if vehicle still in zone
-    distance = distanceInMeters(
-        outputObj["zone"]["shape"]["lat"],
-        outputObj["zone"]["shape"]["lon"],
-        outputObj["global_frame"]["lat"],
-        outputObj["global_frame"]["lon"])
-    if (distance > 500):
-        droneAPIAction.rtl(inVehicle)
+    return outputObj
 
+# get the next image and port to launch dronesim docker image (create new image if necessary)
+
+
+def getNexthostAndPort():
+    firstFreePort = 0
+    keys = redisdB.keys("dockerHostsArray")
+    dockerHostsArray = json.loads(redisdB.get(keys[0]))
+    my_logger.info("dockerHostsArray")
+    my_logger.info(dockerHostsArray)
+
+    # initially always use current image
+    for i in range(14550, 14560):
+        # find first unused port
+        portList = dockerHostsArray[0]['usedPorts']  # [{"internalIP":"172.17.0.1","usedPorts":[]}]
+        if not(i in portList):
+            firstFreePort = i
+            break
+    dockerHostsArray[0]['usedPorts'].append(i)
+    my_logger.info("First unassigned port:" + str(firstFreePort))
+
+    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
+    return {"image": dockerHostsArray[0]['internalIP'], "port": firstFreePort}
+
+
+def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir):
+    connection = None
+    dockerContainerId = "N/A"
+    uuidVal = uuid.uuid4()
+    key = str(uuidVal)[:8]
+
+    environmentString = 'LOCATION=' + str(drone_lat) + ',' + str(drone_lon) + ',' + str(drone_alt) + ',' + str(drone_dir)
+    my_logger.info("Start location environement %s", environmentString)
+
+    # build simulated drone or proxy via Docker
+    # docker api available on host at
+    # http://172.17.0.1:4243/containers/json
+
+    #private_ip_address=this.launchCloudImage('ami-5be0f43f', 't2.micro', ['sg-fd0c8394'])
+    #connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
+    hostAndPort = getNexthostAndPort()
+    dockerClient = docker.DockerClient(
+        version='1.27',
+        base_url='tcp://' +
+        hostAndPort['image'] +
+        ':4243')  # docker.from_env(version='1.27')
+    dockerContainer = None
+    containerName = 'lesterthomas/droneproxy:1.0'
+    if (droneType == "simulated"):
+        containerName = 'lesterthomas/dronesim:1.8'
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            environment=[environmentString],
+            detach=True,
+            ports={
+                '14550/tcp': hostAndPort['port']},
+            name=key)
+    else:
+        containerName = 'lesterthomas/droneproxy:1.0'
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            detach=True,
+            ports={
+                '14550/tcp': hostAndPort['port'] + 10,
+                '14551/tcp': hostAndPort['port'],
+                '14552/tcp': hostAndPort['port'] + 20},
+            name=key)
+
+    dockerContainerId = dockerContainer.id
+    my_logger.info("container Id=" + str(dockerContainerId))
+
+    connection = "tcp:" + hostAndPort['image'] + ":" + str(hostAndPort['port'])
+
+    my_logger.debug(connection)
+
+    my_logger.info("adding connectionString to Redis db with key '" + "connectionString:" + str(key) + "'")
+    redisdB.set("connectionString:" + key,
+                json.dumps({"connectionString": connection,
+                            "name": vehicleName,
+                            "vehicleType": droneType,
+                            "startTime": time.time(),
+                            "dockerContainerId": dockerContainerId}))
+
+    outputObj = {}
+    outputObj["connection"] = connection
+    if (droneType == "real"):
+        outputObj["droneConnectTo"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 10)
+        outputObj["groundstationConnectTo"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 20)
+    outputObj["id"] = key
+    my_logger.info("Return: =" + json.dumps(outputObj))
     return outputObj
 
 

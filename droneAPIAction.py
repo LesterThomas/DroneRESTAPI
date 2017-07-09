@@ -204,7 +204,7 @@ class action:
                 outputObj["action"] = rtl(inVehicle)
             elif value == "Arm":
                 my_logger.debug("Armiong")
-                outputObj["action"] = arm(inVehicle)
+                outputObj["action"] = arm(inVehicle, vehicleId)
             elif value == "Takeoff":
                 height = data.get("height", 20)  # get height - default to 20
                 my_logger.debug("Taking off to height of " + str(height))
@@ -293,7 +293,7 @@ def rtl(inVehicle):
     return outputObj
 
 
-def arm(inVehicle,):
+def arm(inVehicle, inVehicleId):
     outputObj = {}
     if inVehicle.is_armable:
         outputObj["name"] = "Arm"
@@ -310,6 +310,16 @@ def arm(inVehicle,):
         # Copter should arm in GUIDED mode
         inVehicle.mode = VehicleMode("GUIDED")
         inVehicle.armed = True
+
+        outputObj["zone"] = {
+            "shape": {
+                "name": "circle",
+                "lat": currentLocation.lat,
+                "lon": currentLocation.lon,
+                "radius": 500}}
+        if (outputObj["zone"]["shape"]["lat"] != 0):  # only automatically assign a zone if it is not 0,0,0,0
+            droneAPIUtils.authorizedZoneDict[inVehicleId] = outputObj["zone"]
+
         # Confirm vehicle armed before attempting to take off
         while not inVehicle.armed:
             my_logger.info(" Waiting for arming...")
@@ -336,15 +346,14 @@ def takeoff(inVehicle, inHeight):
         outputObj["param3"] = 0
         outputObj["param4"] = 0
         outputObj["command"] = 22
-        my_logger.info("Arming motors")
         inVehicle.mode = VehicleMode("GUIDED")
         my_logger.info("Taking off!")
         inVehicle.simple_takeoff(inHeight)  # Take off to target altitude
     else:
         outputObj["name"] = "Takeoff"
         outputObj["status"] = "Error"
-        outputObj["error"] = "vehicle not armable"
-        my_logger.warn("vehicle not armable")
+        outputObj["error"] = "vehicle not armed"
+        my_logger.warn("vehicle not armed")
     return outputObj
 
 
