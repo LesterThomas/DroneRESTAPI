@@ -45,7 +45,7 @@
 						<a data-toggle="collapse" data-parent="#accordion" data-target="{{'#'+action.name}}">{{action.name}}</a>
 					  </h4>
 					</div>
-					<div id="{{action.name}}" class="panel-collapse collapse">
+					<div id="{{action.name}}" class="panel-collapse collapse"}">
 					  <div class="panel-body">
 						<p>{{action.description}}</p>
 						<div class="container-fluid">
@@ -193,7 +193,7 @@
 		</div>
 	</div>	
 
-	<div  class="col-lg-12 col-sm-12" >			
+	<div  class="col-lg-12 col-sm-12" ng-if="drones.collection[droneIndex].vehicleType=='simulated'">			
 		<div class="panel panel-default panel-primary">
 			<div class="panel-heading">Simulator Environment parameters </div>
 			<div class="panel-body">

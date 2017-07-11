@@ -3,57 +3,71 @@
 
 
 
-<div  class="col-lg-12 col-sm-12">		
-	<div class="panel panel-default panel-primary">
-		<div class="panel-heading">Drone inventory</div>
-		<div class="panel-body">
-	 
+<div ng-if="drones.collection.length>0">
+	<div  class="col-lg-12 col-sm-12">		
+		<div class="panel panel-default panel-primary">
+			<div class="panel-heading">Drone inventory</div>
+			<div class="panel-body">
 				<table class="table table-striped">
 					<tr>
 						<th>name</th>
 						<th>type</th>
-						<th>id</th>
+						<th class="visible-sm visible-md visible-lg">id</th>
 						<th>Status</th>
-						<th>Mode</th>
+						<th class="visible-sm visible-md visible-lg">Mode</th>
 						<th>Distance (home)</th>
-						<th>Heading</th>
-						<th>Groundspeed</un>
+						<th class="visible-md visible-lg">Heading</th>
+						<th class="visible-sm visible-md visible-lg">Groundspeed</un>
 						<th>Heartbeat</th>
-						<th>Lat</th>
-						<th>Lon</th>
+						<th class="visible-md visible-lg">Lat</th>
+						<th class="visible-md visible-lg">Lon</th>
 						<th>Alt</th>
 					</tr>
-					<tr ng-click="selectIndividual(drone)" ng-repeat="drone in drones.collection" >
-						<td >{{drone.name}}</td>
-						<td >{{drone.vehicleType}}</td>
-						<td >{{drone.id}}</td>
-						<td >{{drone.vehicleStatus.armed_status}}</td>
-						<td >{{drone.vehicleStatus.mode}}</td>
-						<td >{{drone.vehicleStatus.distance_home| number : 0}}m</td>
-						<td >{{drone.vehicleStatus.heading| number : 0}}&deg;</td>
-						<td >{{drone.vehicleStatus.groundspeed| number : 0}} km/h</td>
-						<td >{{drone.vehicleStatus.heartbeat_status}}</td>
-						<td >{{drone.vehicleStatus.global_frame.lat| number : 4}}</td>
-						<td >{{drone.vehicleStatus.global_frame.lon| number : 4}}</td>
-						<td >{{-drone.vehicleStatus.local_frame.down| number : 0}}</td>
+					<tr ng-click="selectIndividual(Drone)" ng-repeat="Drone in drones.collection" >
+						<td >{{Drone.name}}</td>
+						<td >{{Drone.vehicleType}}</td>
+						<td class="visible-sm visible-md visible-lg">{{Drone.id}}</td>
+						<td >{{Drone.vehicleStatus.armed_status}}</td>
+						<td class="visible-sm visible-md visible-lg">{{Drone.vehicleStatus.mode}}</td>
+						<td >{{Drone.vehicleStatus.distance_home| number : 0}}m</td>
+						<td class="visible-md visible-lg">{{Drone.vehicleStatus.heading| number : 0}}&deg;</td>
+						<td class="visible-sm visible-md visible-lg">{{Drone.vehicleStatus.groundspeed| number : 0}} km/h</td>
+						<td >{{Drone.vehicleStatus.heartbeat_status}}</td>
+						<td  class="visible-md visible-lg">{{Drone.vehicleStatus.global_frame.lat| number : 4}}</td>
+						<td  class="visible-md visible-lg">{{Drone.vehicleStatus.global_frame.lon| number : 4}}</td>
+						<td >{{-Drone.vehicleStatus.local_frame.down| number : 0}}</td>
 					</tr>
 				</table>
-
+			</div>
 		</div>
 	</div>
+
+	<div  class="col-lg-12 col-sm-12">		
+		<div class="panel panel-default panel-primary" >
+			<div class="panel-heading">Map</div>
+			<div class="panel-body"  >
+				<ng-map style="height: 600px;" zoom="17" options="{mapTypeId:'satellite'}"></ng-map>
+			</div>
+		</div>
+	</div> 
+
+
 </div>
-
-<div  class="col-lg-12 col-sm-12">		
-	<div class="panel panel-default panel-primary" >
-		<div class="panel-heading">Map</div>
-		<div class="panel-body"  >
-			<ng-map style="height: 600px;" zoom="17" options="{mapTypeId:'satellite'}"></ng-map>
+<div ng-if="drones.collection.length==0">
+	<div  class="col-lg-12 col-sm-12">		
+		<div class="panel panel-default panel-primary" >
+			<div class="panel-heading">Help</div>
+			<div class="panel-body"  >
+				<p>
+					This console allows you to view and control real or simulated Drones through a simple interface. <b>At the moment there are no Drones available to view</b>. 
+				</p>
+				<p>
+					To add a simulated Drone, click the <b><a href="/static/app/#!/new">New Drone</a></b> link above. To add a real Drone, please follow the <a href="https://github.com/LesterThomas/DroneRESTAPI/blob/master/README.md">Instructions to connect real Drone</a>. 
+				</p>
+			</div>
 		</div>
-	</div>
-</div> 
-
-
-
+	</div> 
+</div>
 
 
 

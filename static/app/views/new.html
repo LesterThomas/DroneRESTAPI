@@ -5,57 +5,9 @@
 
 	<div  class="col-lg-6 col-sm-12">			
 		<div class="panel panel-default panel-primary">
-			<div class="panel-heading">Connect to existing Drone </div>
+			<div class="panel-heading">Connect to real Drone </div>
 			<div class="panel-body">
-
-
-
-				<div class="container-fluid">
-					<div class="row form-inline"  >
-						<table class="table">
-							<tr>
-								<td>
-									<label  for="usr">Drone Name:</label>
-								<td>
-								<td>
-									<input type="text" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" name="vehicleName" ng-model="vehicleName" /> 
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<label  for="usr">Select tcp/udp:</label>
-								<td>
-								<td>
-									<select class="form-control" name="connectionStringType" id="connectionStringType" ng-model="connectionStringType">
-								    	<option value="tcp">tcp</option>
-								    	<option value="udp">udp</option>
-								    </select> 
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<label  for="usr">IP Address:</label>
-								<td>
-								<td>
-									<input type="text" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" name="connectionStringIP" ng-model="connectionStringIP" /> 
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<label  for="usr">Port:</label>
-								<td>
-								<td>
-									<input type="text" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" name="connectionStringPort" ng-model="connectionStringPort" />
-								</td>
-							</tr>
-						</table>
-					</div>
-					<div><h4>ConnectionString:<b>{{connectionString}}</b></h4></div>
-
-					<button type="button" class="btn btn-primary" ng-click='connectExisting()'>Connect to existing drone</button>
-				</div>
-
-
+				<p>To add a real Drone, please follow the <a href="https://github.com/LesterThomas/DroneRESTAPI/blob/master/README.md">Instructions to connect real Drone</a>. </p>
 			</div>
 		</div>
 	</div>

@@ -189,6 +189,17 @@ angular.module('droneFrontendApp')
 
 	}
 
+	//if vehicle is disarmed then delete the authorized zone
+	$scope.$watch("drones.collection[droneIndex].vehicleStatus.armed_status", function (newValue) {		
+		console.log("Armed status",newValue);	
+		if (newValue=="DISARMED"){
+			if ($scope.zones.length>0) {
+				$scope.zones[0].setMap(null);
+				$scope.zones.splice(0, 1);
+			}
+		}
+	});
+
 	$scope.$watch("simParamSelected", function (newValue) {			
 		$scope.simParamValue=$scope.simEnvironment[newValue];
 	});
@@ -226,10 +237,12 @@ angular.module('droneFrontendApp')
 		        //console.log('Zone already exists');
 	        } else
 			{
-				if ($scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape) {
-					var center={lat:$scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape.lat,lng:$scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape.lon};
-			        $scope.zones[0] = new google.maps.Circle({strokeColor:'#22FF22', strokeOpacity:0.8,fillColor:'#00FF00',fillOpacity:0.10,center:center ,radius: $scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape.radius,map:map}); 
-			    }
+				if (($scope.drones.collection[$scope.droneIndex].vehicleStatus.zone) && ($scope.drones.collection[$scope.droneIndex].vehicleStatus.armed_status=="ARMED")){
+					if ($scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape) {
+						var center={lat:$scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape.lat,lng:$scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape.lon};
+						$scope.zones[0] = new google.maps.Circle({strokeColor:'#22FF22', strokeOpacity:0.8,fillColor:'#00FF00',fillOpacity:0.10,center:center ,radius: $scope.drones.collection[$scope.droneIndex].vehicleStatus.zone.shape.radius,map:map}); 
+					}
+				}
 			}
 	
 
@@ -486,6 +499,10 @@ angular.module('droneFrontendApp')
 		if ($scope.markers.length>0) {
 			$scope.markers[0].setMap(null);
 			$scope.markers.splice(0, 1);
+		}
+		if ($scope.zones.length>0) {
+			$scope.zones[0].setMap(null);
+			$scope.zones.splice(0, 1);
 		}
 		droneService.apiURL=$scope.apiURL;
 	})		

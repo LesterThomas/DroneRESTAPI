@@ -64,10 +64,12 @@ angular.module('droneFrontendApp')
 			        //console.log('Zone already exists');
 		        } else
 				{
-					if ($scope.drones.collection[droneIndex].vehicleStatus.zone.shape) {
-    					var center={lat:$scope.drones.collection[droneIndex].vehicleStatus.zone.shape.lat,lng:$scope.drones.collection[droneIndex].vehicleStatus.zone.shape.lon};
-				        $scope.zones[droneIndex] = new google.maps.Circle({strokeColor:'#22FF22', strokeOpacity:0.8,fillColor:'#00FF00',fillOpacity:0.10,center:center ,radius: $scope.drones.collection[droneIndex].vehicleStatus.zone.shape.radius,map:map}); 
-				    }
+					if (($scope.drones.collection[droneIndex].vehicleStatus.zone) && ($scope.drones.collection[droneIndex].vehicleStatus.armed_status=="ARMED")){
+						if ($scope.drones.collection[droneIndex].vehicleStatus.zone.shape) {
+							var center={lat:$scope.drones.collection[droneIndex].vehicleStatus.zone.shape.lat,lng:$scope.drones.collection[droneIndex].vehicleStatus.zone.shape.lon};
+							$scope.zones[droneIndex] = new google.maps.Circle({strokeColor:'#22FF22', strokeOpacity:0.8,fillColor:'#00FF00',fillOpacity:0.10,center:center ,radius: $scope.drones.collection[droneIndex].vehicleStatus.zone.shape.radius,map:map}); 
+						}
+					}
 				}
 
 		    }

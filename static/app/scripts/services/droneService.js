@@ -2,8 +2,8 @@ angular.module('droneFrontendApp')
 .service('droneService',['$http','$interval', function($http,$interval) {
 	var self=this;
     this.droneId=-1;
-    this.apiURL='HTTP://192.168.1.67:1235/'
-    this.consoleRootURL='HTTP://192.168.1.67:1235/static/app'
+    this.apiURL='HTTP://droneapi.ddns.net:1235/'
+    this.consoleRootURL='HTTP://droneapi.ddns.net:1235/static/app'
     this.droneName='';
     this.lat=0;
     this.lon=0;
