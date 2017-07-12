@@ -41,9 +41,9 @@ class simulator:
             my_logger.debug(simulatorData)
             simKey = str(simulatorData['parameter'])
             simValue = simulatorData['value']
-            my_logger.debug(simKey)
-            my_logger.debug(simValue)
-            inVehicle.parameters[simKey] = simValue
+            my_logger.info(simKey)
+            my_logger.info(simValue)
+            inVehicle.parameters[simKey] = float(simValue)
             my_logger.debug('Updated parameter')
 
             output = getSimulatorParams(vehicleId)
@@ -96,6 +96,8 @@ def getSimulatorParams(vehicleId):
             my_logger.debug(" Key:" + str(key) + " Value:" + str(value))
             my_logger.debug(key.find("SIM"))
             if (key.find("SIM") == 0):
+                simulatorParams[key] = inVehicle.parameters[key]
+            if (key.find("TERRAIN") == 0):
                 simulatorParams[key] = inVehicle.parameters[key]
 
         outputObj['simulatorParams'] = simulatorParams

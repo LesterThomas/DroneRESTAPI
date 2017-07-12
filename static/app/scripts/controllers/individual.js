@@ -26,9 +26,9 @@ angular.module('droneFrontendApp')
 	$scope.mission={};
 	$scope.actions={availableActions:{}};
 	$scope.actionLog={items:[]};
-	$scope.simEnvironment=[];
-	$scope.simParamSelected='';
-	$scope.simParamValue='';
+	$scope.simEnvironment={params:[]};
+	$scope.simParamSelected='SIM_WIND_SPD';
+	$scope.simParamValue='3';
 	$scope.zones=[];
 
     $scope.droneIcon = {
@@ -153,7 +153,7 @@ angular.module('droneFrontendApp')
 	$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator').
 	    then(function(data, status, headers, config) {
 				console.log('getSimEnvironment API get success',data,status);	
-				$scope.simEnvironment=data.data.simulatorParams;
+				$scope.simEnvironment.params=data.data.simulatorParams;
 			},
 				function(data, status, headers, config) {
 				  // log error
@@ -306,6 +306,10 @@ angular.module('droneFrontendApp')
 		//Takeoff
 		if (inAction.command==22){
 			textDescription="Takeoff to an altitude of " + Math.round(inAction.coordinate[2]*100)/100 + "m.";
+		}
+		//Arm
+		if (inAction.command==400){
+			textDescription="Vehicle armed.";
 		}
 		//Region of Interest
 		if (inAction.command==80){

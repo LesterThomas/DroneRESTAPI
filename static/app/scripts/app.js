@@ -42,6 +42,11 @@ angular
         controller: 'ModalCtrl',
         controllerAs: 'modal'
       })
+      .when('/perf', {
+        templateUrl: 'views/performance.html',
+        controller: 'PerformanceCtrl',
+        controllerAs: 'Performance'
+      })
       .otherwise({
         redirectTo: '/'
       });

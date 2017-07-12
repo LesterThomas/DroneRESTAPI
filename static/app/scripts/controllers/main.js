@@ -29,8 +29,10 @@ angular.module('droneFrontendApp')
             var bounds=new google.maps.LatLngBounds();
 
             for(var droneIndex in $scope.drones.collection) {
-            	bounds=bounds.extend({lat:$scope.drones.collection[droneIndex].vehicleStatus.global_frame.lat+0.003,lng:$scope.drones.collection[droneIndex].vehicleStatus.global_frame.lon+0.003});
-            	bounds=bounds.extend({lat:$scope.drones.collection[droneIndex].vehicleStatus.global_frame.lat-0.003,lng:$scope.drones.collection[droneIndex].vehicleStatus.global_frame.lon-0.003});
+            	if ($scope.drones.collection[droneIndex].vehicleStatus){
+	            	bounds=bounds.extend({lat:$scope.drones.collection[droneIndex].vehicleStatus.global_frame.lat+0.003,lng:$scope.drones.collection[droneIndex].vehicleStatus.global_frame.lon+0.003});
+	            	bounds=bounds.extend({lat:$scope.drones.collection[droneIndex].vehicleStatus.global_frame.lat-0.003,lng:$scope.drones.collection[droneIndex].vehicleStatus.global_frame.lon-0.003});
+	            }
             }
 
 

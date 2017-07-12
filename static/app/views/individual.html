@@ -202,7 +202,7 @@
 					<tr>
 						<td>
 						    <select class="form-control" name="simParamSelect" id="simParamSelect" ng-model="simParamSelected">
-						      <option ng-repeat="(key, value) in simEnvironment" value="{{key}}">{{key}}</option>
+						      <option ng-repeat="(key, value) in simEnvironment.params" value="{{key}}">{{key}}</option>
 						    </select>
 						</td>
 						<td>
@@ -218,7 +218,7 @@
 		</div>
 	</div>	
 		 
-
+<div>local frame:{{-drones.collection[droneIndex].vehicleStatus.local_frame.down | number : 2}} : global frame:{{-drones.collection[droneIndex].vehicleStatus.global_relative_frame.alt | number : 2}}</div>
 
 
 </div>

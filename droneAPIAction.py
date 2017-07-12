@@ -56,7 +56,15 @@ class action:
             availableActions = []
             # available when armed
             my_logger.info("global_relative_frame.alt=%s", vehicleStatus["global_relative_frame"]["alt"])
-            if (vehicleStatus["global_relative_frame"]["alt"] > 1):  # if at height of >1 m
+            if (vehicleStatus["armed"] == False):
+                availableActions.append({
+                    "name": "Arm",
+                    "title": "Arm drone.",
+                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/action",
+                    "method": "POST",
+                    "fields": [{"name": "name", "type": "string", "value": "Arm"}]
+                })
+            elif (vehicleStatus["global_relative_frame"]["alt"] > 1):  # if at height of >1 m
                 availableActions.append({"name": "Region-of-Interest",
                                          "title": "Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
                                          "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/action",
@@ -150,14 +158,7 @@ class action:
                     "method": "POST",
                     "fields": [{"name": "name", "type": "string", "value": "Takeoff"}, {"name": "height", "type": "float", "value": 30}]
                 })
-            else:
-                availableActions.append({
-                    "name": "Arm",
-                    "title": "Arm drone.",
-                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/action",
-                    "method": "POST",
-                    "fields": [{"name": "name", "type": "string", "value": "Arm"}]
-                })
+
             outputObj['_actions'] = availableActions
             my_logger.debug(outputObj)
             updateActionStatus(inVehicle, vehicleId)
@@ -301,11 +302,11 @@ def arm(inVehicle, inVehicleId):
         # coodinates are same as current + height
         currentLocation = inVehicle.location.global_relative_frame
         outputObj["coordinate"] = [currentLocation.lat, currentLocation.lon, 0]
-        outputObj["param1"] = 0
+        outputObj["param1"] = 1
         outputObj["param2"] = 0
         outputObj["param3"] = 0
         outputObj["param4"] = 0
-        outputObj["command"] = 22
+        outputObj["command"] = 400
         my_logger.info("Arming motors")
         # Copter should arm in GUIDED mode
         inVehicle.mode = VehicleMode("GUIDED")
