@@ -209,7 +209,7 @@ class action:
             elif value == "Takeoff":
                 height = data.get("height", 20)  # get height - default to 20
                 my_logger.debug("Taking off to height of " + str(height))
-                outputObj["action"] = takeoff(inVehicle, height)
+                outputObj["action"] = takeoff(inVehicle, float(height))
             elif value == "Start-Mission":
                 outputObj["action"] = auto(inVehicle)
             elif value == "Land":

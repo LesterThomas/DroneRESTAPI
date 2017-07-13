@@ -26,9 +26,9 @@ angular.module('droneFrontendApp')
 	$scope.mission={};
 	$scope.actions={availableActions:{}};
 	$scope.actionLog={items:[]};
-	$scope.simEnvironment={params:[]};
-	$scope.simParamSelected='SIM_WIND_SPD';
-	$scope.simParamValue='3';
+	$scope.simEnvironment=[];
+	$scope.simParamSelected='';
+	$scope.simParamValue='';
 	$scope.zones=[];
 
     $scope.droneIcon = {
@@ -153,7 +153,7 @@ angular.module('droneFrontendApp')
 	$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator').
 	    then(function(data, status, headers, config) {
 				console.log('getSimEnvironment API get success',data,status);	
-				$scope.simEnvironment.params=data.data.simulatorParams;
+				$scope.simEnvironment=data.data.simulatorParams;
 			},
 				function(data, status, headers, config) {
 				  // log error
@@ -260,7 +260,7 @@ angular.module('droneFrontendApp')
 			}
 			
 			$scope.altVel.data[0].push(Math.round($scope.drones.collection[$scope.droneIndex].vehicleStatus.groundspeed*10)/10);
-			$scope.altVel.data[1].push(-Math.round($scope.drones.collection[$scope.droneIndex].vehicleStatus.local_frame.down));
+			$scope.altVel.data[1].push(Math.round($scope.drones.collection[$scope.droneIndex].vehicleStatus.global_relative_frame.alt));
 			if ($scope.altVel.data[0].length>80) {
 				$scope.altVel.data[0].shift();
 			}
