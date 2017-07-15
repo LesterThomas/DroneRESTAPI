@@ -36,6 +36,8 @@ class vehicleIndex:
                 connectionString = jsonObj['connectionString']
                 vehicleName = jsonObj['name']
                 vehicleType = jsonObj['vehicleType']
+                host = jsonObj.get('host', '')
+                port = jsonObj.get('port', '')
                 vehicleId = key[17:]
                 droneDetails = {
                     "_links": {
@@ -47,9 +49,14 @@ class vehicleIndex:
                             str(vehicleId)}},
                     "id": str(vehicleId),
                         "name": vehicleName,
+                        "host": host,
+                        "port": port,
                         "vehicleType": vehicleType}
+                if (vehicleType == 'real'):
+                    droneDetails['droneConnectTo'] = jsonObj.get('droneConnectTo', '')
+                    droneDetails['groundstationConnectTo'] = jsonObj.get('groundstationConnectTo', '')
                 if (hasattr(queryParameters, 'details')):
-                        # try to get extra details. Ignore if this fails
+                    # try to get extra details. Ignore if this fails
                     try:
                         droneObj = droneAPIUtils.connectVehicle(vehicleId)
                         droneDetails['vehicleStatus'] = droneAPIUtils.getVehicleStatus(droneObj, vehicleId)

@@ -84,7 +84,7 @@ angular.module('droneFrontendApp')
 
 
   function getContainerStats() {
-  $http.get('http://localhost:4000/stats').
+  $http.get('http://192.168.1.67:4000/stats').
       then(function(data, status, headers, config) {
         console.log('getContainerStats API get success',data,status); 
         //data has id, image, cpu

@@ -10,6 +10,7 @@
  */
 angular
   .module('droneFrontendApp', [
+	'ngVis',
     'ngAnimate',
     'ngCookies',
     'ngResource',
@@ -37,9 +38,9 @@ angular
         controller: 'MainCtrl',
         controllerAs: 'main'
       })
-      .when('/modal', {
-        templateUrl: 'views/modal.html',
-        controller: 'ModalCtrl',
+      .when('/network', {
+        templateUrl: 'views/network.html',
+        controller: 'NetworkCtrl',
         controllerAs: 'modal'
       })
       .when('/perf', {

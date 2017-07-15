@@ -435,12 +435,19 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
     my_logger.debug(connection)
 
     my_logger.info("adding connectionString to Redis db with key '" + "connectionString:" + str(key) + "'")
+    droneDBDetails = {"connectionString": connection,
+                      "name": vehicleName,
+                      "vehicleType": droneType,
+                      "host": hostAndPort['image'],
+                      "port": hostAndPort['port'],
+                      "startTime": time.time(),
+                      "dockerContainerId": dockerContainerId}
+    if (droneType == 'real'):
+        droneDBDetails['droneConnectTo'] = hostAndPort['port'] + 10
+        droneDBDetails['groundstationConnectTo'] = hostAndPort['port'] + 20
+
     redisdB.set("connectionString:" + key,
-                json.dumps({"connectionString": connection,
-                            "name": vehicleName,
-                            "vehicleType": droneType,
-                            "startTime": time.time(),
-                            "dockerContainerId": dockerContainerId}))
+                json.dumps(droneDBDetails))
 
     outputObj = {}
     outputObj["connection"] = connection

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+  <meta charset="utf-8">
+  <title>angular-visjs example</title>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.3.0/vis.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.3.0/vis.js"></script>
+  <script src="angular-vis.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/locales.min.js"></script>
+  <script src="script.js"></script>
+</head>
+
+<body style="background-color: #eee; padding:30px">
+  <div ng-controller="MainCtrl">
+    <vis-network data="data" options="options" height="100%"></vis-network>
+  </div>
+</body>
+
+</html>
