@@ -124,7 +124,6 @@
 							"        tests[\"vehicleType value returned \"] = (jsonData.vehicleType);",
 							"        tests[\"id value returned \"] = (jsonData.id=postman.getEnvironmentVariable(\"droneId\"));",
 							"        tests[\"vehicleType value returned \"] = (jsonData.vehicleType);",
-							"        tests[\"zone value returned \"] = (jsonData.zone);",
 							"        tests[\"version value returned \"] = (jsonData.version);",
 							"        tests[\"gps_0 value returned \"] = (jsonData.gps_0);",
 							"        tests[\"gimbal value returned \"] = (jsonData.gimbal);",
