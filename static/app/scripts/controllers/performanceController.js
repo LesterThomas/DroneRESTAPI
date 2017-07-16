@@ -90,29 +90,69 @@ angular.module('droneFrontendApp')
         //data has id, image, cpu
         //we want an array of the latest stat objects
         //$scope.stats.splice(0, $scope.stats.length);  //reset stats array to zero elements (without creating new array)
+        if (data.data.length>0){
+          $scope.stats=[]; //delete every element from previous array
+        }
+
         for(var statObj in data.data) {
           var containerObj=data.data[statObj];
           //console.log(containerObj); 
           $scope.stats[containerObj.id]=containerObj;
         }
+
         //console.log($scope.stats.length); 
         //console.log($scope.stats); 
         for(var stat in $scope.stats) {
           var statObj=$scope.stats[stat];
-          console.log(statObj.image, statObj.cpu); 
 
           if (!$scope.containers[statObj.id]) {
             //build new baseline
             addGraphBaseline(statObj.id);
           }
-
-
           $scope.containers[statObj.id].data[0].push(statObj.cpu);
           if ($scope.containers[statObj.id].data[0].length>80) {
             $scope.containers[statObj.id].data[0].shift();
           }
         }
 
+        //go through each container and check there are still stats for container
+        for (var containerIndex in $scope.containers){
+          
+
+          var containerFound=false;
+          for(var stat in $scope.stats) {
+            var statObj=$scope.stats[stat];
+            if (statObj.id==containerIndex){
+              containerFound=true;
+            }
+          }
+
+          if (!containerFound){
+            //delete container
+            //delete from whichever index it is in and the actual container
+            for (var i in $scope.containerIndex){
+              if ($scope.containerIndex[i]==containerIndex){
+                $scope.containerIndex.splice(i,1);
+              }
+            }
+            for (var i in $scope.proxyIndex){
+              if ($scope.proxyIndex[i]==containerIndex){
+                $scope.proxyIndex.splice(i,1);
+              }
+            }
+            for (var i in $scope.utilityContainerIndex){
+              if ($scope.utilityContainerIndex[i]==containerIndex){
+                $scope.utilityContainerIndex.splice(i,1);
+              }
+            }
+            for (var i in $scope.mainAPIIndex){
+              if ($scope.mainAPIIndex[i]==containerIndex){
+                $scope.mainAPIIndex.splice(i,1);
+              }
+            }
+            delete $scope.containers[containerIndex];
+          }
+        }
 
       },
         function(data, status, headers, config) {
