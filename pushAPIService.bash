@@ -15,6 +15,7 @@ echo $VERSION
 
 echo "Changing UI to point to prod api"
 sed -i -e 's/192.168.1.67/droneapi.ddns.net/g' static/app/scripts/services/droneService.js
+sed -i -e 's/192.168.1.67/droneapi.ddns.net/g' static/app/scripts/controllers/performanceController.js
 
 echo "Running locally"
 docker stop $(docker ps -a -q -f name=droneapi)

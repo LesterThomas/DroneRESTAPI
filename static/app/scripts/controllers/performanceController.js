@@ -23,7 +23,7 @@ angular.module('droneFrontendApp')
       $scope.containerIndex.push(containerId);
     }
     else if ($scope.stats[containerId].image.includes('droneproxy')){
-      $scope.proxyIndex.push(containerId);
+      $scope.containerIndex.push(containerId);
     } else if  ($scope.stats[containerId].image.includes('droneapi')){
       $scope.mainAPIIndex.push(containerId);  
     }    
@@ -53,7 +53,7 @@ angular.module('droneFrontendApp')
                 beginAtZero: true,
                                 steps: 10,
                                 stepValue: 10,
-                                max: 100
+                                max: 200
                             }
                         },{
               position: 'right',
@@ -84,7 +84,7 @@ angular.module('droneFrontendApp')
 
 
   function getContainerStats() {
-  $http.get('http://192.168.1.67:4000/stats').
+  $http.get('http://droneapi.ddns.net:4000/stats').
       then(function(data, status, headers, config) {
         console.log('getContainerStats API get success',data,status); 
         //data has id, image, cpu

@@ -20,22 +20,6 @@ adminApp.service('containersService',     function($http) {
     
     this.console={
     containers:[],
-    containersTimer:null,
-    autoScalerTimer:null,
-    chaosMonkeyTimer:null,
-    instances:3,
-    autoRecovery:false,
-    autoScale:false,
-    chaosMonkey:false,
-    upgrade:false,
-    ZTUA:100,
-    ZTUAContainer:'lesterthomas/appserver:1.0',   
-    ZTUB:0,
-    ZTUBContainer:'lesterthomas/appserver:1.1',
-    initiated:false,
-    percentageUpgraded:0,
-    maxCPUSeconds:0,
-    minCPUSeconds:0,
 
 
     //call the docker API to get the list of running containers. Store the containers that match the image name for the Application Servers.
@@ -88,9 +72,6 @@ adminApp.service('containersService',     function($http) {
                         }
 
                     }       
-                }
-                if (inScope.console.autoRecovery==false) { //if auto-scale switch is off then set instances to currently running.
-                     inScope.console.instances=inScope.console.containers.length;
                 }
             });
          

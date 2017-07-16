@@ -2,7 +2,7 @@
 
 <div  class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-if="containerIndex.length>0">            
     <div class="panel panel-default panel-primary">
-        <div class="panel-heading ">Simulated Drone Containers</div>
+        <div class="panel-heading ">Simulated Drone and Drone Proxy Containers</div>
         <div class="panel-body">
 
             <div  style="padding-right:0; padding-left:0;" ng-repeat="containerId in containerIndex">  
@@ -22,27 +22,6 @@
     </div>
 </div>
 
-<div  class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-if="proxyIndex.length>0">            
-    <div class="panel panel-default panel-primary">
-        <div class="panel-heading ">Drone Mavlink Proxy Containers</div>
-        <div class="panel-body">
-
-            <div  style="padding-right:0; padding-left:0;" ng-repeat="containerId in proxyIndex">  
-                <div  class="col-lg-3 col-md-4 col-sm-6 col-xs-12">            
-                    <div class="panel panel-default ">
-                        <div class="panel-heading ">{{stats[containerId].image}} ({{containerId}}) </div>
-                        <div class="panel-body">
-                            <canvas id="line" class="chart chart-line" chart-data="containers[containerId].data"
-                                chart-labels="containers[containerId].labels" chart-series="containers[containerId].series" chart-options="containers[containerId].options"
-                                chart-dataset-override="containers[containerId].datasetOverride" chart-click="containers[containerId].onClick">
-                            </canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div  class="col-lg-12 col-md-12 col-sm-12 col-xs-12">            
     <div class="panel panel-default panel-primary">
