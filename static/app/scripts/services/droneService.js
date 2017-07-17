@@ -10,10 +10,12 @@ angular.module('droneFrontendApp')
     this.alt=0;
     this.dir=0;
     this.drones={"collection":[]};
+	this.advisories={"collection":{},"max_safe_distance":0};
 
 
 	var intervalTimer = $interval(updateDrones, 250);
 	updateDrones();
+	//this.queryAdvisories(51.3793,-1.1954);
 	function updateDrones() {
 			$http.get(self.apiURL + 'vehicle?details=true').
 			    then(function(data, status, headers, config) {
@@ -55,10 +57,42 @@ angular.module('droneFrontendApp')
 					},
 					function(data, status, headers, config) {
 					  // log error
-						console.log('API get error',data, status, headers, config);
+						console.log('API get error',data, status, headers, config);	
 					});
 
 		}
 
-
+	this.queryAdvisories=function(inLat,inLon){
+			var airmapURL='https://api.airmap.com/status/v2/point?latitude='+inLat+'&longitude='+inLon+'&buffer=10000&weather=true';
+			console.log('AIRMAP URL:',airmapURL);
+			$http.get(airmapURL, { 
+				headers: {'X-API-Key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVkZW50aWFsX2lkIjoiY3JlZGVudGlhbHxBendXTDJKaGF4MEVRWUNlQlJCR2VVb0dKV2VhIiwiYXBwbGljYXRpb25faWQiOiJhcHBsaWNhdGlvbnxrOVFBZEJ3aE93M0JQT2ZZRzZlZ0pVUXdFRVhMIiwib3JnYW5pemF0aW9uX2lkIjoiZGV2ZWxvcGVyfE43Z2Q2eURobkdubnFOc2Q5eEpiS2hiWm1vWCIsImlhdCI6MTUwMDIwMTczOH0.HX-RbNqEGq_ic1ys0U5dvZCtvCPCgz2_z8ggxv5SHdo'}
+				}).
+			    then(function(data, status, headers, config) {
+					console.log('AIRMAP API get success',data, status, headers, config);
+					var inAdvisories=data.data.data.advisories;
+					var shortest_distance=3000;
+					for (var advisoryIndex in inAdvisories){
+						console.log('Advisory:',inAdvisories[advisoryIndex]);
+						console.log('Advisory id:',inAdvisories[advisoryIndex].id);
+						if (inAdvisories[advisoryIndex].distance<shortest_distance){
+							shortest_distance=inAdvisories[advisoryIndex].distance;
+						}
+						self.advisories.collection[inAdvisories[advisoryIndex].id]=inAdvisories[advisoryIndex];
+					}
+					//calculate max safe distance
+					
+					self.advisories.max_safe_distance=shortest_distance;
+					console.log('Query Advisories',self.advisories);
+					
+				},
+				function(data, status, headers, config) {
+				  // log error
+					console.log('AIRMAP API get error',data, status, headers, config);
+				});
+		
+	}
+	
 }]);
+
+

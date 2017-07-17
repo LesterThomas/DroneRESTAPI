@@ -16,16 +16,21 @@ angular.module('droneFrontendApp')
 	$scope.drones=droneService.drones;
 	$scope.markers=[];
 	$scope.zones=[];
+	
+	$scope.mappedAdvisories=[];
+	$scope.advisories=droneService.advisories;
+	$scope.advisoriesCount=0;
 
 
 	var mapIntervalTimer = $interval(updateMap, 250);
 	var deleteMarketsTimer = $interval(deleteAllMarkers, 5000);
 	var deleteZonesTimer = $interval(deleteAllZones, 7000);
+	var deleteAdvisoriesTimer = $interval(deleteAllAdvisories, 7000);
 	updateMap();
 	function updateMap() {
-
         NgMap.getMap().then(function(map) {
-				
+			//console.log('Main Map',map);
+			
             var bounds=new google.maps.LatLngBounds();
 
             for(var droneIndex in $scope.drones.collection) {
@@ -73,12 +78,34 @@ angular.module('droneFrontendApp')
 						}
 					}
 				}
+				
+				//draw advisories
+				
+				var newAdvisoriesLength=Object.keys($scope.advisories.collection).length;
+				if (newAdvisoriesLength>$scope.advisoriesCount){
+					console.log('advisories changed');
+					$scope.advisoriesCount=newAdvisoriesLength;
+					
+					//delete old advisories
+					for (var mappedAdvisoryIndex in $scope.mappedAdvisories) {
+						$scope.mappedAdvisories[mappedAdvisoryIndex].setMap(null);
+					}
+					$scope.mappedAdvisories.splice(0, $scope.mappedAdvisories.length);
+
+					
+					for (var advisoryKey in $scope.advisories.collection) {
+						console.log('advisoryKey',advisoryKey);
+						var center={lat:$scope.advisories.collection[advisoryKey].latitude,lng:$scope.advisories.collection[advisoryKey].longitude};
+						$scope.mappedAdvisories.push(new google.maps.Circle({strokeColor:'#FF2222', strokeOpacity:0.8,fillColor:'#FF0000',fillOpacity:0.10,center:center ,radius: 2000,map:map})); 
+					}
+				}				
 
 		    }
 		});
 
 	}
 
+	
 
 	function deleteAllMarkers() {
 		for(var droneIndex in $scope.markers) {
@@ -92,6 +119,14 @@ angular.module('droneFrontendApp')
 		    $scope.zones[droneIndex].setMap(null);
 		}
 		$scope.zones.splice(0, $scope.zones.length);
+	}
+	
+	function deleteAllAdvisories() {
+		for(var advisoryIndex in $scope.mappedAdvisories) {
+		    $scope.mappedAdvisories[advisoryIndex].setMap(null);
+		}
+		$scope.mappedAdvisories.splice(0, $scope.mappedAdvisories.length);
+		$scope.advisoriesCount=0;
 	}
 
 	$scope.selectIndividual=function(inDrone) {
@@ -110,9 +145,11 @@ angular.module('droneFrontendApp')
 		$interval.cancel(mapIntervalTimer);
 		$interval.cancel(deleteMarketsTimer);
 		$interval.cancel(deleteZonesTimer);
+		$interval.cancel(deleteAdvisoriesTimer);
 
 		deleteAllMarkers();	
-		deleteAllZones();	
+		deleteAllZones();
+		deleteAllAdvisories();		
 
 	})			
 
