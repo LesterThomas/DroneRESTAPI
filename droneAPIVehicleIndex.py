@@ -1,5 +1,5 @@
-"""This module provides the API endpoint for the collection of vehicles. It also lets you create
-of link to a new drone"""
+"""This module provides the API endpoint for the collection of vehicles (drones). It also lets you create
+a new simulated drone or a connection to a real drone."""
 
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException

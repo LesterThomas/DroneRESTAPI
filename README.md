@@ -51,21 +51,21 @@ The Dockerfile builds on top of the baselineDocker file (that creates the `leste
 
 The python ```pdoc``` documentation is at:
 
-[droneAPIMain](droneAPIMain.m.html): The main module that sets-up the API server.
+[droneAPIMain](http://htmlpreview.github.io/?https://github.com/LesterThomas/DroneRESTAPI/blob/master/droneAPIMain.m.html): The main module that sets-up the API server.
 
-[droneAPIUtils](droneAPIUtils.m.html): Utility functions that manage global data structures and Redis database.
+[droneAPIUtils](http://htmlpreview.github.io/?https://github.com/LesterThomas/DroneRESTAPI/blob/master/droneAPIUtils.m.html): Utility functions that manage global data structures and Redis database.
 
 Modules for each end-point:
 
 
-- /vehicle : [droneAPIVehicleIndex](droneAPIVehicleIndex.m.html) 
-	- /vehicle/(.*) : [droneAPIVehicleStatus](droneAPIVehicleStatus.m.html) 
-		- /vehicle/(.*)/action : [droneAPIAction](droneAPIAction.m.html)  
-		- /vehicle/(.*)/homeLocation : [droneAPIHomeLocation](droneAPIHomeLocation.m.html)  
-		- /vehicle/(.*)/mission : [droneAPIMission](droneAPIMission.m.html) 
-		- /vehicle/(.*)/authorizedZone : [droneAPIAuthorizedZone](droneAPIAuthorizedZone.m.html) 
-		- /vehicle/(.*)/simulator : [droneAPISimulator](droneAPISimulator.m.html) 
-- /admin : [droneAPIAdmin](droneAPIAdmin.m.html) 
+- /vehicle : [droneAPIVehicleIndex](http://htmlpreview.github.io/?https://github.com/LesterThomas/DroneRESTAPI/blob/master/droneAPIVehicleIndex.m.html) 
+	- /vehicle/(.*) : [droneAPIVehicleStatus](http://htmlpreview.github.io/?https://github.com/LesterThomas/DroneRESTAPI/blob/master/droneAPIVehicleStatus.m.html) 
+		- /vehicle/(.*)/action : [droneAPIAction](http://htmlpreview.github.io/?https://github.com/LesterThomas/DroneRESTAPI/blob/master/droneAPIAction.m.html)  
+		- /vehicle/(.*)/homeLocation : [droneAPIHomeLocation](http://htmlpreview.github.io/?https://github.com/LesterThomas/DroneRESTAPI/blob/master/droneAPIHomeLocation.m.html)  
+		- /vehicle/(.*)/mission : [droneAPIMission](http://htmlpreview.github.io/?https://github.com/LesterThomas/DroneRESTAPI/blob/master/droneAPIMission.m.html) 
+		- /vehicle/(.*)/authorizedZone : [droneAPIAuthorizedZone](http://htmlpreview.github.io/?https://github.com/LesterThomas/DroneRESTAPI/blob/master/droneAPIAuthorizedZone.m.html) 
+		- /vehicle/(.*)/simulator : [droneAPISimulator](http://htmlpreview.github.io/?https://github.com/LesterThomas/DroneRESTAPI/blob/master/droneAPISimulator.m.html) 
+- /admin : [droneAPIAdmin](http://htmlpreview.github.io/?https://github.com/LesterThomas/DroneRESTAPI/blob/master/droneAPIAdmin.m.html) 
 
 
 
