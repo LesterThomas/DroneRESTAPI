@@ -1,4 +1,7 @@
-# This module has utility functions used by all the other modules in this App
+"""This module provides the API endpoint to manage the zones a drone is authorised to fly in. The
+existing authorized zones are returned as part of the vehicleStatus. This module allows you
+to request a new authorised zone."""
+
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
 

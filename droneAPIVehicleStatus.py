@@ -1,4 +1,7 @@
-# This module has utility functions used by all the other modules in this App
+"""Thi module manages the API endpoint for an individual vehicle (drone). It returns
+the status for a drone and allows you to delete a drone"""
+
+
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
 

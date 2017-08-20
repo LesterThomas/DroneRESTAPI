@@ -1,3 +1,5 @@
+"""This module provides the API endpoint for simulated drones to manage the simulator parameters"""
+
 # This class handles the '/vehicle/(.*)/simulator' resource end-point which manages the Drone Simulator paramaters
 
 import logging

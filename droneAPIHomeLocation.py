@@ -1,4 +1,6 @@
-# This module has utility functions used by all the other modules in this App
+"""This module provides the API endpoint to retrieve the home location for a drone. The home
+location is the position the drone took off from."""
+
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
 

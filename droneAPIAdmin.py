@@ -1,4 +1,5 @@
-# This class handles the '/admin' resource end-point which provides a catalogue of API Service admin functions
+"""This module provides the API endpoint to administer the API service."""
+
 
 import logging
 import traceback

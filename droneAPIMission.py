@@ -1,4 +1,6 @@
-# This module has utility functions used by all the other modules in this App
+"""This module provides the API endpoint to manage the missions for a drone. A mission is a
+series of actions that can be loaded to a drone and executed automatically"""
+
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
 

@@ -1,4 +1,5 @@
-# This module has utility functions used by all the other modules in this App
+"""Thi module manages the API endpoint to manage an individual vehicles actions."""
+
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
 

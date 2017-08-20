@@ -4,7 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>droneAPIVehicleStatus API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="Thi module manages the API endpoint for an individual vehicle (drone). It returns
+the status for a d..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1007,11 +1008,15 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">droneAPIVehicleStatus</span> module</h1>
-  
+  <p>Thi module manages the API endpoint for an individual vehicle (drone). It returns
+the status for a drone and allows you to delete a drone</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIVehicleStatus', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIVehicleStatus" class="source">
-    <pre><code># This module has utility functions used by all the other modules in this App
+    <pre><code>"""Thi module manages the API endpoint for an individual vehicle (drone). It returns
+the status for a drone and allows you to delete a drone"""
+
+
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
 
