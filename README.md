@@ -47,4 +47,24 @@ The Dockerfile builds on top of the baselineDocker file (that creates the `leste
 
 ```docker build -t lesterthomas/dronesim:1.5 .```
 
+##Python module documentation
+
+The python ```pdoc``` documentation is at:
+
+[droneAPIMain](droneAPIMain.m.html): The main module that sets-up the API server
+[droneAPIUtils](droneAPIUtils.m.html): Utility functions that manage global data structures and Redis database
+
+Modules for each end-point:
+
+| URL Endpoint | Module |
+| /vehicle | [droneAPIVehicleIndex](droneAPIVehicleIndex.m.html) |
+| /vehicle/(.*) | [droneAPIVehicleStatus](droneAPIVehicleStatus.m.html) |
+| /vehicle/(.*)/action | [droneAPIAction](droneAPIAction.m.html)  |
+| /vehicle/(.*)/homeLocation | [droneAPIHomeLocation](droneAPIHomeLocation.m.html)  |
+| /vehicle/(.*)/mission | [droneAPIMission](droneAPIMission.m.html) '.mission',
+| /vehicle/(.*)/authorizedZone | [droneAPIAuthorizedZone](droneAPIAuthorizedZone.m.html) |
+| /vehicle/(.*)/simulator | [droneAPISimulator](droneAPISimulator.m.html) |
+| /admin | [droneAPIAdmin](droneAPIAdmin.m.html) |
+
+
 

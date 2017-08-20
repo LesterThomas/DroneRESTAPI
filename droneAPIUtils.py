@@ -1,4 +1,4 @@
-# This module has utility functions used by all the other modules in this App
+"""This module has utility functions used by all the other modules in this App"""
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
 
@@ -24,12 +24,11 @@ authorizedZoneDict = None
 defaultDockerHost = ""
 dronesimImage = ""
 homeDomain = ""
-
 redisdB = None
 
 
-def startup():
-    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, actionArrayDict, authorizedZoneDict, redisdB, my_logger
+def initaliseLogger():
+    global my_logger
 
     # Set logging framework
     main_logger = logging.getLogger("DroneAPIServer")
@@ -53,6 +52,12 @@ def startup():
     my_logger.info("##################################################################################")
     my_logger.info("Logging level:" + str(logging.INFO))
 
+    return
+
+
+def initaliseGlobals():
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, actionArrayDict, authorizedZoneDict
+
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
@@ -63,10 +68,14 @@ def startup():
     connectionNameTypeDict = {}  # holds the additonal name, type and starttime for the conections
     actionArrayDict = {}  # holds recent actions executied by each drone
     authorizedZoneDict = {}  # holds zone authorizations for each drone
-    redisdB = redis.Redis(host='redis', port=6379)  # redis or localhost
 
-    # refresh the running containers based on redis data
-    validateAndRefreshContainers()
+    return
+
+
+def initiliseRedisDB():
+
+    global redisdB
+    redisdB = redis.Redis(host='redis', port=6379)  # redis or localhost
 
     return
 
@@ -457,7 +466,3 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
     outputObj["id"] = key
     my_logger.info("Return: =" + json.dumps(outputObj))
     return outputObj
-
-
-print("Starting up at " + str(time.time()))
-startup()

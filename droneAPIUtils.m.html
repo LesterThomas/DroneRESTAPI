@@ -1,0 +1,2240 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>droneAPIUtils API documentation</title>
+    <meta name="description" content="This module has utility functions used by all the other modules in this App" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    max-width: 850px;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow: hidden;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#droneAPIUtils.actionArrayDict">actionArrayDict</a></li>
+    <li class="mono"><a href="#droneAPIUtils.authorizedZoneDict">authorizedZoneDict</a></li>
+    <li class="mono"><a href="#droneAPIUtils.connectionDict">connectionDict</a></li>
+    <li class="mono"><a href="#droneAPIUtils.connectionNameTypeDict">connectionNameTypeDict</a></li>
+    <li class="mono"><a href="#droneAPIUtils.defaultDockerHost">defaultDockerHost</a></li>
+    <li class="mono"><a href="#droneAPIUtils.dronesimImage">dronesimImage</a></li>
+    <li class="mono"><a href="#droneAPIUtils.homeDomain">homeDomain</a></li>
+    <li class="mono"><a href="#droneAPIUtils.my_logger">my_logger</a></li>
+    <li class="mono"><a href="#droneAPIUtils.redisdB">redisdB</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#droneAPIUtils.applyHeadders">applyHeadders</a></li>
+    <li class="mono"><a href="#droneAPIUtils.connectVehicle">connectVehicle</a></li>
+    <li class="mono"><a href="#droneAPIUtils.createDrone">createDrone</a></li>
+    <li class="mono"><a href="#droneAPIUtils.distanceInMeters">distanceInMeters</a></li>
+    <li class="mono"><a href="#droneAPIUtils.getEnvironmentVariable">getEnvironmentVariable</a></li>
+    <li class="mono"><a href="#droneAPIUtils.getNexthostAndPort">getNexthostAndPort</a></li>
+    <li class="mono"><a href="#droneAPIUtils.getVehicleStatus">getVehicleStatus</a></li>
+    <li class="mono"><a href="#droneAPIUtils.initaliseGlobals">initaliseGlobals</a></li>
+    <li class="mono"><a href="#droneAPIUtils.initaliseLogger">initaliseLogger</a></li>
+    <li class="mono"><a href="#droneAPIUtils.initiliseRedisDB">initiliseRedisDB</a></li>
+    <li class="mono"><a href="#droneAPIUtils.latLonAltObj">latLonAltObj</a></li>
+    <li class="mono"><a href="#droneAPIUtils.rebuildDockerHostsArray">rebuildDockerHostsArray</a></li>
+    <li class="mono"><a href="#droneAPIUtils.validateAndRefreshContainers">validateAndRefreshContainers</a></li>
+  </ul>
+
+    </li>
+
+
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">droneAPIUtils</span> module</h1>
+  <p>This module has utility functions used by all the other modules in this App</p>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils" class="source">
+    <pre><code>"""This module has utility functions used by all the other modules in this App"""
+# Import DroneKit-Python
+from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
+
+import web
+import logging
+import watchtower
+import traceback
+import json
+import time
+import math
+import os
+import uuid
+import redis
+import docker
+
+import droneAPIAction
+# define global variables
+my_logger = None
+connectionDict = None
+connectionNameTypeDict = None
+actionArrayDict = None
+authorizedZoneDict = None
+defaultDockerHost = ""
+dronesimImage = ""
+homeDomain = ""
+redisdB = None
+
+
+def initaliseLogger():
+    global my_logger
+
+    # Set logging framework
+    main_logger = logging.getLogger("DroneAPIServer")
+    LOG_FILENAME = 'droneapi.log'
+    main_logger.setLevel(logging.INFO)
+    handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=200000, backupCount=5)
+    formatter = logging.Formatter("%(levelname)s - %(message)s")
+    handler.setFormatter(formatter)
+    main_logger.addHandler(handler)
+    main_logger.propegate = False
+
+    try:
+        main_logger.addHandler(watchtower.CloudWatchLogHandler())
+    except BaseException:
+        main_logger.warn("Can not add CloudWatch Log Handler")
+
+    my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
+
+    my_logger.info("##################################################################################")
+    my_logger.info("Starting DroneAPI at  " + str(time.time()))
+    my_logger.info("##################################################################################")
+    my_logger.info("Logging level:" + str(logging.INFO))
+
+    return
+
+
+def initaliseGlobals():
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, actionArrayDict, authorizedZoneDict
+
+    # Set environment variables
+    homeDomain = getEnvironmentVariable('DRONEAPI_URL')
+    dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
+    defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
+
+    # set global variables
+    connectionDict = {}  # holds a dictionary of DroneKit connection objects
+    connectionNameTypeDict = {}  # holds the additonal name, type and starttime for the conections
+    actionArrayDict = {}  # holds recent actions executied by each drone
+    authorizedZoneDict = {}  # holds zone authorizations for each drone
+
+    return
+
+
+def initiliseRedisDB():
+
+    global redisdB
+    redisdB = redis.Redis(host='redis', port=6379)  # redis or localhost
+
+    return
+
+
+def getEnvironmentVariable(inVariable):
+    try:
+        envVariable = os.environ[inVariable]
+        my_logger.info("Env variable " + inVariable + "=" + envVariable)
+        return envVariable
+    except Exception as e:
+        my_logger.error("Can't get environment variable " + inVariable)
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        my_logger.exception(traceLines)
+    return ""
+
+
+def validateAndRefreshContainers():
+    try:
+        # test the redis dB
+        # remove any old entries (and any old docker containers)
+        my_logger.info("Connecting to Redis dB and removing any existing entries and stopping any existing containers at " + str(time.time()))
+
+        dockerHostsArray = []
+        redisdB.set('foo', 'bar')
+        my_logger.info("RedisSet " + str(time.time()))
+
+        value = redisdB.get('foo')
+        my_logger.info("RedisGet " + str(time.time()))
+        if (value == 'bar'):
+            my_logger.info("Connected to Redis dB")
+        else:
+            my_logger.error("Can not connect to Redis dB")
+            raise Exception('Can not connect to Redis dB on port 6379')
+
+        # drone reference data is in Redis database with a key for each drone
+        # there is also a dockerHostsArray that contains a simplified view of the same data for performance
+        # we will start/stop each docker container and also re-build the dockerHostsArray value
+        rebuildDockerHostsArray()
+
+        keys = redisdB.keys("connectionString:*")
+        for key in keys:
+            my_logger.debug("key = '" + key + "'")
+            jsonObjStr = redisdB.get(key)
+            my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
+            jsonObj = json.loads(jsonObjStr)
+            connectionString = jsonObj['connectionString']
+            vehicleName = jsonObj['name']
+            vehicleType = jsonObj['vehicleType']
+            dockerContainerId = jsonObj['dockerContainerId']
+            droneId = key[17:]
+            hostIp = connectionString[4:-6]
+            port = connectionString[-5:]
+            my_logger.info("connectionString:%s vehicleName:%s vehicleType:%s droneId:%s hostIp:%s port:%s ",
+                           connectionString, vehicleName, vehicleType, droneId, hostIp, port)
+
+            # stop and start this container (or start a new one if it doesn't exist)
+            dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
+            dockerAPIClient = docker.APIClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
+            containerFound = False
+            for container in dockerClient.containers.list(all=True):
+                if (container.id == dockerContainerId):
+                    containerFound = True
+                    my_logger.info("Container %s found - restarting", container.id)
+                    container.restart()
+            if (containerFound == False):
+                my_logger.info("Container not found - creating")
+
+                # check if there is a container on this host already using this port
+                containerWithPort = False
+                for container in dockerClient.containers.list():
+
+                    contPortObj = dockerAPIClient.port(container.id, 14550)
+                    if (contPortObj is not None):
+                        my_logger.info("Testing Container %s port %s", container.id, contPortObj)
+                        if (contPortObj[0]['HostPort'] == port):
+                            # container found. restart
+                            my_logger.info("Container found - restarting")
+                            containerWithPort = True
+                            container.restart()
+                            # update Redis with new container Id
+                            dockerContainerId = container.id
+                            redisdB.set(key,
+                                        json.dumps({"connectionString": connectionString,
+                                                    "name": vehicleName,
+                                                    "vehicleType": vehicleType,
+                                                    "startTime": time.time(),
+                                                    "dockerContainerId": dockerContainerId}))
+
+                if (containerWithPort == False):
+                    my_logger.info("Container not found - creating new")
+
+                    createDrone(vehicleType, vehicleName, '51.4049', '1.3049', '105', '0')
+
+                    #dockerContainer = dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port}, name=droneId)
+                    #dockerContainerId = dockerContainer.id
+                    # update redis
+                    # redisdB.set(key,
+                    #            json.dumps({"connectionString": connectionString,
+                    #                        "name": vehicleName,
+                    #                        "vehicleType": vehicleType,
+                    #                        "startTime": time.time(),
+                    #                        "dockerContainerId": dockerContainerId}))
+
+    except Exception as e:
+        my_logger.warn("Caught exception: Unexpected error in validateAndRefreshContainers:")
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+
+    return
+
+
+def rebuildDockerHostsArray():
+    # reset dockerHostsArray
+    dockerHostsArray = [{"internalIP": defaultDockerHost, "usedPorts": []}]
+    keys = redisdB.keys("connectionString:*")
+    for key in keys:
+
+        jsonObjStr = redisdB.get(key)
+        jsonObj = json.loads(jsonObjStr)
+        connectionString = jsonObj['connectionString']
+        hostIp = connectionString[4:-6]
+        port = connectionString[-5:]
+        # check if this host already exists in dockerHostsArray
+        found = False
+        for host in dockerHostsArray:
+            if (host['internalIP'] == hostIp):
+                found = True
+        if (found == False):
+            dockerHostsArray.append({"internalIP": hostIp, "usedPorts": []})
+        # add this drone to docker host
+        for host in dockerHostsArray:
+            if (host['internalIP'] == hostIp):
+                host['usedPorts'].append(int(port))
+    my_logger.info("dockerHostsArray (rebuilt)")
+    my_logger.info(dockerHostsArray)
+    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
+
+
+def applyHeadders():
+    my_logger.debug('Applying HTTP headers')
+    web.header('Content-Type', 'application/json')
+    web.header('Access-Control-Allow-Origin', '*')
+    web.header('Access-Control-Allow-Credentials', 'true')
+    web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
+    web.header('Access-Control-Allow-Headers', 'Content-Type')
+    return
+
+
+def connectVehicle(inVehicleId):
+    #global connectionStringArray
+    global redisdB
+    global connectionDict
+    global actionArrayDict
+    try:
+        my_logger.debug("connectVehicle called with inVehicleId = " + str(inVehicleId))
+        # connectionString=connectionStringArray[inVehicleId]
+        jsonObjStr = redisdB.get('connectionString:' + str(inVehicleId))
+        my_logger.debug("Redis returns '" + str(jsonObjStr) + "'")
+        if (jsonObjStr is None):
+            my_logger.warn("Raising Vehicle not found warning")
+            raise Warning('Vehicle not found ')
+        my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
+        jsonObj = json.loads(jsonObjStr)
+        connectionString = jsonObj['connectionString']
+        vehicleName = jsonObj['name']
+        vehicleType = jsonObj['vehicleType']
+        vehicleStartTime = jsonObj['startTime']
+        currentTime = time.time()
+        timeSinceStart = currentTime - vehicleStartTime
+        my_logger.debug("timeSinceStart= " + str(timeSinceStart))
+        if (timeSinceStart < 10):  # less than 10 seconds so throw Exception
+            my_logger.warn("Raising Vehicle starting up warning")
+            raise Warning('Vehicle starting up ')
+
+        my_logger.debug("connection string for vehicle " + str(inVehicleId) + "='" + connectionString + "'")
+        # Connect to the Vehicle.
+        if not connectionDict.get(inVehicleId):
+            my_logger.info("connectionString: %s" % (connectionString,))
+            my_logger.info("Connecting to vehicle on: %s" % (connectionString,))
+            connectionNameTypeDict[inVehicleId] = {"name": vehicleName, "vehicleType": vehicleType}
+            actionArrayDict[inVehicleId] = []  # create empty action array
+            connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+            my_logger.info("actionArrayDict")
+            my_logger.info(actionArrayDict)
+        else:
+            my_logger.debug("Already connected to vehicle")
+    except Warning as w:
+        my_logger.warn("Caught warning: " + str(w))
+        raise Warning(str(w))
+    except Exception as e:
+        my_logger.warn("Caught exceptio: Unexpected error in connectVehicle:")
+        my_logger.warn("VehicleId=" + str(inVehicleId))
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        raise Exception('Unexpected error connecting to vehicle ' + str(inVehicleId))
+    return connectionDict[inVehicleId]
+
+
+def latLonAltObj(inObj):
+    output = {}
+    output["lat"] = (inObj.lat)
+    output["lon"] = (inObj.lon)
+    output["alt"] = (inObj.alt)
+    return output
+
+
+def distanceInMeters(lat1, lon1, lat2, lon2):
+    # approximate radius of earth in km
+    R = 6373.0
+    lat1 = math.radians(lat1)
+    lon1 = math.radians(lon1)
+    lat2 = math.radians(lat2)
+    lon2 = math.radians(lon2)
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = (math.sin(dlat / 2))**2 + math.cos(lat1) * math.cos(lat2) * (math.sin(dlon / 2))**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distance = R * c
+    return distance * 1000
+
+
+def getVehicleStatus(inVehicle, inVehicleId):
+    # inVehicle is an instance of the Vehicle class
+    outputObj = {}
+    web.header('Content-Type', 'application/json')
+    my_logger.debug("Autopilot Firmware version: %s" % inVehicle.version)
+    outputObj["version"] = str(inVehicle.version)
+    my_logger.debug("Global Location: %s" % inVehicle.location.global_frame)
+    global_frame = latLonAltObj(inVehicle.location.global_frame)
+    outputObj["global_frame"] = global_frame
+    my_logger.debug("Global Location (relative altitude): %s" % inVehicle.location.global_relative_frame)
+    global_relative_frame = latLonAltObj(inVehicle.location.global_relative_frame)
+    outputObj["global_relative_frame"] = global_relative_frame
+    my_logger.debug("Local Location: %s" % inVehicle.location.local_frame)  # NED
+    local_frame = {}
+    local_frame["north"] = (inVehicle.location.local_frame.north)
+    local_frame["east"] = (inVehicle.location.local_frame.east)
+    local_frame["down"] = (inVehicle.location.local_frame.down)
+    outputObj["local_frame"] = local_frame
+    my_logger.debug("Attitude: %s" % inVehicle.attitude)
+    outputObj["attitude"] = {"pitch": inVehicle.attitude.pitch, "roll": inVehicle.attitude.roll, "yaw": inVehicle.attitude.yaw}
+    my_logger.debug("Velocity: %s" % inVehicle.velocity)
+    outputObj["velocity"] = (inVehicle.velocity)
+    my_logger.debug("GPS: %s" % inVehicle.gps_0)
+    outputObj["gps_0"] = {
+        "eph": (
+            inVehicle.gps_0.eph), "epv": (
+            inVehicle.gps_0.eph), "fix_type": (
+                inVehicle.gps_0.fix_type), "satellites_visible": (
+                    inVehicle.gps_0.satellites_visible)}
+    my_logger.debug("Groundspeed: %s" % inVehicle.groundspeed)
+    outputObj["groundspeed"] = (inVehicle.groundspeed)
+    my_logger.debug("Airspeed: %s" % inVehicle.airspeed)
+    outputObj["airspeed"] = (inVehicle.airspeed)
+    my_logger.debug("Gimbal status: %s" % inVehicle.gimbal)
+    outputObj["gimbal"] = {"pitch": inVehicle.gimbal.pitch, "roll": inVehicle.gimbal.roll, "yaw": inVehicle.gimbal.yaw}
+    my_logger.debug("Battery: %s" % inVehicle.battery)
+    outputObj["battery"] = {"voltage": inVehicle.battery.voltage, "current": inVehicle.battery.current, "level": inVehicle.battery.level}
+    my_logger.debug("EKF OK?: %s" % inVehicle.ekf_ok)
+    outputObj["ekf_ok"] = (inVehicle.ekf_ok)
+    my_logger.debug("Last Heartbeat: %s" % inVehicle.last_heartbeat)
+    outputObj["last_heartbeat"] = (inVehicle.last_heartbeat)
+    my_logger.debug("Rangefinder: %s" % inVehicle.rangefinder)
+    outputObj["rangefinder"] = {"distance": inVehicle.rangefinder.distance, "voltage": inVehicle.rangefinder.voltage}
+    my_logger.debug("Heading: %s" % inVehicle.heading)
+    outputObj["heading"] = (inVehicle.heading)
+    my_logger.debug("Is Armable?: %s" % inVehicle.is_armable)
+    outputObj["is_armable"] = (inVehicle.is_armable)
+    my_logger.debug("System status: %s" % inVehicle.system_status.state)
+    outputObj["system_status"] = str(inVehicle.system_status.state)
+    my_logger.debug("Mode: %s" % inVehicle.mode.name)  # settable
+    outputObj["mode"] = str(inVehicle.mode.name)
+    my_logger.debug("Armed: %s" % inVehicle.armed)  # settable
+    outputObj["armed"] = (inVehicle.armed)
+
+    zone = authorizedZoneDict.get(inVehicleId, None)
+    if (zone is not None):
+        outputObj["zone"] = authorizedZoneDict.get(inVehicleId, None)
+        # check if vehicle still in zone
+        distance = distanceInMeters(
+            outputObj["zone"]["shape"]["lat"],
+            outputObj["zone"]["shape"]["lon"],
+            outputObj["global_frame"]["lat"],
+            outputObj["global_frame"]["lon"])
+        if (distance > 500):
+            droneAPIAction.rtl(inVehicle)
+
+    return outputObj
+
+# get the next image and port to launch dronesim docker image (create new image if necessary)
+
+
+def getNexthostAndPort():
+    firstFreePort = 0
+    keys = redisdB.keys("dockerHostsArray")
+    dockerHostsArray = json.loads(redisdB.get(keys[0]))
+    my_logger.info("dockerHostsArray")
+    my_logger.info(dockerHostsArray)
+
+    # initially always use current image
+    for i in range(14550, 14560):
+        # find first unused port
+        portList = dockerHostsArray[0]['usedPorts']  # [{"internalIP":"172.17.0.1","usedPorts":[]}]
+        if not(i in portList):
+            firstFreePort = i
+            break
+    dockerHostsArray[0]['usedPorts'].append(i)
+    my_logger.info("First unassigned port:" + str(firstFreePort))
+
+    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
+    return {"image": dockerHostsArray[0]['internalIP'], "port": firstFreePort}
+
+
+def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir):
+    connection = None
+    dockerContainerId = "N/A"
+    uuidVal = uuid.uuid4()
+    key = str(uuidVal)[:8]
+
+    environmentString = 'LOCATION=' + str(drone_lat) + ',' + str(drone_lon) + ',' + str(drone_alt) + ',' + str(drone_dir)
+    my_logger.info("Start location environement %s", environmentString)
+
+    # build simulated drone or proxy via Docker
+    # docker api available on host at
+    # http://172.17.0.1:4243/containers/json
+
+    #private_ip_address=this.launchCloudImage('ami-5be0f43f', 't2.micro', ['sg-fd0c8394'])
+    #connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
+    hostAndPort = getNexthostAndPort()
+    dockerClient = docker.DockerClient(
+        version='1.27',
+        base_url='tcp://' +
+        hostAndPort['image'] +
+        ':4243')  # docker.from_env(version='1.27')
+    dockerContainer = None
+    containerName = 'lesterthomas/droneproxy:1.0'
+    if (droneType == "simulated"):
+        containerName = 'lesterthomas/dronesim:1.8'
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            environment=[environmentString],
+            detach=True,
+            ports={
+                '14550/tcp': hostAndPort['port']},
+            name=key)
+    else:
+        containerName = 'lesterthomas/droneproxy:1.0'
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            detach=True,
+            ports={
+                '14550/tcp': hostAndPort['port'] + 10,
+                '14551/tcp': hostAndPort['port'],
+                '14552/tcp': hostAndPort['port'] + 20},
+            name=key)
+
+    dockerContainerId = dockerContainer.id
+    my_logger.info("container Id=" + str(dockerContainerId))
+
+    connection = "tcp:" + hostAndPort['image'] + ":" + str(hostAndPort['port'])
+
+    my_logger.debug(connection)
+
+    my_logger.info("adding connectionString to Redis db with key '" + "connectionString:" + str(key) + "'")
+    droneDBDetails = {"connectionString": connection,
+                      "name": vehicleName,
+                      "vehicleType": droneType,
+                      "host": hostAndPort['image'],
+                      "port": hostAndPort['port'],
+                      "startTime": time.time(),
+                      "dockerContainerId": dockerContainerId}
+    if (droneType == 'real'):
+        droneDBDetails['droneConnectTo'] = hostAndPort['port'] + 10
+        droneDBDetails['groundstationConnectTo'] = hostAndPort['port'] + 20
+
+    redisdB.set("connectionString:" + key,
+                json.dumps(droneDBDetails))
+
+    outputObj = {}
+    outputObj["connection"] = connection
+    if (droneType == "real"):
+        outputObj["droneConnectTo"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 10)
+        outputObj["groundstationConnectTo"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 20)
+    outputObj["id"] = key
+    my_logger.info("Return: =" + json.dumps(outputObj))
+    return outputObj
+</code></pre>
+  </div>
+
+  </header>
+
+  <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="droneAPIUtils.actionArrayDict" class="name">var <span class="ident">actionArrayDict</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="droneAPIUtils.authorizedZoneDict" class="name">var <span class="ident">authorizedZoneDict</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="droneAPIUtils.connectionDict" class="name">var <span class="ident">connectionDict</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="droneAPIUtils.connectionNameTypeDict" class="name">var <span class="ident">connectionNameTypeDict</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="droneAPIUtils.defaultDockerHost" class="name">var <span class="ident">defaultDockerHost</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="droneAPIUtils.dronesimImage" class="name">var <span class="ident">dronesimImage</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="droneAPIUtils.homeDomain" class="name">var <span class="ident">homeDomain</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="droneAPIUtils.my_logger" class="name">var <span class="ident">my_logger</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="droneAPIUtils.redisdB" class="name">var <span class="ident">redisdB</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.applyHeadders">
+    <p>def <span class="ident">applyHeadders</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.applyHeadders', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.applyHeadders" class="source">
+    <pre><code>def applyHeadders():
+    my_logger.debug('Applying HTTP headers')
+    web.header('Content-Type', 'application/json')
+    web.header('Access-Control-Allow-Origin', '*')
+    web.header('Access-Control-Allow-Credentials', 'true')
+    web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
+    web.header('Access-Control-Allow-Headers', 'Content-Type')
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.connectVehicle">
+    <p>def <span class="ident">connectVehicle</span>(</p><p>inVehicleId)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.connectVehicle', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.connectVehicle" class="source">
+    <pre><code>def connectVehicle(inVehicleId):
+    #global connectionStringArray
+    global redisdB
+    global connectionDict
+    global actionArrayDict
+    try:
+        my_logger.debug("connectVehicle called with inVehicleId = " + str(inVehicleId))
+        # connectionString=connectionStringArray[inVehicleId]
+        jsonObjStr = redisdB.get('connectionString:' + str(inVehicleId))
+        my_logger.debug("Redis returns '" + str(jsonObjStr) + "'")
+        if (jsonObjStr is None):
+            my_logger.warn("Raising Vehicle not found warning")
+            raise Warning('Vehicle not found ')
+        my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
+        jsonObj = json.loads(jsonObjStr)
+        connectionString = jsonObj['connectionString']
+        vehicleName = jsonObj['name']
+        vehicleType = jsonObj['vehicleType']
+        vehicleStartTime = jsonObj['startTime']
+        currentTime = time.time()
+        timeSinceStart = currentTime - vehicleStartTime
+        my_logger.debug("timeSinceStart= " + str(timeSinceStart))
+        if (timeSinceStart < 10):  # less than 10 seconds so throw Exception
+            my_logger.warn("Raising Vehicle starting up warning")
+            raise Warning('Vehicle starting up ')
+
+        my_logger.debug("connection string for vehicle " + str(inVehicleId) + "='" + connectionString + "'")
+        # Connect to the Vehicle.
+        if not connectionDict.get(inVehicleId):
+            my_logger.info("connectionString: %s" % (connectionString,))
+            my_logger.info("Connecting to vehicle on: %s" % (connectionString,))
+            connectionNameTypeDict[inVehicleId] = {"name": vehicleName, "vehicleType": vehicleType}
+            actionArrayDict[inVehicleId] = []  # create empty action array
+            connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+            my_logger.info("actionArrayDict")
+            my_logger.info(actionArrayDict)
+        else:
+            my_logger.debug("Already connected to vehicle")
+    except Warning as w:
+        my_logger.warn("Caught warning: " + str(w))
+        raise Warning(str(w))
+    except Exception as e:
+        my_logger.warn("Caught exceptio: Unexpected error in connectVehicle:")
+        my_logger.warn("VehicleId=" + str(inVehicleId))
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        raise Exception('Unexpected error connecting to vehicle ' + str(inVehicleId))
+    return connectionDict[inVehicleId]
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.createDrone">
+    <p>def <span class="ident">createDrone</span>(</p><p>droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.createDrone', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.createDrone" class="source">
+    <pre><code>def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir):
+    connection = None
+    dockerContainerId = "N/A"
+    uuidVal = uuid.uuid4()
+    key = str(uuidVal)[:8]
+
+    environmentString = 'LOCATION=' + str(drone_lat) + ',' + str(drone_lon) + ',' + str(drone_alt) + ',' + str(drone_dir)
+    my_logger.info("Start location environement %s", environmentString)
+
+    # build simulated drone or proxy via Docker
+    # docker api available on host at
+    # http://172.17.0.1:4243/containers/json
+
+    #private_ip_address=this.launchCloudImage('ami-5be0f43f', 't2.micro', ['sg-fd0c8394'])
+    #connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
+    hostAndPort = getNexthostAndPort()
+    dockerClient = docker.DockerClient(
+        version='1.27',
+        base_url='tcp://' +
+        hostAndPort['image'] +
+        ':4243')  # docker.from_env(version='1.27')
+    dockerContainer = None
+    containerName = 'lesterthomas/droneproxy:1.0'
+    if (droneType == "simulated"):
+        containerName = 'lesterthomas/dronesim:1.8'
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            environment=[environmentString],
+            detach=True,
+            ports={
+                '14550/tcp': hostAndPort['port']},
+            name=key)
+    else:
+        containerName = 'lesterthomas/droneproxy:1.0'
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            detach=True,
+            ports={
+                '14550/tcp': hostAndPort['port'] + 10,
+                '14551/tcp': hostAndPort['port'],
+                '14552/tcp': hostAndPort['port'] + 20},
+            name=key)
+
+    dockerContainerId = dockerContainer.id
+    my_logger.info("container Id=" + str(dockerContainerId))
+
+    connection = "tcp:" + hostAndPort['image'] + ":" + str(hostAndPort['port'])
+
+    my_logger.debug(connection)
+
+    my_logger.info("adding connectionString to Redis db with key '" + "connectionString:" + str(key) + "'")
+    droneDBDetails = {"connectionString": connection,
+                      "name": vehicleName,
+                      "vehicleType": droneType,
+                      "host": hostAndPort['image'],
+                      "port": hostAndPort['port'],
+                      "startTime": time.time(),
+                      "dockerContainerId": dockerContainerId}
+    if (droneType == 'real'):
+        droneDBDetails['droneConnectTo'] = hostAndPort['port'] + 10
+        droneDBDetails['groundstationConnectTo'] = hostAndPort['port'] + 20
+
+    redisdB.set("connectionString:" + key,
+                json.dumps(droneDBDetails))
+
+    outputObj = {}
+    outputObj["connection"] = connection
+    if (droneType == "real"):
+        outputObj["droneConnectTo"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 10)
+        outputObj["groundstationConnectTo"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 20)
+    outputObj["id"] = key
+    my_logger.info("Return: =" + json.dumps(outputObj))
+    return outputObj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.distanceInMeters">
+    <p>def <span class="ident">distanceInMeters</span>(</p><p>lat1, lon1, lat2, lon2)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.distanceInMeters', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.distanceInMeters" class="source">
+    <pre><code>def distanceInMeters(lat1, lon1, lat2, lon2):
+    # approximate radius of earth in km
+    R = 6373.0
+    lat1 = math.radians(lat1)
+    lon1 = math.radians(lon1)
+    lat2 = math.radians(lat2)
+    lon2 = math.radians(lon2)
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = (math.sin(dlat / 2))**2 + math.cos(lat1) * math.cos(lat2) * (math.sin(dlon / 2))**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distance = R * c
+    return distance * 1000
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.getEnvironmentVariable">
+    <p>def <span class="ident">getEnvironmentVariable</span>(</p><p>inVariable)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.getEnvironmentVariable', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.getEnvironmentVariable" class="source">
+    <pre><code>def getEnvironmentVariable(inVariable):
+    try:
+        envVariable = os.environ[inVariable]
+        my_logger.info("Env variable " + inVariable + "=" + envVariable)
+        return envVariable
+    except Exception as e:
+        my_logger.error("Can't get environment variable " + inVariable)
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        my_logger.exception(traceLines)
+    return ""
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.getNexthostAndPort">
+    <p>def <span class="ident">getNexthostAndPort</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.getNexthostAndPort', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.getNexthostAndPort" class="source">
+    <pre><code>def getNexthostAndPort():
+    firstFreePort = 0
+    keys = redisdB.keys("dockerHostsArray")
+    dockerHostsArray = json.loads(redisdB.get(keys[0]))
+    my_logger.info("dockerHostsArray")
+    my_logger.info(dockerHostsArray)
+
+    # initially always use current image
+    for i in range(14550, 14560):
+        # find first unused port
+        portList = dockerHostsArray[0]['usedPorts']  # [{"internalIP":"172.17.0.1","usedPorts":[]}]
+        if not(i in portList):
+            firstFreePort = i
+            break
+    dockerHostsArray[0]['usedPorts'].append(i)
+    my_logger.info("First unassigned port:" + str(firstFreePort))
+
+    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
+    return {"image": dockerHostsArray[0]['internalIP'], "port": firstFreePort}
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.getVehicleStatus">
+    <p>def <span class="ident">getVehicleStatus</span>(</p><p>inVehicle, inVehicleId)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.getVehicleStatus', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.getVehicleStatus" class="source">
+    <pre><code>def getVehicleStatus(inVehicle, inVehicleId):
+    # inVehicle is an instance of the Vehicle class
+    outputObj = {}
+    web.header('Content-Type', 'application/json')
+    my_logger.debug("Autopilot Firmware version: %s" % inVehicle.version)
+    outputObj["version"] = str(inVehicle.version)
+    my_logger.debug("Global Location: %s" % inVehicle.location.global_frame)
+    global_frame = latLonAltObj(inVehicle.location.global_frame)
+    outputObj["global_frame"] = global_frame
+    my_logger.debug("Global Location (relative altitude): %s" % inVehicle.location.global_relative_frame)
+    global_relative_frame = latLonAltObj(inVehicle.location.global_relative_frame)
+    outputObj["global_relative_frame"] = global_relative_frame
+    my_logger.debug("Local Location: %s" % inVehicle.location.local_frame)  # NED
+    local_frame = {}
+    local_frame["north"] = (inVehicle.location.local_frame.north)
+    local_frame["east"] = (inVehicle.location.local_frame.east)
+    local_frame["down"] = (inVehicle.location.local_frame.down)
+    outputObj["local_frame"] = local_frame
+    my_logger.debug("Attitude: %s" % inVehicle.attitude)
+    outputObj["attitude"] = {"pitch": inVehicle.attitude.pitch, "roll": inVehicle.attitude.roll, "yaw": inVehicle.attitude.yaw}
+    my_logger.debug("Velocity: %s" % inVehicle.velocity)
+    outputObj["velocity"] = (inVehicle.velocity)
+    my_logger.debug("GPS: %s" % inVehicle.gps_0)
+    outputObj["gps_0"] = {
+        "eph": (
+            inVehicle.gps_0.eph), "epv": (
+            inVehicle.gps_0.eph), "fix_type": (
+                inVehicle.gps_0.fix_type), "satellites_visible": (
+                    inVehicle.gps_0.satellites_visible)}
+    my_logger.debug("Groundspeed: %s" % inVehicle.groundspeed)
+    outputObj["groundspeed"] = (inVehicle.groundspeed)
+    my_logger.debug("Airspeed: %s" % inVehicle.airspeed)
+    outputObj["airspeed"] = (inVehicle.airspeed)
+    my_logger.debug("Gimbal status: %s" % inVehicle.gimbal)
+    outputObj["gimbal"] = {"pitch": inVehicle.gimbal.pitch, "roll": inVehicle.gimbal.roll, "yaw": inVehicle.gimbal.yaw}
+    my_logger.debug("Battery: %s" % inVehicle.battery)
+    outputObj["battery"] = {"voltage": inVehicle.battery.voltage, "current": inVehicle.battery.current, "level": inVehicle.battery.level}
+    my_logger.debug("EKF OK?: %s" % inVehicle.ekf_ok)
+    outputObj["ekf_ok"] = (inVehicle.ekf_ok)
+    my_logger.debug("Last Heartbeat: %s" % inVehicle.last_heartbeat)
+    outputObj["last_heartbeat"] = (inVehicle.last_heartbeat)
+    my_logger.debug("Rangefinder: %s" % inVehicle.rangefinder)
+    outputObj["rangefinder"] = {"distance": inVehicle.rangefinder.distance, "voltage": inVehicle.rangefinder.voltage}
+    my_logger.debug("Heading: %s" % inVehicle.heading)
+    outputObj["heading"] = (inVehicle.heading)
+    my_logger.debug("Is Armable?: %s" % inVehicle.is_armable)
+    outputObj["is_armable"] = (inVehicle.is_armable)
+    my_logger.debug("System status: %s" % inVehicle.system_status.state)
+    outputObj["system_status"] = str(inVehicle.system_status.state)
+    my_logger.debug("Mode: %s" % inVehicle.mode.name)  # settable
+    outputObj["mode"] = str(inVehicle.mode.name)
+    my_logger.debug("Armed: %s" % inVehicle.armed)  # settable
+    outputObj["armed"] = (inVehicle.armed)
+
+    zone = authorizedZoneDict.get(inVehicleId, None)
+    if (zone is not None):
+        outputObj["zone"] = authorizedZoneDict.get(inVehicleId, None)
+        # check if vehicle still in zone
+        distance = distanceInMeters(
+            outputObj["zone"]["shape"]["lat"],
+            outputObj["zone"]["shape"]["lon"],
+            outputObj["global_frame"]["lat"],
+            outputObj["global_frame"]["lon"])
+        if (distance > 500):
+            droneAPIAction.rtl(inVehicle)
+
+    return outputObj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.initaliseGlobals">
+    <p>def <span class="ident">initaliseGlobals</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.initaliseGlobals', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.initaliseGlobals" class="source">
+    <pre><code>def initaliseGlobals():
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, actionArrayDict, authorizedZoneDict
+
+    # Set environment variables
+    homeDomain = getEnvironmentVariable('DRONEAPI_URL')
+    dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
+    defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
+
+    # set global variables
+    connectionDict = {}  # holds a dictionary of DroneKit connection objects
+    connectionNameTypeDict = {}  # holds the additonal name, type and starttime for the conections
+    actionArrayDict = {}  # holds recent actions executied by each drone
+    authorizedZoneDict = {}  # holds zone authorizations for each drone
+
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.initaliseLogger">
+    <p>def <span class="ident">initaliseLogger</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.initaliseLogger', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.initaliseLogger" class="source">
+    <pre><code>def initaliseLogger():
+    global my_logger
+
+    # Set logging framework
+    main_logger = logging.getLogger("DroneAPIServer")
+    LOG_FILENAME = 'droneapi.log'
+    main_logger.setLevel(logging.INFO)
+    handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=200000, backupCount=5)
+    formatter = logging.Formatter("%(levelname)s - %(message)s")
+    handler.setFormatter(formatter)
+    main_logger.addHandler(handler)
+    main_logger.propegate = False
+
+    try:
+        main_logger.addHandler(watchtower.CloudWatchLogHandler())
+    except BaseException:
+        main_logger.warn("Can not add CloudWatch Log Handler")
+
+    my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
+
+    my_logger.info("##################################################################################")
+    my_logger.info("Starting DroneAPI at  " + str(time.time()))
+    my_logger.info("##################################################################################")
+    my_logger.info("Logging level:" + str(logging.INFO))
+
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.initiliseRedisDB">
+    <p>def <span class="ident">initiliseRedisDB</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.initiliseRedisDB', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.initiliseRedisDB" class="source">
+    <pre><code>def initiliseRedisDB():
+
+    global redisdB
+    redisdB = redis.Redis(host='redis', port=6379)  # redis or localhost
+
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.latLonAltObj">
+    <p>def <span class="ident">latLonAltObj</span>(</p><p>inObj)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.latLonAltObj', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.latLonAltObj" class="source">
+    <pre><code>def latLonAltObj(inObj):
+    output = {}
+    output["lat"] = (inObj.lat)
+    output["lon"] = (inObj.lon)
+    output["alt"] = (inObj.alt)
+    return output
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.rebuildDockerHostsArray">
+    <p>def <span class="ident">rebuildDockerHostsArray</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.rebuildDockerHostsArray', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.rebuildDockerHostsArray" class="source">
+    <pre><code>def rebuildDockerHostsArray():
+    # reset dockerHostsArray
+    dockerHostsArray = [{"internalIP": defaultDockerHost, "usedPorts": []}]
+    keys = redisdB.keys("connectionString:*")
+    for key in keys:
+
+        jsonObjStr = redisdB.get(key)
+        jsonObj = json.loads(jsonObjStr)
+        connectionString = jsonObj['connectionString']
+        hostIp = connectionString[4:-6]
+        port = connectionString[-5:]
+        # check if this host already exists in dockerHostsArray
+        found = False
+        for host in dockerHostsArray:
+            if (host['internalIP'] == hostIp):
+                found = True
+        if (found == False):
+            dockerHostsArray.append({"internalIP": hostIp, "usedPorts": []})
+        # add this drone to docker host
+        for host in dockerHostsArray:
+            if (host['internalIP'] == hostIp):
+                host['usedPorts'].append(int(port))
+    my_logger.info("dockerHostsArray (rebuilt)")
+    my_logger.info(dockerHostsArray)
+    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.validateAndRefreshContainers">
+    <p>def <span class="ident">validateAndRefreshContainers</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.validateAndRefreshContainers', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.validateAndRefreshContainers" class="source">
+    <pre><code>def validateAndRefreshContainers():
+    try:
+        # test the redis dB
+        # remove any old entries (and any old docker containers)
+        my_logger.info("Connecting to Redis dB and removing any existing entries and stopping any existing containers at " + str(time.time()))
+
+        dockerHostsArray = []
+        redisdB.set('foo', 'bar')
+        my_logger.info("RedisSet " + str(time.time()))
+
+        value = redisdB.get('foo')
+        my_logger.info("RedisGet " + str(time.time()))
+        if (value == 'bar'):
+            my_logger.info("Connected to Redis dB")
+        else:
+            my_logger.error("Can not connect to Redis dB")
+            raise Exception('Can not connect to Redis dB on port 6379')
+
+        # drone reference data is in Redis database with a key for each drone
+        # there is also a dockerHostsArray that contains a simplified view of the same data for performance
+        # we will start/stop each docker container and also re-build the dockerHostsArray value
+        rebuildDockerHostsArray()
+
+        keys = redisdB.keys("connectionString:*")
+        for key in keys:
+            my_logger.debug("key = '" + key + "'")
+            jsonObjStr = redisdB.get(key)
+            my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
+            jsonObj = json.loads(jsonObjStr)
+            connectionString = jsonObj['connectionString']
+            vehicleName = jsonObj['name']
+            vehicleType = jsonObj['vehicleType']
+            dockerContainerId = jsonObj['dockerContainerId']
+            droneId = key[17:]
+            hostIp = connectionString[4:-6]
+            port = connectionString[-5:]
+            my_logger.info("connectionString:%s vehicleName:%s vehicleType:%s droneId:%s hostIp:%s port:%s ",
+                           connectionString, vehicleName, vehicleType, droneId, hostIp, port)
+
+            # stop and start this container (or start a new one if it doesn't exist)
+            dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
+            dockerAPIClient = docker.APIClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
+            containerFound = False
+            for container in dockerClient.containers.list(all=True):
+                if (container.id == dockerContainerId):
+                    containerFound = True
+                    my_logger.info("Container %s found - restarting", container.id)
+                    container.restart()
+            if (containerFound == False):
+                my_logger.info("Container not found - creating")
+
+                # check if there is a container on this host already using this port
+                containerWithPort = False
+                for container in dockerClient.containers.list():
+
+                    contPortObj = dockerAPIClient.port(container.id, 14550)
+                    if (contPortObj is not None):
+                        my_logger.info("Testing Container %s port %s", container.id, contPortObj)
+                        if (contPortObj[0]['HostPort'] == port):
+                            # container found. restart
+                            my_logger.info("Container found - restarting")
+                            containerWithPort = True
+                            container.restart()
+                            # update Redis with new container Id
+                            dockerContainerId = container.id
+                            redisdB.set(key,
+                                        json.dumps({"connectionString": connectionString,
+                                                    "name": vehicleName,
+                                                    "vehicleType": vehicleType,
+                                                    "startTime": time.time(),
+                                                    "dockerContainerId": dockerContainerId}))
+
+                if (containerWithPort == False):
+                    my_logger.info("Container not found - creating new")
+
+                    createDrone(vehicleType, vehicleName, '51.4049', '1.3049', '105', '0')
+
+                    #dockerContainer = dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port}, name=droneId)
+                    #dockerContainerId = dockerContainer.id
+                    # update redis
+                    # redisdB.set(key,
+                    #            json.dumps({"connectionString": connectionString,
+                    #                        "name": vehicleName,
+                    #                        "vehicleType": vehicleType,
+                    #                        "startTime": time.time(),
+                    #                        "dockerContainerId": dockerContainerId}))
+
+    except Exception as e:
+        my_logger.warn("Caught exception: Unexpected error in validateAndRefreshContainers:")
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+
+
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
+</div>
+</body>
+</html>
