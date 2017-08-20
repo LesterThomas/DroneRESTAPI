@@ -426,7 +426,7 @@
 						"type": "text/javascript",
 						"exec": [
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
+							"tests[\"Response time is less than 2s\"] = responseTime < 10000;",
 							"var jsonData = JSON.parse(responseBody);",
 							"tests[\"Body contains vehicle\"] = responseBody.has(\"vehicle\");",
 							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",

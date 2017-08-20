@@ -20,6 +20,9 @@ import boto3
 import traceback
 import docker
 
+# Import  modules that are part of this app
+import droneAPIUtils
+
 
 class index:
     """THis class handles the root URL (sometimes called the EntryPoint) for the drone API."""
@@ -154,11 +157,6 @@ def startup():
     Redis database and refreshes the drone docker containers. Finally it starts the web
     application that serves the API HTTP traffic."""
 
-    my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
-
-    # Import  modules that are part of this app
-    import droneAPIUtils
-
     print("Starting up at " + str(time.time()))
 
     droneAPIUtils.initaliseLogger()
@@ -189,4 +187,5 @@ def startup():
 
 
 if __name__ == "__main__":
+    my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
     startup()
