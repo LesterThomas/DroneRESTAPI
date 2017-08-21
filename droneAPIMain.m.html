@@ -4,7 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>droneAPIMain API documentation</title>
-    <meta name="description" content="The Main module of the drone API server. This module creates all the API URL endpoints and handles t..." />
+    <meta name="description" content="The Main module of the drone API server. This module creates all the API URL endpoints and
+handles t..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -981,22 +982,22 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#droneAPIMain.catchAll">catchAll</a></span>
+        <span class="class_name"><a href="#droneAPIMain.CatchAll">CatchAll</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#droneAPIMain.catchAll.DELETE">DELETE</a></li>
-    <li class="mono"><a href="#droneAPIMain.catchAll.GET">GET</a></li>
-    <li class="mono"><a href="#droneAPIMain.catchAll.POST">POST</a></li>
+    <li class="mono"><a href="#droneAPIMain.CatchAll.DELETE">DELETE</a></li>
+    <li class="mono"><a href="#droneAPIMain.CatchAll.GET">GET</a></li>
+    <li class="mono"><a href="#droneAPIMain.CatchAll.POST">POST</a></li>
   </ul>
 
         </li>
         <li class="mono">
-        <span class="class_name"><a href="#droneAPIMain.index">index</a></span>
+        <span class="class_name"><a href="#droneAPIMain.Index">Index</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#droneAPIMain.index.GET">GET</a></li>
+    <li class="mono"><a href="#droneAPIMain.Index.GET">GET</a></li>
   </ul>
 
         </li>
@@ -1015,57 +1016,48 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">droneAPIMain</span> module</h1>
-  <p>The Main module of the drone API server. This module creates all the API URL endpoints and handles the index endpoint and contains the logic for catch-all (for any unhandled endpoints).</p>
+  <p>The Main module of the drone API server. This module creates all the API URL endpoints and
+handles the index endpoint and contains the logic for catch-all (for any unhandled endpoints).</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIMain" class="source">
-    <pre><code>"""The Main module of the drone API server. This module creates all the API URL endpoints and handles the index endpoint and contains the logic for catch-all (for any unhandled endpoints)."""
+    <pre><code>"""The Main module of the drone API server. This module creates all the API URL endpoints and
+handles the index endpoint and contains the logic for catch-all (for any unhandled endpoints)."""
 #!/usr/bin/env python
 
-# Import DroneKit-Python
-from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative
-from dronekit import Command, mavutil, APIException
 # Import external modules
-from collections import OrderedDict
 import time
 import json
-import math
-import warnings
-import os
-import web
 import logging
 import logging.handlers
-import redis
-import uuid
-import boto3
 import traceback
-import docker
+import web
 
 # Import  modules that are part of this app
 import droneAPIUtils
 
 
-class index:
+class Index(object):  # pylint: disable=R0903
     """THis class handles the root URL (sometimes called the EntryPoint) for the drone API."""
 
-    def GET(self):
+    def GET(self):  # pylint: disable=R0201
         """This method returns the root (sometimes called the EntryPoint) for the drone API.
         The returned string is a static set of links (to the other resource endpoints) and
         a simple description field for the API"""
         try:
             my_logger.info("GET")
             droneAPIUtils.applyHeadders()
-            outputObj = {}
-            outputObj['description'] = 'Welcome to the Drone API homepage. WARNING: This API is '
-            'experimental - use at your own discression. The API allows you to interact with '
-            'simulated or real drones through a simple hypermedia REST API. There is a HAL API '
-            'Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test '
-            ' client at http://droneapi.ddns.net:1235/static/app  The API is maintained at '
-            'https://github.com/lesterthomas/DroneRESTAPI. This experimental API is part of '
-            'the TM Forum Anything-as-a-Service Catalyst  '
-            'https://projects.tmforum.org/wiki/display/PCT/A+Platform+for+IoT+and+Anything'
-            '+as+a+Service+Catalyst'
-            outputObj['_links'] = {
+            output_obj = {}
+            output_obj['description'] = """Welcome to the Drone API homepage. WARNING: This API is
+            experimental - use at your own discression. The API allows you to interact with
+            simulated or real drones through a simple hypermedia REST API. There is a HAL API
+            Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test
+             client at http://droneapi.ddns.net:1235/static/app  The API is maintained at
+            https://github.com/lesterthomas/DroneRESTAPI. This experimental API is part of
+            the TM Forum Anything-as-a-Service Catalyst
+            https://projects.tmforum.org/wiki/display/PCT/A+Platform+for+IoT+and+Anything
+            +as+a+Service+Catalyst"""
+            output_obj['_links'] = {
                 'self': {
                     "href": droneAPIUtils.homeDomain,
                     "title": "Home-page (or EntryPoint) of the API"},
@@ -1073,31 +1065,31 @@ class index:
                     "title": "Return the collection of available vehicles.",
                     "href": droneAPIUtils.homeDomain +
                     "/vehicle"}}
-            output = json.dumps(outputObj)
+            output = json.dumps(output_obj)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
-            tracebackStr = traceback.format_exc()
-            traceLines = tracebackStr.split("\n")
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            traceback_str = traceback.format_exc()
+            trace_lines = traceback_str.split("\n")
             return json.dumps({"error": "An unknown Error occurred ",
-                               "details": e.message,
-                               "args": e.args,
-                               "traceback": traceLines})
+                               "details": ex.message,
+                               "args": ex.args,
+                               "traceback": trace_lines})
 
         return output
 
 
-class catchAll:
-    """THis class handles any unknown URLs for the API. It provides Error and help information back to
-    the client. It has methods for GET, POST and DELETE."""
+class CatchAll(object):
+    """THis class handles any unknown URLs for the API. It provides Error and help information back
+    to the client. It has methods for GET, POST and DELETE."""
 
-    def GET(self, user):
+    def GET(self):  # pylint: disable=R0201
         """THis method handles any unknown GET URL requests for the API."""
         try:
-            my_logger.info("GET - catchAll")
+            my_logger.info("GET - CatchAll")
             droneAPIUtils.applyHeadders()
             my_logger.debug(droneAPIUtils.homeDomain)
-            outputObj = {
+            output_obj = {
                 "Error": "No API endpoint found. Try navigating to " +
                          droneAPIUtils.homeDomain +
                          "/vehicle for list of vehicles or to " +
@@ -1106,23 +1098,23 @@ class catchAll:
                          droneAPIUtils.homeDomain +
                          "/vehicle/<vehicleId>/action for the list of actions available for "
                          "vehicle <vehicleId>."}
-            my_logger.info("Return: =" + json.dumps(outputObj))
-        except Exception as e:
-            my_logger.exception(e)
-            tracebackStr = traceback.format_exc()
-            traceLines = tracebackStr.split("\n")
+            my_logger.info("Return: =" + json.dumps(output_obj))
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            traceback_str = traceback.format_exc()
+            trace_lines = traceback_str.split("\n")
             return json.dumps({"error": "An unknown Error occurred ",
-                               "details": e.message,
-                               "args": e.args,
-                               "traceback": traceLines})
-        return json.dumps(outputObj)
+                               "details": ex.message,
+                               "args": ex.args,
+                               "traceback": trace_lines})
+        return json.dumps(output_obj)
 
-    def POST(self, user):
+    def POST(self):  # pylint: disable=R0201
         """THis method handles any unknown POST URL requests for the API."""
         try:
-            my_logger.info("POST - catchAll")
+            my_logger.info("POST - CatchAll")
             droneAPIUtils.applyHeadders()
-            outputObj = {
+            output_obj = {
                 "Error": "No API endpoint found. Try navigating to " +
                          droneAPIUtils.homeDomain +
                          "/vehicle for list of vehicles or to " +
@@ -1131,23 +1123,23 @@ class catchAll:
                          droneAPIUtils.homeDomain +
                          "/vehicle/<vehicleId>/action for the list of actions available for "
                          "vehicle <vehicleId>."}
-            my_logger.info("Return: =" + json.dumps(outputObj))
-        except Exception as e:
-            my_logger.exception(e)
-            tracebackStr = traceback.format_exc()
-            traceLines = tracebackStr.split("\n")
+            my_logger.info("Return: =" + json.dumps(output_obj))
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            traceback_str = traceback.format_exc()
+            trace_lines = traceback_str.split("\n")
             return json.dumps({"error": "An unknown Error occurred ",
-                               "details": e.message,
-                               "args": e.args,
-                               "traceback": traceLines})
-        return json.dumps(outputObj)
+                               "details": ex.message,
+                               "args": ex.args,
+                               "traceback": trace_lines})
+        return json.dumps(output_obj)
 
-    def DELETE(self, user):
+    def DELETE(self):  # pylint: disable=R0201
         """THis method handles any unknown DELETE URL requests for the API."""
         try:
-            my_logger.info("DELETE - catchAll")
+            my_logger.info("DELETE - CatchAll")
             droneAPIUtils.applyHeadders()
-            outputObj = {
+            output_obj = {
                 "Error": "No API endpoint found. Try navigating to " +
                          droneAPIUtils.homeDomain +
                          "/vehicle for list of vehicles or to " +
@@ -1156,16 +1148,16 @@ class catchAll:
                          droneAPIUtils.homeDomain +
                          "/vehicle/<vehicleId>/action for the list of actions available for "
                          "vehicle <vehicleId>."}
-            my_logger.info("Return: =" + json.dumps(outputObj))
-        except Exception as e:
-            my_logger.exception(e)
-            tracebackStr = traceback.format_exc()
-            traceLines = tracebackStr.split("\n")
+            my_logger.info("Return: =" + json.dumps(output_obj))
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            traceback_str = traceback.format_exc()
+            trace_lines = traceback_str.split("\n")
             return json.dumps({"error": "An unknown Error occurred ",
-                               "details": e.message,
-                               "args": e.args,
-                               "traceback": traceLines})
-        return json.dumps(outputObj)
+                               "details": ex.message,
+                               "args": ex.args,
+                               "traceback": trace_lines})
+        return json.dumps(output_obj)
 
 
 ##########################################################################
@@ -1178,7 +1170,7 @@ def startup():
     Redis database and refreshes the drone docker containers. Finally it starts the web
     application that serves the API HTTP traffic."""
 
-    print("Starting up at " + str(time.time()))
+    print "Starting up at " + str(time.time())
 
     droneAPIUtils.initaliseLogger()
     droneAPIUtils.initaliseGlobals()
@@ -1188,8 +1180,8 @@ def startup():
     # set API url endpoints and class handlers. Each handler class is in its
     # own python module
     urls = (
-        '/', 'index',
-        '/vehicle/(.*)/action', 'droneAPIAction.action',
+        '/', 'Index',
+        '/vehicle/(.*)/action', 'droneAPIAction.Action',
         '/vehicle/(.*)/homeLocation', 'droneAPIHomeLocation.homeLocation',
         '/vehicle/(.*)/mission', 'droneAPIMission.mission',
         '/vehicle/(.*)/authorizedZone', 'droneAPIAuthorizedZone.authorizedZone',
@@ -1198,7 +1190,7 @@ def startup():
         '/admin', 'droneAPIAdmin.admin',
         # was     '/vehicle/(.*)/(.*)', 'vehicleStatus',
         '/vehicle/(.*)', 'droneAPIVehicleStatus.vehicleStatus',
-        '/(.*)', 'catchAll'
+        '/(.*)', 'CatchAll'
     )
 
     # start API web application server
@@ -1208,7 +1200,7 @@ def startup():
 
 
 if __name__ == "__main__":
-    my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
+    my_logger = logging.getLogger("DroneAPIServer." + str(__name__))  # pylint: disable=C0103
     startup()
 </code></pre>
   </div>
@@ -1238,7 +1230,7 @@ application that serves the API HTTP traffic.</p></div>
     Redis database and refreshes the drone docker containers. Finally it starts the web
     application that serves the API HTTP traffic."""
 
-    print("Starting up at " + str(time.time()))
+    print "Starting up at " + str(time.time())
 
     droneAPIUtils.initaliseLogger()
     droneAPIUtils.initaliseGlobals()
@@ -1248,8 +1240,8 @@ application that serves the API HTTP traffic.</p></div>
     # set API url endpoints and class handlers. Each handler class is in its
     # own python module
     urls = (
-        '/', 'index',
-        '/vehicle/(.*)/action', 'droneAPIAction.action',
+        '/', 'Index',
+        '/vehicle/(.*)/action', 'droneAPIAction.Action',
         '/vehicle/(.*)/homeLocation', 'droneAPIHomeLocation.homeLocation',
         '/vehicle/(.*)/mission', 'droneAPIMission.mission',
         '/vehicle/(.*)/authorizedZone', 'droneAPIAuthorizedZone.authorizedZone',
@@ -1258,7 +1250,7 @@ application that serves the API HTTP traffic.</p></div>
         '/admin', 'droneAPIAdmin.admin',
         # was     '/vehicle/(.*)/(.*)', 'vehicleStatus',
         '/vehicle/(.*)', 'droneAPIVehicleStatus.vehicleStatus',
-        '/(.*)', 'catchAll'
+        '/(.*)', 'CatchAll'
     )
 
     # start API web application server
@@ -1275,25 +1267,25 @@ application that serves the API HTTP traffic.</p></div>
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="droneAPIMain.catchAll" class="name">class <span class="ident">catchAll</span></p>
+      <p id="droneAPIMain.CatchAll" class="name">class <span class="ident">CatchAll</span></p>
       
   
-    <div class="desc"><p>THis class handles any unknown URLs for the API. It provides Error and help information back to
-the client. It has methods for GET, POST and DELETE.</p></div>
+    <div class="desc"><p>THis class handles any unknown URLs for the API. It provides Error and help information back
+to the client. It has methods for GET, POST and DELETE.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.catchAll', this);">Show source &equiv;</a></p>
-  <div id="source-droneAPIMain.catchAll" class="source">
-    <pre><code>class catchAll:
-    """THis class handles any unknown URLs for the API. It provides Error and help information back to
-    the client. It has methods for GET, POST and DELETE."""
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.CatchAll', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIMain.CatchAll" class="source">
+    <pre><code>class CatchAll(object):
+    """THis class handles any unknown URLs for the API. It provides Error and help information back
+    to the client. It has methods for GET, POST and DELETE."""
 
-    def GET(self, user):
+    def GET(self):  # pylint: disable=R0201
         """THis method handles any unknown GET URL requests for the API."""
         try:
-            my_logger.info("GET - catchAll")
+            my_logger.info("GET - CatchAll")
             droneAPIUtils.applyHeadders()
             my_logger.debug(droneAPIUtils.homeDomain)
-            outputObj = {
+            output_obj = {
                 "Error": "No API endpoint found. Try navigating to " +
                          droneAPIUtils.homeDomain +
                          "/vehicle for list of vehicles or to " +
@@ -1302,23 +1294,23 @@ the client. It has methods for GET, POST and DELETE.</p></div>
                          droneAPIUtils.homeDomain +
                          "/vehicle/<vehicleId>/action for the list of actions available for "
                          "vehicle <vehicleId>."}
-            my_logger.info("Return: =" + json.dumps(outputObj))
-        except Exception as e:
-            my_logger.exception(e)
-            tracebackStr = traceback.format_exc()
-            traceLines = tracebackStr.split("\n")
+            my_logger.info("Return: =" + json.dumps(output_obj))
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            traceback_str = traceback.format_exc()
+            trace_lines = traceback_str.split("\n")
             return json.dumps({"error": "An unknown Error occurred ",
-                               "details": e.message,
-                               "args": e.args,
-                               "traceback": traceLines})
-        return json.dumps(outputObj)
+                               "details": ex.message,
+                               "args": ex.args,
+                               "traceback": trace_lines})
+        return json.dumps(output_obj)
 
-    def POST(self, user):
+    def POST(self):  # pylint: disable=R0201
         """THis method handles any unknown POST URL requests for the API."""
         try:
-            my_logger.info("POST - catchAll")
+            my_logger.info("POST - CatchAll")
             droneAPIUtils.applyHeadders()
-            outputObj = {
+            output_obj = {
                 "Error": "No API endpoint found. Try navigating to " +
                          droneAPIUtils.homeDomain +
                          "/vehicle for list of vehicles or to " +
@@ -1327,23 +1319,23 @@ the client. It has methods for GET, POST and DELETE.</p></div>
                          droneAPIUtils.homeDomain +
                          "/vehicle/<vehicleId>/action for the list of actions available for "
                          "vehicle <vehicleId>."}
-            my_logger.info("Return: =" + json.dumps(outputObj))
-        except Exception as e:
-            my_logger.exception(e)
-            tracebackStr = traceback.format_exc()
-            traceLines = tracebackStr.split("\n")
+            my_logger.info("Return: =" + json.dumps(output_obj))
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            traceback_str = traceback.format_exc()
+            trace_lines = traceback_str.split("\n")
             return json.dumps({"error": "An unknown Error occurred ",
-                               "details": e.message,
-                               "args": e.args,
-                               "traceback": traceLines})
-        return json.dumps(outputObj)
+                               "details": ex.message,
+                               "args": ex.args,
+                               "traceback": trace_lines})
+        return json.dumps(output_obj)
 
-    def DELETE(self, user):
+    def DELETE(self):  # pylint: disable=R0201
         """THis method handles any unknown DELETE URL requests for the API."""
         try:
-            my_logger.info("DELETE - catchAll")
+            my_logger.info("DELETE - CatchAll")
             droneAPIUtils.applyHeadders()
-            outputObj = {
+            output_obj = {
                 "Error": "No API endpoint found. Try navigating to " +
                          droneAPIUtils.homeDomain +
                          "/vehicle for list of vehicles or to " +
@@ -1352,16 +1344,16 @@ the client. It has methods for GET, POST and DELETE.</p></div>
                          droneAPIUtils.homeDomain +
                          "/vehicle/<vehicleId>/action for the list of actions available for "
                          "vehicle <vehicleId>."}
-            my_logger.info("Return: =" + json.dumps(outputObj))
-        except Exception as e:
-            my_logger.exception(e)
-            tracebackStr = traceback.format_exc()
-            traceLines = tracebackStr.split("\n")
+            my_logger.info("Return: =" + json.dumps(output_obj))
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            traceback_str = traceback.format_exc()
+            trace_lines = traceback_str.split("\n")
             return json.dumps({"error": "An unknown Error occurred ",
-                               "details": e.message,
-                               "args": e.args,
-                               "traceback": traceLines})
-        return json.dumps(outputObj)
+                               "details": ex.message,
+                               "args": ex.args,
+                               "traceback": trace_lines})
+        return json.dumps(output_obj)
 </code></pre>
   </div>
 </div>
@@ -1370,13 +1362,14 @@ the client. It has methods for GET, POST and DELETE.</p></div>
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#droneAPIMain.catchAll">catchAll</a></li>
+          <li><a href="#droneAPIMain.CatchAll">CatchAll</a></li>
+          <li>__builtin__.object</li>
           </ul>
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="droneAPIMain.catchAll.DELETE">
-    <p>def <span class="ident">DELETE</span>(</p><p>self, user)</p>
+    <div class="name def" id="droneAPIMain.CatchAll.DELETE">
+    <p>def <span class="ident">DELETE</span>(</p><p>self)</p>
     </div>
     
 
@@ -1384,14 +1377,14 @@ the client. It has methods for GET, POST and DELETE.</p></div>
   
     <div class="desc"><p>THis method handles any unknown DELETE URL requests for the API.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.catchAll.DELETE', this);">Show source &equiv;</a></p>
-  <div id="source-droneAPIMain.catchAll.DELETE" class="source">
-    <pre><code>def DELETE(self, user):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.CatchAll.DELETE', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIMain.CatchAll.DELETE" class="source">
+    <pre><code>def DELETE(self):  # pylint: disable=R0201
     """THis method handles any unknown DELETE URL requests for the API."""
     try:
-        my_logger.info("DELETE - catchAll")
+        my_logger.info("DELETE - CatchAll")
         droneAPIUtils.applyHeadders()
-        outputObj = {
+        output_obj = {
             "Error": "No API endpoint found. Try navigating to " +
                      droneAPIUtils.homeDomain +
                      "/vehicle for list of vehicles or to " +
@@ -1400,16 +1393,16 @@ the client. It has methods for GET, POST and DELETE.</p></div>
                      droneAPIUtils.homeDomain +
                      "/vehicle/<vehicleId>/action for the list of actions available for "
                      "vehicle <vehicleId>."}
-        my_logger.info("Return: =" + json.dumps(outputObj))
-    except Exception as e:
-        my_logger.exception(e)
-        tracebackStr = traceback.format_exc()
-        traceLines = tracebackStr.split("\n")
+        my_logger.info("Return: =" + json.dumps(output_obj))
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
+        traceback_str = traceback.format_exc()
+        trace_lines = traceback_str.split("\n")
         return json.dumps({"error": "An unknown Error occurred ",
-                           "details": e.message,
-                           "args": e.args,
-                           "traceback": traceLines})
-    return json.dumps(outputObj)
+                           "details": ex.message,
+                           "args": ex.args,
+                           "traceback": trace_lines})
+    return json.dumps(output_obj)
 </code></pre>
   </div>
 </div>
@@ -1418,8 +1411,8 @@ the client. It has methods for GET, POST and DELETE.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="droneAPIMain.catchAll.GET">
-    <p>def <span class="ident">GET</span>(</p><p>self, user)</p>
+    <div class="name def" id="droneAPIMain.CatchAll.GET">
+    <p>def <span class="ident">GET</span>(</p><p>self)</p>
     </div>
     
 
@@ -1427,15 +1420,15 @@ the client. It has methods for GET, POST and DELETE.</p></div>
   
     <div class="desc"><p>THis method handles any unknown GET URL requests for the API.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.catchAll.GET', this);">Show source &equiv;</a></p>
-  <div id="source-droneAPIMain.catchAll.GET" class="source">
-    <pre><code>def GET(self, user):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.CatchAll.GET', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIMain.CatchAll.GET" class="source">
+    <pre><code>def GET(self):  # pylint: disable=R0201
     """THis method handles any unknown GET URL requests for the API."""
     try:
-        my_logger.info("GET - catchAll")
+        my_logger.info("GET - CatchAll")
         droneAPIUtils.applyHeadders()
         my_logger.debug(droneAPIUtils.homeDomain)
-        outputObj = {
+        output_obj = {
             "Error": "No API endpoint found. Try navigating to " +
                      droneAPIUtils.homeDomain +
                      "/vehicle for list of vehicles or to " +
@@ -1444,16 +1437,16 @@ the client. It has methods for GET, POST and DELETE.</p></div>
                      droneAPIUtils.homeDomain +
                      "/vehicle/<vehicleId>/action for the list of actions available for "
                      "vehicle <vehicleId>."}
-        my_logger.info("Return: =" + json.dumps(outputObj))
-    except Exception as e:
-        my_logger.exception(e)
-        tracebackStr = traceback.format_exc()
-        traceLines = tracebackStr.split("\n")
+        my_logger.info("Return: =" + json.dumps(output_obj))
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
+        traceback_str = traceback.format_exc()
+        trace_lines = traceback_str.split("\n")
         return json.dumps({"error": "An unknown Error occurred ",
-                           "details": e.message,
-                           "args": e.args,
-                           "traceback": traceLines})
-    return json.dumps(outputObj)
+                           "details": ex.message,
+                           "args": ex.args,
+                           "traceback": trace_lines})
+    return json.dumps(output_obj)
 </code></pre>
   </div>
 </div>
@@ -1462,8 +1455,8 @@ the client. It has methods for GET, POST and DELETE.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="droneAPIMain.catchAll.POST">
-    <p>def <span class="ident">POST</span>(</p><p>self, user)</p>
+    <div class="name def" id="droneAPIMain.CatchAll.POST">
+    <p>def <span class="ident">POST</span>(</p><p>self)</p>
     </div>
     
 
@@ -1471,14 +1464,14 @@ the client. It has methods for GET, POST and DELETE.</p></div>
   
     <div class="desc"><p>THis method handles any unknown POST URL requests for the API.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.catchAll.POST', this);">Show source &equiv;</a></p>
-  <div id="source-droneAPIMain.catchAll.POST" class="source">
-    <pre><code>def POST(self, user):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.CatchAll.POST', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIMain.CatchAll.POST" class="source">
+    <pre><code>def POST(self):  # pylint: disable=R0201
     """THis method handles any unknown POST URL requests for the API."""
     try:
-        my_logger.info("POST - catchAll")
+        my_logger.info("POST - CatchAll")
         droneAPIUtils.applyHeadders()
-        outputObj = {
+        output_obj = {
             "Error": "No API endpoint found. Try navigating to " +
                      droneAPIUtils.homeDomain +
                      "/vehicle for list of vehicles or to " +
@@ -1487,16 +1480,16 @@ the client. It has methods for GET, POST and DELETE.</p></div>
                      droneAPIUtils.homeDomain +
                      "/vehicle/<vehicleId>/action for the list of actions available for "
                      "vehicle <vehicleId>."}
-        my_logger.info("Return: =" + json.dumps(outputObj))
-    except Exception as e:
-        my_logger.exception(e)
-        tracebackStr = traceback.format_exc()
-        traceLines = tracebackStr.split("\n")
+        my_logger.info("Return: =" + json.dumps(output_obj))
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
+        traceback_str = traceback.format_exc()
+        trace_lines = traceback_str.split("\n")
         return json.dumps({"error": "An unknown Error occurred ",
-                           "details": e.message,
-                           "args": e.args,
-                           "traceback": traceLines})
-    return json.dumps(outputObj)
+                           "details": ex.message,
+                           "args": ex.args,
+                           "traceback": trace_lines})
+    return json.dumps(output_obj)
 </code></pre>
   </div>
 </div>
@@ -1507,34 +1500,34 @@ the client. It has methods for GET, POST and DELETE.</p></div>
       </div>
       
       <div class="item">
-      <p id="droneAPIMain.index" class="name">class <span class="ident">index</span></p>
+      <p id="droneAPIMain.Index" class="name">class <span class="ident">Index</span></p>
       
   
     <div class="desc"><p>THis class handles the root URL (sometimes called the EntryPoint) for the drone API.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.index', this);">Show source &equiv;</a></p>
-  <div id="source-droneAPIMain.index" class="source">
-    <pre><code>class index:
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.Index', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIMain.Index" class="source">
+    <pre><code>class Index(object):  # pylint: disable=R0903
     """THis class handles the root URL (sometimes called the EntryPoint) for the drone API."""
 
-    def GET(self):
+    def GET(self):  # pylint: disable=R0201
         """This method returns the root (sometimes called the EntryPoint) for the drone API.
         The returned string is a static set of links (to the other resource endpoints) and
         a simple description field for the API"""
         try:
             my_logger.info("GET")
             droneAPIUtils.applyHeadders()
-            outputObj = {}
-            outputObj['description'] = 'Welcome to the Drone API homepage. WARNING: This API is '
-            'experimental - use at your own discression. The API allows you to interact with '
-            'simulated or real drones through a simple hypermedia REST API. There is a HAL API '
-            'Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test '
-            ' client at http://droneapi.ddns.net:1235/static/app  The API is maintained at '
-            'https://github.com/lesterthomas/DroneRESTAPI. This experimental API is part of '
-            'the TM Forum Anything-as-a-Service Catalyst  '
-            'https://projects.tmforum.org/wiki/display/PCT/A+Platform+for+IoT+and+Anything'
-            '+as+a+Service+Catalyst'
-            outputObj['_links'] = {
+            output_obj = {}
+            output_obj['description'] = """Welcome to the Drone API homepage. WARNING: This API is
+            experimental - use at your own discression. The API allows you to interact with
+            simulated or real drones through a simple hypermedia REST API. There is a HAL API
+            Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test
+             client at http://droneapi.ddns.net:1235/static/app  The API is maintained at
+            https://github.com/lesterthomas/DroneRESTAPI. This experimental API is part of
+            the TM Forum Anything-as-a-Service Catalyst
+            https://projects.tmforum.org/wiki/display/PCT/A+Platform+for+IoT+and+Anything
+            +as+a+Service+Catalyst"""
+            output_obj['_links'] = {
                 'self': {
                     "href": droneAPIUtils.homeDomain,
                     "title": "Home-page (or EntryPoint) of the API"},
@@ -1542,16 +1535,16 @@ the client. It has methods for GET, POST and DELETE.</p></div>
                     "title": "Return the collection of available vehicles.",
                     "href": droneAPIUtils.homeDomain +
                     "/vehicle"}}
-            output = json.dumps(outputObj)
+            output = json.dumps(output_obj)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
-            tracebackStr = traceback.format_exc()
-            traceLines = tracebackStr.split("\n")
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            traceback_str = traceback.format_exc()
+            trace_lines = traceback_str.split("\n")
             return json.dumps({"error": "An unknown Error occurred ",
-                               "details": e.message,
-                               "args": e.args,
-                               "traceback": traceLines})
+                               "details": ex.message,
+                               "args": ex.args,
+                               "traceback": trace_lines})
 
         return output
 </code></pre>
@@ -1562,12 +1555,13 @@ the client. It has methods for GET, POST and DELETE.</p></div>
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#droneAPIMain.index">index</a></li>
+          <li><a href="#droneAPIMain.Index">Index</a></li>
+          <li>__builtin__.object</li>
           </ul>
           <h3>Methods</h3>
             
   <div class="item">
-    <div class="name def" id="droneAPIMain.index.GET">
+    <div class="name def" id="droneAPIMain.Index.GET">
     <p>def <span class="ident">GET</span>(</p><p>self)</p>
     </div>
     
@@ -1578,26 +1572,26 @@ the client. It has methods for GET, POST and DELETE.</p></div>
 The returned string is a static set of links (to the other resource endpoints) and
 a simple description field for the API</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.index.GET', this);">Show source &equiv;</a></p>
-  <div id="source-droneAPIMain.index.GET" class="source">
-    <pre><code>def GET(self):
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.Index.GET', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIMain.Index.GET" class="source">
+    <pre><code>def GET(self):  # pylint: disable=R0201
     """This method returns the root (sometimes called the EntryPoint) for the drone API.
     The returned string is a static set of links (to the other resource endpoints) and
     a simple description field for the API"""
     try:
         my_logger.info("GET")
         droneAPIUtils.applyHeadders()
-        outputObj = {}
-        outputObj['description'] = 'Welcome to the Drone API homepage. WARNING: This API is '
-        'experimental - use at your own discression. The API allows you to interact with '
-        'simulated or real drones through a simple hypermedia REST API. There is a HAL API '
-        'Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test '
-        ' client at http://droneapi.ddns.net:1235/static/app  The API is maintained at '
-        'https://github.com/lesterthomas/DroneRESTAPI. This experimental API is part of '
-        'the TM Forum Anything-as-a-Service Catalyst  '
-        'https://projects.tmforum.org/wiki/display/PCT/A+Platform+for+IoT+and+Anything'
-        '+as+a+Service+Catalyst'
-        outputObj['_links'] = {
+        output_obj = {}
+        output_obj['description'] = """Welcome to the Drone API homepage. WARNING: This API is
+        experimental - use at your own discression. The API allows you to interact with
+        simulated or real drones through a simple hypermedia REST API. There is a HAL API
+        Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test
+         client at http://droneapi.ddns.net:1235/static/app  The API is maintained at
+        https://github.com/lesterthomas/DroneRESTAPI. This experimental API is part of
+        the TM Forum Anything-as-a-Service Catalyst
+        https://projects.tmforum.org/wiki/display/PCT/A+Platform+for+IoT+and+Anything
+        +as+a+Service+Catalyst"""
+        output_obj['_links'] = {
             'self': {
                 "href": droneAPIUtils.homeDomain,
                 "title": "Home-page (or EntryPoint) of the API"},
@@ -1605,16 +1599,16 @@ a simple description field for the API</p></div>
                 "title": "Return the collection of available vehicles.",
                 "href": droneAPIUtils.homeDomain +
                 "/vehicle"}}
-        output = json.dumps(outputObj)
+        output = json.dumps(output_obj)
         my_logger.info("Return: =" + output)
-    except Exception as e:
-        my_logger.exception(e)
-        tracebackStr = traceback.format_exc()
-        traceLines = tracebackStr.split("\n")
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
+        traceback_str = traceback.format_exc()
+        trace_lines = traceback_str.split("\n")
         return json.dumps({"error": "An unknown Error occurred ",
-                           "details": e.message,
-                           "args": e.args,
-                           "traceback": traceLines})
+                           "details": ex.message,
+                           "args": ex.args,
+                           "traceback": trace_lines})
     return output
 </code></pre>
   </div>

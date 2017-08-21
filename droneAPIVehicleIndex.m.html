@@ -977,6 +977,13 @@ table {
 
     </li>
 
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#droneAPIVehicleIndex.launchCloudImage">launchCloudImage</a></li>
+  </ul>
+
+    </li>
 
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
@@ -988,7 +995,6 @@ table {
     <li class="mono"><a href="#droneAPIVehicleIndex.vehicleIndex.GET">GET</a></li>
     <li class="mono"><a href="#droneAPIVehicleIndex.vehicleIndex.OPTIONS">OPTIONS</a></li>
     <li class="mono"><a href="#droneAPIVehicleIndex.vehicleIndex.POST">POST</a></li>
-    <li class="mono"><a href="#droneAPIVehicleIndex.vehicleIndex.launchCloudImage">launchCloudImage</a></li>
   </ul>
 
         </li>
@@ -1026,6 +1032,7 @@ import time
 import math
 import docker
 import redis
+import boto3
 import droneAPIUtils
 
 
@@ -1140,39 +1147,40 @@ class vehicleIndex:
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
         return output
 
-    def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
-        # build simulted drone using aws
-        # test how many non-terminated instances there are
-        ec2client = boto3.client('ec2')
-        response = ec2client.describe_instances()
-        # print(response)
-        instances = []
 
-        for reservation in response["Reservations"]:
-            for instance in reservation["Instances"]:
-                # This sample print will output entire Dictionary object
-                # print(instance)
-                # This will print will output the value of the Dictionary key 'InstanceId'
-                if (instance["State"]["Name"] != "terminated"):
-                    instances.append(instance["InstanceId"])
+def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
+    # build simulted drone using aws
+    # test how many non-terminated instances there are
+    ec2client = boto3.client('ec2')
+    response = ec2client.describe_instances()
+    # print(response)
+    instances = []
 
-        my_logger.debug("Non terminated instances=")
-        my_logger.debug(len(instances))
-        if (len(instances) > 20):
-            outputObj = {}
-            outputObj["status"] = "Error: can't launch more than " + str(20) + " cloud images"
-            return json.dumps(outputObj)
+    for reservation in response["Reservations"]:
+        for instance in reservation["Instances"]:
+            # This sample print will output entire Dictionary object
+            # print(instance)
+            # This will print will output the value of the Dictionary key 'InstanceId'
+            if (instance["State"]["Name"] != "terminated"):
+                instances.append(instance["InstanceId"])
 
-        my_logger.info("Creating new AWS image")
-        ec2resource = boto3.resource('ec2')
-        createresponse = ec2resource.create_instances(
-            ImageId=ImageId,
-            MinCount=1,
-            MaxCount=1,
-            InstanceType=InstanceType,
-            SecurityGroupIds=SecurityGroupIds)
-        my_logger.info(createresponse[0].private_ip_address)
-        return private_ip_address
+    my_logger.debug("Non terminated instances=")
+    my_logger.debug(len(instances))
+    if (len(instances) > 20):
+        outputObj = {}
+        outputObj["status"] = "Error: can't launch more than " + str(20) + " cloud images"
+        return json.dumps(outputObj)
+
+    my_logger.info("Creating new AWS image")
+    ec2resource = boto3.resource('ec2')
+    createresponse = ec2resource.create_instances(
+        ImageId=ImageId,
+        MinCount=1,
+        MaxCount=1,
+        InstanceType=InstanceType,
+        SecurityGroupIds=SecurityGroupIds)
+    my_logger.info(createresponse[0].private_ip_address)
+    return createresponse[0].private_ip_address
 </code></pre>
   </div>
 
@@ -1189,6 +1197,58 @@ class vehicleIndex:
 
       </div>
 
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="droneAPIVehicleIndex.launchCloudImage">
+    <p>def <span class="ident">launchCloudImage</span>(</p><p>ImageId, InstanceType, SecurityGroupIds)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIVehicleIndex.launchCloudImage', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIVehicleIndex.launchCloudImage" class="source">
+    <pre><code>def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
+    # build simulted drone using aws
+    # test how many non-terminated instances there are
+    ec2client = boto3.client('ec2')
+    response = ec2client.describe_instances()
+    # print(response)
+    instances = []
+
+    for reservation in response["Reservations"]:
+        for instance in reservation["Instances"]:
+            # This sample print will output entire Dictionary object
+            # print(instance)
+            # This will print will output the value of the Dictionary key 'InstanceId'
+            if (instance["State"]["Name"] != "terminated"):
+                instances.append(instance["InstanceId"])
+
+    my_logger.debug("Non terminated instances=")
+    my_logger.debug(len(instances))
+    if (len(instances) > 20):
+        outputObj = {}
+        outputObj["status"] = "Error: can't launch more than " + str(20) + " cloud images"
+        return json.dumps(outputObj)
+
+    my_logger.info("Creating new AWS image")
+    ec2resource = boto3.resource('ec2')
+    createresponse = ec2resource.create_instances(
+        ImageId=ImageId,
+        MinCount=1,
+        MaxCount=1,
+        InstanceType=InstanceType,
+        SecurityGroupIds=SecurityGroupIds)
+    my_logger.info(createresponse[0].private_ip_address)
+    return createresponse[0].private_ip_address
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
 
     <h2 class="section-title" id="header-classes">Classes</h2>
       
@@ -1306,40 +1366,6 @@ class vehicleIndex:
             traceLines = tracebackStr.split("\n")
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
         return output
-
-    def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
-        # build simulted drone using aws
-        # test how many non-terminated instances there are
-        ec2client = boto3.client('ec2')
-        response = ec2client.describe_instances()
-        # print(response)
-        instances = []
-
-        for reservation in response["Reservations"]:
-            for instance in reservation["Instances"]:
-                # This sample print will output entire Dictionary object
-                # print(instance)
-                # This will print will output the value of the Dictionary key 'InstanceId'
-                if (instance["State"]["Name"] != "terminated"):
-                    instances.append(instance["InstanceId"])
-
-        my_logger.debug("Non terminated instances=")
-        my_logger.debug(len(instances))
-        if (len(instances) > 20):
-            outputObj = {}
-            outputObj["status"] = "Error: can't launch more than " + str(20) + " cloud images"
-            return json.dumps(outputObj)
-
-        my_logger.info("Creating new AWS image")
-        ec2resource = boto3.resource('ec2')
-        createresponse = ec2resource.create_instances(
-            ImageId=ImageId,
-            MinCount=1,
-            MaxCount=1,
-            InstanceType=InstanceType,
-            SecurityGroupIds=SecurityGroupIds)
-        my_logger.info(createresponse[0].private_ip_address)
-        return private_ip_address
 </code></pre>
   </div>
 </div>
@@ -1495,54 +1521,6 @@ class vehicleIndex:
         traceLines = tracebackStr.split("\n")
         return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
     return json.dumps(outputObj)
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="droneAPIVehicleIndex.vehicleIndex.launchCloudImage">
-    <p>def <span class="ident">launchCloudImage</span>(</p><p>ImageId, InstanceType, SecurityGroupIds)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIVehicleIndex.vehicleIndex.launchCloudImage', this);">Show source &equiv;</a></p>
-  <div id="source-droneAPIVehicleIndex.vehicleIndex.launchCloudImage" class="source">
-    <pre><code>def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
-    # build simulted drone using aws
-    # test how many non-terminated instances there are
-    ec2client = boto3.client('ec2')
-    response = ec2client.describe_instances()
-    # print(response)
-    instances = []
-    for reservation in response["Reservations"]:
-        for instance in reservation["Instances"]:
-            # This sample print will output entire Dictionary object
-            # print(instance)
-            # This will print will output the value of the Dictionary key 'InstanceId'
-            if (instance["State"]["Name"] != "terminated"):
-                instances.append(instance["InstanceId"])
-    my_logger.debug("Non terminated instances=")
-    my_logger.debug(len(instances))
-    if (len(instances) > 20):
-        outputObj = {}
-        outputObj["status"] = "Error: can't launch more than " + str(20) + " cloud images"
-        return json.dumps(outputObj)
-    my_logger.info("Creating new AWS image")
-    ec2resource = boto3.resource('ec2')
-    createresponse = ec2resource.create_instances(
-        ImageId=ImageId,
-        MinCount=1,
-        MaxCount=1,
-        InstanceType=InstanceType,
-        SecurityGroupIds=SecurityGroupIds)
-    my_logger.info(createresponse[0].private_ip_address)
-    return private_ip_address
 </code></pre>
   </div>
 </div>
