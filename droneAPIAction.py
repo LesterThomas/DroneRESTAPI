@@ -1,7 +1,7 @@
 """This module manages the API endpoint to manage an individual vehicles actions."""
 
 # Import DroneKit-Python
-from dronekit import VehicleMode
+from dronekit import VehicleMode, LocationGlobal, LocationGlobalRelative, mavutil
 
 import web
 import logging
