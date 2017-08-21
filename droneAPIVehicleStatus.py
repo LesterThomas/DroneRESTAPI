@@ -132,49 +132,50 @@ class vehicleStatus:
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
         return output
 
-    def terminateCloudInstance(vehicleId):
-        jsonObjStr = droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
-        my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
-        jsonObj = json.loads(jsonObjStr)
-        connectionString = jsonObj['connectionString']
-        ipAddress = connectionString[4:-6]
 
-        try:
-            # terminate any AWS instances with that private IP address
-            ec2client = boto3.client('ec2')
-            response = ec2client.describe_instances()
-            # print(response)
-            instances = []
+def terminateCloudInstance(vehicleId):
+    jsonObjStr = droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
+    my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
+    jsonObj = json.loads(jsonObjStr)
+    connectionString = jsonObj['connectionString']
+    ipAddress = connectionString[4:-6]
 
-            for reservation in response["Reservations"]:
-                for instance in reservation["Instances"]:
-                    # This sample print will output entire Dictionary object
-                    # print(instance)
-                    # This will print will output the value of the Dictionary key 'InstanceId'
-                    if (instance["State"]["Name"] != "terminated"):
-                        if (instance.get("PrivateIpAddress", None) == ipAddress):
-                            # my_logger.debug(instance)
-                            my_logger.debug(
-                                instance["PrivateIpAddress"],
-                                instance["InstanceId"],
-                                instance["InstanceType"],
-                                instance["State"]["Name"])
-                            instances.append(instance["InstanceId"])
+    try:
+        # terminate any AWS instances with that private IP address
+        ec2client = boto3.client('ec2')
+        response = ec2client.describe_instances()
+        # print(response)
+        instances = []
 
-            my_logger.debug("instances to terminate")
-            my_logger.debug(instances)
+        for reservation in response["Reservations"]:
+            for instance in reservation["Instances"]:
+                # This sample print will output entire Dictionary object
+                # print(instance)
+                # This will print will output the value of the Dictionary key 'InstanceId'
+                if (instance["State"]["Name"] != "terminated"):
+                    if (instance.get("PrivateIpAddress", None) == ipAddress):
+                        # my_logger.debug(instance)
+                        my_logger.debug(
+                            instance["PrivateIpAddress"],
+                            instance["InstanceId"],
+                            instance["InstanceType"],
+                            instance["State"]["Name"])
+                        instances.append(instance["InstanceId"])
 
-            if (len(instances) > 0):
-                # startresp=ec2client.start_instances(InstanceIds=["i-094270016448e61e2"])
-                stopresp = ec2client.terminate_instances(InstanceIds=instances)
-                my_logger.debug("Terminated instance")
+        my_logger.debug("instances to terminate")
+        my_logger.debug(instances)
 
-        except Exception as inst:
-            my_logger.error("Error conneting to AWS:")
-            my_logger.error("VehicleId=")
-            my_logger.error(vehicleId)
-            my_logger.error("Exception=")
-            my_logger.error(inst)
-            # ignore error and continue
+        if (len(instances) > 0):
+            # startresp=ec2client.start_instances(InstanceIds=["i-094270016448e61e2"])
+            stopresp = ec2client.terminate_instances(InstanceIds=instances)
+            my_logger.debug("Terminated instance")
 
-        return
+    except Exception as inst:
+        my_logger.error("Error conneting to AWS:")
+        my_logger.error("VehicleId=")
+        my_logger.error(vehicleId)
+        my_logger.error("Exception=")
+        my_logger.error(inst)
+        # ignore error and continue
+
+    return

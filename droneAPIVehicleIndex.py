@@ -12,6 +12,7 @@ import time
 import math
 import docker
 import redis
+import boto3
 import droneAPIUtils
 
 
@@ -126,36 +127,37 @@ class vehicleIndex:
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
         return output
 
-    def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
-        # build simulted drone using aws
-        # test how many non-terminated instances there are
-        ec2client = boto3.client('ec2')
-        response = ec2client.describe_instances()
-        # print(response)
-        instances = []
 
-        for reservation in response["Reservations"]:
-            for instance in reservation["Instances"]:
-                # This sample print will output entire Dictionary object
-                # print(instance)
-                # This will print will output the value of the Dictionary key 'InstanceId'
-                if (instance["State"]["Name"] != "terminated"):
-                    instances.append(instance["InstanceId"])
+def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
+    # build simulted drone using aws
+    # test how many non-terminated instances there are
+    ec2client = boto3.client('ec2')
+    response = ec2client.describe_instances()
+    # print(response)
+    instances = []
 
-        my_logger.debug("Non terminated instances=")
-        my_logger.debug(len(instances))
-        if (len(instances) > 20):
-            outputObj = {}
-            outputObj["status"] = "Error: can't launch more than " + str(20) + " cloud images"
-            return json.dumps(outputObj)
+    for reservation in response["Reservations"]:
+        for instance in reservation["Instances"]:
+            # This sample print will output entire Dictionary object
+            # print(instance)
+            # This will print will output the value of the Dictionary key 'InstanceId'
+            if (instance["State"]["Name"] != "terminated"):
+                instances.append(instance["InstanceId"])
 
-        my_logger.info("Creating new AWS image")
-        ec2resource = boto3.resource('ec2')
-        createresponse = ec2resource.create_instances(
-            ImageId=ImageId,
-            MinCount=1,
-            MaxCount=1,
-            InstanceType=InstanceType,
-            SecurityGroupIds=SecurityGroupIds)
-        my_logger.info(createresponse[0].private_ip_address)
-        return private_ip_address
+    my_logger.debug("Non terminated instances=")
+    my_logger.debug(len(instances))
+    if (len(instances) > 20):
+        outputObj = {}
+        outputObj["status"] = "Error: can't launch more than " + str(20) + " cloud images"
+        return json.dumps(outputObj)
+
+    my_logger.info("Creating new AWS image")
+    ec2resource = boto3.resource('ec2')
+    createresponse = ec2resource.create_instances(
+        ImageId=ImageId,
+        MinCount=1,
+        MaxCount=1,
+        InstanceType=InstanceType,
+        SecurityGroupIds=SecurityGroupIds)
+    my_logger.info(createresponse[0].private_ip_address)
+    return createresponse[0].private_ip_address

@@ -180,10 +180,10 @@ class action:
                 inVehicle = droneAPIUtils.connectVehicle(vehicleId)
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
-                return json.dumps({"error": "Cant connect to vehicle - vehicle starting up ", "_actions": actions})
+                return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
             except Exception:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
-                return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId), "_actions": actions})
+                return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId)})
             droneAPIUtils.applyHeadders()
             data = json.loads(web.data())
             # get latest data (inc homeLocation from vehicle)
