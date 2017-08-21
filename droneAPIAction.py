@@ -222,8 +222,7 @@ class Action(object):
                 location_obj = {'lat': float(in_lat), 'lon': float(in_lon), 'alt': float(in_alt)}
                 output_obj["action"] = goto_absolute(inVehicle, location_obj)
             elif value == "Goto-Relative-Home":
-                i
-                    = float(data.get("north", 0))
+                in_north = float(data.get("north", 0))
                 in_east = float(data.get("east", 0))
                 in_down = -float(data.get("up", 0))
                 my_logger.debug("Goto-Relative-Home")
