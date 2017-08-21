@@ -1,0 +1,21 @@
+node {
+
+   stage('Postman tests'){
+       
+       
+
+       withEnv(["PATH+NODE=${tool name: 'nodejs-8.1.2', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'}/bin"]) 
+       {
+           sh 'node -v'
+  
+           git 'https://github.com/lesterthomas/DroneRESTAPI.git'
+           dir('postman-newman-jenkins'){
+               sh 'ls'
+               sh 'npm install'
+               sh 'npm run api-tests-local'
+               
+           }
+
+       }
+   }
+}

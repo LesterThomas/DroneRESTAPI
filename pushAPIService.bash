@@ -51,9 +51,3 @@ docker push lesterthomas/droneapi:$VERSION
 MINOR_VERSION=$((MINOR_VERSION+1))
 echo "$MINOR_VERSION" > "MinorVersion.txt"
 
-sleep 10
-
-echo "Triggering Postman tests via Jenkins"
-
-curl "http://lesterthomas:Llandod1@localhost:8080/job/On%20Git%20commit%20droneapi-test/build?token=PostmanLocal"
-

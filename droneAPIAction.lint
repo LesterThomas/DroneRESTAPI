@@ -1,0 +1,326 @@
+************* Module droneAPIAction
+C:  4, 0: Line too long (113/100) (line-too-long)
+C: 31, 0: Line too long (133/100) (line-too-long)
+C: 42, 0: Line too long (114/100) (line-too-long)
+C: 53, 0: Wrong continued indentation (add 8 spaces).
+                    "/vehicle/" +
+                    ^       | (bad-continuation)
+C: 54, 0: Wrong continued indentation (add 8 spaces).
+                    str(vehicleId) +
+                    ^       | (bad-continuation)
+C: 55, 0: Wrong continued indentation (add 8 spaces).
+                    "/action",
+                    ^       | (bad-continuation)
+C: 59, 0: Line too long (105/100) (line-too-long)
+C: 60, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C: 68, 0: Unnecessary parens after 'elif' keyword (superfluous-parens)
+C: 70, 0: Line too long (179/100) (line-too-long)
+C: 71, 0: Line too long (117/100) (line-too-long)
+C:107, 0: Line too long (144/100) (line-too-long)
+C:108, 0: Line too long (117/100) (line-too-long)
+C:123, 0: Line too long (163/100) (line-too-long)
+C:124, 0: Line too long (117/100) (line-too-long)
+C:139, 0: Line too long (166/100) (line-too-long)
+C:140, 0: Line too long (117/100) (line-too-long)
+C:160, 0: Line too long (136/100) (line-too-long)
+C:173, 0: Line too long (133/100) (line-too-long)
+C:182, 0: Line too long (114/100) (line-too-long)
+C:183, 0: Line too long (115/100) (line-too-long)
+C:186, 0: Line too long (110/100) (line-too-long)
+C:251, 0: Line too long (127/100) (line-too-long)
+C:253, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:258, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:267, 0: Line too long (133/100) (line-too-long)
+C:322, 0: Line too long (109/100) (line-too-long)
+C:322, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:404, 0: Line too long (102/100) (line-too-long)
+C:413, 0: Line too long (135/100) (line-too-long)
+C:439, 0: Line too long (106/100) (line-too-long)
+C:487, 0: Line too long (135/100) (line-too-long)
+C:523, 0: Line too long (135/100) (line-too-long)
+C:535, 0: Line too long (122/100) (line-too-long)
+C:590, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:593, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:599, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:603, 0: Line too long (102/100) (line-too-long)
+C:607, 0: Line too long (111/100) (line-too-long)
+C:610, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:611, 0: Line too long (106/100) (line-too-long)
+C:614, 0: Line too long (107/100) (line-too-long)
+C:618, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:625, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:629, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:631, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C:632, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C: 14, 0: Invalid constant name "my_logger" (invalid-name)
+C: 17, 0: Invalid class name "action" (invalid-name)
+C: 17, 0: Missing class docstring (missing-docstring)
+C: 17, 0: Old-style class defined. (old-style-class)
+W: 17, 0: Class has no __init__ method (no-init)
+C: 18, 4: Invalid argument name "vehicleId" (invalid-name)
+C: 18, 4: Missing method docstring (missing-docstring)
+W: 27,15: Catching too general exception Exception (broad-except)
+C: 23,12: Invalid variable name "outputObj" (invalid-name)
+C: 27,28: Invalid variable name "e" (invalid-name)
+C: 29,12: Invalid variable name "tracebackStr" (invalid-name)
+C: 30,12: Invalid variable name "traceLines" (invalid-name)
+R: 18, 4: Method could be a function (no-self-use)
+C: 34, 4: Invalid argument name "vehicleId" (invalid-name)
+C: 34, 4: Missing method docstring (missing-docstring)
+W:169,15: Catching too general exception Exception (broad-except)
+W: 44,19: Catching too general exception Exception (broad-except)
+C: 40,16: Invalid variable name "inVehicle" (invalid-name)
+C: 48,12: Invalid variable name "vehicleStatus" (invalid-name)
+C: 49,12: Invalid variable name "outputObj" (invalid-name)
+C: 57,12: Invalid variable name "availableActions" (invalid-name)
+C: 60,16: Comparison to False should be 'not expr' or 'expr is False' (singleton-comparison)
+C:169,28: Invalid variable name "e" (invalid-name)
+C:171,12: Invalid variable name "tracebackStr" (invalid-name)
+C:172,12: Invalid variable name "traceLines" (invalid-name)
+R: 34, 4: Method could be a function (no-self-use)
+C:176, 4: Invalid argument name "vehicleId" (invalid-name)
+C:176, 4: Missing method docstring (missing-docstring)
+R:176, 4: Too many local variables (20/15) (too-many-locals)
+W:263,15: Catching too general exception Exception (broad-except)
+W:184,19: Catching too general exception Exception (broad-except)
+C:180,16: Invalid variable name "inVehicle" (invalid-name)
+E:183,106: Undefined variable 'actions' (undefined-variable)
+E:186,101: Undefined variable 'actions' (undefined-variable)
+C:204,12: Invalid variable name "outputObj" (invalid-name)
+C:219,16: Invalid variable name "defaultLocation" (invalid-name)
+C:221,16: Invalid variable name "inLat" (invalid-name)
+C:222,16: Invalid variable name "inLon" (invalid-name)
+C:223,16: Invalid variable name "inAlt" (invalid-name)
+C:224,16: Invalid variable name "locationObj" (invalid-name)
+C:227,16: Invalid variable name "inNorth" (invalid-name)
+C:228,16: Invalid variable name "inEast" (invalid-name)
+C:229,16: Invalid variable name "inDown" (invalid-name)
+C:236,16: Invalid variable name "inNorth" (invalid-name)
+C:237,16: Invalid variable name "inEast" (invalid-name)
+C:238,16: Invalid variable name "inDown" (invalid-name)
+C:244,16: Invalid variable name "defaultLocation" (invalid-name)
+C:245,16: Invalid variable name "inLat" (invalid-name)
+C:246,16: Invalid variable name "inLon" (invalid-name)
+C:247,16: Invalid variable name "inAlt" (invalid-name)
+C:248,16: Invalid variable name "locationObj" (invalid-name)
+C:252,12: Invalid variable name "actionArray" (invalid-name)
+C:263,28: Invalid variable name "e" (invalid-name)
+C:265,12: Invalid variable name "tracebackStr" (invalid-name)
+C:266,12: Invalid variable name "traceLines" (invalid-name)
+R:176, 4: Too many branches (16/12) (too-many-branches)
+R:176, 4: Too many statements (85/50) (too-many-statements)
+R:176, 4: Method could be a function (no-self-use)
+C:273, 0: Invalid argument name "inVehicle" (invalid-name)
+C:273, 0: Missing function docstring (missing-docstring)
+C:275, 4: Invalid variable name "outputObj" (invalid-name)
+C:280, 8: Invalid variable name "homeLocation" (invalid-name)
+C:298, 0: Invalid argument name "inVehicle" (invalid-name)
+C:298, 0: Invalid argument name "inVehicleId" (invalid-name)
+C:298, 0: Missing function docstring (missing-docstring)
+C:299, 4: Invalid variable name "outputObj" (invalid-name)
+C:304, 8: Invalid variable name "currentLocation" (invalid-name)
+C:337, 0: Invalid argument name "inVehicle" (invalid-name)
+C:337, 0: Invalid argument name "inHeight" (invalid-name)
+C:337, 0: Missing function docstring (missing-docstring)
+C:338, 4: Invalid variable name "outputObj" (invalid-name)
+C:344, 8: Invalid variable name "currentLocation" (invalid-name)
+C:362, 0: Invalid argument name "inVehicle" (invalid-name)
+C:362, 0: Missing function docstring (missing-docstring)
+C:363, 4: Invalid variable name "outputObj" (invalid-name)
+C:380, 0: Invalid argument name "inVehicle" (invalid-name)
+C:380, 0: Missing function docstring (missing-docstring)
+C:381, 4: Invalid variable name "outputObj" (invalid-name)
+C:386, 8: Invalid variable name "currentLocation" (invalid-name)
+C:402, 0: Invalid argument name "inVehicle" (invalid-name)
+C:402, 0: Invalid argument name "dNorth" (invalid-name)
+C:402, 0: Invalid argument name "dEast" (invalid-name)
+C:402, 0: Invalid argument name "dDown" (invalid-name)
+W:406, 4: Using global for 'config' but no assignment is done (global-variable-not-assigned)
+C:406, 4: Invalid constant name "config" (invalid-name)
+C:407, 4: Invalid variable name "outputObj" (invalid-name)
+C:419,12: Invalid variable name "currentLocation" (invalid-name)
+C:420,12: Invalid variable name "targetLocation" (invalid-name)
+C:437, 0: Invalid argument name "dNorth" (invalid-name)
+C:437, 0: Invalid argument name "dEast" (invalid-name)
+C:451, 4: Invalid variable name "dLat" (invalid-name)
+C:452, 4: Invalid variable name "dLon" (invalid-name)
+R:460, 8: Redefinition of targetlocation type from dronekit.LocationGlobal to dronekit.LocationGlobalRelative (redefined-variable-type)
+C:466, 0: Invalid function name "gotoRelative" (invalid-name)
+C:466, 0: Invalid argument name "inVehicle" (invalid-name)
+C:466, 0: Missing function docstring (missing-docstring)
+W:467, 4: Using global for 'config' but no assignment is done (global-variable-not-assigned)
+C:467, 4: Invalid constant name "config" (invalid-name)
+C:468, 4: Invalid variable name "outputObj" (invalid-name)
+C:474, 8: Invalid variable name "homeLocation" (invalid-name)
+C:477, 8: Invalid variable name "targetLocation" (invalid-name)
+C:505, 0: Invalid function name "gotoAbsolute" (invalid-name)
+C:505, 0: Invalid argument name "inVehicle" (invalid-name)
+C:505, 0: Invalid argument name "inLocation" (invalid-name)
+C:505, 0: Missing function docstring (missing-docstring)
+W:506, 4: Using global for 'config' but no assignment is done (global-variable-not-assigned)
+C:506, 4: Invalid constant name "config" (invalid-name)
+C:507, 4: Invalid variable name "outputObj" (invalid-name)
+W:511, 8: Specify string format arguments as logging function parameters (logging-not-lazy)
+W:512, 8: Unused variable 'output' (unused-variable)
+C:543, 0: Invalid argument name "inVehicle" (invalid-name)
+C:543, 0: Invalid argument name "inLocation" (invalid-name)
+C:543, 0: Missing function docstring (missing-docstring)
+C:544, 4: Invalid variable name "outputObj" (invalid-name)
+W:547, 4: Specify string format arguments as logging function parameters (logging-not-lazy)
+W:548, 4: Unused variable 'output' (unused-variable)
+C:561, 0: Invalid argument name "inVehicle" (invalid-name)
+C:561, 0: Missing function docstring (missing-docstring)
+C:576, 0: Invalid function name "updateActionStatus" (invalid-name)
+C:576, 0: Invalid argument name "inVehicle" (invalid-name)
+C:576, 0: Invalid argument name "inVehicleId" (invalid-name)
+C:576, 0: Missing function docstring (missing-docstring)
+C:586, 4: Invalid variable name "actionArray" (invalid-name)
+C:591, 8: Invalid variable name "latestAction" (invalid-name)
+C:605,12: Invalid variable name "targetCoordinates" (invalid-name)
+C:607,12: Invalid variable name "vehicleCoordinates" (invalid-name)
+C:611,16: Invalid variable name "vehicleCoordinates" (invalid-name)
+C:613,12: Invalid variable name "horizontalDistance" (invalid-name)
+C:615,12: Invalid variable name "verticalDistance" (invalid-name)
+C:630, 8: Invalid variable name "previousAction" (invalid-name)
+C:631,12: Comparison to False should be 'not expr' or 'expr is False' (singleton-comparison)
+W:  4, 0: Unused Command imported from dronekit (unused-import)
+W:  4, 0: Unused connect imported from dronekit (unused-import)
+W:  4, 0: Unused APIException imported from dronekit (unused-import)
+C:  7, 0: standard import "import logging" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException" (wrong-import-order)
+C:  8, 0: standard import "import traceback" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException" (wrong-import-order)
+C:  9, 0: standard import "import json" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException" (wrong-import-order)
+C: 10, 0: standard import "import time" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException" (wrong-import-order)
+C: 11, 0: standard import "import math" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException" (wrong-import-order)
+
+
+Report
+======
+402 statements analysed.
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |12     |NC         |NC         |16.67       |25.00    |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    droneAPIUtils (droneAPIAction)
+    dronekit (droneAPIAction)
+    web (droneAPIAction)
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |456    |71.59 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |95     |14.91 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |24     |3.77  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |62     |9.73  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |161    |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |7      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |16     |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |2      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------------------------+------------+
+|message id                   |occurrences |
++=============================+============+
+|invalid-name                 |92          |
++-----------------------------+------------+
+|line-too-long                |30          |
++-----------------------------+------------+
+|superfluous-parens           |14          |
++-----------------------------+------------+
+|missing-docstring            |14          |
++-----------------------------+------------+
+|wrong-import-order           |5           |
++-----------------------------+------------+
+|broad-except                 |5           |
++-----------------------------+------------+
+|unused-import                |3           |
++-----------------------------+------------+
+|no-self-use                  |3           |
++-----------------------------+------------+
+|global-variable-not-assigned |3           |
++-----------------------------+------------+
+|bad-continuation             |3           |
++-----------------------------+------------+
+|unused-variable              |2           |
++-----------------------------+------------+
+|undefined-variable           |2           |
++-----------------------------+------------+
+|singleton-comparison         |2           |
++-----------------------------+------------+
+|logging-not-lazy             |2           |
++-----------------------------+------------+
+|too-many-statements          |1           |
++-----------------------------+------------+
+|too-many-locals              |1           |
++-----------------------------+------------+
+|too-many-branches            |1           |
++-----------------------------+------------+
+|redefined-variable-type      |1           |
++-----------------------------+------------+
+|old-style-class              |1           |
++-----------------------------+------------+
+|no-init                      |1           |
++-----------------------------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 5.17/10
+

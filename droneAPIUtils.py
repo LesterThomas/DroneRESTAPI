@@ -249,7 +249,7 @@ def connectVehicle(inVehicleId):
         currentTime = time.time()
         timeSinceStart = currentTime - vehicleStartTime
         my_logger.debug("timeSinceStart= " + str(timeSinceStart))
-        if (timeSinceStart < 10):  # less than 10 seconds so throw Exception
+        if (timeSinceStart < 12):  # less than 10 seconds so throw Exception
             my_logger.warn("Raising Vehicle starting up warning")
             raise Warning('Vehicle starting up ')
 

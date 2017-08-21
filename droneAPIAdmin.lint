@@ -1,0 +1,165 @@
+************* Module droneAPIAdmin
+C: 21, 0: Wrong continued indentation (add 8 spaces).
+                                            "/admin", "title": "Administration functions for the Drone API service"}}
+                                            ^       | (bad-continuation)
+C: 21, 0: Line too long (117/100) (line-too-long)
+C: 70, 0: Line too long (133/100) (line-too-long)
+C: 81, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C: 85, 0: Unnecessary parens after 'if' keyword (superfluous-parens)
+C: 95, 0: Line too long (133/100) (line-too-long)
+C:111, 0: Line too long (133/100) (line-too-long)
+C: 11, 0: Invalid constant name "my_logger" (invalid-name)
+C: 14, 0: Invalid class name "admin" (invalid-name)
+C: 14, 0: Missing class docstring (missing-docstring)
+C: 14, 0: Old-style class defined. (old-style-class)
+W: 14, 0: Class has no __init__ method (no-init)
+C: 15, 4: Missing method docstring (missing-docstring)
+R: 15, 4: Too many local variables (18/15) (too-many-locals)
+W: 66,15: Catching too general exception Exception (broad-except)
+C: 19,12: Invalid variable name "outputObj" (invalid-name)
+C: 23,12: Invalid variable name "availableActions" (invalid-name)
+C: 42,16: Invalid variable name "jsonObjStr" (invalid-name)
+C: 43,16: Invalid variable name "jsonObj" (invalid-name)
+C: 44,16: Invalid variable name "connectionString" (invalid-name)
+C: 45,16: Invalid variable name "dockerContainerId" (invalid-name)
+C: 47,16: Invalid variable name "vehicleName" (invalid-name)
+C: 48,16: Invalid variable name "vehicleType" (invalid-name)
+C: 49,16: Invalid variable name "dockerContainerId" (invalid-name)
+C: 50,16: Invalid variable name "droneId" (invalid-name)
+C: 51,16: Invalid variable name "hostIp" (invalid-name)
+C: 66,28: Invalid variable name "e" (invalid-name)
+C: 68,12: Invalid variable name "tracebackStr" (invalid-name)
+C: 69,12: Invalid variable name "traceLines" (invalid-name)
+R: 15, 4: Method could be a function (no-self-use)
+C: 73, 4: Missing method docstring (missing-docstring)
+W: 91,15: Catching too general exception Exception (broad-except)
+C: 79,12: Invalid variable name "outputObj" (invalid-name)
+C: 83,16: Invalid variable name "outputObj" (invalid-name)
+C: 87,16: Invalid variable name "outputObj" (invalid-name)
+C: 91,28: Invalid variable name "e" (invalid-name)
+C: 93,12: Invalid variable name "tracebackStr" (invalid-name)
+C: 94,12: Invalid variable name "traceLines" (invalid-name)
+R: 73, 4: Method could be a function (no-self-use)
+C: 98, 4: Missing method docstring (missing-docstring)
+W:107,15: Catching too general exception Exception (broad-except)
+C:104,12: Invalid variable name "outputObj" (invalid-name)
+C:107,28: Invalid variable name "e" (invalid-name)
+C:109,12: Invalid variable name "tracebackStr" (invalid-name)
+C:110,12: Invalid variable name "traceLines" (invalid-name)
+R: 98, 4: Method could be a function (no-self-use)
+W:  7, 0: Unused import redis (unused-import)
+
+
+Report
+======
+76 statements analysed.
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |3      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    droneAPIUtils (droneAPIAdmin)
+    redis (droneAPIAdmin)
+    web (droneAPIAdmin)
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |79     |69.91 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |18     |15.93 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |1      |0.88  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |15     |13.27 |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |38     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |4      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |5      |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-------------------+------------+
+|message id         |occurrences |
++===================+============+
+|invalid-name       |26          |
++-------------------+------------+
+|missing-docstring  |4           |
++-------------------+------------+
+|line-too-long      |4           |
++-------------------+------------+
+|no-self-use        |3           |
++-------------------+------------+
+|broad-except       |3           |
++-------------------+------------+
+|superfluous-parens |2           |
++-------------------+------------+
+|unused-import      |1           |
++-------------------+------------+
+|too-many-locals    |1           |
++-------------------+------------+
+|old-style-class    |1           |
++-------------------+------------+
+|no-init            |1           |
++-------------------+------------+
+|bad-continuation   |1           |
++-------------------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at 3.82/10
+

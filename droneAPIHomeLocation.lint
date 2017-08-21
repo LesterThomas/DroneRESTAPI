@@ -1,0 +1,169 @@
+************* Module droneAPIHomeLocation
+C:  5, 0: Line too long (113/100) (line-too-long)
+C: 22, 0: Line too long (123/100) (line-too-long)
+C: 29, 0: Line too long (114/100) (line-too-long)
+C: 44, 0: Wrong continued indentation (add 8 spaces).
+                            "/vehicle/" +
+                            ^       | (bad-continuation)
+C: 45, 0: Wrong continued indentation (add 8 spaces).
+                            str(vehicleId) +
+                            ^       | (bad-continuation)
+C: 46, 0: Wrong continued indentation (add 8 spaces).
+                            "/homeLocation",
+                            ^       | (bad-continuation)
+C: 55, 0: Line too long (133/100) (line-too-long)
+C: 15, 0: Invalid constant name "my_logger" (invalid-name)
+C: 18, 0: Invalid class name "homeLocation" (invalid-name)
+C: 18, 0: Missing class docstring (missing-docstring)
+C: 18, 0: Old-style class defined. (old-style-class)
+W: 18, 0: Class has no __init__ method (no-init)
+C: 19, 4: Invalid argument name "vehicleId" (invalid-name)
+C: 19, 4: Missing method docstring (missing-docstring)
+W: 51,15: Catching too general exception Exception (broad-except)
+C: 22,12: Invalid variable name "statusVal" (invalid-name)
+C: 25,12: Invalid variable name "outputObj" (invalid-name)
+W: 31,19: Catching too general exception Exception (broad-except)
+C: 27,16: Invalid variable name "inVehicle" (invalid-name)
+C: 34,12: Invalid variable name "vehicleStatus" (invalid-name)
+W: 38,12: Specify string format arguments as logging function parameters (logging-not-lazy)
+C: 51,28: Invalid variable name "e" (invalid-name)
+C: 53,12: Invalid variable name "tracebackStr" (invalid-name)
+C: 54,12: Invalid variable name "traceLines" (invalid-name)
+W: 25,12: Unused variable 'outputObj' (unused-variable)
+W: 34,12: Unused variable 'vehicleStatus' (unused-variable)
+R: 19, 4: Method could be a function (no-self-use)
+R: 18, 0: Too few public methods (1/2) (too-few-public-methods)
+W:  5, 0: Unused LocationGlobalRelative imported from dronekit (unused-import)
+W:  5, 0: Unused VehicleMode imported from dronekit (unused-import)
+W:  5, 0: Unused mavutil imported from dronekit (unused-import)
+W:  5, 0: Unused Command imported from dronekit (unused-import)
+W:  5, 0: Unused connect imported from dronekit (unused-import)
+W:  5, 0: Unused APIException imported from dronekit (unused-import)
+W:  5, 0: Unused LocationGlobal imported from dronekit (unused-import)
+W:  7, 0: Unused import web (unused-import)
+W: 11, 0: Unused import time (unused-import)
+W: 12, 0: Unused import math (unused-import)
+C:  8, 0: standard import "import logging" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException" (wrong-import-order)
+C:  9, 0: standard import "import traceback" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException" (wrong-import-order)
+C: 10, 0: standard import "import json" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException" (wrong-import-order)
+C: 11, 0: standard import "import time" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException" (wrong-import-order)
+C: 12, 0: standard import "import math" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException" (wrong-import-order)
+
+
+Report
+======
+38 statements analysed.
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |1      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |1      |NC         |NC         |0.00        |100.00   |
++---------+-------+-----------+-----------+------------+---------+
+|method   |1      |NC         |NC         |0.00        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |0      |NC         |NC         |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    droneAPIUtils (droneAPIHomeLocation)
+    dronekit (droneAPIHomeLocation)
+    web (droneAPIHomeLocation)
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |42     |73.68 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |9      |15.79 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |1      |1.75  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |5      |8.77  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |25     |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |2      |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |16     |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |0      |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-----------------------+------------+
+|message id             |occurrences |
++=======================+============+
+|unused-import          |10          |
++-----------------------+------------+
+|invalid-name           |10          |
++-----------------------+------------+
+|wrong-import-order     |5           |
++-----------------------+------------+
+|line-too-long          |4           |
++-----------------------+------------+
+|bad-continuation       |3           |
++-----------------------+------------+
+|unused-variable        |2           |
++-----------------------+------------+
+|missing-docstring      |2           |
++-----------------------+------------+
+|broad-except           |2           |
++-----------------------+------------+
+|too-few-public-methods |1           |
++-----------------------+------------+
+|old-style-class        |1           |
++-----------------------+------------+
+|no-self-use            |1           |
++-----------------------+------------+
+|no-init                |1           |
++-----------------------+------------+
+|logging-not-lazy       |1           |
++-----------------------+------------+
+
+
+
+Global evaluation
+-----------------
+Your code has been rated at -1.32/10
+
