@@ -161,7 +161,7 @@ class Action(object):
             output_obj['_actions'] = available_actions
             my_logger.debug(output_obj)
             updateActionStatus(inVehicle, vehicle_id)
-            output_obj['actions'] = droneAPIUtils.action_arrayDict[vehicle_id]
+            output_obj['actions'] = droneAPIUtils.actionArrayDict[vehicle_id]
             output = json.dumps(output_obj)
             my_logger.info("Return: =" + output)
         except Exception as ex:
@@ -247,7 +247,7 @@ class Action(object):
                 output_obj["action"] = roi(inVehicle, location_obj)
             else:
                 output_obj["action"] = {"status": "error", "name": value, "error": "No action found with name '" + value + "'."}
-            action_array = droneAPIUtils.action_arrayDict[vehicle_id]
+            action_array = droneAPIUtils.actionArrayDict[vehicle_id]
             if (len(action_array) == 0):
                 output_obj['action']['id'] = 0
             else:
@@ -574,11 +574,11 @@ def updateActionStatus(inVehicle, invehicle_id):
 
     my_logger.info("invehicle_id")
     my_logger.info(invehicle_id)
-    my_logger.info("droneAPIUtils.action_arrayDict")
-    my_logger.info(droneAPIUtils.action_arrayDict)
+    my_logger.info("droneAPIUtils.actionArrayDict")
+    my_logger.info(droneAPIUtils.actionArrayDict)
     my_logger.info("#############")
 
-    action_array = droneAPIUtils.action_arrayDict[invehicle_id]
+    action_array = droneAPIUtils.actionArrayDict[invehicle_id]
 
     my_logger.info(action_array)
 
