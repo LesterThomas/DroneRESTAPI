@@ -1048,21 +1048,17 @@ class vehicleIndex:
             outputObj = []
 
             # get the query parameters
-            queryParameters = web.input()
-            my_logger.debug("Query parameters %s", str(queryParameters))
-            keys = droneAPIUtils.redisdB.keys("connectionString:*")
+            query_parameters = web.input()
+            my_logger.debug("Query parameters %s", str(query_parameters))
+            keys = droneAPIUtils.redisdB.keys("connection_string:*")
             for key in keys:
                 my_logger.debug("key = '" + key + "'")
-                jsonObjStr = droneAPIUtils.redisdB.get(key)
-                my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
-                jsonObj = json.loads(jsonObjStr)
-                connectionString = jsonObj['connectionString']
-                vehicleName = jsonObj['name']
-                vehicleType = jsonObj['vehicleType']
-                host = jsonObj.get('host', '')
-                port = jsonObj.get('port', '')
-                vehicleId = key[17:]
-                droneDetails = {
+                json_str = droneAPIUtils.redisdB.get(key)
+                my_logger.debug("redisDbObj = '" + json_str + "'")
+                json_obj = json.loads(json_str)
+                vehicle_details = json_obj['vehicle_details']
+                vehicleId = key[18:]
+                individual_vehicle = {
                     "_links": {
                         "self": {
                             "href": droneAPIUtils.homeDomain +
@@ -1071,18 +1067,13 @@ class vehicleIndex:
                             "title": "Get status for vehicle " +
                             str(vehicleId)}},
                     "id": str(vehicleId),
-                        "name": vehicleName,
-                        "host": host,
-                        "port": port,
-                        "vehicleType": vehicleType}
-                if (vehicleType == 'real'):
-                    droneDetails['droneConnectTo'] = jsonObj.get('droneConnectTo', '')
-                    droneDetails['groundstationConnectTo'] = jsonObj.get('groundstationConnectTo', '')
-                if (hasattr(queryParameters, 'details')):
+                        "vehicle_details": vehicle_details}
+
+                if (hasattr(query_parameters, 'status')):
                     # try to get extra details. Ignore if this fails
                     try:
                         droneObj = droneAPIUtils.connectVehicle(vehicleId)
-                        droneDetails['vehicleStatus'] = droneAPIUtils.getVehicleStatus(droneObj, vehicleId)
+                        individual_vehicle['vehicle_status'] = droneAPIUtils.getVehicleStatus(droneObj, vehicleId)
                     except Warning:
                         my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up %s", str(vehicleId))
                     except Exception:
@@ -1091,10 +1082,10 @@ class vehicleIndex:
                         traceLines = tracebackStr.split("\n")
                         my_logger.warn("Trace: %s", traceLines)
 
-                outputObj.append(droneDetails)
+                outputObj.append(individual_vehicle)
 
-            actions = '[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). For simulated vehicle you can also give the starting lat, lon, alt (of ground above sea level) and dir (initial direction the drone is pointing). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + \
-                droneAPIUtils.homeDomain + '/vehicle",\n"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}, {"name":"name","type":"string"}, {"name":"lat","type":"float"}, {"name":"lon","type":"float"}, {"name":"alt","type":"float"}, {"name":"dir","type":"float"}] }]\n'
+            actions = '[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). For simulated vehicle you can also give the starting lat, lon, alt (of ground above sea level) and dir (initial direction the drone is pointing). The connection_string is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + \
+                droneAPIUtils.homeDomain + '/vehicle",\n"fields":[{"name":"vehicle_type", "type":{"listOfValues":["simulated","real"]}}, {"name":"connection_string","type":"string"}, {"name":"name","type":"string"}, {"name":"lat","type":"float"}, {"name":"lon","type":"float"}, {"name":"alt","type":"float"}, {"name":"dir","type":"float"}] }]\n'
             self = {"self": {"title": "Return the collection of available vehicles.", "href": droneAPIUtils.homeDomain + "/vehicle"}}
             my_logger.debug("actions")
             my_logger.debug(actions)
@@ -1116,7 +1107,7 @@ class vehicleIndex:
             dataStr = web.data()
             my_logger.info(dataStr)
             data = json.loads(dataStr)
-            droneType = data["vehicleType"]
+            droneType = data["vehicle_type"]
             vehicleName = data["name"]
             drone_lat = data.get('lat', '51.4049')
             drone_lon = data.get('lon', '-1.3049')
@@ -1269,21 +1260,17 @@ def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
             outputObj = []
 
             # get the query parameters
-            queryParameters = web.input()
-            my_logger.debug("Query parameters %s", str(queryParameters))
-            keys = droneAPIUtils.redisdB.keys("connectionString:*")
+            query_parameters = web.input()
+            my_logger.debug("Query parameters %s", str(query_parameters))
+            keys = droneAPIUtils.redisdB.keys("connection_string:*")
             for key in keys:
                 my_logger.debug("key = '" + key + "'")
-                jsonObjStr = droneAPIUtils.redisdB.get(key)
-                my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
-                jsonObj = json.loads(jsonObjStr)
-                connectionString = jsonObj['connectionString']
-                vehicleName = jsonObj['name']
-                vehicleType = jsonObj['vehicleType']
-                host = jsonObj.get('host', '')
-                port = jsonObj.get('port', '')
-                vehicleId = key[17:]
-                droneDetails = {
+                json_str = droneAPIUtils.redisdB.get(key)
+                my_logger.debug("redisDbObj = '" + json_str + "'")
+                json_obj = json.loads(json_str)
+                vehicle_details = json_obj['vehicle_details']
+                vehicleId = key[18:]
+                individual_vehicle = {
                     "_links": {
                         "self": {
                             "href": droneAPIUtils.homeDomain +
@@ -1292,18 +1279,13 @@ def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
                             "title": "Get status for vehicle " +
                             str(vehicleId)}},
                     "id": str(vehicleId),
-                        "name": vehicleName,
-                        "host": host,
-                        "port": port,
-                        "vehicleType": vehicleType}
-                if (vehicleType == 'real'):
-                    droneDetails['droneConnectTo'] = jsonObj.get('droneConnectTo', '')
-                    droneDetails['groundstationConnectTo'] = jsonObj.get('groundstationConnectTo', '')
-                if (hasattr(queryParameters, 'details')):
+                        "vehicle_details": vehicle_details}
+
+                if (hasattr(query_parameters, 'status')):
                     # try to get extra details. Ignore if this fails
                     try:
                         droneObj = droneAPIUtils.connectVehicle(vehicleId)
-                        droneDetails['vehicleStatus'] = droneAPIUtils.getVehicleStatus(droneObj, vehicleId)
+                        individual_vehicle['vehicle_status'] = droneAPIUtils.getVehicleStatus(droneObj, vehicleId)
                     except Warning:
                         my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up %s", str(vehicleId))
                     except Exception:
@@ -1312,10 +1294,10 @@ def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
                         traceLines = tracebackStr.split("\n")
                         my_logger.warn("Trace: %s", traceLines)
 
-                outputObj.append(droneDetails)
+                outputObj.append(individual_vehicle)
 
-            actions = '[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). For simulated vehicle you can also give the starting lat, lon, alt (of ground above sea level) and dir (initial direction the drone is pointing). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + \
-                droneAPIUtils.homeDomain + '/vehicle",\n"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}, {"name":"name","type":"string"}, {"name":"lat","type":"float"}, {"name":"lon","type":"float"}, {"name":"alt","type":"float"}, {"name":"dir","type":"float"}] }]\n'
+            actions = '[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). For simulated vehicle you can also give the starting lat, lon, alt (of ground above sea level) and dir (initial direction the drone is pointing). The connection_string is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + \
+                droneAPIUtils.homeDomain + '/vehicle",\n"fields":[{"name":"vehicle_type", "type":{"listOfValues":["simulated","real"]}}, {"name":"connection_string","type":"string"}, {"name":"name","type":"string"}, {"name":"lat","type":"float"}, {"name":"lon","type":"float"}, {"name":"alt","type":"float"}, {"name":"dir","type":"float"}] }]\n'
             self = {"self": {"title": "Return the collection of available vehicles.", "href": droneAPIUtils.homeDomain + "/vehicle"}}
             my_logger.debug("actions")
             my_logger.debug(actions)
@@ -1337,7 +1319,7 @@ def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
             dataStr = web.data()
             my_logger.info(dataStr)
             data = json.loads(dataStr)
-            droneType = data["vehicleType"]
+            droneType = data["vehicle_type"]
             vehicleName = data["name"]
             drone_lat = data.get('lat', '51.4049')
             drone_lon = data.get('lon', '-1.3049')
@@ -1397,21 +1379,17 @@ def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
         droneAPIUtils.applyHeadders()
         outputObj = []
         # get the query parameters
-        queryParameters = web.input()
-        my_logger.debug("Query parameters %s", str(queryParameters))
-        keys = droneAPIUtils.redisdB.keys("connectionString:*")
+        query_parameters = web.input()
+        my_logger.debug("Query parameters %s", str(query_parameters))
+        keys = droneAPIUtils.redisdB.keys("connection_string:*")
         for key in keys:
             my_logger.debug("key = '" + key + "'")
-            jsonObjStr = droneAPIUtils.redisdB.get(key)
-            my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
-            jsonObj = json.loads(jsonObjStr)
-            connectionString = jsonObj['connectionString']
-            vehicleName = jsonObj['name']
-            vehicleType = jsonObj['vehicleType']
-            host = jsonObj.get('host', '')
-            port = jsonObj.get('port', '')
-            vehicleId = key[17:]
-            droneDetails = {
+            json_str = droneAPIUtils.redisdB.get(key)
+            my_logger.debug("redisDbObj = '" + json_str + "'")
+            json_obj = json.loads(json_str)
+            vehicle_details = json_obj['vehicle_details']
+            vehicleId = key[18:]
+            individual_vehicle = {
                 "_links": {
                     "self": {
                         "href": droneAPIUtils.homeDomain +
@@ -1420,18 +1398,12 @@ def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
                         "title": "Get status for vehicle " +
                         str(vehicleId)}},
                 "id": str(vehicleId),
-                    "name": vehicleName,
-                    "host": host,
-                    "port": port,
-                    "vehicleType": vehicleType}
-            if (vehicleType == 'real'):
-                droneDetails['droneConnectTo'] = jsonObj.get('droneConnectTo', '')
-                droneDetails['groundstationConnectTo'] = jsonObj.get('groundstationConnectTo', '')
-            if (hasattr(queryParameters, 'details')):
+                    "vehicle_details": vehicle_details}
+            if (hasattr(query_parameters, 'status')):
                 # try to get extra details. Ignore if this fails
                 try:
                     droneObj = droneAPIUtils.connectVehicle(vehicleId)
-                    droneDetails['vehicleStatus'] = droneAPIUtils.getVehicleStatus(droneObj, vehicleId)
+                    individual_vehicle['vehicle_status'] = droneAPIUtils.getVehicleStatus(droneObj, vehicleId)
                 except Warning:
                     my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up %s", str(vehicleId))
                 except Exception:
@@ -1439,9 +1411,9 @@ def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
                     tracebackStr = traceback.format_exc()
                     traceLines = tracebackStr.split("\n")
                     my_logger.warn("Trace: %s", traceLines)
-            outputObj.append(droneDetails)
-        actions = '[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). For simulated vehicle you can also give the starting lat, lon, alt (of ground above sea level) and dir (initial direction the drone is pointing). The connectionString is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + \
-            droneAPIUtils.homeDomain + '/vehicle",\n"fields":[{"name":"vehicleType", "type":{"listOfValues":["simulated","real"]}}, {"name":"connectionString","type":"string"}, {"name":"name","type":"string"}, {"name":"lat","type":"float"}, {"name":"lon","type":"float"}, {"name":"alt","type":"float"}, {"name":"dir","type":"float"}] }]\n'
+            outputObj.append(individual_vehicle)
+        actions = '[{"name":"Add vehicle",\n"method":"POST",\n"title":"Add a connection to a new vehicle. Type is real or simulated (conection string is automatic for simulated vehicle). For simulated vehicle you can also give the starting lat, lon, alt (of ground above sea level) and dir (initial direction the drone is pointing). The connection_string is <udp/tcp>:<ip>;<port> eg tcp:123.123.123.213:14550 It will return the id of the vehicle. ",\n"href": "' + \
+            droneAPIUtils.homeDomain + '/vehicle",\n"fields":[{"name":"vehicle_type", "type":{"listOfValues":["simulated","real"]}}, {"name":"connection_string","type":"string"}, {"name":"name","type":"string"}, {"name":"lat","type":"float"}, {"name":"lon","type":"float"}, {"name":"alt","type":"float"}, {"name":"dir","type":"float"}] }]\n'
         self = {"self": {"title": "Return the collection of available vehicles.", "href": droneAPIUtils.homeDomain + "/vehicle"}}
         my_logger.debug("actions")
         my_logger.debug(actions)
@@ -1512,7 +1484,7 @@ def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
         dataStr = web.data()
         my_logger.info(dataStr)
         data = json.loads(dataStr)
-        droneType = data["vehicleType"]
+        droneType = data["vehicle_type"]
         vehicleName = data["name"]
         drone_lat = data.get('lat', '51.4049')
         drone_lon = data.get('lon', '-1.3049')

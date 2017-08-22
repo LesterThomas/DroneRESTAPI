@@ -13,6 +13,8 @@ import os
 import uuid
 import redis
 import docker
+import time
+from threading import Thread
 
 import droneAPIAction
 
@@ -55,7 +57,7 @@ def initaliseGlobals():
 
     # set global variables
     connectionDict = {}  # holds a dictionary of DroneKit connection objects
-    connectionNameTypeDict = {}  # holds the additonal name, type and starttime for the conections
+    connectionNameTypeDict = {}  # holds the additonal name, type and start_time for the conections
     actionArrayDict = {}  # holds recent actions executied by each drone
     authorizedZoneDict = {}  # holds zone authorizations for each drone
 
@@ -107,28 +109,30 @@ def validateAndRefreshContainers():
         # we will start/stop each docker container and also re-build the dockerHostsArray value
         rebuildDockerHostsArray()
 
-        keys = redisdB.keys("connectionString:*")
+        keys = redisdB.keys("connection_string:*")
         for key in keys:
             my_logger.debug("key = '" + key + "'")
-            jsonObjStr = redisdB.get(key)
-            my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
-            jsonObj = json.loads(jsonObjStr)
-            connectionString = jsonObj['connectionString']
-            vehicleName = jsonObj['name']
-            vehicleType = jsonObj['vehicleType']
-            dockerContainerId = jsonObj['dockerContainerId']
-            droneId = key[17:]
-            hostIp = connectionString[4:-6]
-            port = connectionString[-5:]
-            my_logger.info("connectionString:%s vehicleName:%s vehicleType:%s droneId:%s hostIp:%s port:%s ",
-                           connectionString, vehicleName, vehicleType, droneId, hostIp, port)
+            json_str = redisdB.get(key)
+            my_logger.debug("redisDbObj = '" + json_str + "'")
+            json_obj = json.loads(json_str)
+            vehicle_details = json_obj['vehicle_details']
+            host_details = json_obj['host_details']
+            connection_string = vehicle_details['connection_string']
+            vehicleName = vehicle_details['name']
+            vehicle_type = vehicle_details['vehicle_type']
+            docker_container_id = host_details['docker_container_id']
+            droneId = key[18:]
+            hostIp = connection_string[4:-6]
+            port = connection_string[-5:]
+            my_logger.info("connection_string:%s vehicleName:%s vehicle_type:%s droneId:%s hostIp:%s port:%s ",
+                           connection_string, vehicleName, vehicle_type, droneId, hostIp, port)
 
             # stop and start this container (or start a new one if it doesn't exist)
             dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
             dockerAPIClient = docker.APIClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
             containerFound = False
             for container in dockerClient.containers.list(all=True):
-                if (container.id == dockerContainerId):
+                if (container.id == docker_container_id):
                     containerFound = True
                     my_logger.info("Container %s found - restarting", container.id)
                     container.restart()
@@ -148,28 +152,28 @@ def validateAndRefreshContainers():
                             containerWithPort = True
                             container.restart()
                             # update Redis with new container Id
-                            dockerContainerId = container.id
+                            docker_container_id = container.id
                             redisdB.set(key,
-                                        json.dumps({"connectionString": connectionString,
-                                                    "name": vehicleName,
-                                                    "vehicleType": vehicleType,
-                                                    "startTime": time.time(),
-                                                    "dockerContainerId": dockerContainerId}))
+                                        json.dumps({"vehicle_details": {"connection_string": connection_string,
+                                                                        "name": vehicleName,
+                                                                        "vehicle_type": vehicle_type,
+                                                                        "start_time": time.time(),
+                                                                        "docker_container_id": docker_container_id}}))
 
                 if (containerWithPort == False):
                     my_logger.info("Container not found - creating new")
 
-                    createDrone(vehicleType, vehicleName, '51.4049', '1.3049', '105', '0')
+                    createDrone(vehicle_type, vehicleName, '51.4049', '1.3049', '105', '0')
 
                     #dockerContainer = dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port}, name=droneId)
-                    #dockerContainerId = dockerContainer.id
+                    #docker_container_id = dockerContainer.id
                     # update redis
                     # redisdB.set(key,
-                    #            json.dumps({"connectionString": connectionString,
+                    #            json.dumps({"connection_string": connection_string,
                     #                        "name": vehicleName,
-                    #                        "vehicleType": vehicleType,
-                    #                        "startTime": time.time(),
-                    #                        "dockerContainerId": dockerContainerId}))
+                    #                        "vehicle_type": vehicle_type,
+                    #                        "start_time": time.time(),
+                    #                        "docker_container_id": docker_container_id}))
 
     except Exception as e:
         my_logger.warn("Caught exception: Unexpected error in validateAndRefreshContainers:")
@@ -180,17 +184,23 @@ def validateAndRefreshContainers():
     return
 
 
+def startBackgroundWorker():
+    worker().start()
+    return
+
+
 def rebuildDockerHostsArray():
     # reset dockerHostsArray
     dockerHostsArray = [{"internalIP": defaultDockerHost, "usedPorts": []}]
-    keys = redisdB.keys("connectionString:*")
+    keys = redisdB.keys("connection_string:*")
     for key in keys:
 
-        jsonObjStr = redisdB.get(key)
-        jsonObj = json.loads(jsonObjStr)
-        connectionString = jsonObj['connectionString']
-        hostIp = connectionString[4:-6]
-        port = connectionString[-5:]
+        json_str = redisdB.get(key)
+        json_obj = json.loads(json_str)
+        vehicle_details = json_obj['vehicle_details']
+        connection_string = vehicle_details['connection_string']
+        hostIp = connection_string[4:-6]
+        port = connection_string[-5:]
         # check if this host already exists in dockerHostsArray
         found = False
         for host in dockerHostsArray:
@@ -218,39 +228,41 @@ def applyHeadders():
 
 
 def connectVehicle(inVehicleId):
-    #global connectionStringArray
+    #global connection_string_array
     global redisdB
     global connectionDict
     global actionArrayDict
     try:
         my_logger.debug("connectVehicle called with inVehicleId = " + str(inVehicleId))
-        # connectionString=connectionStringArray[inVehicleId]
-        jsonObjStr = redisdB.get('connectionString:' + str(inVehicleId))
-        my_logger.debug("Redis returns '" + str(jsonObjStr) + "'")
-        if (jsonObjStr is None):
+        # connection_string=connection_string_array[inVehicleId]
+        json_str = redisdB.get('connection_string:' + str(inVehicleId))
+        my_logger.debug("Redis returns '" + str(json_str) + "'")
+        if (json_str is None):
             my_logger.warn("Raising Vehicle not found warning")
             raise Warning('Vehicle not found ')
-        my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
-        jsonObj = json.loads(jsonObjStr)
-        connectionString = jsonObj['connectionString']
-        vehicleName = jsonObj['name']
-        vehicleType = jsonObj['vehicleType']
-        vehicleStartTime = jsonObj['startTime']
+        my_logger.debug("redisDbObj = '" + json_str + "'")
+        json_obj = json.loads(json_str)
+        vehicle_details = json_obj['vehicle_details']
+        host_details = json_obj['host_details']
+        connection_string = vehicle_details['connection_string']
+        vehicleName = vehicle_details['name']
+        vehicle_type = vehicle_details['vehicle_type']
+        vehicle_start_time = host_details['start_time']
         currentTime = time.time()
-        timeSinceStart = currentTime - vehicleStartTime
+        timeSinceStart = currentTime - vehicle_start_time
         my_logger.debug("timeSinceStart= " + str(timeSinceStart))
         if (timeSinceStart < 12):  # less than 10 seconds so throw Exception
             my_logger.warn("Raising Vehicle starting up warning")
             raise Warning('Vehicle starting up ')
 
-        my_logger.debug("connection string for vehicle " + str(inVehicleId) + "='" + connectionString + "'")
+        my_logger.debug("connection string for vehicle " + str(inVehicleId) + "='" + connection_string + "'")
         # Connect to the Vehicle.
         if not connectionDict.get(inVehicleId):
-            my_logger.info("connectionString: %s" % (connectionString,))
-            my_logger.info("Connecting to vehicle on: %s" % (connectionString,))
-            connectionNameTypeDict[inVehicleId] = {"name": vehicleName, "vehicleType": vehicleType}
+            my_logger.info("connection_string: %s" % (connection_string,))
+            my_logger.info("Connecting to vehicle on: %s" % (connection_string,))
+            connectionNameTypeDict[inVehicleId] = {"name": vehicleName, "vehicle_type": vehicle_type}
             actionArrayDict[inVehicleId] = []  # create empty action array
-            connectionDict[inVehicleId] = connect(connectionString, wait_ready=True, heartbeat_timeout=10)
+            connectionDict[inVehicleId] = connect(connection_string, wait_ready=True, heartbeat_timeout=10)
             my_logger.info("actionArrayDict")
             my_logger.info(actionArrayDict)
         else:
@@ -356,6 +368,7 @@ def getVehicleStatus(inVehicle, inVehicleId):
             outputObj["global_frame"]["lon"])
         if (distance > 500):
             droneAPIAction.rtl(inVehicle)
+    my_logger.info("Vehicle status output: %s" % outputObj)
 
     return outputObj
 
@@ -385,7 +398,7 @@ def getNexthostAndPort():
 
 def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir):
     connection = None
-    dockerContainerId = "N/A"
+    docker_container_id = "N/A"
     uuidVal = uuid.uuid4()
     key = str(uuidVal)[:8]
 
@@ -426,33 +439,45 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
                 '14552/tcp': hostAndPort['port'] + 20},
             name=key)
 
-    dockerContainerId = dockerContainer.id
-    my_logger.info("container Id=" + str(dockerContainerId))
+    docker_container_id = dockerContainer.id
+    my_logger.info("container Id=" + str(docker_container_id))
 
     connection = "tcp:" + hostAndPort['image'] + ":" + str(hostAndPort['port'])
 
     my_logger.debug(connection)
 
-    my_logger.info("adding connectionString to Redis db with key '" + "connectionString:" + str(key) + "'")
-    droneDBDetails = {"connectionString": connection,
-                      "name": vehicleName,
-                      "vehicleType": droneType,
-                      "host": hostAndPort['image'],
-                      "port": hostAndPort['port'],
-                      "startTime": time.time(),
-                      "dockerContainerId": dockerContainerId}
+    my_logger.info("adding connection_string to Redis db with key '" + "connection_string:" + str(key) + "'")
+    droneDBDetails = {"vehicle_details": {"connection_string": connection,
+                                          "name": vehicleName,
+                                          "vehicle_type": droneType},
+                      "host_details": {"host": hostAndPort['image'],
+                                       "port": hostAndPort['port'],
+                                       "start_time": time.time(),
+                                       "docker_container_id": docker_container_id}}
     if (droneType == 'real'):
-        droneDBDetails['droneConnectTo'] = hostAndPort['port'] + 10
-        droneDBDetails['groundstationConnectTo'] = hostAndPort['port'] + 20
+        droneDBDetails['vehicle_details']['drone_connect_to'] = hostAndPort['port'] + 10
+        droneDBDetails['vehicle_details']['groundstation_connect_to'] = hostAndPort['port'] + 20
 
-    redisdB.set("connectionString:" + key,
+    redisdB.set("connection_string:" + key,
                 json.dumps(droneDBDetails))
 
     outputObj = {}
     outputObj["connection"] = connection
     if (droneType == "real"):
-        outputObj["droneConnectTo"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 10)
-        outputObj["groundstationConnectTo"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 20)
+        outputObj["drone_connect_to"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 10)
+        outputObj["groundstation_connect_to"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 20)
     outputObj["id"] = key
     my_logger.info("Return: =" + json.dumps(outputObj))
     return outputObj
+
+
+class worker(Thread):
+    """This class provides a background worker thread that polls all the drone objects and updates the Redis database.
+    This allows the GET URL requests to be served in a stateless manner from the Redis database."""
+
+    def run(self):
+        x = 1
+        while True:
+            my_logger.info("Background worker processing %i" % x)
+            x = x + 1
+            time.sleep(1)

@@ -1057,35 +1057,35 @@ class vehicleStatus:
                                    " for vehicle with id " + str(vehicleId), "_actions": actions})
             except Exception as e:
                 my_logger.warn("Cant connect to vehicle:" + str(e) + " for vehicle with id " + str(vehicleId))
-                jsonObjStr = droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
+                json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId) +
-                                   "with connection " + jsonObjStr, "_actions": actions})
+                                   "with connection " + json_str, "_actions": actions})
             vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
-            vehicleStatus["name"] = droneAPIUtils.connectionNameTypeDict[vehicleId]['name']
-            vehicleStatus["vehicleType"] = droneAPIUtils.connectionNameTypeDict[vehicleId]['vehicleType']
+            json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
+            json_obj = json.loads(json_str)
+            vehicle_details = json_obj['vehicle_details']
 
-            vehicleStatus['id'] = vehicleId
-            vehicleStatus['_links'] = {}
-            vehicleStatus['_links']["self"] = {
+            individual_vehicle = {"vehicle_status": vehicleStatus, "vehicle_details": vehicle_details}
+            individual_vehicle['id'] = vehicleId
+            individual_vehicle['_links'] = {}
+            individual_vehicle['_links']["self"] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId),
                 "title": "Get status for vehicle " + str(vehicleId) + "."}
-            vehicleStatus['_links']['homeLocation'] = {
+            individual_vehicle['_links']['homeLocation'] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/homeLocation",
                 "title": "Get the home location for this vehicle"}
-            vehicleStatus['_links']['action'] = {
+            individual_vehicle['_links']['action'] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/action",
                 "title": "Get the actions  for this vehicle."}
-            vehicleStatus['_links']['mission'] = {
+            individual_vehicle['_links']['mission'] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/mission",
                 "title": "Get the current mission commands from the vehicle."}
-            vehicleStatus['_links']['simulator'] = {
+            individual_vehicle['_links']['simulator'] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/simulator",
                 "title": "Get the current simulator parameters from the vehicle."}
-            output = ""
-            outputObj = vehicleStatus
-            outputObj["_actions"] = actions
-            output = json.dumps(outputObj)
-            my_logger.debug("Return: =" + output)
+            individual_vehicle["_actions"] = actions
+            output = json.dumps(individual_vehicle)
+            my_logger.debug("Return: %s" % str(individual_vehicle))
 
         except Exception as e:
             my_logger.exception(e)
@@ -1098,30 +1098,30 @@ class vehicleStatus:
         try:
             my_logger.info("DELETE: vehicleId=" + str(vehicleId))
             # delete docker container for this vehicle
-            jsonObjStr = droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
-            my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
-            jsonObj = json.loads(jsonObjStr)
-            connectionString = jsonObj['connectionString']
+            json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
+            my_logger.debug("redisDbObj = '" + json_str + "'")
+            json_obj = json.loads(json_str)
+            connection_string = json_obj['vehicle_details']['connection_string']
 
-            droneAPIUtils.redisdB.delete("connectionString:" + vehicleId)
-            droneAPIUtils.connectionDict.pop("connectionString:" + vehicleId, None)
+            droneAPIUtils.redisdB.delete("connection_string:" + vehicleId)
+            droneAPIUtils.connectionDict.pop("connection_string:" + vehicleId, None)
             dockerHostsArray = json.loads(droneAPIUtils.redisdB.get("dockerHostsArray"))
 
-            ipAddress = connectionString[4:-6]
-            connectionStringLength = len(connectionString)
-            my_logger.debug("connectionStringLength=" + str(connectionStringLength))
-            port = connectionString[connectionStringLength - 5:]
+            ipAddress = connection_string[4:-6]
+            connection_stringLength = len(connection_string)
+            my_logger.debug("connection_stringLength=" + str(connection_stringLength))
+            port = connection_string[connection_stringLength - 5:]
             index = -1
 
             droneAPIUtils.rebuildDockerHostsArray()
 
-            dockerContainerId = jsonObj['dockerContainerId']
+            docker_container_id = json_obj['host_details']['docker_container_id']
             my_logger.info("Deleting container")
             my_logger.info("dockerHost = '" + ipAddress + "'")
             my_logger.info("port = '" + str(port) + "'")
-            my_logger.info("containerId = '" + dockerContainerId + "'")
+            my_logger.info("containerId = '" + docker_container_id + "'")
             dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + ipAddress + ':4243')  # docker.from_env(version='1.27')
-            container = dockerClient.containers.get(dockerContainerId)
+            container = dockerClient.containers.get(docker_container_id)
             container.stop()
             dockerClient.containers.prune(filters=None)
 
@@ -1156,11 +1156,11 @@ class vehicleStatus:
 
 
 def terminateCloudInstance(vehicleId):
-    jsonObjStr = droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
-    my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
-    jsonObj = json.loads(jsonObjStr)
-    connectionString = jsonObj['connectionString']
-    ipAddress = connectionString[4:-6]
+    json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
+    my_logger.debug("redisDbObj = '" + json_str + "'")
+    json_obj = json.loads(json_str)
+    connection_string = json_obj['host_details']['connection_string']
+    ipAddress = connection_string[4:-6]
 
     try:
         # terminate any AWS instances with that private IP address
@@ -1231,11 +1231,11 @@ def terminateCloudInstance(vehicleId):
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIVehicleStatus.terminateCloudInstance', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIVehicleStatus.terminateCloudInstance" class="source">
     <pre><code>def terminateCloudInstance(vehicleId):
-    jsonObjStr = droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
-    my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
-    jsonObj = json.loads(jsonObjStr)
-    connectionString = jsonObj['connectionString']
-    ipAddress = connectionString[4:-6]
+    json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
+    my_logger.debug("redisDbObj = '" + json_str + "'")
+    json_obj = json.loads(json_str)
+    connection_string = json_obj['host_details']['connection_string']
+    ipAddress = connection_string[4:-6]
 
     try:
         # terminate any AWS instances with that private IP address
@@ -1310,35 +1310,35 @@ def terminateCloudInstance(vehicleId):
                                    " for vehicle with id " + str(vehicleId), "_actions": actions})
             except Exception as e:
                 my_logger.warn("Cant connect to vehicle:" + str(e) + " for vehicle with id " + str(vehicleId))
-                jsonObjStr = droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
+                json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId) +
-                                   "with connection " + jsonObjStr, "_actions": actions})
+                                   "with connection " + json_str, "_actions": actions})
             vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
-            vehicleStatus["name"] = droneAPIUtils.connectionNameTypeDict[vehicleId]['name']
-            vehicleStatus["vehicleType"] = droneAPIUtils.connectionNameTypeDict[vehicleId]['vehicleType']
+            json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
+            json_obj = json.loads(json_str)
+            vehicle_details = json_obj['vehicle_details']
 
-            vehicleStatus['id'] = vehicleId
-            vehicleStatus['_links'] = {}
-            vehicleStatus['_links']["self"] = {
+            individual_vehicle = {"vehicle_status": vehicleStatus, "vehicle_details": vehicle_details}
+            individual_vehicle['id'] = vehicleId
+            individual_vehicle['_links'] = {}
+            individual_vehicle['_links']["self"] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId),
                 "title": "Get status for vehicle " + str(vehicleId) + "."}
-            vehicleStatus['_links']['homeLocation'] = {
+            individual_vehicle['_links']['homeLocation'] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/homeLocation",
                 "title": "Get the home location for this vehicle"}
-            vehicleStatus['_links']['action'] = {
+            individual_vehicle['_links']['action'] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/action",
                 "title": "Get the actions  for this vehicle."}
-            vehicleStatus['_links']['mission'] = {
+            individual_vehicle['_links']['mission'] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/mission",
                 "title": "Get the current mission commands from the vehicle."}
-            vehicleStatus['_links']['simulator'] = {
+            individual_vehicle['_links']['simulator'] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/simulator",
                 "title": "Get the current simulator parameters from the vehicle."}
-            output = ""
-            outputObj = vehicleStatus
-            outputObj["_actions"] = actions
-            output = json.dumps(outputObj)
-            my_logger.debug("Return: =" + output)
+            individual_vehicle["_actions"] = actions
+            output = json.dumps(individual_vehicle)
+            my_logger.debug("Return: %s" % str(individual_vehicle))
 
         except Exception as e:
             my_logger.exception(e)
@@ -1351,30 +1351,30 @@ def terminateCloudInstance(vehicleId):
         try:
             my_logger.info("DELETE: vehicleId=" + str(vehicleId))
             # delete docker container for this vehicle
-            jsonObjStr = droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
-            my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
-            jsonObj = json.loads(jsonObjStr)
-            connectionString = jsonObj['connectionString']
+            json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
+            my_logger.debug("redisDbObj = '" + json_str + "'")
+            json_obj = json.loads(json_str)
+            connection_string = json_obj['vehicle_details']['connection_string']
 
-            droneAPIUtils.redisdB.delete("connectionString:" + vehicleId)
-            droneAPIUtils.connectionDict.pop("connectionString:" + vehicleId, None)
+            droneAPIUtils.redisdB.delete("connection_string:" + vehicleId)
+            droneAPIUtils.connectionDict.pop("connection_string:" + vehicleId, None)
             dockerHostsArray = json.loads(droneAPIUtils.redisdB.get("dockerHostsArray"))
 
-            ipAddress = connectionString[4:-6]
-            connectionStringLength = len(connectionString)
-            my_logger.debug("connectionStringLength=" + str(connectionStringLength))
-            port = connectionString[connectionStringLength - 5:]
+            ipAddress = connection_string[4:-6]
+            connection_stringLength = len(connection_string)
+            my_logger.debug("connection_stringLength=" + str(connection_stringLength))
+            port = connection_string[connection_stringLength - 5:]
             index = -1
 
             droneAPIUtils.rebuildDockerHostsArray()
 
-            dockerContainerId = jsonObj['dockerContainerId']
+            docker_container_id = json_obj['host_details']['docker_container_id']
             my_logger.info("Deleting container")
             my_logger.info("dockerHost = '" + ipAddress + "'")
             my_logger.info("port = '" + str(port) + "'")
-            my_logger.info("containerId = '" + dockerContainerId + "'")
+            my_logger.info("containerId = '" + docker_container_id + "'")
             dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + ipAddress + ':4243')  # docker.from_env(version='1.27')
-            container = dockerClient.containers.get(dockerContainerId)
+            container = dockerClient.containers.get(docker_container_id)
             container.stop()
             dockerClient.containers.prune(filters=None)
 
@@ -1433,26 +1433,26 @@ def terminateCloudInstance(vehicleId):
     try:
         my_logger.info("DELETE: vehicleId=" + str(vehicleId))
         # delete docker container for this vehicle
-        jsonObjStr = droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
-        my_logger.debug("redisDbObj = '" + jsonObjStr + "'")
-        jsonObj = json.loads(jsonObjStr)
-        connectionString = jsonObj['connectionString']
-        droneAPIUtils.redisdB.delete("connectionString:" + vehicleId)
-        droneAPIUtils.connectionDict.pop("connectionString:" + vehicleId, None)
+        json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
+        my_logger.debug("redisDbObj = '" + json_str + "'")
+        json_obj = json.loads(json_str)
+        connection_string = json_obj['vehicle_details']['connection_string']
+        droneAPIUtils.redisdB.delete("connection_string:" + vehicleId)
+        droneAPIUtils.connectionDict.pop("connection_string:" + vehicleId, None)
         dockerHostsArray = json.loads(droneAPIUtils.redisdB.get("dockerHostsArray"))
-        ipAddress = connectionString[4:-6]
-        connectionStringLength = len(connectionString)
-        my_logger.debug("connectionStringLength=" + str(connectionStringLength))
-        port = connectionString[connectionStringLength - 5:]
+        ipAddress = connection_string[4:-6]
+        connection_stringLength = len(connection_string)
+        my_logger.debug("connection_stringLength=" + str(connection_stringLength))
+        port = connection_string[connection_stringLength - 5:]
         index = -1
         droneAPIUtils.rebuildDockerHostsArray()
-        dockerContainerId = jsonObj['dockerContainerId']
+        docker_container_id = json_obj['host_details']['docker_container_id']
         my_logger.info("Deleting container")
         my_logger.info("dockerHost = '" + ipAddress + "'")
         my_logger.info("port = '" + str(port) + "'")
-        my_logger.info("containerId = '" + dockerContainerId + "'")
+        my_logger.info("containerId = '" + docker_container_id + "'")
         dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + ipAddress + ':4243')  # docker.from_env(version='1.27')
-        container = dockerClient.containers.get(dockerContainerId)
+        container = dockerClient.containers.get(docker_container_id)
         container.stop()
         dockerClient.containers.prune(filters=None)
         outputObj = {"status": "success"}
@@ -1497,34 +1497,34 @@ def terminateCloudInstance(vehicleId):
                                " for vehicle with id " + str(vehicleId), "_actions": actions})
         except Exception as e:
             my_logger.warn("Cant connect to vehicle:" + str(e) + " for vehicle with id " + str(vehicleId))
-            jsonObjStr = droneAPIUtils.redisdB.get('connectionString:' + str(vehicleId))
+            json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
             return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId) +
-                               "with connection " + jsonObjStr, "_actions": actions})
+                               "with connection " + json_str, "_actions": actions})
         vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
-        vehicleStatus["name"] = droneAPIUtils.connectionNameTypeDict[vehicleId]['name']
-        vehicleStatus["vehicleType"] = droneAPIUtils.connectionNameTypeDict[vehicleId]['vehicleType']
-        vehicleStatus['id'] = vehicleId
-        vehicleStatus['_links'] = {}
-        vehicleStatus['_links']["self"] = {
+        json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
+        json_obj = json.loads(json_str)
+        vehicle_details = json_obj['vehicle_details']
+        individual_vehicle = {"vehicle_status": vehicleStatus, "vehicle_details": vehicle_details}
+        individual_vehicle['id'] = vehicleId
+        individual_vehicle['_links'] = {}
+        individual_vehicle['_links']["self"] = {
             "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId),
             "title": "Get status for vehicle " + str(vehicleId) + "."}
-        vehicleStatus['_links']['homeLocation'] = {
+        individual_vehicle['_links']['homeLocation'] = {
             "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/homeLocation",
             "title": "Get the home location for this vehicle"}
-        vehicleStatus['_links']['action'] = {
+        individual_vehicle['_links']['action'] = {
             "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/action",
             "title": "Get the actions  for this vehicle."}
-        vehicleStatus['_links']['mission'] = {
+        individual_vehicle['_links']['mission'] = {
             "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/mission",
             "title": "Get the current mission commands from the vehicle."}
-        vehicleStatus['_links']['simulator'] = {
+        individual_vehicle['_links']['simulator'] = {
             "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/simulator",
             "title": "Get the current simulator parameters from the vehicle."}
-        output = ""
-        outputObj = vehicleStatus
-        outputObj["_actions"] = actions
-        output = json.dumps(outputObj)
-        my_logger.debug("Return: =" + output)
+        individual_vehicle["_actions"] = actions
+        output = json.dumps(individual_vehicle)
+        my_logger.debug("Return: %s" % str(individual_vehicle))
     except Exception as e:
         my_logger.exception(e)
         tracebackStr = traceback.format_exc()

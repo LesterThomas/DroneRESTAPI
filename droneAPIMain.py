@@ -153,6 +153,7 @@ def startup():
     droneAPIUtils.initaliseGlobals()
     droneAPIUtils.initiliseRedisDB()
     droneAPIUtils.validateAndRefreshContainers()
+    droneAPIUtils.startBackgroundWorker()
 
     # set API url endpoints and class handlers. Each handler class is in its
     # own python module
