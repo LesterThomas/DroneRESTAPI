@@ -113,6 +113,7 @@ class vehicleIndex:
         return json.dumps(outputObj)
 
     def OPTIONS(self):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS: ")
             droneAPIUtils.applyHeadders()

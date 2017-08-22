@@ -1108,6 +1108,7 @@ class admin:
         return output
 
     def OPTIONS(self):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS")
             # just here to suppor the CORS Cross-Origin security
@@ -1233,6 +1234,7 @@ class admin:
         return output
 
     def OPTIONS(self):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS")
             # just here to suppor the CORS Cross-Origin security
@@ -1338,10 +1340,12 @@ class admin:
 
     
   
+    <div class="desc"><p>This method handles the OPTIONS HTTP verb, required for CORS support.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIAdmin.admin.OPTIONS', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIAdmin.admin.OPTIONS" class="source">
     <pre><code>def OPTIONS(self):
+    """This method handles the OPTIONS HTTP verb, required for CORS support."""
     try:
         my_logger.info("OPTIONS")
         # just here to suppor the CORS Cross-Origin security

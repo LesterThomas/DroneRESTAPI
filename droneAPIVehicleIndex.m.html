@@ -1133,6 +1133,7 @@ class vehicleIndex:
         return json.dumps(outputObj)
 
     def OPTIONS(self):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS: ")
             droneAPIUtils.applyHeadders()
@@ -1353,6 +1354,7 @@ def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
         return json.dumps(outputObj)
 
     def OPTIONS(self):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS: ")
             droneAPIUtils.applyHeadders()
@@ -1467,10 +1469,12 @@ def launchCloudImage(ImageId, InstanceType, SecurityGroupIds):
 
     
   
+    <div class="desc"><p>This method handles the OPTIONS HTTP verb, required for CORS support.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIVehicleIndex.vehicleIndex.OPTIONS', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIVehicleIndex.vehicleIndex.OPTIONS" class="source">
     <pre><code>def OPTIONS(self):
+    """This method handles the OPTIONS HTTP verb, required for CORS support."""
     try:
         my_logger.info("OPTIONS: ")
         droneAPIUtils.applyHeadders()

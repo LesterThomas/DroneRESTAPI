@@ -117,6 +117,7 @@ class vehicleStatus:
         return output
 
     def OPTIONS(self, vehicleId):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS: vehicleId=" + str(vehicleId))
             droneAPIUtils.applyHeadders()

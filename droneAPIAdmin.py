@@ -96,6 +96,7 @@ class admin:
         return output
 
     def OPTIONS(self):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS")
             # just here to suppor the CORS Cross-Origin security

@@ -1099,6 +1099,7 @@ class mission:
         return output
 
     def OPTIONS(self, vehicleId):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS: vehicleId=" + str(vehicleId))
             droneAPIUtils.applyHeadders()
@@ -1344,6 +1345,7 @@ def getMissionActions(vehicleId):
         return output
 
     def OPTIONS(self, vehicleId):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS: vehicleId=" + str(vehicleId))
             droneAPIUtils.applyHeadders()
@@ -1408,10 +1410,12 @@ def getMissionActions(vehicleId):
 
     
   
+    <div class="desc"><p>This method handles the OPTIONS HTTP verb, required for CORS support.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMission.mission.OPTIONS', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIMission.mission.OPTIONS" class="source">
     <pre><code>def OPTIONS(self, vehicleId):
+    """This method handles the OPTIONS HTTP verb, required for CORS support."""
     try:
         my_logger.info("OPTIONS: vehicleId=" + str(vehicleId))
         droneAPIUtils.applyHeadders()

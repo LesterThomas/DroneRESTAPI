@@ -14,8 +14,21 @@ import droneAPIUtils
 my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 
+class CannotArmException(Exception):
+    """This is a custom exception class raised when the vehicle won't arm"""
+    pass
+
+
+class InvalidLocationException(Exception):
+    """This is a custom exception class raised when an invalid Location object is passed"""
+    pass
+
+
 class Action(object):
+    """THis class handles the /vehicle/*/action URL for the drone API."""
+
     def OPTIONS(self, vehicle_id):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS: vehicle_id=" + str(vehicle_id))
             droneAPIUtils.applyHeadders()
@@ -24,7 +37,7 @@ class Action(object):
             output = json.dumps(output_obj)
             my_logger.info("Return: =" + output)
 
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             traceback_str = traceback.format_exc()
             trace_lines = traceback_str.split("\n")
@@ -32,6 +45,8 @@ class Action(object):
         return output
 
     def GET(self, vehicle_id):
+        """This method handles the GET request. It returns the list of previous actions,
+        as well as the actions that are available for the drones current state."""
         try:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
 
@@ -57,7 +72,7 @@ class Action(object):
             available_actions = []
             # available when armed
             my_logger.info("global_relative_frame.alt=%s", vehicleStatus["global_relative_frame"]["alt"])
-            if (vehicleStatus["armed"] == False):
+            if vehicleStatus["armed"] == False:
                 available_actions.append({
                     "name": "Arm",
                     "title": "Arm drone.",
@@ -65,7 +80,7 @@ class Action(object):
                     "method": "POST",
                     "fields": [{"name": "name", "type": "string", "value": "Arm"}]
                 })
-            elif (vehicleStatus["global_relative_frame"]["alt"] > 1):  # if at height of >1 m
+            elif vehicleStatus["global_relative_frame"]["alt"] > 1:  # if at height of >1 m
                 available_actions.append({"name": "Region-of-Interest",
                                           "title": "Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
                                           "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
@@ -166,7 +181,7 @@ class Action(object):
             output_obj['actions'] = droneAPIUtils.actionArrayDict[vehicle_id]
             output = json.dumps(output_obj)
             my_logger.info("Return: =" + output)
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             traceback_str = traceback.format_exc()
             trace_lines = traceback_str.split("\n")
@@ -174,6 +189,7 @@ class Action(object):
         return output
 
     def POST(self, vehicle_id):
+        """This method handles the POST requests to send a new action to the drone."""
         try:
             my_logger.info("POST: vehicle_id=" + str(vehicle_id))
             try:
@@ -250,28 +266,27 @@ class Action(object):
             else:
                 output_obj["action"] = {"status": "error", "name": value, "error": "No action found with name '" + value + "'."}
             action_array = droneAPIUtils.actionArrayDict[vehicle_id]
-            if (len(action_array) == 0):
+            if len(action_array) == 0:
                 output_obj['action']['id'] = 0
             else:
                 output_obj['action']['id'] = action_array[len(action_array) - 1]['action']['id'] + 1
             action_array.append(output_obj)
-            if (len(action_array) > 10):
+            if len(action_array) > 10:
                 action_array.pop(0)
             output_obj['href'] = droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action"
             my_logger.info("Return: =" + json.dumps(output_obj))
 
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             traceback_str = traceback.format_exc()
             trace_lines = traceback_str.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": trace_lines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": trace_lines})
 
         return json.dumps(output_obj)
 
 
-# methods to support the different actions
 def rtl(inVehicle):
-
+    """This function sends a rtl (return-to-launch) action to the drone."""
     output_obj = {}
     if inVehicle.armed:
         output_obj["name"] = "Return-to-Launch"
@@ -296,45 +311,58 @@ def rtl(inVehicle):
 
 
 def arm(inVehicle, invehicle_id):
-    output_obj = {}
-    if inVehicle.is_armable:
-        output_obj["name"] = "Arm"
-        output_obj["status"] = "success"
-        # coodinates are same as current + height
-        currentLocation = inVehicle.location.global_relative_frame
-        output_obj["coordinate"] = [currentLocation.lat, currentLocation.lon, 0]
-        output_obj["param1"] = 1
-        output_obj["param2"] = 0
-        output_obj["param3"] = 0
-        output_obj["param4"] = 0
-        output_obj["command"] = 400
-        my_logger.info("Arming motors")
-        # Copter should arm in GUIDED mode
-        inVehicle.mode = VehicleMode("GUIDED")
-        inVehicle.armed = True
+    """This function arms the drone."""
+    try:
+        output_obj = {}
+        if inVehicle.is_armable:
+            output_obj["name"] = "Arm"
+            output_obj["status"] = "success"
+            # coodinates are same as current + height
+            currentLocation = inVehicle.location.global_relative_frame
+            output_obj["coordinate"] = [currentLocation.lat, currentLocation.lon, 0]
+            output_obj["param1"] = 1
+            output_obj["param2"] = 0
+            output_obj["param3"] = 0
+            output_obj["param4"] = 0
+            output_obj["command"] = 400
+            my_logger.info("Arming motors")
+            # Copter should arm in GUIDED mode
+            # inVehicle.mode = VehicleMode("GUIDED")
+            inVehicle.armed = True
 
-        output_obj["zone"] = {
-            "shape": {
-                "name": "circle",
-                "lat": currentLocation.lat,
-                "lon": currentLocation.lon,
-                "radius": 500}}
-        if (output_obj["zone"]["shape"]["lat"] != 0):  # only automatically assign a zone if it is not 0,0,0,0
-            droneAPIUtils.authorizedZoneDict[invehicle_id] = output_obj["zone"]
+            output_obj["zone"] = {
+                "shape": {
+                    "name": "circle",
+                    "lat": currentLocation.lat,
+                    "lon": currentLocation.lon,
+                    "radius": 500}}
+            if output_obj["zone"]["shape"]["lat"] != 0:  # only automatically assign a zone if it is not 0,0,0,0
+                droneAPIUtils.authorizedZoneDict[invehicle_id] = output_obj["zone"]
 
-        # Confirm vehicle armed before attempting to take off
-        while not inVehicle.armed:
-            my_logger.info(" Waiting for arming...")
-            time.sleep(1)
-    else:
+            # Confirm vehicle armed before attempting to take off - if drone doesn't arm in 5s then raise exception
+            start_time = time.time()  # start time in seconds since the epoch
+            while not inVehicle.armed:
+                my_logger.info(" Waiting for arming...")
+                if time.time() - start_time > 5:  # if more than 5 seconds then raise Exception
+                    raise CannotArmException("Drone did not arm within 5 seconds")
+                time.sleep(1)
+        else:
+            output_obj["name"] = "Arm"
+            output_obj["status"] = "Error"
+            output_obj["error"] = "vehicle not armable"
+            my_logger.warn("vehicle not armable")
+
+    except CannotArmException as ex:
         output_obj["name"] = "Arm"
         output_obj["status"] = "Error"
-        output_obj["error"] = "vehicle not armable"
-        my_logger.warn("vehicle not armable")
+        output_obj["error"] = "vehicle did not arm within 5 seconds."
+        my_logger.warn("vehicle did not arm within 5 seconds.")
+
     return output_obj
 
 
 def takeoff(inVehicle, inHeight):
+    """This function sends a takeoff action to the drone."""
     output_obj = {}
     if inVehicle.armed:
         output_obj["name"] = "Takeoff"
@@ -360,6 +388,8 @@ def takeoff(inVehicle, inHeight):
 
 
 def auto(inVehicle):
+    """This function puts the drone in auto mode to follow whatever mission
+    was previously uploaded to the drone."""
     output_obj = {}
     if inVehicle.armed:
         output_obj["name"] = "Start-Mission"
@@ -378,6 +408,7 @@ def auto(inVehicle):
 
 
 def land(inVehicle):
+    """This function sends a land action to the drone."""
     output_obj = {}
     if inVehicle.armed:
         output_obj["name"] = "Land"
@@ -400,9 +431,7 @@ def land(inVehicle):
 
 
 def goto(inVehicle, dNorth, dEast, dDown):
-    """
-    Moves the vehicle to a position dNorth metres North and dEast metres East of the current position.
-    """
+    """This function moves the vehicle to a position dNorth metres North and dEast metres East of the current position."""
     output_obj = {}
     if inVehicle.armed:
         distance = round(math.sqrt(dNorth * dNorth + dEast * dEast))
@@ -458,11 +487,13 @@ def get_location_metres(original_location, dNorth, dEast):
     elif isinstance(original_location, LocationGlobalRelative):
         target_location = LocationGlobalRelative(newlat, newlon, original_location.alt)
     else:
-        raise Exception("Invalid Location object passed")
+        raise InvalidLocationException("Invalid Location object passed")
     return target_location
 
 
 def gotoRelative(inVehicle, north, east, down):
+    """This function moves the vehicle to a position north metres North and east metres
+    East and down meters below the Home position."""
     output_obj = {}
     if inVehicle.armed:
         output_obj["name"] = "Goto-Relative-Home"
@@ -471,7 +502,7 @@ def gotoRelative(inVehicle, north, east, down):
 
         home_location = inVehicle.home_location
 
-        #currentLocation = inVehicle.location.global_relative_frame
+        # currentLocation = inVehicle.location.global_relative_frame
         target_location = get_location_metres(home_location, north, east)
         target_location.alt = home_location.alt - down
         distance = round(
@@ -501,13 +532,13 @@ def gotoRelative(inVehicle, north, east, down):
 
 
 def goto_absolute(inVehicle, inLocation):
+    """This function moves the vehicle to a position defined by lat, lon, alt."""
     output_obj = {}
     if inVehicle.armed:
         output_obj["name"] = "Goto-Absolute"
         output_obj["status"] = "success"
         my_logger.debug(" Goto Location: %s" % inLocation)
-        output = {"global_frame": inLocation}
-        my_logger.debug("lat" + str(inLocation['lat']))
+        my_logger.debug("lat %s" % str(inLocation['lat']))
 
         distance = round(
             droneAPIUtils.distanceInMeters(
@@ -538,12 +569,13 @@ def goto_absolute(inVehicle, inLocation):
 
 
 def roi(inVehicle, inLocation):
+    """This function points the vehicle in the direction of a roi (region
+    of interest)."""
     output_obj = {}
     output_obj["name"] = "Region-of-Interest"
     output_obj["status"] = "success"
     my_logger.debug(" Home Location: %s" % inLocation)
-    output = {"home_location": inLocation}
-    my_logger.debug("lat" + str(inLocation['lat']))
+    my_logger.debug("lat %s" % str(inLocation['lat']))
     # coodinates are target
     output_obj["coordinate"] = [inLocation['lat'], inLocation['lon'], inLocation['alt']]
     output_obj["param1"] = 0
@@ -551,27 +583,24 @@ def roi(inVehicle, inLocation):
     output_obj["param3"] = 0
     output_obj["param4"] = 0
     output_obj["command"] = 80
-    set_roi(inVehicle, inLocation)
-    return output_obj
-
-
-def set_roi(inVehicle, location):
     # create the MAV_CMD_DO_SET_ROI command
     msg = inVehicle.message_factory.command_long_encode(
         0, 0,    # target system, target component
         mavutil.mavlink.MAV_CMD_DO_SET_ROI,  # command
         0,  # confirmation
         0, 0, 0, 0,  # params 1-4
-        location['lat'],
-        location['lon'],
-        location['alt']
+        inLocation['lat'],
+        inLocation['lon'],
+        inLocation['alt']
     )
     # send command to vehicle
     inVehicle.send_mavlink(msg)
+    return output_obj
 
 
 def updateActionStatus(inVehicle, invehicle_id):
-    # test to see whether the vehicle is at the target location of the action
+    """This function allows you to monitor the progress of the last action.
+    It updates the action status until it is complete (or errors) or is superceeded."""
     my_logger.info("############# in updateActionStatus")
 
     my_logger.info("invehicle_id")
@@ -584,16 +613,16 @@ def updateActionStatus(inVehicle, invehicle_id):
 
     my_logger.info(action_array)
 
-    if (len(action_array) > 0):
+    if len(action_array) > 0:
         latestAction = action_array[len(action_array) - 1]
 
-        if (latestAction['action']['status'] == "Error"):
+        if latestAction['action']['status'] == "Error":
             latestAction['complete'] = False
             latestAction['completeStatus'] = 'Error'
             return
         my_logger.debug("Latest Action:" + latestAction['action']['name'])
 
-        if (latestAction['action']['name'] == 'Start-Mission'):
+        if latestAction['action']['name'] == 'Start-Mission':
             # cant monitor progress at the moment
             my_logger.info("Cant monitor progress for mission")
         else:
@@ -604,7 +633,7 @@ def updateActionStatus(inVehicle, invehicle_id):
             vehicleCoordinates = inVehicle.location.global_relative_frame  # object with lat,lon,alt attributes
             # Return-to-launch uses global_frame (alt is absolute)
 
-            if (latestAction['action']['name'] == 'Return-to-Launch'):
+            if latestAction['action']['name'] == 'Return-to-Launch':
                 vehicleCoordinates = inVehicle.location.global_frame  # object with lat,lon,alt attributes
 
             horizontalDistance = droneAPIUtils.distanceInMeters(
@@ -612,7 +641,7 @@ def updateActionStatus(inVehicle, invehicle_id):
             verticalDistance = abs(targetCoordinates[2] - vehicleCoordinates.alt)
             latestAction['horizontalDistance'] = round(horizontalDistance, 2)
             latestAction['verticalDistance'] = round(verticalDistance, 2)
-            if ((horizontalDistance < 5) and (verticalDistance < 1)):
+            if (horizontalDistance < 5) and (verticalDistance < 1):
                 latestAction['complete'] = True
                 latestAction['completeStatus'] = 'Complete'
             else:
@@ -623,7 +652,7 @@ def updateActionStatus(inVehicle, invehicle_id):
                 latestAction['complete'] = True
                 latestAction['completeStatus'] = 'Complete'
 
-    if (len(action_array) > 1):  # check if previous actions completed or were interrupted
+    if len(action_array) > 1:  # check if previous actions completed or were interrupted
         previousAction = action_array[len(action_array) - 2]
         if (previousAction.get('complete', False) == False):
             if (previousAction.get('completeStatus', 'In progress') == "In progress"):

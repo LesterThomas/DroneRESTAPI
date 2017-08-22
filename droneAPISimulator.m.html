@@ -1077,6 +1077,7 @@ class simulator:
         return output
 
     def OPTIONS(self, vehicleId):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS: vehicleId=" + str(vehicleId))
             # just here to suppor the CORS Cross-Origin security
@@ -1285,6 +1286,7 @@ def getSimulatorParams(vehicleId):
         return output
 
     def OPTIONS(self, vehicleId):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
             my_logger.info("OPTIONS: vehicleId=" + str(vehicleId))
             # just here to suppor the CORS Cross-Origin security
@@ -1350,10 +1352,12 @@ def getSimulatorParams(vehicleId):
 
     
   
+    <div class="desc"><p>This method handles the OPTIONS HTTP verb, required for CORS support.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPISimulator.simulator.OPTIONS', this);">Show source &equiv;</a></p>
   <div id="source-droneAPISimulator.simulator.OPTIONS" class="source">
     <pre><code>def OPTIONS(self, vehicleId):
+    """This method handles the OPTIONS HTTP verb, required for CORS support."""
     try:
         my_logger.info("OPTIONS: vehicleId=" + str(vehicleId))
         # just here to suppor the CORS Cross-Origin security

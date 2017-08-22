@@ -15,16 +15,6 @@ import redis
 import docker
 
 import droneAPIAction
-# define global variables
-my_logger = None
-connectionDict = None
-connectionNameTypeDict = None
-actionArrayDict = None
-authorizedZoneDict = None
-defaultDockerHost = ""
-dronesimImage = ""
-homeDomain = ""
-redisdB = None
 
 
 def initaliseLogger():
