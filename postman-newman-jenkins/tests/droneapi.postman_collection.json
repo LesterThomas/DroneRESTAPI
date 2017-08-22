@@ -57,7 +57,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"name\":\"test\",\"vehicleType\":\"simulated\",\"lat\":51.4,\"lon\":-1.3432,\"alt\":105}"
+					"raw": "{\"name\":\"test\",\"vehicle_type\":\"simulated\",\"lat\":51.4,\"lon\":-1.3432,\"alt\":105}"
 				},
 				"description": "Add a new simulated drone"
 			},
@@ -112,27 +112,26 @@
 							"    ",
 							"    postman.setNextRequest(\"http://droneapi.ddns.net:1235/vehicle\"); //if vehicle starting up then re-try",
 							"} else {",
-							"    if (jsonData.is_armable){",
+							"    if (jsonData.vehicle_status.is_armable){",
 							"        tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"        tests[\"Response time is less than 2s\"] = responseTime < 2000;",
 							"        tests[\"Self link returned\"] = jsonData._links.self.href === request.url;",
-							"        tests[\"battery value returned with voltage > 10\"] = (jsonData.battery.voltage>10);",
-							"        tests[\"groundspeed value returned \"] = (jsonData.groundspeed);",
-							"        tests[\"is_armable value returned \"] = (jsonData.is_armable);",
-							"        tests[\"attitude value returned \"] = (jsonData.attitude);",
-							"        tests[\"last_heartbeat value returned < 2s \"] = (jsonData.last_heartbeat<2);",
-							"        tests[\"vehicleType value returned \"] = (jsonData.vehicleType);",
+							"        tests[\"battery value returned with voltage > 10\"] = (jsonData.vehicle_status.battery.voltage>10);",
+							"        tests[\"groundspeed value returned \"] = (jsonData.vehicle_status.groundspeed);",
+							"        tests[\"is_armable value returned \"] = (jsonData.vehicle_status.is_armable);",
+							"        tests[\"attitude value returned \"] = (jsonData.vehicle_status.attitude);",
+							"        tests[\"last_heartbeat value returned < 2s \"] = (jsonData.vehicle_status.last_heartbeat<2);",
+							"        tests[\"vehicleType value returned \"] = (jsonData.vehicle_details.vehicle_type);",
 							"        tests[\"id value returned \"] = (jsonData.id=postman.getEnvironmentVariable(\"droneId\"));",
-							"        tests[\"vehicleType value returned \"] = (jsonData.vehicleType);",
-							"        tests[\"version value returned \"] = (jsonData.version);",
-							"        tests[\"gps_0 value returned \"] = (jsonData.gps_0);",
-							"        tests[\"gimbal value returned \"] = (jsonData.gimbal);",
-							"        tests[\"ekf_ok value returned true \"] = (jsonData.ekf_ok===true);",
-							"        tests[\"global_frame value returned \"] = (jsonData.global_frame);",
-							"        tests[\"system_status value returned \"] = (jsonData.system_status);",
-							"        tests[\"mode value returned \"] = (jsonData.mode);",
-							"        tests[\"local_frame value returned \"] = (jsonData.local_frame);",
-							"        tests[\"velocity value returned \"] = (jsonData.velocity);",
+							"        tests[\"version value returned \"] = (jsonData.vehicle_status.version);",
+							"        tests[\"gps_0 value returned \"] = (jsonData.vehicle_status.gps_0);",
+							"        tests[\"gimbal value returned \"] = (jsonData.vehicle_status.gimbal);",
+							"        tests[\"ekf_ok value returned true \"] = (jsonData.vehicle_status.ekf_ok===true);",
+							"        tests[\"global_frame value returned \"] = (jsonData.vehicle_status.global_frame);",
+							"        tests[\"system_status value returned \"] = (jsonData.vehicle_status.system_status);",
+							"        tests[\"mode value returned \"] = (jsonData.vehicle_status.mode);",
+							"        tests[\"local_frame value returned \"] = (jsonData.vehicle_status.local_frame);",
+							"        tests[\"velocity value returned \"] = (jsonData.vehicle_status.velocity);",
 							"        tests[\"_actions value returned \"] = (jsonData._actions);",
 							"    } else {",
 							"        tests[\"Drone not armable\"] = (true);",
@@ -418,7 +417,7 @@
 			"response": []
 		},
 		{
-			"name": "http://droneapi.ddns.net:1235/vehicle?details=true",
+			"name": "http://droneapi.ddns.net:1235/vehicle?status=true",
 			"event": [
 				{
 					"listen": "test",
@@ -431,7 +430,7 @@
 							"tests[\"Body contains vehicle\"] = responseBody.has(\"vehicle\");",
 							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
 							"tests[\"Drone Array has at least one Drone\"] = jsonData._embedded.vehicle.length>0;",
-							"tests[\"Drone Array has vehicleStatus\"] = jsonData._embedded.vehicle[0].vehicleStatus",
+							"tests[\"Drone Array has vehicleStatus\"] = jsonData._embedded.vehicle[0].vehicle_status",
 							"",
 							"",
 							""
@@ -441,7 +440,7 @@
 			],
 			"request": {
 				"url": {
-					"raw": "http://{{url}}/vehicle?details=true",
+					"raw": "http://{{url}}/vehicle?status=true",
 					"protocol": "http",
 					"host": [
 						"{{url}}"
@@ -451,7 +450,7 @@
 					],
 					"query": [
 						{
-							"key": "details",
+							"key": "status",
 							"value": "true",
 							"equals": true,
 							"description": ""
