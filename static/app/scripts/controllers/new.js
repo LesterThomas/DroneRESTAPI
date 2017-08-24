@@ -7,14 +7,14 @@
  * # IndividualCtrl
  * Controller of the droneFrontendApp
  */
-   
+
 angular.module('droneFrontendApp')
   .controller('NewCtrl', ['$scope', '$http','$interval','$location','droneService','ModalService',function ($scope,$http,$interval,$location,droneService,ModalService) {
-	
+
     $scope.apiURL=droneService.apiURL;
     $scope.consoleRootURL=droneService.consoleRootURL;
 
-  	console.log('Started New controller'); 
+  	console.log('Started New controller');
     $scope.connectionString="tcp:ip_address:port";
     $scope.connectionStringIP="ip_address";
     $scope.connectionStringPort="port";
@@ -29,13 +29,13 @@ angular.module('droneFrontendApp')
         $scope.connectionString=$scope.connectionStringType+":"+$scope.connectionStringIP+":"+$scope.connectionStringPort
   }
 
-  $scope.$watch("connectionStringIP", function (newValue) {     
+  $scope.$watch("connectionStringIP", function (newValue) {
     $scope.updateConnectionString()
   });
-  $scope.$watch("connectionStringPort", function (newValue) {     
+  $scope.$watch("connectionStringPort", function (newValue) {
     $scope.updateConnectionString()
   });
-  $scope.$watch("connectionStringType", function (newValue) {     
+  $scope.$watch("connectionStringType", function (newValue) {
     $scope.updateConnectionString()
   });
 
@@ -45,9 +45,9 @@ angular.module('droneFrontendApp')
 
 
     var payload={};
-    payload['vehicleType']="real";
+    payload['vehicle_type']="real";
     payload['name']=$scope.vehicleName;
-    payload['connectionString']=$scope.connectionString;
+    payload['connection_string']=$scope.connectionString;
     console.log('Sending POST with payload ',payload);
 
     $http.post($scope.apiURL + 'vehicle',payload,{headers : { 'Content-Type' : 'application/json; charset=UTF-8'  }}).then(function(data, status, headers, config) {
@@ -92,10 +92,10 @@ angular.module('droneFrontendApp')
 
   $scope.$on('$destroy', function() {
     // clean up stuff
-      console.log('###################################################'); 
-      console.log('Unloading New Controller'); 
-  })    
-  
+      console.log('###################################################');
+      console.log('Unloading New Controller');
+  })
+
 
 
 

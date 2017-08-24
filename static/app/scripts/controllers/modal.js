@@ -7,12 +7,12 @@
  * # IndividualCtrl
  * Controller of the droneFrontendApp
  */
-   
+
 angular.module('droneFrontendApp')
   .controller('ModalCtrl', ['$scope','$http','$interval','$location','droneService',function ($scope, $http, $interval, $location,droneService,close) {
-	
 
-  	console.log('Started modal controller'); 
+
+  	console.log('Started modal controller');
     $scope.apiURL=droneService.apiURL;
     $scope.consoleRootURL=droneService.consoleRootURL;
 
@@ -24,7 +24,7 @@ angular.module('droneFrontendApp')
 	$scope.intervalTimer=null;
 
 	var payload={};
-	payload['vehicleType']="simulated";
+	payload['vehicle_type']="simulated";
 	payload['name']=droneService.droneName;
     payload['lat']=droneService.lat;
     payload['lon']=droneService.lon;
