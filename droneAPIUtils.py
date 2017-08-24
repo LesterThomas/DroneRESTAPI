@@ -368,7 +368,7 @@ def getVehicleStatus(inVehicle, inVehicleId):
             outputObj["global_frame"]["lon"])
         if (distance > 500):
             droneAPIAction.rtl(inVehicle)
-    my_logger.info("Vehicle status output: %s" % outputObj)
+    my_logger.debug("Vehicle status output: %s" % outputObj)
 
     return outputObj
 
@@ -478,6 +478,6 @@ class worker(Thread):
     def run(self):
         x = 1
         while True:
-            my_logger.info("Background worker processing %i" % x)
+            my_logger.debug("Background worker processing %i" % x)
             x = x + 1
             time.sleep(1)
