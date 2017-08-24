@@ -17,47 +17,47 @@ angular.module('droneFrontendApp')
 	updateDrones();
 	//this.queryAdvisories(51.3793,-1.1954);
 	function updateDrones() {
-			$http.get(self.apiURL + 'vehicle?details=true').
+			$http.get(self.apiURL + 'vehicle?status=true').
 			    then(function(data, status, headers, config) {
-						console.debug('API get success',data,status);	
+						console.debug('API get success',data,status);
 						self.drones.collection=data.data._embedded.vehicle;
 
 						for ( var droneId in self.drones.collection){
 								//manipulate the model
 							var drone=self.drones.collection[droneId];
-							console.debug('Drone:',drone);	
-							if (drone.vehicleStatus){
-								if (drone.vehicleStatus.armed==true) {
-									drone.vehicleStatus.armed_status="ARMED";
-									drone.vehicleStatus.armed_colour={color:'red'};
+							console.debug('Drone:',drone);
+							if (drone.vehicle_status){
+								if (drone.vehicle_status.armed==true) {
+									drone.vehicle_status.armed_status="ARMED";
+									drone.vehicle_status.armed_colour={color:'red'};
 								} else {
-									drone.vehicleStatus.armed_status="DISARMED";
-									drone.vehicleStatus.armed_colour={color:'green'};
+									drone.vehicle_status.armed_status="DISARMED";
+									drone.vehicle_status.armed_colour={color:'green'};
 								}
-								if (drone.vehicleStatus.last_heartbeat<1) {
-									drone.vehicleStatus.heartbeat_status="OK";
-									drone.vehicleStatus.heartbeat_colour={color:'green'};
+								if (drone.vehicle_status.last_heartbeat<1) {
+									drone.vehicle_status.heartbeat_status="OK";
+									drone.vehicle_status.heartbeat_colour={color:'green'};
 								} else {
-									drone.vehicleStatus.heartbeat_status="Err- " + Math.round(drone.vehicleStatus.last_heartbeat) + " s";
-									drone.vehicleStatus.heartbeat_colour={color:'red'};
+									drone.vehicle_status.heartbeat_status="Err- " + Math.round(drone.vehicle_status.last_heartbeat) + " s";
+									drone.vehicle_status.heartbeat_colour={color:'red'};
 								}
-								if (drone.vehicleStatus.ekf_ok==true) {
-									drone.vehicleStatus.ekf_status="OK";
-									drone.vehicleStatus.ekf_colour={color:'green'};
+								if (drone.vehicle_status.ekf_ok==true) {
+									drone.vehicle_status.ekf_status="OK";
+									drone.vehicle_status.ekf_colour={color:'green'};
 								} else {
-									drone.vehicleStatus.ekf_status="EFK ERROR";
-									drone.vehicleStatus.ekf_colour={color:'red'};
+									drone.vehicle_status.ekf_status="EFK ERROR";
+									drone.vehicle_status.ekf_colour={color:'red'};
 								}
-								drone.vehicleStatus.distance_home= Math.sqrt((drone.vehicleStatus.local_frame.east)*(drone.vehicleStatus.local_frame.east)+(drone.vehicleStatus.local_frame.north)*(drone.vehicleStatus.local_frame.north)); 
-							}  
+								drone.vehicle_status.distance_home= Math.sqrt((drone.vehicle_status.local_frame.east)*(drone.vehicle_status.local_frame.east)+(drone.vehicle_status.local_frame.north)*(drone.vehicle_status.local_frame.north));
+							}
 						}
-					
 
-	                          
+
+
 					},
 					function(data, status, headers, config) {
 					  // log error
-						console.log('API get error',data, status, headers, config);	
+						console.log('API get error',data, status, headers, config);
 					});
 
 		}
@@ -65,7 +65,7 @@ angular.module('droneFrontendApp')
 	this.queryAdvisories=function(inLat,inLon){
 			var airmapURL='https://api.airmap.com/status/v2/point?latitude='+inLat+'&longitude='+inLon+'&buffer=10000&weather=true';
 			console.log('AIRMAP URL:',airmapURL);
-			$http.get(airmapURL, { 
+			$http.get(airmapURL, {
 				headers: {'X-API-Key': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVkZW50aWFsX2lkIjoiY3JlZGVudGlhbHxBendXTDJKaGF4MEVRWUNlQlJCR2VVb0dKV2VhIiwiYXBwbGljYXRpb25faWQiOiJhcHBsaWNhdGlvbnxrOVFBZEJ3aE93M0JQT2ZZRzZlZ0pVUXdFRVhMIiwib3JnYW5pemF0aW9uX2lkIjoiZGV2ZWxvcGVyfE43Z2Q2eURobkdubnFOc2Q5eEpiS2hiWm1vWCIsImlhdCI6MTUwMDIwMTczOH0.HX-RbNqEGq_ic1ys0U5dvZCtvCPCgz2_z8ggxv5SHdo'}
 				}).
 			    then(function(data, status, headers, config) {
@@ -81,18 +81,18 @@ angular.module('droneFrontendApp')
 						self.advisories.collection[inAdvisories[advisoryIndex].id]=inAdvisories[advisoryIndex];
 					}
 					//calculate max safe distance
-					
+
 					self.advisories.max_safe_distance=shortest_distance;
 					console.log('Query Advisories',self.advisories);
-					
+
 				},
 				function(data, status, headers, config) {
 				  // log error
 					console.log('AIRMAP API get error',data, status, headers, config);
 				});
-		
+
 	}
-	
+
 }]);
 
 

@@ -143,13 +143,13 @@ class Action(object):
                                                       "value": "Goto-Relative-Home"},
                                                      {"name": "north",
                                                       "type": "float",
-                                                      "value": 30},
+                                                      "value": 0},
                                                      {"name": "east",
                                                       "type": "float",
-                                                      "value": 30},
+                                                      "value": 0},
                                                      {"name": "up",
                                                       "type": "float",
-                                                      "value": 10}]})
+                                                      "value": 15}]})
                 available_actions.append({"name": "Goto-Relative-Current",
                                           "title": "Go to the location <north> meters North, <east> meters East and <up> meters vertically from the current location.",
                                           "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
@@ -159,20 +159,20 @@ class Action(object):
                                                       "value": "Goto-Relative-Current"},
                                                      {"name": "north",
                                                       "type": "float",
-                                                      "value": 30},
+                                                      "value": 20},
                                                      {"name": "east",
                                                       "type": "float",
-                                                      "value": 30},
+                                                      "value": 20},
                                                      {"name": "up",
                                                       "type": "float",
-                                                      "value": 10}]})
+                                                      "value": 0}]})
             elif vehicleStatus["armed"]:
                 available_actions.append({
                     "name": "Takeoff",
                     "title": "Takeoff in GUIDED mode to height of <height> (default 20m).",
                     "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
                     "method": "POST",
-                    "fields": [{"name": "name", "type": "string", "value": "Takeoff"}, {"name": "height", "type": "float", "value": 30}]
+                    "fields": [{"name": "name", "type": "string", "value": "Takeoff"}, {"name": "height", "type": "float", "value": 20}]
                 })
 
             output_obj['_actions'] = available_actions
@@ -326,8 +326,9 @@ def arm(inVehicle, invehicle_id):
             output_obj["param4"] = 0
             output_obj["command"] = 400
             my_logger.info("Arming motors")
-            # Copter should arm in GUIDED mode
-            # inVehicle.mode = VehicleMode("GUIDED")
+            # If vehicle is in a non armable mode, change to GUIDED mode
+            if (inVehicle.mode.name == 'RTL') or (inVehicle.mode.name == 'Land'):
+                inVehicle.mode = VehicleMode("GUIDED")
             inVehicle.armed = True
 
             output_obj["zone"] = {

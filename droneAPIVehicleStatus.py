@@ -76,6 +76,9 @@ class vehicleStatus:
     def DELETE(self, vehicleId):
         try:
             my_logger.info("DELETE: vehicleId=" + str(vehicleId))
+
+            # remove reference t dronekit object
+            droneAPIUtils.connectionDict[vehicleId] = None
             # delete docker container for this vehicle
             json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
             my_logger.debug("redisDbObj = '" + json_str + "'")
