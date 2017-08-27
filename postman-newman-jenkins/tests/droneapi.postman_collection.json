@@ -107,8 +107,8 @@
 						"exec": [
 							"",
 							"var jsonData = JSON.parse(responseBody);",
-							"if (jsonData.error){",
-							"    tests[\"Vehicle starting up\"] = responseBody.has('starting up');",
+							"if (!jsonData.vehicle_status){",
+							"    tests[\"Vehicle starting up\"] = true;",
 							"    ",
 							"    postman.setNextRequest(\"http://droneapi.ddns.net:1235/vehicle\"); //if vehicle starting up then re-try",
 							"} else {",
