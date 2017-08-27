@@ -28,23 +28,9 @@ class vehicleStatus:
             actions = [{"method": "DELETE", "href": droneAPIUtils.homeDomain + "/vehicle/" +
                         str(vehicleId), "title": "Delete connection to vehicle " + str(vehicleId)}]
 
-            try:
-                inVehicle = droneAPIUtils.connectVehicle(vehicleId)
-            except Warning as w:
-                my_logger.warn("Cant connect to vehicle: " + str(w) + " for vehicle with id " + str(vehicleId))
-                return json.dumps({"error": "Cant connect to vehicle: " + str(w) +
-                                   " for vehicle with id " + str(vehicleId), "_actions": actions})
-            except Exception as e:
-                my_logger.warn("Cant connect to vehicle:" + str(e) + " for vehicle with id " + str(vehicleId))
-                json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
-                return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId) +
-                                   "with connection " + json_str, "_actions": actions})
-            vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
             json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
-            json_obj = json.loads(json_str)
-            vehicle_details = json_obj['vehicle_details']
+            individual_vehicle = json.loads(json_str)
 
-            individual_vehicle = {"vehicle_status": vehicleStatus, "vehicle_details": vehicle_details}
             individual_vehicle['id'] = vehicleId
             individual_vehicle['_links'] = {}
             individual_vehicle['_links']["self"] = {

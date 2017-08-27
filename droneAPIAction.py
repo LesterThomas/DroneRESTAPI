@@ -327,7 +327,7 @@ def arm(inVehicle, invehicle_id):
             output_obj["command"] = 400
             my_logger.info("Arming motors")
             # If vehicle is in a non armable mode, change to GUIDED mode
-            if (inVehicle.mode.name == 'RTL') or (inVehicle.mode.name == 'Land'):
+            if (inVehicle.mode.name == 'RTL') or (inVehicle.mode.name == 'Land') or (inVehicle.mode.name == 'AUTO'):
                 inVehicle.mode = VehicleMode("GUIDED")
             inVehicle.armed = True
 

@@ -26,7 +26,7 @@ def initaliseLogger():
     main_logger = logging.getLogger("DroneAPIServer")
     LOG_FILENAME = 'droneapi.log'
     main_logger.setLevel(logging.INFO)
-    handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=200000, backupCount=5)
+    handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=2000000, backupCount=5)
     formatter = logging.Formatter("%(levelname)s - %(message)s")
     handler.setFormatter(formatter)
     main_logger.addHandler(handler)
@@ -306,7 +306,6 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
 def getVehicleStatus(inVehicle, inVehicleId):
     # inVehicle is an instance of the Vehicle class
     outputObj = {}
-    web.header('Content-Type', 'application/json')
     my_logger.debug("Autopilot Firmware version: %s" % inVehicle.version)
     outputObj["version"] = str(inVehicle.version)
     my_logger.debug("Global Location: %s" % inVehicle.location.global_frame)
@@ -449,11 +448,12 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
     my_logger.info("adding connection_string to Redis db with key '" + "connection_string:" + str(key) + "'")
     droneDBDetails = {"vehicle_details": {"connection_string": connection,
                                           "name": vehicleName,
+                                          "port": hostAndPort['port'],
                                           "vehicle_type": droneType},
                       "host_details": {"host": hostAndPort['image'],
-                                       "port": hostAndPort['port'],
                                        "start_time": time.time(),
                                        "docker_container_id": docker_container_id}}
+
     if (droneType == 'real'):
         droneDBDetails['vehicle_details']['drone_connect_to'] = hostAndPort['port'] + 10
         droneDBDetails['vehicle_details']['groundstation_connect_to'] = hostAndPort['port'] + 20
@@ -476,8 +476,43 @@ class worker(Thread):
     This allows the GET URL requests to be served in a stateless manner from the Redis database."""
 
     def run(self):
-        x = 1
-        while True:
-            my_logger.debug("Background worker processing %i" % x)
-            x = x + 1
-            time.sleep(1)
+        try:
+            x = 1
+            while True:
+                my_logger.info("Background worker processing %i" % x)
+                x = x + 1
+                start_time = time.time()
+                keys = redisdB.keys("connection_string:*")
+                for key in keys:
+                    my_logger.info("key = '" + key + "'")
+                    json_str = redisdB.get(key)
+                    my_logger.info("redisDbObj = '" + json_str + "'")
+                    json_obj = json.loads(json_str)
+                    vehicle_id = key[18:]
+                    try:
+                        vehicle_obj = connectVehicle(vehicle_id)
+                        vehicle_status = getVehicleStatus(vehicle_obj, vehicle_id)
+                        json_obj['vehicle_status'] = vehicle_status
+                        redisdB.set(key, json.dumps(json_obj))
+                    except Warning as warn:
+                        my_logger.info("Caught warning in worker.run connectVehicle: " + str(warn))
+                    except APIException as ex:
+                        # these can safely be ignored during vehicle startup
+                        my_logger.info("Caught exception: APIException in worker.run connectVehicle")
+                        my_logger.exception(ex)
+                    except Exception as ex:
+                        my_logger.warn("Caught exception: Unexpected error in worker.run connectVehicle")
+                        my_logger.exception(ex)
+                        tracebackStr = traceback.format_exc()
+                        traceLines = tracebackStr.split("\n")
+
+                elapsed_time = time.time() - start_time
+                my_logger.info("Background processing took %f" % elapsed_time)
+                if (elapsed_time < .25):
+                    time.sleep(.25 - elapsed_time)
+        except Exception as ex:
+            my_logger.warn("Caught exception: Unexpected error in worker.run")
+            my_logger.exception(ex)
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+        return
