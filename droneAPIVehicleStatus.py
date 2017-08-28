@@ -20,7 +20,7 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 class vehicleStatus:
 
-    def __init__(self)
+    def __init__(self):
         return
 
     def GET(self, vehicle_id):
