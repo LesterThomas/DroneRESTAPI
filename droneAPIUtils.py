@@ -1,6 +1,6 @@
 """This module has utility functions used by all the other modules in this App"""
 # Import DroneKit-Python
-from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
+from dronekit import connect, APIException
 
 import web
 import logging
@@ -13,10 +13,9 @@ import os
 import uuid
 import redis
 import docker
-import time
 from threading import Thread
 
-import droneAPIAction
+import droneAPICommand
 
 
 def initaliseLogger():
@@ -48,7 +47,7 @@ def initaliseLogger():
 
 
 def initaliseGlobals():
-    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, actionArrayDict, authorizedZoneDict
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, commandArrayDict, authorizedZoneDict
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
@@ -58,7 +57,7 @@ def initaliseGlobals():
     # set global variables
     connectionDict = {}  # holds a dictionary of DroneKit connection objects
     connectionNameTypeDict = {}  # holds the additonal name, type and start_time for the conections
-    actionArrayDict = {}  # holds recent actions executied by each drone
+    commandArrayDict = {}  # holds recent actions executied by each drone
     authorizedZoneDict = {}  # holds zone authorizations for each drone
 
     return
@@ -231,7 +230,7 @@ def connectVehicle(inVehicleId):
     #global connection_string_array
     global redisdB
     global connectionDict
-    global actionArrayDict
+    global commandArrayDict
     try:
         my_logger.debug("connectVehicle called with inVehicleId = " + str(inVehicleId))
         # connection_string=connection_string_array[inVehicleId]
@@ -261,10 +260,10 @@ def connectVehicle(inVehicleId):
             my_logger.info("connection_string: %s" % (connection_string,))
             my_logger.info("Connecting to vehicle on: %s" % (connection_string,))
             connectionNameTypeDict[inVehicleId] = {"name": vehicleName, "vehicle_type": vehicle_type}
-            actionArrayDict[inVehicleId] = []  # create empty action array
+            commandArrayDict[inVehicleId] = []  # create empty action array
             connectionDict[inVehicleId] = connect(connection_string, wait_ready=True, heartbeat_timeout=10)
-            my_logger.info("actionArrayDict")
-            my_logger.info(actionArrayDict)
+            my_logger.info("commandArrayDict")
+            my_logger.info(commandArrayDict)
         else:
             my_logger.debug("Already connected to vehicle")
     except Warning as w:
@@ -306,54 +305,54 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
 def getVehicleStatus(inVehicle, inVehicleId):
     # inVehicle is an instance of the Vehicle class
     outputObj = {}
-    my_logger.debug("Autopilot Firmware version: %s" % inVehicle.version)
+    my_logger.debug("Autopilot Firmware version: %s", inVehicle.version)
     outputObj["version"] = str(inVehicle.version)
-    my_logger.debug("Global Location: %s" % inVehicle.location.global_frame)
+    my_logger.debug("Global Location: %s", inVehicle.location.global_frame)
     global_frame = latLonAltObj(inVehicle.location.global_frame)
     outputObj["global_frame"] = global_frame
-    my_logger.debug("Global Location (relative altitude): %s" % inVehicle.location.global_relative_frame)
+    my_logger.debug("Global Location (relative altitude): %s", inVehicle.location.global_relative_frame)
     global_relative_frame = latLonAltObj(inVehicle.location.global_relative_frame)
     outputObj["global_relative_frame"] = global_relative_frame
-    my_logger.debug("Local Location: %s" % inVehicle.location.local_frame)  # NED
+    my_logger.debug("Local Location: %s", inVehicle.location.local_frame)  # NED
     local_frame = {}
     local_frame["north"] = (inVehicle.location.local_frame.north)
     local_frame["east"] = (inVehicle.location.local_frame.east)
     local_frame["down"] = (inVehicle.location.local_frame.down)
     outputObj["local_frame"] = local_frame
-    my_logger.debug("Attitude: %s" % inVehicle.attitude)
+    my_logger.debug("Attitude: %s", inVehicle.attitude)
     outputObj["attitude"] = {"pitch": inVehicle.attitude.pitch, "roll": inVehicle.attitude.roll, "yaw": inVehicle.attitude.yaw}
-    my_logger.debug("Velocity: %s" % inVehicle.velocity)
+    my_logger.debug("Velocity: %s", inVehicle.velocity)
     outputObj["velocity"] = (inVehicle.velocity)
-    my_logger.debug("GPS: %s" % inVehicle.gps_0)
+    my_logger.debug("GPS: %s", inVehicle.gps_0)
     outputObj["gps_0"] = {
         "eph": (
             inVehicle.gps_0.eph), "epv": (
             inVehicle.gps_0.eph), "fix_type": (
                 inVehicle.gps_0.fix_type), "satellites_visible": (
                     inVehicle.gps_0.satellites_visible)}
-    my_logger.debug("Groundspeed: %s" % inVehicle.groundspeed)
+    my_logger.debug("Groundspeed: %s", inVehicle.groundspeed)
     outputObj["groundspeed"] = (inVehicle.groundspeed)
-    my_logger.debug("Airspeed: %s" % inVehicle.airspeed)
+    my_logger.debug("Airspeed: %s", inVehicle.airspeed)
     outputObj["airspeed"] = (inVehicle.airspeed)
-    my_logger.debug("Gimbal status: %s" % inVehicle.gimbal)
+    my_logger.debug("Gimbal status: %s", inVehicle.gimbal)
     outputObj["gimbal"] = {"pitch": inVehicle.gimbal.pitch, "roll": inVehicle.gimbal.roll, "yaw": inVehicle.gimbal.yaw}
-    my_logger.debug("Battery: %s" % inVehicle.battery)
+    my_logger.debug("Battery: %s", inVehicle.battery)
     outputObj["battery"] = {"voltage": inVehicle.battery.voltage, "current": inVehicle.battery.current, "level": inVehicle.battery.level}
-    my_logger.debug("EKF OK?: %s" % inVehicle.ekf_ok)
+    my_logger.debug("EKF OK?: %s", inVehicle.ekf_ok)
     outputObj["ekf_ok"] = (inVehicle.ekf_ok)
-    my_logger.debug("Last Heartbeat: %s" % inVehicle.last_heartbeat)
+    my_logger.debug("Last Heartbeat: %s", inVehicle.last_heartbeat)
     outputObj["last_heartbeat"] = (inVehicle.last_heartbeat)
-    my_logger.debug("Rangefinder: %s" % inVehicle.rangefinder)
+    my_logger.debug("Rangefinder: %s", inVehicle.rangefinder)
     outputObj["rangefinder"] = {"distance": inVehicle.rangefinder.distance, "voltage": inVehicle.rangefinder.voltage}
-    my_logger.debug("Heading: %s" % inVehicle.heading)
+    my_logger.debug("Heading: %s", inVehicle.heading)
     outputObj["heading"] = (inVehicle.heading)
-    my_logger.debug("Is Armable?: %s" % inVehicle.is_armable)
+    my_logger.debug("Is Armable?: %s", inVehicle.is_armable)
     outputObj["is_armable"] = (inVehicle.is_armable)
-    my_logger.debug("System status: %s" % inVehicle.system_status.state)
+    my_logger.debug("System status: %s", inVehicle.system_status.state)
     outputObj["system_status"] = str(inVehicle.system_status.state)
-    my_logger.debug("Mode: %s" % inVehicle.mode.name)  # settable
+    my_logger.debug("Mode: %s", inVehicle.mode.name)  # settable
     outputObj["mode"] = str(inVehicle.mode.name)
-    my_logger.debug("Armed: %s" % inVehicle.armed)  # settable
+    my_logger.debug("Armed: %s", inVehicle.armed)  # settable
     outputObj["armed"] = (inVehicle.armed)
 
     zone = authorizedZoneDict.get(inVehicleId, None)
@@ -366,7 +365,7 @@ def getVehicleStatus(inVehicle, inVehicleId):
             outputObj["global_frame"]["lat"],
             outputObj["global_frame"]["lon"])
         if (distance > 500):
-            droneAPIAction.rtl(inVehicle)
+            droneAPICommand.rtl(inVehicle)
     my_logger.debug("Vehicle status output: %s" % outputObj)
 
     return outputObj
@@ -439,13 +438,13 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
             name=key)
 
     docker_container_id = dockerContainer.id
-    my_logger.info("container Id=" + str(docker_container_id))
+    my_logger.info("container Id=%s", str(docker_container_id))
 
     connection = "tcp:" + hostAndPort['image'] + ":" + str(hostAndPort['port'])
 
     my_logger.debug(connection)
 
-    my_logger.info("adding connection_string to Redis db with key '" + "connection_string:" + str(key) + "'")
+    my_logger.info("adding connection_string to Redis db with key 'connection_string:%s'", str(key))
     droneDBDetails = {"vehicle_details": {"connection_string": connection,
                                           "name": vehicleName,
                                           "port": hostAndPort['port'],
@@ -479,14 +478,14 @@ class worker(Thread):
         try:
             x = 1
             while True:
-                my_logger.info("Background worker processing %i" % x)
+                my_logger.info("Background worker processing %i", x)
                 x = x + 1
                 start_time = time.time()
                 keys = redisdB.keys("connection_string:*")
                 for key in keys:
-                    my_logger.info("key = '" + key + "'")
+                    my_logger.info("key = '%s'", key)
                     json_str = redisdB.get(key)
-                    my_logger.info("redisDbObj = '" + json_str + "'")
+                    my_logger.info("redisDbObj = '%s'", json_str)
                     json_obj = json.loads(json_str)
                     vehicle_id = key[18:]
                     try:
@@ -495,7 +494,7 @@ class worker(Thread):
                         json_obj['vehicle_status'] = vehicle_status
                         redisdB.set(key, json.dumps(json_obj))
                     except Warning as warn:
-                        my_logger.info("Caught warning in worker.run connectVehicle: " + str(warn))
+                        my_logger.info("Caught warning in worker.run connectVehicle:%s ", str(warn))
                     except APIException as ex:
                         # these can safely be ignored during vehicle startup
                         my_logger.info("Caught exception: APIException in worker.run connectVehicle")
@@ -507,7 +506,7 @@ class worker(Thread):
                         traceLines = tracebackStr.split("\n")
 
                 elapsed_time = time.time() - start_time
-                my_logger.info("Background processing took %f" % elapsed_time)
+                my_logger.info("Background processing took %f", elapsed_time)
                 if (elapsed_time < .25):
                     time.sleep(.25 - elapsed_time)
         except Exception as ex:

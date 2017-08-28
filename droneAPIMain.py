@@ -159,7 +159,7 @@ def startup():
     # own python module
     urls = (
         '/', 'Index',
-        '/vehicle/(.*)/action', 'droneAPIAction.Action',
+        '/vehicle/(.*)/command', 'droneAPICommand.Command',
         '/vehicle/(.*)/homeLocation', 'droneAPIHomeLocation.homeLocation',
         '/vehicle/(.*)/mission', 'droneAPIMission.mission',
         '/vehicle/(.*)/authorizedZone', 'droneAPIAuthorizedZone.authorizedZone',

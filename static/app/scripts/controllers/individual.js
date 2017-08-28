@@ -24,8 +24,8 @@ angular.module('droneFrontendApp')
 
     $scope.status='Loading';
 	$scope.mission={};
-	$scope.actions={availableActions:{}};
-	$scope.actionLog={items:[]};
+	$scope.commands={availableCommands:{}};
+	$scope.commandLog={items:[]};
 	$scope.simEnvironment=[];
 	$scope.simParamSelected='';
 	$scope.simParamValue='';
@@ -243,7 +243,7 @@ angular.module('droneFrontendApp')
 	});
 
 	var intervalTimer = $interval(updateDrone, 250);
-	var intervalActionsTimer = $interval(updateActions, 2000);
+	var intervalActionsTimer = $interval(updateCommands, 2000);
 	function updateDrone() {
 
 			NgMap.getMap().then(function(map) {
@@ -394,8 +394,8 @@ angular.module('droneFrontendApp')
 						if ($scope.mission.items.length>0) {
 							//Mission polyline
 							var flightPlanCoordinates = [];
-							for(var actionIndex in $scope.mission.items) {
-								var missionAction=$scope.mission.items[actionIndex];
+							for(var commandIndex in $scope.mission.items) {
+								var missionAction=$scope.mission.items[commandIndex];
 								if (missionAction.command==20) {
 									//return-to-home so draw to planned home
 									missionAction.coordinate=$scope.mission.plannedHomePosition.coordinate;
@@ -452,7 +452,7 @@ angular.module('droneFrontendApp')
 		}
 	}
 
-	$scope.actionButton = function(inAction) {
+	$scope.commandButton = function(inAction) {
 		console.log('Button Clicked',inAction);
 		var payload={};
 		for (var i=0;i<inAction.attributes.length;i++) {
@@ -464,82 +464,82 @@ angular.module('droneFrontendApp')
 
 		console.log('Sending POST with payload ',payload);
 
-		$http.post($scope.apiURL + 'vehicle/'+droneService.droneId+'/action',payload,{
+		$http.post($scope.apiURL + 'vehicle/'+droneService.droneId+'/command',payload,{
 			headers : {
 				'Content-Type' : 'application/json; charset=UTF-8'
 			}
 		}).then(function(data, status, headers, config) {
-			var actionItem=data.data.action;
-			actionItem['textDescription']=setActionText(actionItem);
+			var commandItem=data.data.command;
+			commandItem['textDescription']=setActionText(commandItem);
 
-			$scope.actionLog.items.push(actionItem);
-			console.log('API  action POST success',data,status);
+			$scope.commandLog.items.push(commandItem);
+			console.log('API  command POST success',data,status);
 
 		},
 		function(data, status, headers, config) {
 		  // log error
-			console.log('API actions POST error',data, status, headers, config);
+			console.log('API commands POST error',data, status, headers, config);
 		});
 
 
 	}
 
-	function updateActions() {
+	function updateCommands() {
 
 		redrawAdvisories();
-		$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/action').
+		$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/command').
 		    then(function(data, status, headers, config) {
-					console.log('API action get success',data,status);
-					//add or delete actions - if unchanged then leave model unchanged
+					console.log('API command get success',data,status);
+					//add or delete commands - if unchanged then leave model unchanged
 
-					//$scope.actions.availableActions=data.data._actions;
+					//$scope.commands.availableCommands=data.data._actions;
 
 					//manipulate the model
-					for(var action in data.data._actions) {
-						var actionName=data.data._actions[action].name;
-						if ($scope.actions.availableActions[actionName]) {  //if action already exists, do nothing
+					for(var command in data.data._actions) {
+						var commandName=data.data._actions[command].name;
+						if ($scope.commands.availableCommands[commandName]) {  //if command already exists, do nothing
 						} else
 						{
-							$scope.actions.availableActions[actionName]=data.data._actions[action];
+							$scope.commands.availableCommands[commandName]=data.data._actions[command];
 
 
-							$scope.actions.availableActions[actionName].attributes=[];
-							for(var i in $scope.actions.availableActions[actionName].fields) {
-								if ($scope.actions.availableActions[actionName].fields[i]['name']!='name') {//do not push the name attribute
-									console.log ($scope.actions.availableActions[actionName].fields[i]['name'],$scope.actions.availableActions[actionName].fields[i]['value']);
-									$scope.actions.availableActions[actionName].attributes.push({name:$scope.actions.availableActions[actionName].fields[i]['name'],value:$scope.actions.availableActions[actionName].fields[i]['value'] })
+							$scope.commands.availableCommands[commandName].attributes=[];
+							for(var i in $scope.commands.availableCommands[commandName].fields) {
+								if ($scope.commands.availableCommands[commandName].fields[i]['name']!='name') {//do not push the name attribute
+									console.log ($scope.commands.availableCommands[commandName].fields[i]['name'],$scope.commands.availableCommands[commandName].fields[i]['value']);
+									$scope.commands.availableCommands[commandName].attributes.push({name:$scope.commands.availableCommands[commandName].fields[i]['name'],value:$scope.commands.availableCommands[commandName].fields[i]['value'] })
 								}
 								//if (i!='name'){//do not push the name attribute
-								//	$scope.actions.availableActions[actionName].attributes.push({name:i,value:$scope.actions.availableActions[actionName].samplePayload[i]});
-								//	console.log (i,$scope.actions.availableActions[actionName].samplePayload[i]);
+								//	$scope.commands.availableCommands[commandName].attributes.push({name:i,value:$scope.commands.availableCommands[commandName].samplePayload[i]});
+								//	console.log (i,$scope.commands.availableCommands[commandName].samplePayload[i]);
 								//}
 							}
 						}
 					}
-					//check if actions are no longer present
-					for(var action in $scope.actions.availableActions) {
-						var actionName=$scope.actions.availableActions[action].name;
+					//check if commands are no longer present
+					for(var command in $scope.commands.availableCommands) {
+						var commandName=$scope.commands.availableCommands[command].name;
 						var found=false;
 						for (var index in data.data._actions) {
-							if (data.data._actions[index].name==actionName) {
+							if (data.data._actions[index].name==commandName) {
 								found=true;
 							}
 						}
-						if (found==false) { //remove action
-							delete $scope.actions.availableActions[action];
+						if (found==false) { //remove command
+							delete $scope.commands.availableCommands[command];
 						}
 
 					}
 
-					//if action is Arm then additional checks necessary
-					for(var action in $scope.actions.availableActions) {
-						var actionName=$scope.actions.availableActions[action].name;
-						if (actionName=='Arm'){
-							console.log("Additional checks for Arm action");
-							if ($scope.advisories.max_safe_distance<2500) { //if max safe distance is lass than 2500m then remove action (500m for drone line-of-sight and 2000m for advisory
-								delete $scope.actions.availableActions[action];
+					//if command is Arm then additional checks necessary
+					for(var command in $scope.commands.availableCommands) {
+						var commandName=$scope.commands.availableCommands[command].name;
+						if (commandName=='Arm'){
+							console.log("Additional checks for Arm command");
+							if ($scope.advisories.max_safe_distance<2500) { //if max safe distance is lass than 2500m then remove command (500m for drone line-of-sight and 2000m for advisory
+								delete $scope.commands.availableCommands[command];
 								//replace with warning
-								$scope.actions.availableActions['Cannot-Arm']={"name":"Cannot-Arm","title":"Cannot Arm: Check advisories (advisory distance is "+$scope.advisories.max_safe_distance+"m)","fields":[]};
+								$scope.commands.availableCommands['Cannot-Arm']={"name":"Cannot-Arm","title":"Cannot Arm: Check advisories (advisory distance is "+$scope.advisories.max_safe_distance+"m)","fields":[]};
 							}
 						}
 					}
@@ -550,7 +550,7 @@ angular.module('droneFrontendApp')
 				},
 				function(data, status, headers, config) {
 				  // log error
-					console.log('API actions get error',data, status, headers, config);
+					console.log('API commands get error',data, status, headers, config);
 				});
 			}
 

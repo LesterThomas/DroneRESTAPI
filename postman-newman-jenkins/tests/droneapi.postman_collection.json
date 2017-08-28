@@ -169,14 +169,14 @@
 							"} else {",
 							"tests[\"Self link returned\"] = jsonData._links.self.href === request.url;",
 							"tests[\"_actions value returned \"] = (jsonData._actions);",
-							"tests[\"actions value returned \"] = (jsonData.actions);",
+							"tests[\"commands value returned \"] = (jsonData.commands);",
 							"}"
 						]
 					}
 				}
 			],
 			"request": {
-				"url": "http://{{url}}/vehicle/{{droneId}}/action",
+				"url": "http://{{url}}/vehicle/{{droneId}}/command",
 				"method": "GET",
 				"header": [],
 				"body": {},
@@ -294,7 +294,7 @@
 			"response": []
 		},
 		{
-			"name": "POST-http://droneapi.ddns.net:1235/vehicle/{{droneId}}/action - Arm",
+			"name": "POST-http://droneapi.ddns.net:1235/vehicle/{{droneId}}/command - Arm",
 			"event": [
 				{
 					"listen": "test",
@@ -304,14 +304,14 @@
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
 							"var jsonData = JSON.parse(responseBody);",
-							"tests[\"action value returned \"] = (jsonData.action);",
+							"tests[\"command value returned \"] = (jsonData.command);",
 							""
 						]
 					}
 				}
 			],
 			"request": {
-				"url": "http://{{url}}/vehicle/{{droneId}}/action",
+				"url": "http://{{url}}/vehicle/{{droneId}}/command",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -323,7 +323,7 @@
 			"response": []
 		},
 		{
-			"name": "POST-http://droneapi.ddns.net:1235/vehicle/{{droneId}}/action - Takeoff",
+			"name": "POST-http://droneapi.ddns.net:1235/vehicle/{{droneId}}/command - Takeoff",
 			"event": [
 				{
 					"listen": "test",
@@ -333,14 +333,14 @@
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
 							"var jsonData = JSON.parse(responseBody);",
-							"tests[\"action value returned \"] = (jsonData.action);",
+							"tests[\"command value returned \"] = (jsonData.command);",
 							""
 						]
 					}
 				}
 			],
 			"request": {
-				"url": "http://{{url}}/vehicle/{{droneId}}/action",
+				"url": "http://{{url}}/vehicle/{{droneId}}/command",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -352,7 +352,7 @@
 			"response": []
 		},
 		{
-			"name": "POST-http://droneapi.ddns.net:1235/vehicle/{{droneId}}/action - Start-Mission",
+			"name": "POST-http://droneapi.ddns.net:1235/vehicle/{{droneId}}/command - Start-Mission",
 			"event": [
 				{
 					"listen": "test",
@@ -362,14 +362,14 @@
 							"tests[\"Status code is 200\"] = responseCode.code === 200;",
 							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
 							"var jsonData = JSON.parse(responseBody);",
-							"tests[\"action value returned \"] = (jsonData.action);",
+							"tests[\"command value returned \"] = (jsonData.command);",
 							""
 						]
 					}
 				}
 			],
 			"request": {
-				"url": "http://{{url}}/vehicle/{{droneId}}/action",
+				"url": "http://{{url}}/vehicle/{{droneId}}/command",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -430,7 +430,7 @@
 							"tests[\"Body contains vehicle\"] = responseBody.has(\"vehicle\");",
 							"tests[\"Content-Type is present\"] = postman.getResponseHeader(\"Content-Type\");",
 							"tests[\"Drone Array has at least one Drone\"] = jsonData._embedded.vehicle.length>0;",
-							"tests[\"Drone Array has vehicleStatus\"] = jsonData._embedded.vehicle[0].vehicle_status",
+							"tests[\"Drone Array has vehicle_status\"] = jsonData._embedded.vehicle[0].vehicle_status",
 							"",
 							"",
 							""

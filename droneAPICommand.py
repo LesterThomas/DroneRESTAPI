@@ -1,4 +1,4 @@
-"""This module manages the API endpoint to manage an individual vehicles actions."""
+"""This module manages the API endpoint to manage an individual vehicles commands."""
 
 # Import DroneKit-Python
 from dronekit import VehicleMode, LocationGlobal, LocationGlobalRelative, mavutil
@@ -24,8 +24,8 @@ class InvalidLocationException(Exception):
     pass
 
 
-class Action(object):
-    """THis class handles the /vehicle/*/action URL for the drone API."""
+class Command(object):
+    """THis class handles the /vehicle/*/command URL for the drone API."""
 
     def OPTIONS(self, vehicle_id):
         """This method handles the OPTIONS HTTP verb, required for CORS support."""
@@ -45,8 +45,8 @@ class Action(object):
         return output
 
     def GET(self, vehicle_id):
-        """This method handles the GET request. It returns the list of previous actions,
-        as well as the actions that are available for the drones current state."""
+        """This method handles the GET request. It returns the list of previous commands,
+        as well as the commands that are available for the drones current state."""
         try:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
 
@@ -67,118 +67,118 @@ class Action(object):
                     "href": droneAPIUtils.homeDomain +
                     "/vehicle/" +
                     str(vehicle_id) +
-                    "/action",
-                    "title": "Get the actions for this vehicle."}}
-            available_actions = []
+                    "/command",
+                    "title": "Get the commands for this vehicle."}}
+            available_commands = []
             # available when armed
             my_logger.info("global_relative_frame.alt=%s", vehicleStatus["global_relative_frame"]["alt"])
             if vehicleStatus["armed"] == False:
-                available_actions.append({
+                available_commands.append({
                     "name": "Arm",
                     "title": "Arm drone.",
-                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
+                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
                     "method": "POST",
                     "fields": [{"name": "name", "type": "string", "value": "Arm"}]
                 })
             elif vehicleStatus["global_relative_frame"]["alt"] > 1:  # if at height of >1 m
-                available_actions.append({"name": "Region-of-Interest",
-                                          "title": "Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
-                                          "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
-                                          "method": "POST",
-                                          "fields": [{"name": "name",
-                                                      "type": "string",
-                                                      "value": "Region-of-Interest"},
-                                                     {"name": "lat",
-                                                      "type": "float",
-                                                      "value": 51.3946},
-                                                     {"name": "lon",
-                                                      "type": "float",
-                                                      "value": -1.299},
-                                                     {"name": "alt",
-                                                      "type": "float",
-                                                      "value": 105}]})
-                available_actions.append({
+                available_commands.append({"name": "Region-of-Interest",
+                                           "title": "Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
+                                           "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
+                                           "method": "POST",
+                                           "fields": [{"name": "name",
+                                                       "type": "string",
+                                                       "value": "Region-of-Interest"},
+                                                      {"name": "lat",
+                                                       "type": "float",
+                                                       "value": 51.3946},
+                                                      {"name": "lon",
+                                                       "type": "float",
+                                                       "value": -1.299},
+                                                      {"name": "alt",
+                                                       "type": "float",
+                                                       "value": 105}]})
+                available_commands.append({
                     "name": "Land",
                     "title": "Land at current location",
-                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
+                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
                     "method": "POST",
                     "fields": [{"name": "name", "type": "string", "value": "Land"}]
                 })
-                available_actions.append({
+                available_commands.append({
                     "name": "Return-to-Launch",
                     "title": "Return to launch: Return to the home location and land.",
-                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
+                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
                     "method": "POST",
                     "fields": [{"name": "name", "type": "string", "value": "Return-to-Launch"}]
                 })
-                available_actions.append({
+                available_commands.append({
                     "name": "Start-Mission",
                     "title": "Begin the pre-defined mission.",
-                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
+                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
                     "method": "POST",
                     "fields": [{"name": "name", "type": "string", "value": "Start-Mission"}]
                 })
-                available_actions.append({"name": "Goto-Absolute",
-                                          "title": "Go to the location at latitude <lat>, longitude <lon> and altitude <alt> (above sea level).",
-                                          "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
-                                          "method": "POST",
-                                          "fields": [{"name": "name",
-                                                      "type": "string",
-                                                      "value": "Goto-Absolute"},
-                                                     {"name": "lat",
-                                                      "type": "float",
-                                                      "value": 51.3946},
-                                                     {"name": "lon",
-                                                      "type": "float",
-                                                      "value": -1.299},
-                                                     {"name": "alt",
-                                                      "type": "float",
-                                                      "value": 105}]})
-                available_actions.append({"name": "Goto-Relative-Home",
-                                          "title": "Go to the location <north> meters North, <east> meters East and <up> meters vertically from the home location.",
-                                          "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
-                                          "method": "POST",
-                                          "fields": [{"name": "name",
-                                                      "type": "string",
-                                                      "value": "Goto-Relative-Home"},
-                                                     {"name": "north",
-                                                      "type": "float",
-                                                      "value": 0},
-                                                     {"name": "east",
-                                                      "type": "float",
-                                                      "value": 0},
-                                                     {"name": "up",
-                                                      "type": "float",
-                                                      "value": 15}]})
-                available_actions.append({"name": "Goto-Relative-Current",
-                                          "title": "Go to the location <north> meters North, <east> meters East and <up> meters vertically from the current location.",
-                                          "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
-                                          "method": "POST",
-                                          "fields": [{"name": "name",
-                                                      "type": "string",
-                                                      "value": "Goto-Relative-Current"},
-                                                     {"name": "north",
-                                                      "type": "float",
-                                                      "value": 20},
-                                                     {"name": "east",
-                                                      "type": "float",
-                                                      "value": 20},
-                                                     {"name": "up",
-                                                      "type": "float",
-                                                      "value": 0}]})
+                available_commands.append({"name": "Goto-Absolute",
+                                           "title": "Go to the location at latitude <lat>, longitude <lon> and altitude <alt> (above sea level).",
+                                           "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
+                                           "method": "POST",
+                                           "fields": [{"name": "name",
+                                                       "type": "string",
+                                                       "value": "Goto-Absolute"},
+                                                      {"name": "lat",
+                                                       "type": "float",
+                                                       "value": 51.3946},
+                                                      {"name": "lon",
+                                                       "type": "float",
+                                                       "value": -1.299},
+                                                      {"name": "alt",
+                                                       "type": "float",
+                                                       "value": 105}]})
+                available_commands.append({"name": "Goto-Relative-Home",
+                                           "title": "Go to the location <north> meters North, <east> meters East and <up> meters vertically from the home location.",
+                                           "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
+                                           "method": "POST",
+                                           "fields": [{"name": "name",
+                                                       "type": "string",
+                                                       "value": "Goto-Relative-Home"},
+                                                      {"name": "north",
+                                                       "type": "float",
+                                                       "value": 0},
+                                                      {"name": "east",
+                                                       "type": "float",
+                                                       "value": 0},
+                                                      {"name": "up",
+                                                       "type": "float",
+                                                       "value": 15}]})
+                available_commands.append({"name": "Goto-Relative-Current",
+                                           "title": "Go to the location <north> meters North, <east> meters East and <up> meters vertically from the current location.",
+                                           "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
+                                           "method": "POST",
+                                           "fields": [{"name": "name",
+                                                       "type": "string",
+                                                       "value": "Goto-Relative-Current"},
+                                                      {"name": "north",
+                                                       "type": "float",
+                                                       "value": 20},
+                                                      {"name": "east",
+                                                       "type": "float",
+                                                       "value": 20},
+                                                      {"name": "up",
+                                                       "type": "float",
+                                                       "value": 0}]})
             elif vehicleStatus["armed"]:
-                available_actions.append({
+                available_commands.append({
                     "name": "Takeoff",
                     "title": "Takeoff in GUIDED mode to height of <height> (default 20m).",
-                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
+                    "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
                     "method": "POST",
                     "fields": [{"name": "name", "type": "string", "value": "Takeoff"}, {"name": "height", "type": "float", "value": 20}]
                 })
 
-            output_obj['_actions'] = available_actions
+            output_obj['_actions'] = available_commands
             my_logger.debug(output_obj)
             updateActionStatus(inVehicle, vehicle_id)
-            output_obj['actions'] = droneAPIUtils.actionArrayDict[vehicle_id]
+            output_obj['commands'] = droneAPIUtils.commandArrayDict[vehicle_id]
             output = json.dumps(output_obj)
             my_logger.info("Return: =" + output)
         except Exception as ex:  # pylint: disable=W0703
@@ -189,7 +189,7 @@ class Action(object):
         return output
 
     def POST(self, vehicle_id):
-        """This method handles the POST requests to send a new action to the drone."""
+        """This method handles the POST requests to send a new command to the drone."""
         try:
             my_logger.info("POST: vehicle_id=" + str(vehicle_id))
             try:
@@ -219,18 +219,18 @@ class Action(object):
             my_logger.debug(value)
             output_obj = {}
             if value == "Return-to-Launch":
-                output_obj["action"] = rtl(inVehicle)
+                output_obj['command'] = rtl(inVehicle)
             elif value == "Arm":
                 my_logger.debug("Armiong")
-                output_obj["action"] = arm(inVehicle, vehicle_id)
+                output_obj['command'] = arm(inVehicle, vehicle_id)
             elif value == "Takeoff":
                 height = data.get("height", 20)  # get height - default to 20
                 my_logger.debug("Taking off to height of " + str(height))
-                output_obj["action"] = takeoff(inVehicle, float(height))
+                output_obj['command'] = takeoff(inVehicle, float(height))
             elif value == "Start-Mission":
-                output_obj["action"] = auto(inVehicle)
+                output_obj['command'] = auto(inVehicle)
             elif value == "Land":
-                output_obj["action"] = land(inVehicle)
+                output_obj['command'] = land(inVehicle)
             elif value == "Goto-Absolute":
                 default_location = inVehicle.location.global_frame  # default to current position
                 my_logger.debug("Global Frame" + str(default_location))
@@ -238,7 +238,7 @@ class Action(object):
                 in_lon = data.get("lon", default_location.lon)
                 in_alt = data.get("alt", default_location.alt)
                 location_obj = {'lat': float(in_lat), 'lon': float(in_lon), 'alt': float(in_alt)}
-                output_obj["action"] = goto_absolute(inVehicle, location_obj)
+                output_obj['command'] = goto_absolute(inVehicle, location_obj)
             elif value == "Goto-Relative-Home":
                 in_north = float(data.get("north", 0))
                 in_east = float(data.get("east", 0))
@@ -247,12 +247,12 @@ class Action(object):
                 my_logger.debug(in_north)
                 my_logger.debug(in_east)
                 my_logger.debug(in_down)
-                output_obj["action"] = gotoRelative(inVehicle, in_north, in_east, in_down)
+                output_obj['command'] = gotoRelative(inVehicle, in_north, in_east, in_down)
             elif value == "Goto-Relative-Current":
                 in_north = float(data.get("north", 0))
                 in_east = float(data.get("east", 0))
                 in_down = -float(data.get("up", 0))
-                output_obj["action"] = goto(inVehicle, in_north, in_east, in_down)
+                output_obj['command'] = goto(inVehicle, in_north, in_east, in_down)
             elif value == "Region-of-Interest":
                 cmds = inVehicle.commands
                 cmds.download()
@@ -262,18 +262,18 @@ class Action(object):
                 in_lon = data.get("lon", default_location.lon)
                 in_alt = data.get("alt", default_location.alt)
                 location_obj = {'lat': float(in_lat), 'lon': float(in_lon), 'alt': float(in_alt)}
-                output_obj["action"] = roi(inVehicle, location_obj)
+                output_obj['command'] = roi(inVehicle, location_obj)
             else:
-                output_obj["action"] = {"status": "error", "name": value, "error": "No action found with name '" + value + "'."}
-            action_array = droneAPIUtils.actionArrayDict[vehicle_id]
-            if len(action_array) == 0:
-                output_obj['action']['id'] = 0
+                output_obj['command'] = {"status": "error", "name": value, "error": "No command found with name '" + value + "'."}
+            command_array = droneAPIUtils.commandArrayDict[vehicle_id]
+            if len(command_array) == 0:
+                output_obj['command']['id'] = 0
             else:
-                output_obj['action']['id'] = action_array[len(action_array) - 1]['action']['id'] + 1
-            action_array.append(output_obj)
-            if len(action_array) > 10:
-                action_array.pop(0)
-            output_obj['href'] = droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action"
+                output_obj['command']['id'] = command_array[len(command_array) - 1]['command']['id'] + 1
+            command_array.append(output_obj)
+            if len(command_array) > 10:
+                command_array.pop(0)
+            output_obj['href'] = droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command"
             my_logger.info("Return: =" + json.dumps(output_obj))
 
         except Exception as ex:  # pylint: disable=W0703
@@ -286,7 +286,7 @@ class Action(object):
 
 
 def rtl(inVehicle):
-    """This function sends a rtl (return-to-launch) action to the drone."""
+    """This function sends a rtl (return-to-launch) command to the drone."""
     output_obj = {}
     if inVehicle.armed:
         output_obj["name"] = "Return-to-Launch"
@@ -363,7 +363,7 @@ def arm(inVehicle, invehicle_id):
 
 
 def takeoff(inVehicle, inHeight):
-    """This function sends a takeoff action to the drone."""
+    """This function sends a takeoff command to the drone."""
     output_obj = {}
     if inVehicle.armed:
         output_obj["name"] = "Takeoff"
@@ -409,7 +409,7 @@ def auto(inVehicle):
 
 
 def land(inVehicle):
-    """This function sends a land action to the drone."""
+    """This function sends a land command to the drone."""
     output_obj = {}
     if inVehicle.armed:
         output_obj["name"] = "Land"
@@ -600,41 +600,41 @@ def roi(inVehicle, inLocation):
 
 
 def updateActionStatus(inVehicle, invehicle_id):
-    """This function allows you to monitor the progress of the last action.
-    It updates the action status until it is complete (or errors) or is superceeded."""
+    """This function allows you to monitor the progress of the last command.
+    It updates the command status until it is complete (or errors) or is superceeded."""
     my_logger.info("############# in updateActionStatus")
 
     my_logger.info("invehicle_id")
     my_logger.info(invehicle_id)
-    my_logger.info("droneAPIUtils.actionArrayDict")
-    my_logger.info(droneAPIUtils.actionArrayDict)
+    my_logger.info("droneAPIUtils.commandArrayDict")
+    my_logger.info(droneAPIUtils.commandArrayDict)
     my_logger.info("#############")
 
-    action_array = droneAPIUtils.actionArrayDict[invehicle_id]
+    command_array = droneAPIUtils.commandArrayDict[invehicle_id]
 
-    my_logger.info(action_array)
+    my_logger.info(command_array)
 
-    if len(action_array) > 0:
-        latestAction = action_array[len(action_array) - 1]
+    if len(command_array) > 0:
+        latestAction = command_array[len(command_array) - 1]
 
-        if latestAction['action']['status'] == "Error":
+        if latestAction['command']['status'] == "Error":
             latestAction['complete'] = False
             latestAction['completeStatus'] = 'Error'
             return
-        my_logger.debug("Latest Action:" + latestAction['action']['name'])
+        my_logger.debug("Latest Action:" + latestAction['command']['name'])
 
-        if latestAction['action']['name'] == 'Start-Mission':
+        if latestAction['command']['name'] == 'Start-Mission':
             # cant monitor progress at the moment
             my_logger.info("Cant monitor progress for mission")
         else:
-            my_logger.debug("Monitoring progress for action '" + latestAction['action']['name'] + "'")
+            my_logger.debug("Monitoring progress for command '" + latestAction['command']['name'] + "'")
 
-            targetCoordinates = latestAction['action']['coordinate']  # array with lat,lon,alt
+            targetCoordinates = latestAction['command']['coordinate']  # array with lat,lon,alt
             my_logger.info(inVehicle)
             vehicleCoordinates = inVehicle.location.global_relative_frame  # object with lat,lon,alt attributes
             # Return-to-launch uses global_frame (alt is absolute)
 
-            if latestAction['action']['name'] == 'Return-to-Launch':
+            if latestAction['command']['name'] == 'Return-to-Launch':
                 vehicleCoordinates = inVehicle.location.global_frame  # object with lat,lon,alt attributes
 
             horizontalDistance = droneAPIUtils.distanceInMeters(
@@ -649,12 +649,12 @@ def updateActionStatus(inVehicle, invehicle_id):
                 latestAction['completeStatus'] = 'In progress'
                 latestAction['complete'] = False
             # region of interest is special case
-            if (latestAction['action']['name'] == 'Region-of-Interest'):
+            if (latestAction['command']['name'] == 'Region-of-Interest'):
                 latestAction['complete'] = True
                 latestAction['completeStatus'] = 'Complete'
 
-    if len(action_array) > 1:  # check if previous actions completed or were interrupted
-        previousAction = action_array[len(action_array) - 2]
+    if len(command_array) > 1:  # check if previous commands completed or were interrupted
+        previousAction = command_array[len(command_array) - 2]
         if (previousAction.get('complete', False) == False):
             if (previousAction.get('completeStatus', 'In progress') == "In progress"):
                 previousAction['completeStatus'] = 'Interrupted'

@@ -39,7 +39,7 @@ class vehicleStatus:
             individual_vehicle['_links']['homeLocation'] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/homeLocation",
                 "title": "Get the home location for this vehicle"}
-            individual_vehicle['_links']['action'] = {
+            individual_vehicle['_links']['command'] = {
                 "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/action",
                 "title": "Get the actions  for this vehicle."}
             individual_vehicle['_links']['mission'] = {

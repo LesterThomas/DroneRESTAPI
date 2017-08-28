@@ -36,24 +36,24 @@
 	</div>
 	<div  class="col-lg-12 col-sm-12">
 		<div class="panel panel-default panel-primary">
-			<div class="panel-heading">Actions </div>
+			<div class="panel-heading">Commands </div>
 			<div class="panel-body">
 				<div class="panel-group" id="accordion">
-				  <div ng-repeat="action in actions.availableActions" class="panel panel-default">
+				  <div ng-repeat="command in commands.availableCommands" class="panel panel-default">
 					<div class="panel-heading">
 					  <h4 class="panel-title">
-						<a data-toggle="collapse" data-parent="#accordion" data-target="{{'#'+action.name}}">{{action.name}}</a>
+						<a data-toggle="collapse" data-parent="#accordion" data-target="{{'#'+command.name}}">{{command.name}}</a>
 					  </h4>
 					</div>
-					<div id="{{action.name}}" class="panel-collapse collapse"}">
+					<div id="{{command.name}}" class="panel-collapse collapse"}">
 					  <div class="panel-body">
-						<p>{{action.title}}</p>
+						<p>{{command.title}}</p>
 						<div class="container-fluid">
-							<div class="row form-inline" ng-repeat="attribute in action.attributes" >
+							<div class="row form-inline" ng-repeat="attribute in command.attributes" >
 								<label class="col-lg-2 col-md-2 col-sm-2 col-xs-2" for="usr">{{attribute.name}}:</label>
 								<input type="text" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" name="attribute.name" ng-model="attribute.value" />
 							</div>
-							<button ng-if="action.href" type="button" class="btn btn-primary" ng-click='actionButton(action)'>{{action.name}}</button>
+							<button ng-if="command.href" type="button" class="btn btn-primary" ng-click='commandButton(command)'>{{command.name}}</button>
 						</div>
 					  </div>
 					</div>
@@ -167,25 +167,25 @@
 				<p>
 				<table class="table table-striped">
 
-					<tr  ng-repeat="missionAction in mission.items" >
-						<td >{{missionAction.textDescription}}</td>
+					<tr  ng-repeat="missionCommand in mission.items" >
+						<td >{{missionCommand.textDescription}}</td>
 					</tr>
 				</table>
-				<p ng-if="mission.items.length==0">No Mission Actions</p>
+				<p ng-if="mission.items.length==0">No Mission Commands</p>
 			</p>
 			</div>
 		</div>
 	</div>
 	<div  class="col-lg-12 col-sm-12">
 		<div class="panel panel-default panel-primary">
-			<div class="panel-heading">Action log </div>
+			<div class="panel-heading">Command log </div>
 			<div class="panel-body">
 				<table class="table table-striped">
 
-					<tr  ng-repeat="actionItem in actionLog.items" >
+					<tr  ng-repeat="commandItem in commandLog.items" >
 
-						<th ><span ng-style="actionItem.status === 'Error' ? { color:'red' } : { color:'black' }">{{actionItem.name}}</span></th>
-						<td >{{actionItem.textDescription}}</td>
+						<th ><span ng-style="commandItem.status === 'Error' ? { color:'red' } : { color:'black' }">{{commandItem.name}}</span></th>
+						<td >{{commandItem.textDescription}}</td>
 					</tr>
 				</table>
 			</p>
