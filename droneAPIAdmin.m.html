@@ -985,6 +985,7 @@ table {
         
           
   <ul>
+    <li class="mono"><a href="#droneAPIAdmin.admin.__init__">__init__</a></li>
     <li class="mono"><a href="#droneAPIAdmin.admin.GET">GET</a></li>
     <li class="mono"><a href="#droneAPIAdmin.admin.OPTIONS">OPTIONS</a></li>
     <li class="mono"><a href="#droneAPIAdmin.admin.POST">POST</a></li>
@@ -1016,7 +1017,6 @@ table {
 import logging
 import traceback
 import json
-import redis
 import droneAPIUtils
 import web
 
@@ -1024,6 +1024,10 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 
 class admin:
+
+    def __init__():
+        return
+
     def GET(self):
         try:
             my_logger.info("GET")
@@ -1150,6 +1154,10 @@ class admin:
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIAdmin.admin', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIAdmin.admin" class="source">
     <pre><code>class admin:
+
+    def __init__():
+        return
+
     def GET(self):
         try:
             my_logger.info("GET")
@@ -1260,6 +1268,26 @@ class admin:
           <li><a href="#droneAPIAdmin.admin">admin</a></li>
           </ul>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="droneAPIAdmin.admin.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIAdmin.admin.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIAdmin.admin.__init__" class="source">
+    <pre><code>def __init__():
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="droneAPIAdmin.admin.GET">

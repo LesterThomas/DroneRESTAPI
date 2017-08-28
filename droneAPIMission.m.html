@@ -993,6 +993,7 @@ table {
         
           
   <ul>
+    <li class="mono"><a href="#droneAPIMission.mission.__init__">__init__</a></li>
     <li class="mono"><a href="#droneAPIMission.mission.GET">GET</a></li>
     <li class="mono"><a href="#droneAPIMission.mission.OPTIONS">OPTIONS</a></li>
     <li class="mono"><a href="#droneAPIMission.mission.POST">POST</a></li>
@@ -1023,20 +1024,22 @@ series of actions that can be loaded to a drone and executed automatically</p>
 series of actions that can be loaded to a drone and executed automatically"""
 
 # Import DroneKit-Python
-from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
+from dronekit import Command, mavutil
 
 import web
 import logging
 import traceback
 import json
-import time
-import math
 import droneAPIUtils
 
 my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 
 class mission:
+
+    def __init__():
+        return
+
     def GET(self, vehicle_id):
         try:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
@@ -1044,11 +1047,11 @@ class mission:
             droneAPIUtils.applyHeadders()
             output = getMissionActions(vehicle_id)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
     def POST(self, vehicle_id):
@@ -1060,7 +1063,7 @@ class mission:
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-            except Exception:
+            except Exception:  # pylint: disable=W0703
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
             # download existing commands
@@ -1091,11 +1094,11 @@ class mission:
             my_logger.info("Command added")
             output = getMissionActions(vehicle_id)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
     def OPTIONS(self, vehicle_id):
@@ -1107,11 +1110,11 @@ class mission:
             outputObj = {}
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
 
@@ -1122,10 +1125,10 @@ def getMissionActions(vehicle_id):
         except Warning:
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-        except Exception:
+        except Exception:  # pylint: disable=W0703
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
-        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
+        droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
         outputObj = {"_actions": [{"name": "upload mission", "method": "POST", "title": "Upload a new mission to the vehicle. The mission is a collection of mission actions with <command>, <coordinate[lat,lon,alt]> and command specific <param1>,<param2>,<param3>,<param4>. The command-set is described at https://pixhawk.ethz.ch/mavlink/",
                                    "fields": [{"name": "coordinate", "type": "array", "value": [51.3957, -1.3441, 30]}, {"name": "command", "type": "integer", "value": 16}, {"name": "param1", "type": "integer"}, {"name": "param2", "type": "integer"}, {"name": "param3", "type": "integer"}, {"name": "param4", "type": "integer"}]}]}
         cmds = inVehicle.commands
@@ -1170,11 +1173,11 @@ def getMissionActions(vehicle_id):
 
         # outputObj['mission']=cmds
         output = json.dumps(outputObj)
-    except Exception as e:
-        my_logger.exception(e)
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return output
 </code></pre>
   </div>
@@ -1212,10 +1215,10 @@ def getMissionActions(vehicle_id):
         except Warning:
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-        except Exception:
+        except Exception:  # pylint: disable=W0703
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
-        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
+        droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
         outputObj = {"_actions": [{"name": "upload mission", "method": "POST", "title": "Upload a new mission to the vehicle. The mission is a collection of mission actions with <command>, <coordinate[lat,lon,alt]> and command specific <param1>,<param2>,<param3>,<param4>. The command-set is described at https://pixhawk.ethz.ch/mavlink/",
                                    "fields": [{"name": "coordinate", "type": "array", "value": [51.3957, -1.3441, 30]}, {"name": "command", "type": "integer", "value": 16}, {"name": "param1", "type": "integer"}, {"name": "param2", "type": "integer"}, {"name": "param3", "type": "integer"}, {"name": "param4", "type": "integer"}]}]}
         cmds = inVehicle.commands
@@ -1260,11 +1263,11 @@ def getMissionActions(vehicle_id):
 
         # outputObj['mission']=cmds
         output = json.dumps(outputObj)
-    except Exception as e:
-        my_logger.exception(e)
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return output
 </code></pre>
   </div>
@@ -1283,6 +1286,10 @@ def getMissionActions(vehicle_id):
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMission.mission', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIMission.mission" class="source">
     <pre><code>class mission:
+
+    def __init__():
+        return
+
     def GET(self, vehicle_id):
         try:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
@@ -1290,11 +1297,11 @@ def getMissionActions(vehicle_id):
             droneAPIUtils.applyHeadders()
             output = getMissionActions(vehicle_id)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
     def POST(self, vehicle_id):
@@ -1306,7 +1313,7 @@ def getMissionActions(vehicle_id):
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-            except Exception:
+            except Exception:  # pylint: disable=W0703
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
             # download existing commands
@@ -1337,11 +1344,11 @@ def getMissionActions(vehicle_id):
             my_logger.info("Command added")
             output = getMissionActions(vehicle_id)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
     def OPTIONS(self, vehicle_id):
@@ -1353,11 +1360,11 @@ def getMissionActions(vehicle_id):
             outputObj = {}
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 </code></pre>
   </div>
@@ -1370,6 +1377,26 @@ def getMissionActions(vehicle_id):
           <li><a href="#droneAPIMission.mission">mission</a></li>
           </ul>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="droneAPIMission.mission.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMission.mission.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIMission.mission.__init__" class="source">
+    <pre><code>def __init__():
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="droneAPIMission.mission.GET">
@@ -1389,11 +1416,11 @@ def getMissionActions(vehicle_id):
         droneAPIUtils.applyHeadders()
         output = getMissionActions(vehicle_id)
         my_logger.info("Return: =" + output)
-    except Exception as e:
-        my_logger.exception(e)
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return output
 </code></pre>
   </div>
@@ -1422,11 +1449,11 @@ def getMissionActions(vehicle_id):
         outputObj = {}
         output = json.dumps(outputObj)
         my_logger.info("Return: =" + output)
-    except Exception as e:
-        my_logger.exception(e)
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return output
 </code></pre>
   </div>
@@ -1455,7 +1482,7 @@ def getMissionActions(vehicle_id):
         except Warning:
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-        except Exception:
+        except Exception:  # pylint: disable=W0703
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
         # download existing commands
@@ -1486,11 +1513,11 @@ def getMissionActions(vehicle_id):
         my_logger.info("Command added")
         output = getMissionActions(vehicle_id)
         my_logger.info("Return: =" + output)
-    except Exception as e:
-        my_logger.exception(e)
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return output
 </code></pre>
   </div>

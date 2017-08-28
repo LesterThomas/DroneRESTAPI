@@ -15,7 +15,7 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 class authorizedZone:
 
-    def __init__()
+    def __init__():
         return
 
     def POST(self, vehicle_id):

@@ -468,7 +468,7 @@ class worker(Thread):
     """This class provides a background worker thread that polls all the drone objects and updates the Redis database.
     This allows the GET URL requests to be served in a stateless manner from the Redis database."""
 
-    def __init__()
+    def __init__():
         return
 
     def run(self):

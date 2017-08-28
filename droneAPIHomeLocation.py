@@ -12,7 +12,7 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 class homeLocation:
 
-    def __init__()
+    def __init__():
         return
 
     def GET(self, vehicleId):

@@ -986,6 +986,7 @@ table {
         
           
   <ul>
+    <li class="mono"><a href="#droneAPIAuthorizedZone.authorizedZone.__init__">__init__</a></li>
     <li class="mono"><a href="#droneAPIAuthorizedZone.authorizedZone.POST">POST</a></li>
   </ul>
 
@@ -1015,15 +1016,11 @@ to request a new authorised zone.</p>
 existing authorized zones are returned as part of the vehicleStatus. This module allows you
 to request a new authorised zone."""
 
-# Import DroneKit-Python
-from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
 
 import web
 import logging
 import traceback
 import json
-import time
-import math
 import droneAPIUtils
 
 
@@ -1031,6 +1028,9 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 
 class authorizedZone:
+
+    def __init__():
+        return
 
     def POST(self, vehicle_id):
         try:
@@ -1042,7 +1042,7 @@ class authorizedZone:
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-            except Exception:
+            except Exception:  # pylint: disable=W0703
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
             vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
@@ -1059,11 +1059,11 @@ class authorizedZone:
             outputObj["zone"] = zone
             droneAPIUtils.authorizedZoneDict[vehicle_id] = zone
             my_logger.info("Return: =" + json.dumps(outputObj))
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return json.dumps(outputObj)
 </code></pre>
   </div>
@@ -1093,6 +1093,9 @@ class authorizedZone:
   <div id="source-droneAPIAuthorizedZone.authorizedZone" class="source">
     <pre><code>class authorizedZone:
 
+    def __init__():
+        return
+
     def POST(self, vehicle_id):
         try:
             my_logger.info("POST: vehicle_id=" + str(vehicle_id))
@@ -1103,7 +1106,7 @@ class authorizedZone:
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-            except Exception:
+            except Exception:  # pylint: disable=W0703
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
             vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
@@ -1120,11 +1123,11 @@ class authorizedZone:
             outputObj["zone"] = zone
             droneAPIUtils.authorizedZoneDict[vehicle_id] = zone
             my_logger.info("Return: =" + json.dumps(outputObj))
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return json.dumps(outputObj)
 </code></pre>
   </div>
@@ -1137,6 +1140,26 @@ class authorizedZone:
           <li><a href="#droneAPIAuthorizedZone.authorizedZone">authorizedZone</a></li>
           </ul>
           <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="droneAPIAuthorizedZone.authorizedZone.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIAuthorizedZone.authorizedZone.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIAuthorizedZone.authorizedZone.__init__" class="source">
+    <pre><code>def __init__():
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
             
   <div class="item">
     <div class="name def" id="droneAPIAuthorizedZone.authorizedZone.POST">
@@ -1159,7 +1182,7 @@ class authorizedZone:
         except Warning:
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-        except Exception:
+        except Exception:  # pylint: disable=W0703
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
         vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
@@ -1176,11 +1199,11 @@ class authorizedZone:
         outputObj["zone"] = zone
         droneAPIUtils.authorizedZoneDict[vehicle_id] = zone
         my_logger.info("Return: =" + json.dumps(outputObj))
-    except Exception as e:
-        my_logger.exception(e)
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return json.dumps(outputObj)
 </code></pre>
   </div>
