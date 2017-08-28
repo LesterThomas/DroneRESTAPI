@@ -12,6 +12,10 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 
 class simulator:
+
+    def __init__()
+        return
+
     def GET(self, vehicle_id):
         try:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
@@ -19,11 +23,11 @@ class simulator:
             droneAPIUtils.applyHeadders()
             output = getSimulatorParams(vehicle_id)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
     def POST(self, vehicle_id):
@@ -35,7 +39,7 @@ class simulator:
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-            except Exception:
+            except Exception:  # pylint: disable=W0703
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
             my_logger.debug("posting new simulator parameter")
@@ -50,11 +54,11 @@ class simulator:
 
             output = getSimulatorParams(vehicle_id)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
     def OPTIONS(self, vehicle_id):
@@ -67,11 +71,11 @@ class simulator:
             outputObj = {}
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
 
@@ -82,13 +86,13 @@ def getSimulatorParams(vehicle_id):
         except Warning:
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
-        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
+        droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
         outputObj = {"_actions": [{"method": "POST", "title": "Upload a new simulator paramater to the simulator. ", "fields": [
-            {"name": "parameter", "value": "SIM_WIND_SPD", "type": "string"}, {"name": "value", "type": "integer", "float": 10}]}]};
+            {"name": "parameter", "value": "SIM_WIND_SPD", "type": "string"}, {"name": "value", "type": "integer", "float": 10}]}]}
 
         simulatorParams = {}
 
@@ -119,9 +123,9 @@ def getSimulatorParams(vehicle_id):
 
         # outputObj['mission']=cmds
         output = json.dumps(outputObj)
-    except Exception as e:
-        my_logger.exception(e)
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return output

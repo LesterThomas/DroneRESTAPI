@@ -27,6 +27,9 @@ class InvalidLocationException(Exception):
 class Command(object):
     """THis class handles the /vehicle/*/command URL for the drone API."""
 
+    def __init__()
+        return
+
     def OPTIONS(self, vehicle_id):
         """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
@@ -193,7 +196,7 @@ class Command(object):
             except Warning:
                 my_logger.warn("vehicle_status:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-            except Exception:
+            except Exception:  # pylint: disable=W0703
                 my_logger.warn("vehicle_status:GET Cant connect to vehicle" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
             droneAPIUtils.applyHeadders()
@@ -356,7 +359,7 @@ def arm(inVehicle, vehicle_id):
             output_obj["error"] = "vehicle not armable"
             my_logger.warn("vehicle not armable")
 
-    except CannotArmException as ex:
+    except CannotArmException:
         output_obj["name"] = "Arm"
         output_obj["status"] = "Error"
         output_obj["error"] = "vehicle did not arm within 5 seconds."
@@ -541,8 +544,8 @@ def goto_absolute(inVehicle, inLocation):
     if inVehicle.armed:
         output_obj["name"] = "Goto-Absolute"
         output_obj["status"] = "success"
-        my_logger.debug(" Goto Location: %s" % inLocation)
-        my_logger.debug("lat %s" % str(inLocation['lat']))
+        my_logger.debug(" Goto Location: %s", inLocation)
+        my_logger.debug("lat %s", str(inLocation['lat']))
 
         distance = round(
             droneAPIUtils.distanceInMeters(
@@ -578,8 +581,8 @@ def roi(inVehicle, inLocation):
     output_obj = {}
     output_obj["name"] = "Region-of-Interest"
     output_obj["status"] = "success"
-    my_logger.debug(" Home Location: %s" % inLocation)
-    my_logger.debug("lat %s" % str(inLocation['lat']))
+    my_logger.debug(" Home Location: %s", inLocation)
+    my_logger.debug("lat %s", str(inLocation['lat']))
     # coodinates are target
     output_obj["coordinate"] = [inLocation['lat'], inLocation['lon'], inLocation['alt']]
     output_obj["param1"] = 0

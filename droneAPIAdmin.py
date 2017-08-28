@@ -4,7 +4,6 @@
 import logging
 import traceback
 import json
-import redis
 import droneAPIUtils
 import web
 
@@ -12,6 +11,10 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 
 class admin:
+
+    def __init__()
+        return
+
     def GET(self):
         try:
             my_logger.info("GET")

@@ -19,6 +19,10 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 
 class vehicleStatus:
+
+    def __init__()
+        return
+
     def GET(self, vehicle_id):
         try:
             my_logger.debug("GET: vehicle_id=" + str(vehicle_id))

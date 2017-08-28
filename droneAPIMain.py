@@ -17,6 +17,9 @@ import droneAPIUtils
 class Index(object):  # pylint: disable=R0903
     """THis class handles the root URL (sometimes called the EntryPoint) for the drone API."""
 
+    def __init__()
+        return
+
     def GET(self):  # pylint: disable=R0201
         """This method returns the root (sometimes called the EntryPoint) for the drone API.
         The returned string is a static set of links (to the other resource endpoints) and

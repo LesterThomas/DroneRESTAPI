@@ -2,20 +2,22 @@
 series of actions that can be loaded to a drone and executed automatically"""
 
 # Import DroneKit-Python
-from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException
+from dronekit import Command, mavutil
 
 import web
 import logging
 import traceback
 import json
-import time
-import math
 import droneAPIUtils
 
 my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 
 class mission:
+
+    def __init__()
+        return
+
     def GET(self, vehicle_id):
         try:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
@@ -23,11 +25,11 @@ class mission:
             droneAPIUtils.applyHeadders()
             output = getMissionActions(vehicle_id)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
     def POST(self, vehicle_id):
@@ -39,7 +41,7 @@ class mission:
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-            except Exception:
+            except Exception:  # pylint: disable=W0703
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
             # download existing commands
@@ -70,11 +72,11 @@ class mission:
             my_logger.info("Command added")
             output = getMissionActions(vehicle_id)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
     def OPTIONS(self, vehicle_id):
@@ -86,11 +88,11 @@ class mission:
             outputObj = {}
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
 
@@ -101,10 +103,10 @@ def getMissionActions(vehicle_id):
         except Warning:
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-        except Exception:
+        except Exception:  # pylint: disable=W0703
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
-        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
+        droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
         outputObj = {"_actions": [{"name": "upload mission", "method": "POST", "title": "Upload a new mission to the vehicle. The mission is a collection of mission actions with <command>, <coordinate[lat,lon,alt]> and command specific <param1>,<param2>,<param3>,<param4>. The command-set is described at https://pixhawk.ethz.ch/mavlink/",
                                    "fields": [{"name": "coordinate", "type": "array", "value": [51.3957, -1.3441, 30]}, {"name": "command", "type": "integer", "value": 16}, {"name": "param1", "type": "integer"}, {"name": "param2", "type": "integer"}, {"name": "param3", "type": "integer"}, {"name": "param4", "type": "integer"}]}]}
         cmds = inVehicle.commands
@@ -149,9 +151,9 @@ def getMissionActions(vehicle_id):
 
         # outputObj['mission']=cmds
         output = json.dumps(outputObj)
-    except Exception as e:
-        my_logger.exception(e)
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return output
