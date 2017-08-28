@@ -21,7 +21,7 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 class vehicleIndex:
 
-    def __init__():
+    def __init__(self):
         return
 
     def GET(self):

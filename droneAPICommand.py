@@ -27,7 +27,7 @@ class InvalidLocationException(Exception):
 class Command(object):
     """THis class handles the /vehicle/*/command URL for the drone API."""
 
-    def __init__():
+    def __init__(self):
         return
 
     def OPTIONS(self, vehicle_id):

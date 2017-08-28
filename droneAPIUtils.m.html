@@ -1500,9 +1500,6 @@ class worker(Thread):
     """This class provides a background worker thread that polls all the drone objects and updates the Redis database.
     This allows the GET URL requests to be served in a stateless manner from the Redis database."""
 
-    def __init__():
-        return
-
     def run(self):
         try:
             x = 1
@@ -2236,9 +2233,6 @@ This allows the GET URL requests to be served in a stateless manner from the Red
     """This class provides a background worker thread that polls all the drone objects and updates the Redis database.
     This allows the GET URL requests to be served in a stateless manner from the Redis database."""
 
-    def __init__():
-        return
-
     def run(self):
         try:
             x = 1
@@ -2341,17 +2335,60 @@ initial name is set by the constructor.</p></div>
             
   <div class="item">
     <div class="name def" id="droneAPIUtils.worker.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>)</p>
+    <p>def <span class="ident">__init__</span>(</p><p>self, group=None, target=None, name=None, args=(), kwargs=None, verbose=None)</p>
     </div>
     
 
     
   
+    <div class="desc"><p>This constructor should always be called with keyword arguments. Arguments are:</p>
+<p><em>group</em> should be None; reserved for future extension when a ThreadGroup
+class is implemented.</p>
+<p><em>target</em> is the callable object to be invoked by the run()
+method. Defaults to None, meaning nothing is called.</p>
+<p><em>name</em> is the thread name. By default, a unique name is constructed of
+the form "Thread-N" where N is a small decimal number.</p>
+<p><em>args</em> is the argument tuple for the target invocation. Defaults to ().</p>
+<p><em>kwargs</em> is a dictionary of keyword arguments for the target
+invocation. Defaults to {}.</p>
+<p>If a subclass overrides the constructor, it must make sure to invoke
+the base class constructor (Thread.<strong>init</strong>()) before doing anything
+else to the thread.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.__init__', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIUtils.worker.__init__" class="source">
-    <pre><code>def __init__():
-    return
+    <pre><code>def __init__(self, group=None, target=None, name=None,
+             args=(), kwargs=None, verbose=None):
+    """This constructor should always be called with keyword arguments. Arguments are:
+    *group* should be None; reserved for future extension when a ThreadGroup
+    class is implemented.
+    *target* is the callable object to be invoked by the run()
+    method. Defaults to None, meaning nothing is called.
+    *name* is the thread name. By default, a unique name is constructed of
+    the form "Thread-N" where N is a small decimal number.
+    *args* is the argument tuple for the target invocation. Defaults to ().
+    *kwargs* is a dictionary of keyword arguments for the target
+    invocation. Defaults to {}.
+    If a subclass overrides the constructor, it must make sure to invoke
+    the base class constructor (Thread.__init__()) before doing anything
+    else to the thread.
+    assert group is None, "group argument must be None for now"
+    _Verbose.__init__(self, verbose)
+    if kwargs is None:
+        kwargs = {}
+    self.__target = target
+    self.__name = str(name or _newname())
+    self.__args = args
+    self.__kwargs = kwargs
+    self.__daemonic = self._set_daemon()
+    self.__ident = None
+    self.__started = Event()
+    self.__stopped = False
+    self.__block = Condition(Lock())
+    self.__initialized = True
+    # sys.stderr is not stored in the class like
+    # sys.exc_info since it can be changed between instances
+    self.__stderr = _sys.stderr
 </code></pre>
   </div>
 </div>
