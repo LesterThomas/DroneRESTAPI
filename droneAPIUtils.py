@@ -47,7 +47,7 @@ def initaliseLogger():
 
 
 def initaliseGlobals():
-    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, commandArrayDict, authorizedZoneDict
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
@@ -57,7 +57,6 @@ def initaliseGlobals():
     # set global variables
     connectionDict = {}  # holds a dictionary of DroneKit connection objects
     connectionNameTypeDict = {}  # holds the additonal name, type and start_time for the conections
-    commandArrayDict = {}  # holds recent actions executied by each drone
     authorizedZoneDict = {}  # holds zone authorizations for each drone
 
     return
@@ -230,7 +229,6 @@ def connectVehicle(inVehicleId):
     #global connection_string_array
     global redisdB
     global connectionDict
-    global commandArrayDict
     try:
         my_logger.debug("connectVehicle called with inVehicleId = " + str(inVehicleId))
         # connection_string=connection_string_array[inVehicleId]
@@ -260,10 +258,7 @@ def connectVehicle(inVehicleId):
             my_logger.info("connection_string: %s" % (connection_string,))
             my_logger.info("Connecting to vehicle on: %s" % (connection_string,))
             connectionNameTypeDict[inVehicleId] = {"name": vehicleName, "vehicle_type": vehicle_type}
-            commandArrayDict[inVehicleId] = []  # create empty action array
             connectionDict[inVehicleId] = connect(connection_string, wait_ready=True, heartbeat_timeout=10)
-            my_logger.info("commandArrayDict")
-            my_logger.info(commandArrayDict)
         else:
             my_logger.debug("Already connected to vehicle")
     except Warning as w:
@@ -457,8 +452,8 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
         droneDBDetails['vehicle_details']['drone_connect_to'] = hostAndPort['port'] + 10
         droneDBDetails['vehicle_details']['groundstation_connect_to'] = hostAndPort['port'] + 20
 
-    redisdB.set("connection_string:" + key,
-                json.dumps(droneDBDetails))
+    redisdB.set("connection_string:" + key, json.dumps(droneDBDetails))
+    redisdB.set("vehicle_commands:" + key, json.dumps({"commands": []}))
 
     outputObj = {}
     outputObj["connection"] = connection
@@ -478,14 +473,13 @@ class worker(Thread):
         try:
             x = 1
             while True:
-                my_logger.info("Background worker processing %i", x)
                 x = x + 1
                 start_time = time.time()
                 keys = redisdB.keys("connection_string:*")
                 for key in keys:
-                    my_logger.info("key = '%s'", key)
+                    my_logger.debug("key = '%s'", key)
                     json_str = redisdB.get(key)
-                    my_logger.info("redisDbObj = '%s'", json_str)
+                    my_logger.debug("redisDbObj = '%s'", json_str)
                     json_obj = json.loads(json_str)
                     vehicle_id = key[18:]
                     try:
@@ -506,7 +500,7 @@ class worker(Thread):
                         traceLines = tracebackStr.split("\n")
 
                 elapsed_time = time.time() - start_time
-                my_logger.info("Background processing took %f", elapsed_time)
+                my_logger.info("Background processing %i took %f", x, elapsed_time)
                 if (elapsed_time < .25):
                     time.sleep(.25 - elapsed_time)
         except Exception as ex:

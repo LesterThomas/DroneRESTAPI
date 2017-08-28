@@ -16,12 +16,12 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 
 class mission:
-    def GET(self, vehicleId):
+    def GET(self, vehicle_id):
         try:
-            my_logger.info("GET: vehicleId=" + str(vehicleId))
-            my_logger.debug("vehicleId = '" + vehicleId + "'")
+            my_logger.info("GET: vehicle_id=" + str(vehicle_id))
+            my_logger.debug("vehicle_id = '" + vehicle_id + "'")
             droneAPIUtils.applyHeadders()
-            output = getMissionActions(vehicleId)
+            output = getMissionActions(vehicle_id)
             my_logger.info("Return: =" + output)
         except Exception as e:
             my_logger.exception(e)
@@ -30,18 +30,18 @@ class mission:
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
         return output
 
-    def POST(self, vehicleId):
+    def POST(self, vehicle_id):
         try:
-            my_logger.info("POST: vehicleId=" + str(vehicleId))
+            my_logger.info("POST: vehicle_id=" + str(vehicle_id))
             droneAPIUtils.applyHeadders()
             try:
-                inVehicle = droneAPIUtils.connectVehicle(vehicleId)
+                inVehicle = droneAPIUtils.connectVehicle(vehicle_id)
             except Warning:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
             except Exception:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
-                return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId)})
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
+                return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
             # download existing commands
             my_logger.info("download existing commands")
             cmds = inVehicle.commands
@@ -68,7 +68,7 @@ class mission:
                 cmds.add(cmd)
             inVehicle.flush()
             my_logger.info("Command added")
-            output = getMissionActions(vehicleId)
+            output = getMissionActions(vehicle_id)
             my_logger.info("Return: =" + output)
         except Exception as e:
             my_logger.exception(e)
@@ -77,10 +77,10 @@ class mission:
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
         return output
 
-    def OPTIONS(self, vehicleId):
+    def OPTIONS(self, vehicle_id):
         """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
-            my_logger.info("OPTIONS: vehicleId=" + str(vehicleId))
+            my_logger.info("OPTIONS: vehicle_id=" + str(vehicle_id))
             droneAPIUtils.applyHeadders()
 
             outputObj = {}
@@ -94,17 +94,17 @@ class mission:
         return output
 
 
-def getMissionActions(vehicleId):
+def getMissionActions(vehicle_id):
     try:
         try:
-            inVehicle = droneAPIUtils.connectVehicle(vehicleId)
+            inVehicle = droneAPIUtils.connectVehicle(vehicle_id)
         except Warning:
-            my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+            my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
         except Exception:
-            my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
-            return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId)})
-        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
+            my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
+            return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
+        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
         outputObj = {"_actions": [{"name": "upload mission", "method": "POST", "title": "Upload a new mission to the vehicle. The mission is a collection of mission actions with <command>, <coordinate[lat,lon,alt]> and command specific <param1>,<param2>,<param3>,<param4>. The command-set is described at https://pixhawk.ethz.ch/mavlink/",
                                    "fields": [{"name": "coordinate", "type": "array", "value": [51.3957, -1.3441, 30]}, {"name": "command", "type": "integer", "value": 16}, {"name": "param1", "type": "integer"}, {"name": "param2", "type": "integer"}, {"name": "param3", "type": "integer"}, {"name": "param4", "type": "integer"}]}]}
         cmds = inVehicle.commands
@@ -143,7 +143,7 @@ def getMissionActions(vehicleId):
             "self": {
                 "href": droneAPIUtils.homeDomain +
                 "/vehicle/" +
-                str(vehicleId) +
+                str(vehicle_id) +
                 "/mission",
                 "title": "Get the current mission commands from the vehicle."}}
 

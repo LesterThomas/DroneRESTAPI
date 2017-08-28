@@ -19,20 +19,20 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 class authorizedZone:
 
-    def POST(self, vehicleId):
+    def POST(self, vehicle_id):
         try:
-            my_logger.info("POST: vehicleId=" + str(vehicleId))
-            my_logger.debug("vehicleId = '" + vehicleId + "'")
+            my_logger.info("POST: vehicle_id=" + str(vehicle_id))
+            my_logger.debug("vehicle_id = '" + vehicle_id + "'")
             droneAPIUtils.applyHeadders()
             try:
-                inVehicle = droneAPIUtils.connectVehicle(vehicleId)
+                inVehicle = droneAPIUtils.connectVehicle(vehicle_id)
             except Warning:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
             except Exception:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
-                return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId)})
-            vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
+                return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
+            vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
             my_logger.info(vehicleStatus)
             data = json.loads(web.data())
             zone = data["zone"]
@@ -44,7 +44,7 @@ class authorizedZone:
                     zone["shape"]["radius"] = 500  # default radius of 500
             outputObj = {}
             outputObj["zone"] = zone
-            droneAPIUtils.authorizedZoneDict[vehicleId] = zone
+            droneAPIUtils.authorizedZoneDict[vehicle_id] = zone
             my_logger.info("Return: =" + json.dumps(outputObj))
         except Exception as e:
             my_logger.exception(e)

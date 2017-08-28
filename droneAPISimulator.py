@@ -12,12 +12,12 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 
 class simulator:
-    def GET(self, vehicleId):
+    def GET(self, vehicle_id):
         try:
-            my_logger.info("GET: vehicleId=" + str(vehicleId))
-            my_logger.debug("vehicleId = '" + vehicleId + "'")
+            my_logger.info("GET: vehicle_id=" + str(vehicle_id))
+            my_logger.debug("vehicle_id = '" + vehicle_id + "'")
             droneAPIUtils.applyHeadders()
-            output = getSimulatorParams(vehicleId)
+            output = getSimulatorParams(vehicle_id)
             my_logger.info("Return: =" + output)
         except Exception as e:
             my_logger.exception(e)
@@ -26,18 +26,18 @@ class simulator:
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
         return output
 
-    def POST(self, vehicleId):
+    def POST(self, vehicle_id):
         try:
-            my_logger.info("POST: vehicleId=" + str(vehicleId))
+            my_logger.info("POST: vehicle_id=" + str(vehicle_id))
             droneAPIUtils.applyHeadders()
             try:
-                inVehicle = droneAPIUtils.connectVehicle(vehicleId)
+                inVehicle = droneAPIUtils.connectVehicle(vehicle_id)
             except Warning:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
             except Exception:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
-                return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId)})
+                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
+                return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
             my_logger.debug("posting new simulator parameter")
             simulatorData = json.loads(web.data())
             my_logger.debug(simulatorData)
@@ -48,7 +48,7 @@ class simulator:
             inVehicle.parameters[simKey] = float(simValue)
             my_logger.debug('Updated parameter')
 
-            output = getSimulatorParams(vehicleId)
+            output = getSimulatorParams(vehicle_id)
             my_logger.info("Return: =" + output)
         except Exception as e:
             my_logger.exception(e)
@@ -57,10 +57,10 @@ class simulator:
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
         return output
 
-    def OPTIONS(self, vehicleId):
+    def OPTIONS(self, vehicle_id):
         """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
-            my_logger.info("OPTIONS: vehicleId=" + str(vehicleId))
+            my_logger.info("OPTIONS: vehicle_id=" + str(vehicle_id))
             # just here to suppor the CORS Cross-Origin security
             droneAPIUtils.applyHeadders()
 
@@ -75,18 +75,18 @@ class simulator:
         return output
 
 
-def getSimulatorParams(vehicleId):
+def getSimulatorParams(vehicle_id):
     try:
         try:
-            inVehicle = droneAPIUtils.connectVehicle(vehicleId)
+            inVehicle = droneAPIUtils.connectVehicle(vehicle_id)
         except Warning:
-            my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
+            my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
         except Exception as e:
             my_logger.exception(e)
-            my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicleId))
-            return json.dumps({"error": "Cant connect to vehicle " + str(vehicleId)})
-        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicleId)
+            my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
+            return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
+        vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
         outputObj = {"_actions": [{"method": "POST", "title": "Upload a new simulator paramater to the simulator. ", "fields": [
             {"name": "parameter", "value": "SIM_WIND_SPD", "type": "string"}, {"name": "value", "type": "integer", "float": 10}]}]};
 
@@ -108,13 +108,13 @@ def getSimulatorParams(vehicleId):
             "self": {
                 "href": droneAPIUtils.homeDomain +
                 "/vehicle/" +
-                str(vehicleId) +
+                str(vehicle_id) +
                 "/simulator",
                 "title": "Get the current simulator parameters from the vehicle."},
             "up": {
                 "href": droneAPIUtils.homeDomain +
                 "/vehicle/" +
-                str(vehicleId),
+                str(vehicle_id),
                 "title": "Get status for parent vehicle."}}
 
         # outputObj['mission']=cmds

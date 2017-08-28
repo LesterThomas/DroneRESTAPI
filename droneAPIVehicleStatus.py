@@ -19,34 +19,34 @@ my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
 
 class vehicleStatus:
-    def GET(self, vehicleId):
+    def GET(self, vehicle_id):
         try:
-            my_logger.debug("GET: vehicleId=" + str(vehicleId))
+            my_logger.debug("GET: vehicle_id=" + str(vehicle_id))
             droneAPIUtils.applyHeadders()
             outputObj = {}
 
             actions = [{"method": "DELETE", "href": droneAPIUtils.homeDomain + "/vehicle/" +
-                        str(vehicleId), "title": "Delete connection to vehicle " + str(vehicleId)}]
+                        str(vehicle_id), "title": "Delete connection to vehicle " + str(vehicle_id)}]
 
-            json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
+            json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicle_id))
             individual_vehicle = json.loads(json_str)
 
-            individual_vehicle['id'] = vehicleId
+            individual_vehicle['id'] = vehicle_id
             individual_vehicle['_links'] = {}
             individual_vehicle['_links']["self"] = {
-                "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId),
-                "title": "Get status for vehicle " + str(vehicleId) + "."}
+                "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id),
+                "title": "Get status for vehicle " + str(vehicle_id) + "."}
             individual_vehicle['_links']['homeLocation'] = {
-                "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/homeLocation",
+                "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/homeLocation",
                 "title": "Get the home location for this vehicle"}
             individual_vehicle['_links']['command'] = {
-                "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/action",
+                "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/action",
                 "title": "Get the actions  for this vehicle."}
             individual_vehicle['_links']['mission'] = {
-                "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/mission",
+                "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/mission",
                 "title": "Get the current mission commands from the vehicle."}
             individual_vehicle['_links']['simulator'] = {
-                "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicleId) + "/simulator",
+                "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/simulator",
                 "title": "Get the current simulator parameters from the vehicle."}
             individual_vehicle["_actions"] = actions
             output = json.dumps(individual_vehicle)
@@ -59,20 +59,21 @@ class vehicleStatus:
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
         return output
 
-    def DELETE(self, vehicleId):
+    def DELETE(self, vehicle_id):
         try:
-            my_logger.info("DELETE: vehicleId=" + str(vehicleId))
+            my_logger.info("DELETE: vehicle_id=" + str(vehicle_id))
 
             # remove reference t dronekit object
-            droneAPIUtils.connectionDict[vehicleId] = None
+            droneAPIUtils.connectionDict[vehicle_id] = None
             # delete docker container for this vehicle
-            json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
+            json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicle_id))
             my_logger.debug("redisDbObj = '" + json_str + "'")
             json_obj = json.loads(json_str)
             connection_string = json_obj['vehicle_details']['connection_string']
 
-            droneAPIUtils.redisdB.delete("connection_string:" + vehicleId)
-            droneAPIUtils.connectionDict.pop("connection_string:" + vehicleId, None)
+            droneAPIUtils.redisdB.delete("connection_string:" + vehicle_id)
+            droneAPIUtils.redisdB.delete("vehicle_commands:" + vehicle_id)
+            droneAPIUtils.connectionDict.pop("connection_string:" + vehicle_id, None)
             dockerHostsArray = json.loads(droneAPIUtils.redisdB.get("dockerHostsArray"))
 
             ipAddress = connection_string[4:-6]
@@ -105,10 +106,10 @@ class vehicleStatus:
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
         return output
 
-    def OPTIONS(self, vehicleId):
+    def OPTIONS(self, vehicle_id):
         """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
-            my_logger.info("OPTIONS: vehicleId=" + str(vehicleId))
+            my_logger.info("OPTIONS: vehicle_id=" + str(vehicle_id))
             droneAPIUtils.applyHeadders()
 
             outputObj = {}
@@ -123,8 +124,8 @@ class vehicleStatus:
         return output
 
 
-def terminateCloudInstance(vehicleId):
-    json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicleId))
+def terminateCloudInstance(vehicle_id):
+    json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicle_id))
     my_logger.debug("redisDbObj = '" + json_str + "'")
     json_obj = json.loads(json_str)
     connection_string = json_obj['host_details']['connection_string']
@@ -163,7 +164,7 @@ def terminateCloudInstance(vehicleId):
     except Exception as inst:
         my_logger.error("Error conneting to AWS:")
         my_logger.error("VehicleId=")
-        my_logger.error(vehicleId)
+        my_logger.error(vehicle_id)
         my_logger.error("Exception=")
         my_logger.error(inst)
         # ignore error and continue

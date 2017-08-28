@@ -36,15 +36,15 @@ class vehicleIndex:
                 json_str = droneAPIUtils.redisdB.get(key)
                 my_logger.debug("redisDbObj = '" + json_str + "'")
                 individual_vehicle = json.loads(json_str)
-                vehicleId = key[18:]
+                vehicle_id = key[18:]
                 individual_vehicle["_links"] = {
                     "self": {
                         "href": droneAPIUtils.homeDomain +
                         "/vehicle/" +
-                        str(vehicleId),
+                        str(vehicle_id),
                         "title": "Get status for vehicle " +
-                        str(vehicleId)}}
-                individual_vehicle["id"] = vehicleId
+                        str(vehicle_id)}}
+                individual_vehicle["id"] = vehicle_id
                 vehicle_started = ('vehicle_status' in individual_vehicle.keys())
                 if vehicle_started:
                     if not(hasattr(query_parameters, 'status')):

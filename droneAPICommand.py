@@ -51,16 +51,13 @@ class Command(object):
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
 
             droneAPIUtils.applyHeadders()
-            try:
-                inVehicle = droneAPIUtils.connectVehicle(vehicle_id)
-            except Warning:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
+            json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicle_id))
+            individual_vehicle = json.loads(str(json_str))
+            if not('vehicle_status' in individual_vehicle.keys()):  # if the vehicle is starting up there will be no vehicle_status
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-            except Exception:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
-                return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
 
-            vehicleStatus = droneAPIUtils.getVehicleStatus(inVehicle, vehicle_id)
+            vehicle_status = individual_vehicle['vehicle_status']
+
             output_obj = {}
             output_obj["_links"] = {
                 "self": {
@@ -71,8 +68,8 @@ class Command(object):
                     "title": "Get the commands for this vehicle."}}
             available_commands = []
             # available when armed
-            my_logger.info("global_relative_frame.alt=%s", vehicleStatus["global_relative_frame"]["alt"])
-            if vehicleStatus["armed"] == False:
+            my_logger.info("global_relative_frame.alt=%s", vehicle_status["global_relative_frame"]["alt"])
+            if vehicle_status["armed"] == False:
                 available_commands.append({
                     "name": "Arm",
                     "title": "Arm drone.",
@@ -80,7 +77,7 @@ class Command(object):
                     "method": "POST",
                     "fields": [{"name": "name", "type": "string", "value": "Arm"}]
                 })
-            elif vehicleStatus["global_relative_frame"]["alt"] > 1:  # if at height of >1 m
+            elif vehicle_status["global_relative_frame"]["alt"] > 1:  # if at height of >1 m
                 available_commands.append({"name": "Region-of-Interest",
                                            "title": "Set a Region of Interest : When the drone is flying, it will face the point  <lat>,<lon>,<alt> (defaults to the home location)",
                                            "href": droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
@@ -166,7 +163,7 @@ class Command(object):
                                                       {"name": "up",
                                                        "type": "float",
                                                        "value": 0}]})
-            elif vehicleStatus["armed"]:
+            elif vehicle_status["armed"]:
                 available_commands.append({
                     "name": "Takeoff",
                     "title": "Takeoff in GUIDED mode to height of <height> (default 20m).",
@@ -177,8 +174,7 @@ class Command(object):
 
             output_obj['_actions'] = available_commands
             my_logger.debug(output_obj)
-            updateActionStatus(inVehicle, vehicle_id)
-            output_obj['commands'] = droneAPIUtils.commandArrayDict[vehicle_id]
+            output_obj['commands'] = updateActionStatus(vehicle_status, vehicle_id)
             output = json.dumps(output_obj)
             my_logger.info("Return: =" + output)
         except Exception as ex:  # pylint: disable=W0703
@@ -195,10 +191,10 @@ class Command(object):
             try:
                 inVehicle = droneAPIUtils.connectVehicle(vehicle_id)
             except Warning:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
+                my_logger.warn("vehicle_status:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
             except Exception:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
+                my_logger.warn("vehicle_status:GET Cant connect to vehicle" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
             droneAPIUtils.applyHeadders()
             data = json.loads(web.data())
@@ -265,7 +261,13 @@ class Command(object):
                 output_obj['command'] = roi(inVehicle, location_obj)
             else:
                 output_obj['command'] = {"status": "error", "name": value, "error": "No command found with name '" + value + "'."}
-            command_array = droneAPIUtils.commandArrayDict[vehicle_id]
+            #command_array = droneAPIUtils.commandArrayDict[vehicle_id]
+            json_str = droneAPIUtils.redisdB.get('vehicle_commands:' + str(vehicle_id))
+            my_logger.info('vehicle_commands from Redis')
+            my_logger.info(json_str)
+            command_array_obj = json.loads(str(json_str))
+            command_array = command_array_obj['commands']
+
             if len(command_array) == 0:
                 output_obj['command']['id'] = 0
             else:
@@ -273,6 +275,7 @@ class Command(object):
             command_array.append(output_obj)
             if len(command_array) > 10:
                 command_array.pop(0)
+            droneAPIUtils.redisdB.set('vehicle_commands:' + str(vehicle_id), json.dumps({"commands": command_array}))
             output_obj['href'] = droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command"
             my_logger.info("Return: =" + json.dumps(output_obj))
 
@@ -310,7 +313,7 @@ def rtl(inVehicle):
     return output_obj
 
 
-def arm(inVehicle, invehicle_id):
+def arm(inVehicle, vehicle_id):
     """This function arms the drone."""
     try:
         output_obj = {}
@@ -338,7 +341,7 @@ def arm(inVehicle, invehicle_id):
                     "lon": currentLocation.lon,
                     "radius": 500}}
             if output_obj["zone"]["shape"]["lat"] != 0:  # only automatically assign a zone if it is not 0,0,0,0
-                droneAPIUtils.authorizedZoneDict[invehicle_id] = output_obj["zone"]
+                droneAPIUtils.authorizedZoneDict[vehicle_id] = output_obj["zone"]
 
             # Confirm vehicle armed before attempting to take off - if drone doesn't arm in 5s then raise exception
             start_time = time.time()  # start time in seconds since the epoch
@@ -599,18 +602,24 @@ def roi(inVehicle, inLocation):
     return output_obj
 
 
-def updateActionStatus(inVehicle, invehicle_id):
+def updateActionStatus(vehicle_status, vehicle_id):
     """This function allows you to monitor the progress of the last command.
     It updates the command status until it is complete (or errors) or is superceeded."""
     my_logger.info("############# in updateActionStatus")
 
-    my_logger.info("invehicle_id")
-    my_logger.info(invehicle_id)
-    my_logger.info("droneAPIUtils.commandArrayDict")
-    my_logger.info(droneAPIUtils.commandArrayDict)
+    my_logger.info("vehicle_id")
+    my_logger.info(vehicle_id)
     my_logger.info("#############")
 
-    command_array = droneAPIUtils.commandArrayDict[invehicle_id]
+    #command_array = droneAPIUtils.commandArrayDict[vehicle_id]
+
+    json_str = droneAPIUtils.redisdB.get('vehicle_commands:' + str(vehicle_id))
+    my_logger.info('vehicle_commands from Redis')
+    my_logger.info(json_str)
+    command_array_obj = json.loads(str(json_str))
+    command_array = command_array_obj['commands']
+    my_logger.info("command_array")
+    my_logger.info(command_array)
 
     my_logger.info(command_array)
 
@@ -628,18 +637,17 @@ def updateActionStatus(inVehicle, invehicle_id):
             my_logger.info("Cant monitor progress for mission")
         else:
             my_logger.debug("Monitoring progress for command '" + latestAction['command']['name'] + "'")
-
+            my_logger.info(vehicle_status)
             targetCoordinates = latestAction['command']['coordinate']  # array with lat,lon,alt
-            my_logger.info(inVehicle)
-            vehicleCoordinates = inVehicle.location.global_relative_frame  # object with lat,lon,alt attributes
+            vehicleCoordinates = vehicle_status['global_relative_frame']  # object with lat,lon,alt attributes
             # Return-to-launch uses global_frame (alt is absolute)
 
             if latestAction['command']['name'] == 'Return-to-Launch':
-                vehicleCoordinates = inVehicle.location.global_frame  # object with lat,lon,alt attributes
+                vehicleCoordinates = vehicle_status['global_frame']  # object with lat,lon,alt attributes
 
             horizontalDistance = droneAPIUtils.distanceInMeters(
-                targetCoordinates[0], targetCoordinates[1], vehicleCoordinates.lat, vehicleCoordinates.lon)
-            verticalDistance = abs(targetCoordinates[2] - vehicleCoordinates.alt)
+                targetCoordinates[0], targetCoordinates[1], vehicleCoordinates['lat'], vehicleCoordinates['lon'])
+            verticalDistance = abs(targetCoordinates[2] - vehicleCoordinates['alt'])
             latestAction['horizontalDistance'] = round(horizontalDistance, 2)
             latestAction['verticalDistance'] = round(verticalDistance, 2)
             if (horizontalDistance < 5) and (verticalDistance < 1):
@@ -660,4 +668,6 @@ def updateActionStatus(inVehicle, invehicle_id):
                 previousAction['completeStatus'] = 'Interrupted'
                 previousAction['complete'] = False
 
-    return
+    droneAPIUtils.redisdB.set('vehicle_commands:' + str(vehicle_id), json.dumps({"commands": command_array}))
+
+    return command_array

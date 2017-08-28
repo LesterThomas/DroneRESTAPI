@@ -71,10 +71,10 @@ class CatchAll(object):
                          droneAPIUtils.homeDomain +
                          "/vehicle for list of vehicles or to " +
                          droneAPIUtils.homeDomain +
-                         "/vehicle/<vehicleId> for the status of vehicle #1 or to " +
+                         "/vehicle/<vehicle_id> for the status of vehicle #1 or to " +
                          droneAPIUtils.homeDomain +
-                         "/vehicle/<vehicleId>/action for the list of actions available for "
-                         "vehicle <vehicleId>."}
+                         "/vehicle/<vehicle_id>/action for the list of actions available for "
+                         "vehicle <vehicle_id>."}
             my_logger.info("Return: =" + json.dumps(output_obj))
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
@@ -96,10 +96,10 @@ class CatchAll(object):
                          droneAPIUtils.homeDomain +
                          "/vehicle for list of vehicles or to " +
                          droneAPIUtils.homeDomain +
-                         "/vehicle/<vehicleId> for the status of vehicle #1 or to " +
+                         "/vehicle/<vehicle_id> for the status of vehicle #1 or to " +
                          droneAPIUtils.homeDomain +
-                         "/vehicle/<vehicleId>/action for the list of actions available for "
-                         "vehicle <vehicleId>."}
+                         "/vehicle/<vehicle_id>/action for the list of actions available for "
+                         "vehicle <vehicle_id>."}
             my_logger.info("Return: =" + json.dumps(output_obj))
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
@@ -121,10 +121,10 @@ class CatchAll(object):
                          droneAPIUtils.homeDomain +
                          "/vehicle for list of vehicles or to " +
                          droneAPIUtils.homeDomain +
-                         "/vehicle/<vehicleId> for the status of vehicle #1 or to " +
+                         "/vehicle/<vehicle_id> for the status of vehicle #1 or to " +
                          droneAPIUtils.homeDomain +
-                         "/vehicle/<vehicleId>/action for the list of actions available for "
-                         "vehicle <vehicleId>."}
+                         "/vehicle/<vehicle_id>/action for the list of actions available for "
+                         "vehicle <vehicle_id>."}
             my_logger.info("Return: =" + json.dumps(output_obj))
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
