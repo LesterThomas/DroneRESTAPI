@@ -1,0 +1,92 @@
+<!doctype html>
+<html >
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+	<meta name="description" content="Simple Map">
+	<meta name="keywords" content="ng-map,AngularJS,center">
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+
+  </head>
+  <body ng-app="droneFrontendApp">
+    <!--[if lte IE 8]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!-- Add your site or application content here -->
+        <div class="container-fluid  navbar-default">
+          <div class="navbar-header">
+            <H3><a href="/static/app/"><img src="images/drone2.jpg"</img></a>
+            &nbsp;<a href="/static/app/">Home</a>
+            &nbsp;<a href="/static/app/#!/new">New Drone</a></H3>
+          </div>
+        </div>
+
+  	<div class="row marketing col-lg-12">
+  		<div ng-view=""></div>
+  	</div>
+
+
+    <div class="footer">
+      <div class="container">
+        <p>Copyright 2017 Lester Thomas</p>
+      </div>
+    </div>
+
+
+
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/ngmap/build/scripts/ng-map.js"></script>
+    <script src="bower_components/chart.js/dist/Chart.js"></script>
+    <script src="bower_components/angular-chart.js/dist/angular-chart.js"></script>
+    <script src="bower_components/angular-modal-service/dst/angular-modal-service.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+	<!-- build:js({.tmp,app}) scripts/scripts.js -->
+	<script 
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBwE-65p4Ql09I_jlpVZEBH2bJoguhOOE">
+	</script>
+	<script src="scripts/app.js"></script>
+	<script src="scripts/controllers/main.js"></script>
+	<script src="scripts/controllers/individual.js"></script>
+	<script src="scripts/controllers/new.js"></script>
+	<script src="scripts/controllers/modal.js"></script>
+	<script src="scripts/services/droneService.js"></script>
+	<script src="scripts/controllers/about.js"></script>
+	<script src="scripts/controllers/networkDiagram.js"></script>
+    <script src="scripts/controllers/performanceController.js"></script>
+	<!-- endbuild -->
+		
+	<!-- angular visJs -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.3.0/vis.js"></script>
+	<script src="scripts/angular-vis/angular-vis.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/locales.min.js"></script>	
+	<!-- end angular visJs -->
+
+		
+</body>
+</html>

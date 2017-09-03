@@ -1,0 +1,40 @@
+************* Module droneAPIVehicleIndex
+droneAPIVehicleIndex.py:64: [C0325(superfluous-parens), ] Unnecessary parens after 'if' keyword
+droneAPIVehicleIndex.py:69: [C0325(superfluous-parens), ] Unnecessary parens after 'if' keyword
+droneAPIVehicleIndex.py:19: [C0103(invalid-name), ] Invalid constant name "my_logger"
+droneAPIVehicleIndex.py:22: [C0103(invalid-name), vehicleIndex] Invalid class name "vehicleIndex"
+droneAPIVehicleIndex.py:22: [C0111(missing-docstring), vehicleIndex] Missing class docstring
+droneAPIVehicleIndex.py:22: [C1001(old-style-class), vehicleIndex] Old-style class defined.
+droneAPIVehicleIndex.py:27: [C0111(missing-docstring), vehicleIndex.POST] Missing method docstring
+droneAPIVehicleIndex.py:43: [W0703(broad-except), vehicleIndex.POST] Catching too general exception Exception
+droneAPIVehicleIndex.py:31: [C0103(invalid-name), vehicleIndex.POST] Invalid variable name "dataStr"
+droneAPIVehicleIndex.py:34: [C0103(invalid-name), vehicleIndex.POST] Invalid variable name "droneType"
+droneAPIVehicleIndex.py:35: [C0103(invalid-name), vehicleIndex.POST] Invalid variable name "vehicleName"
+droneAPIVehicleIndex.py:41: [C0103(invalid-name), vehicleIndex.POST] Invalid variable name "outputObj"
+droneAPIVehicleIndex.py:43: [C0103(invalid-name), vehicleIndex.POST] Invalid variable name "e"
+droneAPIVehicleIndex.py:45: [C0103(invalid-name), vehicleIndex.POST] Invalid variable name "tracebackStr"
+droneAPIVehicleIndex.py:46: [C0103(invalid-name), vehicleIndex.POST] Invalid variable name "traceLines"
+droneAPIVehicleIndex.py:27: [R0201(no-self-use), vehicleIndex.POST] Method could be a function
+droneAPIVehicleIndex.py:22: [R0903(too-few-public-methods), vehicleIndex] Too few public methods (1/2)
+droneAPIVehicleIndex.py:51: [C0103(invalid-name), launchCloudImage] Invalid function name "launchCloudImage"
+droneAPIVehicleIndex.py:51: [C0103(invalid-name), launchCloudImage] Invalid argument name "ImageId"
+droneAPIVehicleIndex.py:51: [C0103(invalid-name), launchCloudImage] Invalid argument name "InstanceType"
+droneAPIVehicleIndex.py:51: [C0103(invalid-name), launchCloudImage] Invalid argument name "SecurityGroupIds"
+droneAPIVehicleIndex.py:51: [C0111(missing-docstring), launchCloudImage] Missing function docstring
+droneAPIVehicleIndex.py:70: [C0103(invalid-name), launchCloudImage] Invalid variable name "outputObj"
+droneAPIVehicleIndex.py:5: [W0611(unused-import), ] Unused LocationGlobalRelative imported from dronekit
+droneAPIVehicleIndex.py:5: [W0611(unused-import), ] Unused VehicleMode imported from dronekit
+droneAPIVehicleIndex.py:5: [W0611(unused-import), ] Unused mavutil imported from dronekit
+droneAPIVehicleIndex.py:5: [W0611(unused-import), ] Unused Command imported from dronekit
+droneAPIVehicleIndex.py:5: [W0611(unused-import), ] Unused connect imported from dronekit
+droneAPIVehicleIndex.py:5: [W0611(unused-import), ] Unused APIException imported from dronekit
+droneAPIVehicleIndex.py:5: [W0611(unused-import), ] Unused LocationGlobal imported from dronekit
+droneAPIVehicleIndex.py:11: [W0611(unused-import), ] Unused import time
+droneAPIVehicleIndex.py:12: [W0611(unused-import), ] Unused import math
+droneAPIVehicleIndex.py:13: [W0611(unused-import), ] Unused import docker
+droneAPIVehicleIndex.py:14: [W0611(unused-import), ] Unused import redis
+droneAPIVehicleIndex.py:8: [C0411(wrong-import-order), ] standard import "import logging" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException"
+droneAPIVehicleIndex.py:9: [C0411(wrong-import-order), ] standard import "import traceback" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException"
+droneAPIVehicleIndex.py:10: [C0411(wrong-import-order), ] standard import "import json" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException"
+droneAPIVehicleIndex.py:11: [C0411(wrong-import-order), ] standard import "import time" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException"
+droneAPIVehicleIndex.py:12: [C0411(wrong-import-order), ] standard import "import math" comes before "from dronekit import connect, VehicleMode, LocationGlobal, LocationGlobalRelative, Command, mavutil, APIException"

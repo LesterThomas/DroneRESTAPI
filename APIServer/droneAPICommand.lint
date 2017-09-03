@@ -1,0 +1,40 @@
+************* Module droneAPICommand
+droneAPICommand.py:50: [C0325(superfluous-parens), ] Unnecessary parens after 'not' keyword
+droneAPICommand.py:76: [C0301(line-too-long), ] Line too long (181/160)
+droneAPICommand.py:129: [C0301(line-too-long), ] Line too long (165/160)
+droneAPICommand.py:145: [C0301(line-too-long), ] Line too long (168/160)
+droneAPICommand.py:182: [C0301(line-too-long), ] Line too long (169/160)
+droneAPICommand.py:188: [C0301(line-too-long), ] Line too long (175/160)
+droneAPICommand.py:188: [C0326(bad-whitespace), ] Exactly one space required after comma
+            my_logger.debug("HTTP Proxy calling http post at %s with data %s",droneAPIUtils.getWorkerURLforVehicle(vehicle_id)+"/vehicle/"+str(vehicle_id)+"/command", dataStr)
+                                                                             ^
+droneAPICommand.py:191: [C0326(bad-whitespace), ] Exactly one space required after comma
+            my_logger.debug("HTTP Proxy result status_code %s reason %s",result.status_code, result.reason)
+                                                                        ^
+droneAPICommand.py:259: [C0325(superfluous-parens), ] Unnecessary parens after 'if' keyword
+droneAPICommand.py:265: [C0325(superfluous-parens), ] Unnecessary parens after 'if' keyword
+droneAPICommand.py:266: [C0325(superfluous-parens), ] Unnecessary parens after 'if' keyword
+droneAPICommand.py:1: [C0103(invalid-name), ] Invalid module name "droneAPICommand"
+droneAPICommand.py:12: [C0103(invalid-name), ] Invalid constant name "my_logger"
+droneAPICommand.py:24: [R0201(no-self-use), Command.OPTIONS] Method could be a function
+droneAPICommand.py:50: [C0113(unneeded-not), Command.GET] Consider changing "not 'vehicle_status' in individual_vehicle.keys()" to "'vehicle_status' not in individual_vehicle.keys()"
+droneAPICommand.py:66: [C0121(singleton-comparison), Command.GET] Comparison to False should be 'not expr' or 'expr is False'
+droneAPICommand.py:41: [R0201(no-self-use), Command.GET] Method could be a function
+droneAPICommand.py:187: [C0103(invalid-name), Command.POST] Invalid variable name "dataStr"
+droneAPICommand.py:181: [R0201(no-self-use), Command.POST] Method could be a function
+droneAPICommand.py:204: [C0103(invalid-name), updateActionStatus] Invalid function name "updateActionStatus"
+droneAPICommand.py:226: [C0103(invalid-name), updateActionStatus] Invalid variable name "latestAction"
+droneAPICommand.py:240: [C0103(invalid-name), updateActionStatus] Invalid variable name "targetCoordinates"
+droneAPICommand.py:241: [C0103(invalid-name), updateActionStatus] Invalid variable name "vehicleCoordinates"
+droneAPICommand.py:245: [C0103(invalid-name), updateActionStatus] Invalid variable name "vehicleCoordinates"
+droneAPICommand.py:247: [C0103(invalid-name), updateActionStatus] Invalid variable name "horizontalDistance"
+droneAPICommand.py:249: [C0103(invalid-name), updateActionStatus] Invalid variable name "verticalDistance"
+droneAPICommand.py:264: [C0103(invalid-name), updateActionStatus] Invalid variable name "previousAction"
+droneAPICommand.py:265: [C0121(singleton-comparison), updateActionStatus] Comparison to False should be 'not expr' or 'expr is False'
+droneAPICommand.py:7: [W0611(unused-import), ] Unused import time
+droneAPICommand.py:8: [W0611(unused-import), ] Unused import math
+droneAPICommand.py:4: [C0411(wrong-import-order), ] standard import "import logging" comes before "import web"
+droneAPICommand.py:5: [C0411(wrong-import-order), ] standard import "import traceback" comes before "import web"
+droneAPICommand.py:6: [C0411(wrong-import-order), ] standard import "import json" comes before "import web"
+droneAPICommand.py:7: [C0411(wrong-import-order), ] standard import "import time" comes before "import web"
+droneAPICommand.py:8: [C0411(wrong-import-order), ] standard import "import math" comes before "import web"

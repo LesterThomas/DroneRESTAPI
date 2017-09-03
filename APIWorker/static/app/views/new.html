@@ -1,0 +1,77 @@
+
+<div  class="col-lg-12 col-sm-12 " style="padding-right:0; padding-left:0;">	 
+
+
+
+	<div  class="col-lg-6 col-sm-12">			
+		<div class="panel panel-default panel-primary">
+			<div class="panel-heading">Connect to real Drone </div>
+			<div class="panel-body">
+				<p>To add a real Drone, please follow the <a href="https://github.com/LesterThomas/DroneRESTAPI/blob/master/README.md">Instructions to connect real Drone</a>. </p>
+			</div>
+		</div>
+	</div>
+
+	<div  class="col-lg-6 col-sm-12">			
+		<div class="panel panel-default panel-primary">
+			<div class="panel-heading">Create Simulated Drone </div>
+			<div class="panel-body">
+				<table class="table">
+					<tr>
+						<td>
+
+							<label  for="usr">Drone Name:</label>
+						</td>
+						<td>
+							<input type="text" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" name="vehicleName" ng-model="vehicleName" /> 
+						</td>
+					</tr>
+					<tr>
+						<td>
+
+							<label  for="usr">Start Lattitude:</label>
+						</td>
+						<td>
+							<input type="text" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" name="lat" ng-model="lat" /> 
+						</td>
+					</tr>
+					<tr>
+						<td>
+
+							<label  for="usr">Start Longitude:</label>
+						</td>
+						<td>
+							<input type="text" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" name="lon" ng-model="lon" /> 
+						</td>
+					</tr>
+					<tr>
+						<td>
+
+							<label  for="usr">Start Ground Height (above sea-level):</label>
+						</td>
+						<td>
+							<input type="text" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" name="alt" ng-model="alt" /> 
+						</td>
+					</tr>
+					<tr>
+						<td>
+
+							<label  for="usr">Start Direction:</label>
+						</td>
+						<td>
+							<input type="text" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 form-control" name="dir" ng-model="dir" /> 
+						</td>
+					</tr>
+				</table>
+
+				<div class="container-fluid">
+					<button type="button" class="btn btn-primary" ng-click='createSimulated()'>Create Simulated Drone</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+</div>
+
+ 

@@ -1,0 +1,41 @@
+************* Module droneAPIAdmin
+droneAPIAdmin.py:84: [C0325(superfluous-parens), ] Unnecessary parens after 'if' keyword
+droneAPIAdmin.py:88: [C0325(superfluous-parens), ] Unnecessary parens after 'if' keyword
+droneAPIAdmin.py:10: [C0103(invalid-name), ] Invalid constant name "my_logger"
+droneAPIAdmin.py:13: [C0103(invalid-name), admin] Invalid class name "admin"
+droneAPIAdmin.py:13: [C0111(missing-docstring), admin] Missing class docstring
+droneAPIAdmin.py:13: [C1001(old-style-class), admin] Old-style class defined.
+droneAPIAdmin.py:18: [C0111(missing-docstring), admin.GET] Missing method docstring
+droneAPIAdmin.py:18: [R0914(too-many-locals), admin.GET] Too many local variables (18/15)
+droneAPIAdmin.py:69: [W0703(broad-except), admin.GET] Catching too general exception Exception
+droneAPIAdmin.py:22: [C0103(invalid-name), admin.GET] Invalid variable name "outputObj"
+droneAPIAdmin.py:26: [C0103(invalid-name), admin.GET] Invalid variable name "availableActions"
+droneAPIAdmin.py:45: [C0103(invalid-name), admin.GET] Invalid variable name "jsonObjStr"
+droneAPIAdmin.py:46: [C0103(invalid-name), admin.GET] Invalid variable name "jsonObj"
+droneAPIAdmin.py:47: [C0103(invalid-name), admin.GET] Invalid variable name "connectionString"
+droneAPIAdmin.py:48: [C0103(invalid-name), admin.GET] Invalid variable name "dockerContainerId"
+droneAPIAdmin.py:50: [C0103(invalid-name), admin.GET] Invalid variable name "vehicleName"
+droneAPIAdmin.py:51: [C0103(invalid-name), admin.GET] Invalid variable name "vehicleType"
+droneAPIAdmin.py:52: [C0103(invalid-name), admin.GET] Invalid variable name "dockerContainerId"
+droneAPIAdmin.py:53: [C0103(invalid-name), admin.GET] Invalid variable name "droneId"
+droneAPIAdmin.py:54: [C0103(invalid-name), admin.GET] Invalid variable name "hostIp"
+droneAPIAdmin.py:69: [C0103(invalid-name), admin.GET] Invalid variable name "e"
+droneAPIAdmin.py:71: [C0103(invalid-name), admin.GET] Invalid variable name "tracebackStr"
+droneAPIAdmin.py:72: [C0103(invalid-name), admin.GET] Invalid variable name "traceLines"
+droneAPIAdmin.py:18: [R0201(no-self-use), admin.GET] Method could be a function
+droneAPIAdmin.py:76: [C0111(missing-docstring), admin.POST] Missing method docstring
+droneAPIAdmin.py:94: [W0703(broad-except), admin.POST] Catching too general exception Exception
+droneAPIAdmin.py:82: [C0103(invalid-name), admin.POST] Invalid variable name "outputObj"
+droneAPIAdmin.py:86: [C0103(invalid-name), admin.POST] Invalid variable name "outputObj"
+droneAPIAdmin.py:90: [C0103(invalid-name), admin.POST] Invalid variable name "outputObj"
+droneAPIAdmin.py:94: [C0103(invalid-name), admin.POST] Invalid variable name "e"
+droneAPIAdmin.py:96: [C0103(invalid-name), admin.POST] Invalid variable name "tracebackStr"
+droneAPIAdmin.py:97: [C0103(invalid-name), admin.POST] Invalid variable name "traceLines"
+droneAPIAdmin.py:76: [R0201(no-self-use), admin.POST] Method could be a function
+droneAPIAdmin.py:111: [W0703(broad-except), admin.OPTIONS] Catching too general exception Exception
+droneAPIAdmin.py:108: [C0103(invalid-name), admin.OPTIONS] Invalid variable name "outputObj"
+droneAPIAdmin.py:111: [C0103(invalid-name), admin.OPTIONS] Invalid variable name "e"
+droneAPIAdmin.py:113: [C0103(invalid-name), admin.OPTIONS] Invalid variable name "tracebackStr"
+droneAPIAdmin.py:114: [C0103(invalid-name), admin.OPTIONS] Invalid variable name "traceLines"
+droneAPIAdmin.py:101: [R0201(no-self-use), admin.OPTIONS] Method could be a function
+droneAPIAdmin.py:8: [C0411(wrong-import-order), ] external import "import web" comes before "import droneAPIUtils"

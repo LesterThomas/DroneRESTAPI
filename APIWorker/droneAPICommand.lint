@@ -1,0 +1,39 @@
+************* Module droneAPICommand
+droneAPICommand.py:1: [C0103(invalid-name), ] Invalid module name "droneAPICommand"
+droneAPICommand.py:14: [C0103(invalid-name), ] Invalid constant name "my_logger"
+droneAPICommand.py:34: [R0914(too-many-locals), Command.POST] Too many local variables (22/15)
+droneAPICommand.py:39: [C0103(invalid-name), Command.POST] Invalid variable name "inVehicle"
+droneAPICommand.py:34: [R0912(too-many-branches), Command.POST] Too many branches (16/12)
+droneAPICommand.py:34: [R0915(too-many-statements), Command.POST] Too many statements (90/50)
+droneAPICommand.py:34: [R0201(no-self-use), Command.POST] Method could be a function
+droneAPICommand.py:27: [R0903(too-few-public-methods), Command] Too few public methods (1/2)
+droneAPICommand.py:138: [C0103(invalid-name), rtl] Invalid argument name "inVehicle"
+droneAPICommand.py:163: [C0103(invalid-name), arm] Invalid argument name "inVehicle"
+droneAPICommand.py:171: [C0103(invalid-name), arm] Invalid variable name "currentLocation"
+droneAPICommand.py:215: [C0103(invalid-name), takeoff] Invalid argument name "inVehicle"
+droneAPICommand.py:215: [C0103(invalid-name), takeoff] Invalid argument name "inHeight"
+droneAPICommand.py:223: [C0103(invalid-name), takeoff] Invalid variable name "currentLocation"
+droneAPICommand.py:241: [C0103(invalid-name), auto] Invalid argument name "inVehicle"
+droneAPICommand.py:261: [C0103(invalid-name), land] Invalid argument name "inVehicle"
+droneAPICommand.py:268: [C0103(invalid-name), land] Invalid variable name "currentLocation"
+droneAPICommand.py:284: [C0103(invalid-name), goto] Invalid argument name "inVehicle"
+droneAPICommand.py:284: [C0103(invalid-name), goto] Invalid argument name "dNorth"
+droneAPICommand.py:284: [C0103(invalid-name), goto] Invalid argument name "dEast"
+droneAPICommand.py:284: [C0103(invalid-name), goto] Invalid argument name "dDown"
+droneAPICommand.py:298: [C0103(invalid-name), goto] Invalid variable name "currentLocation"
+droneAPICommand.py:316: [C0103(invalid-name), get_location_metres] Invalid argument name "dNorth"
+droneAPICommand.py:316: [C0103(invalid-name), get_location_metres] Invalid argument name "dEast"
+droneAPICommand.py:330: [C0103(invalid-name), get_location_metres] Invalid variable name "dLat"
+droneAPICommand.py:331: [C0103(invalid-name), get_location_metres] Invalid variable name "dLon"
+droneAPICommand.py:339: [R0204(redefined-variable-type), get_location_metres] Redefinition of target_location type from dronekit.LocationGlobal to dronekit.LocationGlobalRelative
+droneAPICommand.py:345: [C0103(invalid-name), gotoRelative] Invalid function name "gotoRelative"
+droneAPICommand.py:345: [C0103(invalid-name), gotoRelative] Invalid argument name "inVehicle"
+droneAPICommand.py:385: [C0103(invalid-name), goto_absolute] Invalid argument name "inVehicle"
+droneAPICommand.py:385: [C0103(invalid-name), goto_absolute] Invalid argument name "inLocation"
+droneAPICommand.py:422: [C0103(invalid-name), roi] Invalid argument name "inVehicle"
+droneAPICommand.py:422: [C0103(invalid-name), roi] Invalid argument name "inLocation"
+droneAPICommand.py:7: [C0411(wrong-import-order), ] standard import "import logging" comes before "from dronekit import VehicleMode, LocationGlobal, LocationGlobalRelative, mavutil"
+droneAPICommand.py:8: [C0411(wrong-import-order), ] standard import "import traceback" comes before "from dronekit import VehicleMode, LocationGlobal, LocationGlobalRelative, mavutil"
+droneAPICommand.py:9: [C0411(wrong-import-order), ] standard import "import json" comes before "from dronekit import VehicleMode, LocationGlobal, LocationGlobalRelative, mavutil"
+droneAPICommand.py:10: [C0411(wrong-import-order), ] standard import "import time" comes before "from dronekit import VehicleMode, LocationGlobal, LocationGlobalRelative, mavutil"
+droneAPICommand.py:11: [C0411(wrong-import-order), ] standard import "import math" comes before "from dronekit import VehicleMode, LocationGlobal, LocationGlobalRelative, mavutil"
