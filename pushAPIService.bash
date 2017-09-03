@@ -20,7 +20,7 @@ git push
 cd APIServer
 source "postPushAPIService.bash"
 
-cd ../APIworker
+cd ../APIWorker
 source "postPushAPIService.bash"
 
 
