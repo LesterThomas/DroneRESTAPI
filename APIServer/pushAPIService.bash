@@ -13,9 +13,10 @@ VERSION="$MAJOR_VERSION.$MINOR_VERSION"
 echo "VERSION"
 echo $VERSION
 
-echo "Changing UI to point to prod api"
+echo "Changing UI to point to prod api and prod facebook id"
 sed -i -e 's/192.168.1.67/droneapi.ddns.net/g' static/app/scripts/services/droneService.js
 sed -i -e 's/192.168.1.67/droneapi.ddns.net/g' static/app/scripts/controllers/performanceController.js
+sed -i -e 's/1988760538025932/136908103594406/g' static/app/scripts/app.js
 
 echo "Running locally"
 docker stop $(docker ps -a -q -f name=droneapiserver)

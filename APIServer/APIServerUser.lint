@@ -1,0 +1,21 @@
+************* Module APIServerUser
+APIServerUser.py:12: [C0103(invalid-name), ] Invalid constant name "my_logger"
+APIServerUser.py:15: [C0111(missing-docstring), User] Missing class docstring
+APIServerUser.py:15: [C1001(old-style-class), User] Old-style class defined.
+APIServerUser.py:20: [C0111(missing-docstring), User.POST] Missing method docstring
+APIServerUser.py:48: [W0703(broad-except), User.POST] Catching too general exception Exception
+APIServerUser.py:27: [C0103(invalid-name), User.POST] Invalid variable name "dataStr"
+APIServerUser.py:39: [C0103(invalid-name), User.POST] Invalid variable name "uuidVal"
+APIServerUser.py:48: [C0103(invalid-name), User.POST] Invalid variable name "e"
+APIServerUser.py:50: [C0103(invalid-name), User.POST] Invalid variable name "tracebackStr"
+APIServerUser.py:51: [C0103(invalid-name), User.POST] Invalid variable name "traceLines"
+APIServerUser.py:20: [R0201(no-self-use), User.POST] Method could be a function
+APIServerUser.py:65: [W0703(broad-except), User.OPTIONS] Catching too general exception Exception
+APIServerUser.py:62: [C0103(invalid-name), User.OPTIONS] Invalid variable name "outputObj"
+APIServerUser.py:65: [C0103(invalid-name), User.OPTIONS] Invalid variable name "e"
+APIServerUser.py:67: [C0103(invalid-name), User.OPTIONS] Invalid variable name "tracebackStr"
+APIServerUser.py:68: [C0103(invalid-name), User.OPTIONS] Invalid variable name "traceLines"
+APIServerUser.py:55: [R0201(no-self-use), User.OPTIONS] Method could be a function
+APIServerUser.py:9: [W0611(unused-import), ] Unused import requests
+APIServerUser.py:9: [C0411(wrong-import-order), ] external import "import requests" comes before "import APIServerUtils"
+APIServerUser.py:10: [C0411(wrong-import-order), ] external import "import web" comes before "import APIServerUtils"

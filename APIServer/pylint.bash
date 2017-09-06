@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-echo "Capturing pylint info for all files"
+echo "Capturing pylint info for all files in APIServer"
 
 
 for file_name in *.py

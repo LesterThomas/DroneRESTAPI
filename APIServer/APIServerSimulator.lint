@@ -1,0 +1,20 @@
+************* Module APIServerSimulator
+APIServerSimulator.py:21: [C0301(line-too-long), ] Line too long (165/160)
+APIServerSimulator.py:36: [C0301(line-too-long), ] Line too long (167/160)
+APIServerSimulator.py:12: [C0103(invalid-name), ] Invalid constant name "my_logger"
+APIServerSimulator.py:15: [C0111(missing-docstring), Simulator] Missing class docstring
+APIServerSimulator.py:15: [C1001(old-style-class), Simulator] Old-style class defined.
+APIServerSimulator.py:30: [C0103(invalid-name), Simulator.GET] Invalid variable name "tracebackStr"
+APIServerSimulator.py:31: [C0103(invalid-name), Simulator.GET] Invalid variable name "traceLines"
+APIServerSimulator.py:20: [R0201(no-self-use), Simulator.GET] Method could be a function
+APIServerSimulator.py:50: [W0703(broad-except), Simulator.POST] Catching too general exception Exception
+APIServerSimulator.py:40: [C0103(invalid-name), Simulator.POST] Invalid variable name "dataStr"
+APIServerSimulator.py:52: [C0103(invalid-name), Simulator.POST] Invalid variable name "tracebackStr"
+APIServerSimulator.py:53: [C0103(invalid-name), Simulator.POST] Invalid variable name "traceLines"
+APIServerSimulator.py:35: [R0201(no-self-use), Simulator.POST] Method could be a function
+APIServerSimulator.py:64: [C0103(invalid-name), Simulator.OPTIONS] Invalid variable name "outputObj"
+APIServerSimulator.py:69: [C0103(invalid-name), Simulator.OPTIONS] Invalid variable name "tracebackStr"
+APIServerSimulator.py:70: [C0103(invalid-name), Simulator.OPTIONS] Invalid variable name "traceLines"
+APIServerSimulator.py:57: [R0201(no-self-use), Simulator.OPTIONS] Method could be a function
+APIServerSimulator.py:9: [C0411(wrong-import-order), ] external import "import requests" comes before "import APIServerUtils"
+APIServerSimulator.py:10: [C0411(wrong-import-order), ] external import "import web" comes before "import APIServerUtils"

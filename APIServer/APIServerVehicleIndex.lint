@@ -1,0 +1,36 @@
+************* Module APIServerVehicleIndex
+APIServerVehicleIndex.py:51: [C0325(superfluous-parens), ] Unnecessary parens after 'not' keyword
+APIServerVehicleIndex.py:56: [C0301(line-too-long), ] Line too long (469/160)
+APIServerVehicleIndex.py:57: [C0301(line-too-long), ] Line too long (346/160)
+APIServerVehicleIndex.py:15: [C0103(invalid-name), ] Invalid constant name "my_logger"
+APIServerVehicleIndex.py:18: [C0111(missing-docstring), VehicleIndex] Missing class docstring
+APIServerVehicleIndex.py:18: [C1001(old-style-class), VehicleIndex] Old-style class defined.
+APIServerVehicleIndex.py:23: [C0111(missing-docstring), VehicleIndex.GET] Missing method docstring
+APIServerVehicleIndex.py:64: [W0703(broad-except), VehicleIndex.GET] Catching too general exception Exception
+APIServerVehicleIndex.py:27: [C0103(invalid-name), VehicleIndex.GET] Invalid variable name "outputObj"
+APIServerVehicleIndex.py:61: [C0103(invalid-name), VehicleIndex.GET] Invalid variable name "jsonResponse"
+APIServerVehicleIndex.py:64: [C0103(invalid-name), VehicleIndex.GET] Invalid variable name "e"
+APIServerVehicleIndex.py:66: [C0103(invalid-name), VehicleIndex.GET] Invalid variable name "tracebackStr"
+APIServerVehicleIndex.py:67: [C0103(invalid-name), VehicleIndex.GET] Invalid variable name "traceLines"
+APIServerVehicleIndex.py:82: [W0703(broad-except), VehicleIndex.POST] Catching too general exception Exception
+APIServerVehicleIndex.py:77: [C0103(invalid-name), VehicleIndex.POST] Invalid variable name "dataStr"
+APIServerVehicleIndex.py:82: [C0103(invalid-name), VehicleIndex.POST] Invalid variable name "e"
+APIServerVehicleIndex.py:84: [C0103(invalid-name), VehicleIndex.POST] Invalid variable name "tracebackStr"
+APIServerVehicleIndex.py:85: [C0103(invalid-name), VehicleIndex.POST] Invalid variable name "traceLines"
+APIServerVehicleIndex.py:72: [R0201(no-self-use), VehicleIndex.POST] Method could be a function
+APIServerVehicleIndex.py:98: [W0703(broad-except), VehicleIndex.OPTIONS] Catching too general exception Exception
+APIServerVehicleIndex.py:95: [C0103(invalid-name), VehicleIndex.OPTIONS] Invalid variable name "outputObj"
+APIServerVehicleIndex.py:98: [C0103(invalid-name), VehicleIndex.OPTIONS] Invalid variable name "e"
+APIServerVehicleIndex.py:100: [C0103(invalid-name), VehicleIndex.OPTIONS] Invalid variable name "tracebackStr"
+APIServerVehicleIndex.py:101: [C0103(invalid-name), VehicleIndex.OPTIONS] Invalid variable name "traceLines"
+APIServerVehicleIndex.py:89: [R0201(no-self-use), VehicleIndex.OPTIONS] Method could be a function
+APIServerVehicleIndex.py:8: [W0611(unused-import), ] Unused import time
+APIServerVehicleIndex.py:9: [W0611(unused-import), ] Unused import math
+APIServerVehicleIndex.py:10: [W0611(unused-import), ] Unused import docker
+APIServerVehicleIndex.py:11: [W0611(unused-import), ] Unused import redis
+APIServerVehicleIndex.py:5: [C0411(wrong-import-order), ] standard import "import logging" comes before "import web"
+APIServerVehicleIndex.py:6: [C0411(wrong-import-order), ] standard import "import traceback" comes before "import web"
+APIServerVehicleIndex.py:7: [C0411(wrong-import-order), ] standard import "import json" comes before "import web"
+APIServerVehicleIndex.py:8: [C0411(wrong-import-order), ] standard import "import time" comes before "import web"
+APIServerVehicleIndex.py:9: [C0411(wrong-import-order), ] standard import "import math" comes before "import web"
+APIServerVehicleIndex.py:13: [C0411(wrong-import-order), ] external import "import requests" comes before "import APIServerUtils"
