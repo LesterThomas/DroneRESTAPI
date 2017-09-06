@@ -26,16 +26,17 @@ echo "Applying Python Code styling"
 autopep8 -a -a -v -i --max-line-length 140 *.py
 
 echo "Generating Python pdoc documentation"
-pdoc --html --overwrite droneAPIAction.py
-pdoc --html --overwrite droneAPIHomeLocation.py
-pdoc --html --overwrite droneAPISimulator.py
-pdoc --html --overwrite droneAPIVehicleStatus.py
-pdoc --html --overwrite droneAPIAdmin.py
-pdoc --html --overwrite droneAPIMain.py
-pdoc --html --overwrite droneAPIUtils.py
-pdoc --html --overwrite droneAPIAuthorizedZone.py
-pdoc --html --overwrite droneAPIMission.py
-pdoc --html --overwrite droneAPIVehicleIndex.py
+pdoc --html --overwrite APIServerAction.py
+pdoc --html --overwrite APIServerHomeLocation.py
+pdoc --html --overwrite APIServerSimulator.py
+pdoc --html --overwrite APIServerVehicleStatus.py
+pdoc --html --overwrite APIServerAdmin.py
+pdoc --html --overwrite APIServerMain.py
+pdoc --html --overwrite APIServerUtils.py
+pdoc --html --overwrite APIServerAuthorizedZone.py
+pdoc --html --overwrite APIServerMission.py
+pdoc --html --overwrite APIServerVehicleIndex.py
+pdoc --html --overwrite APIServerUser.py
 
 
 docker build -t lesterthomas/droneapiserver:$VERSION .
