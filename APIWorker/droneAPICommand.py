@@ -30,7 +30,6 @@ class Command(object):
     def __init__(self):
         return
 
-
     def POST(self, vehicle_id):
         """This method handles the POST requests to send a new command to the drone."""
         try:
@@ -447,4 +446,3 @@ def roi(inVehicle, inLocation):
     # send command to vehicle
     inVehicle.send_mavlink(msg)
     return output_obj
-

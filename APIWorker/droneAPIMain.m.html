@@ -992,16 +992,6 @@ table {
   </ul>
 
         </li>
-        <li class="mono">
-        <span class="class_name"><a href="#droneAPIMain.Index">Index</a></span>
-        
-          
-  <ul>
-    <li class="mono"><a href="#droneAPIMain.Index.__init__">__init__</a></li>
-    <li class="mono"><a href="#droneAPIMain.Index.GET">GET</a></li>
-  </ul>
-
-        </li>
       </ul>
     </li>
 
@@ -1036,51 +1026,6 @@ import web
 
 # Import  modules that are part of this app
 import droneAPIUtils
-
-
-class Index(object):  # pylint: disable=R0903
-    """THis class handles the root URL (sometimes called the EntryPoint) for the drone API."""
-
-    def __init__(self):
-        return
-
-    def GET(self):  # pylint: disable=R0201
-        """This method returns the root (sometimes called the EntryPoint) for the drone API.
-        The returned string is a static set of links (to the other resource endpoints) and
-        a simple description field for the API"""
-        try:
-            my_logger.info("GET")
-            droneAPIUtils.applyHeadders()
-            output_obj = {}
-            output_obj['description'] = """Welcome to the Drone API homepage. WARNING: This API is
-            experimental - use at your own discression. The API allows you to interact with
-            simulated or real drones through a simple hypermedia REST API. There is a HAL API
-            Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test
-             client at http://droneapi.ddns.net:1235/static/app  The API is maintained at
-            https://github.com/lesterthomas/DroneRESTAPI. This experimental API is part of
-            the TM Forum Anything-as-a-Service Catalyst
-            https://projects.tmforum.org/wiki/display/PCT/A+Platform+for+IoT+and+Anything
-            +as+a+Service+Catalyst"""
-            output_obj['_links'] = {
-                'self': {
-                    "href": droneAPIUtils.homeDomain,
-                    "title": "Home-page (or EntryPoint) of the API"},
-                'vehicle': {
-                    "title": "Return the collection of available vehicles.",
-                    "href": droneAPIUtils.homeDomain +
-                    "/vehicle"}}
-            output = json.dumps(output_obj)
-            my_logger.info("Return: =" + output)
-        except Exception as ex:  # pylint: disable=W0703
-            my_logger.exception(ex)
-            traceback_str = traceback.format_exc()
-            trace_lines = traceback_str.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ",
-                               "details": ex.message,
-                               "args": ex.args,
-                               "traceback": trace_lines})
-
-        return output
 
 
 class CatchAll(object):
@@ -1185,7 +1130,6 @@ def startup():
     # set API url endpoints and class handlers. Each handler class is in its
     # own python module
     urls = (
-        '/', 'Index',
         '/vehicle/(.*)/command', 'droneAPICommand.Command',
         '/vehicle/(.*)/homeLocation', 'droneAPIHomeLocation.homeLocation',
         '/vehicle/(.*)/mission', 'droneAPIMission.mission',
@@ -1246,7 +1190,6 @@ application that serves the API HTTP traffic.</p></div>
     # set API url endpoints and class handlers. Each handler class is in its
     # own python module
     urls = (
-        '/', 'Index',
         '/vehicle/(.*)/command', 'droneAPICommand.Command',
         '/vehicle/(.*)/homeLocation', 'droneAPIHomeLocation.homeLocation',
         '/vehicle/(.*)/mission', 'droneAPIMission.mission',
@@ -1496,149 +1439,6 @@ to the client. It has methods for GET, POST and DELETE.</p></div>
                            "args": ex.args,
                            "traceback": trace_lines})
     return json.dumps(output_obj)
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-      </div>
-      </div>
-      
-      <div class="item">
-      <p id="droneAPIMain.Index" class="name">class <span class="ident">Index</span></p>
-      
-  
-    <div class="desc"><p>THis class handles the root URL (sometimes called the EntryPoint) for the drone API.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.Index', this);">Show source &equiv;</a></p>
-  <div id="source-droneAPIMain.Index" class="source">
-    <pre><code>class Index(object):  # pylint: disable=R0903
-    """THis class handles the root URL (sometimes called the EntryPoint) for the drone API."""
-
-    def __init__(self):
-        return
-
-    def GET(self):  # pylint: disable=R0201
-        """This method returns the root (sometimes called the EntryPoint) for the drone API.
-        The returned string is a static set of links (to the other resource endpoints) and
-        a simple description field for the API"""
-        try:
-            my_logger.info("GET")
-            droneAPIUtils.applyHeadders()
-            output_obj = {}
-            output_obj['description'] = """Welcome to the Drone API homepage. WARNING: This API is
-            experimental - use at your own discression. The API allows you to interact with
-            simulated or real drones through a simple hypermedia REST API. There is a HAL API
-            Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test
-             client at http://droneapi.ddns.net:1235/static/app  The API is maintained at
-            https://github.com/lesterthomas/DroneRESTAPI. This experimental API is part of
-            the TM Forum Anything-as-a-Service Catalyst
-            https://projects.tmforum.org/wiki/display/PCT/A+Platform+for+IoT+and+Anything
-            +as+a+Service+Catalyst"""
-            output_obj['_links'] = {
-                'self': {
-                    "href": droneAPIUtils.homeDomain,
-                    "title": "Home-page (or EntryPoint) of the API"},
-                'vehicle': {
-                    "title": "Return the collection of available vehicles.",
-                    "href": droneAPIUtils.homeDomain +
-                    "/vehicle"}}
-            output = json.dumps(output_obj)
-            my_logger.info("Return: =" + output)
-        except Exception as ex:  # pylint: disable=W0703
-            my_logger.exception(ex)
-            traceback_str = traceback.format_exc()
-            trace_lines = traceback_str.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ",
-                               "details": ex.message,
-                               "args": ex.args,
-                               "traceback": trace_lines})
-
-        return output
-</code></pre>
-  </div>
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#droneAPIMain.Index">Index</a></li>
-          <li>__builtin__.object</li>
-          </ul>
-          <h3>Methods</h3>
-            
-  <div class="item">
-    <div class="name def" id="droneAPIMain.Index.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.Index.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-droneAPIMain.Index.__init__" class="source">
-    <pre><code>def __init__(self):
-    return
-</code></pre>
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="droneAPIMain.Index.GET">
-    <p>def <span class="ident">GET</span>(</p><p>self)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>This method returns the root (sometimes called the EntryPoint) for the drone API.
-The returned string is a static set of links (to the other resource endpoints) and
-a simple description field for the API</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIMain.Index.GET', this);">Show source &equiv;</a></p>
-  <div id="source-droneAPIMain.Index.GET" class="source">
-    <pre><code>def GET(self):  # pylint: disable=R0201
-    """This method returns the root (sometimes called the EntryPoint) for the drone API.
-    The returned string is a static set of links (to the other resource endpoints) and
-    a simple description field for the API"""
-    try:
-        my_logger.info("GET")
-        droneAPIUtils.applyHeadders()
-        output_obj = {}
-        output_obj['description'] = """Welcome to the Drone API homepage. WARNING: This API is
-        experimental - use at your own discression. The API allows you to interact with
-        simulated or real drones through a simple hypermedia REST API. There is a HAL API
-        Browser at http://droneapi.ddns.net:1235/static/hal-browser/browser.html and a test
-         client at http://droneapi.ddns.net:1235/static/app  The API is maintained at
-        https://github.com/lesterthomas/DroneRESTAPI. This experimental API is part of
-        the TM Forum Anything-as-a-Service Catalyst
-        https://projects.tmforum.org/wiki/display/PCT/A+Platform+for+IoT+and+Anything
-        +as+a+Service+Catalyst"""
-        output_obj['_links'] = {
-            'self': {
-                "href": droneAPIUtils.homeDomain,
-                "title": "Home-page (or EntryPoint) of the API"},
-            'vehicle': {
-                "title": "Return the collection of available vehicles.",
-                "href": droneAPIUtils.homeDomain +
-                "/vehicle"}}
-        output = json.dumps(output_obj)
-        my_logger.info("Return: =" + output)
-    except Exception as ex:  # pylint: disable=W0703
-        my_logger.exception(ex)
-        traceback_str = traceback.format_exc()
-        trace_lines = traceback_str.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ",
-                           "details": ex.message,
-                           "args": ex.args,
-                           "traceback": trace_lines})
-    return output
 </code></pre>
   </div>
 </div>

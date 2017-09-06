@@ -27,9 +27,12 @@
     <!-- Add your site or application content here -->
         <div class="container-fluid  navbar-default">
           <div class="navbar-header">
-            <H3><a href="/static/app/"><img src="images/drone2.jpg"</img></a>
-            &nbsp;<a href="/static/app/">Home</a>
-            &nbsp;<a href="/static/app/#!/new">New Drone</a></H3>
+            <H3><a href="#!/"><img src="images/drone2.jpg"</img></a>
+            &nbsp;<a href="#!/">Home</a>
+            &nbsp;<a ng-if="loggedInUser.name" href="#!/inventory">Inventory</a>
+            &nbsp;<a ng-if="loggedInUser.name" href="#!/new">New Drone</a>
+            &nbsp;<a ng-if="loggedInUser.name" href="#!/perf">Performance</a>
+            &nbsp;<a ng-if="loggedInUser.name" href="#!/network">Network</a></H3>
           </div>
         </div>
 
@@ -62,11 +65,13 @@
     <script src="bower_components/chart.js/dist/Chart.js"></script>
     <script src="bower_components/angular-chart.js/dist/angular-chart.js"></script>
     <script src="bower_components/angular-modal-service/dst/angular-modal-service.js"></script>
+    <script src="bower_components/angularFacebookUtils/src/facebookUtils.js"></script>
+    <script src="bower_components/angularFacebookUtils/src/facebookUtils.min.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
 	<!-- build:js({.tmp,app}) scripts/scripts.js -->
-	<script 
+	<script
 	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBwE-65p4Ql09I_jlpVZEBH2bJoguhOOE">
 	</script>
 	<script src="scripts/app.js"></script>
@@ -78,15 +83,16 @@
 	<script src="scripts/controllers/about.js"></script>
 	<script src="scripts/controllers/networkDiagram.js"></script>
     <script src="scripts/controllers/performanceController.js"></script>
+    <script src="scripts/controllers/inventory.js"></script>
 	<!-- endbuild -->
-		
+
 	<!-- angular visJs -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.3.0/vis.js"></script>
 	<script src="scripts/angular-vis/angular-vis.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/locales.min.js"></script>	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/locales.min.js"></script>
 	<!-- end angular visJs -->
 
-		
+
 </body>
 </html>

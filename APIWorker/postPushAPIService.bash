@@ -2,5 +2,5 @@
 
 
 docker push lesterthomas/droneapiworker:$VERSION
-MINOR_VERSION=$((MINOR_VERSION+1))
+MINOR_VERSION=$((MINOR_VERSION))
 echo "$MINOR_VERSION" > "MinorVersion.txt"

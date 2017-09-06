@@ -68,9 +68,9 @@ angular.module('droneFrontendApp')
                             ticks: {
 								beginAtZero: true,
                                 steps: 10,
-                                stepValue: 5,
-                                max: 50
-                            }
+                                stepValue: 2,
+                                max:40
+                                }
                         },{
 							position: 'right',
 							id: 'y-axis-2',
@@ -83,7 +83,7 @@ angular.module('droneFrontendApp')
 								beginAtZero: true,
                                 steps: 10,
                                 stepValue: 2,
-                                max: 16
+                                max:25
                             }
                         }]
 		}
@@ -121,7 +121,7 @@ angular.module('droneFrontendApp')
 								beginAtZero: true,
                                 steps: 10,
                                 stepValue: 5,
-                                max: 10
+                                max:12
                             }
                         },{
 							position: 'right',
@@ -135,7 +135,7 @@ angular.module('droneFrontendApp')
 								beginAtZero: true,
                                 steps: 6,
                                 stepValue: 10,
-                                max: 50
+                                max:40
                             }
                         }]
 		}

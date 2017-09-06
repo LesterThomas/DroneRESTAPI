@@ -103,8 +103,7 @@ def validateAndRefreshContainers():
 
         # drone reference data is in Redis database with a key for each drone
         # there is also a dockerHostsArray that contains a simplified view of the same data for performance
-        # we will start/stop each docker container and also re-build the dockerHostsArray value
-        rebuildDockerHostsArray()
+        # we will start/stop each docker container
 
         keys = redisdB.keys("connection_string:*")
         for key in keys:
@@ -184,34 +183,6 @@ def validateAndRefreshContainers():
 def startBackgroundWorker():
     worker().start()
     return
-
-
-def rebuildDockerHostsArray():
-    # reset dockerHostsArray
-    dockerHostsArray = [{"internalIP": defaultDockerHost, "usedPorts": []}]
-    keys = redisdB.keys("connection_string:*")
-    for key in keys:
-
-        json_str = redisdB.get(key)
-        json_obj = json.loads(json_str)
-        vehicle_details = json_obj['vehicle_details']
-        connection_string = vehicle_details['connection_string']
-        hostIp = connection_string[4:-6]
-        port = connection_string[-5:]
-        # check if this host already exists in dockerHostsArray
-        found = False
-        for host in dockerHostsArray:
-            if (host['internalIP'] == hostIp):
-                found = True
-        if (found == False):
-            dockerHostsArray.append({"internalIP": hostIp, "usedPorts": []})
-        # add this drone to docker host
-        for host in dockerHostsArray:
-            if (host['internalIP'] == hostIp):
-                host['usedPorts'].append(int(port))
-    my_logger.info("dockerHostsArray (rebuilt)")
-    my_logger.info(dockerHostsArray)
-    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
 
 
 def applyHeadders():

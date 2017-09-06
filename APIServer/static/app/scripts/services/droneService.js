@@ -75,9 +75,11 @@ angular.module('droneFrontendApp')
 					for (var advisoryIndex in inAdvisories){
 						console.log('Advisory:',inAdvisories[advisoryIndex]);
 						console.log('Advisory id:',inAdvisories[advisoryIndex].id);
-						if (inAdvisories[advisoryIndex].distance<shortest_distance){
-							shortest_distance=inAdvisories[advisoryIndex].distance;
-						}
+                        if (inAdvisories[advisoryIndex].color!='green') {
+    						if (inAdvisories[advisoryIndex].distance<shortest_distance){
+    							shortest_distance=inAdvisories[advisoryIndex].distance;
+    						}
+                        }
 						self.advisories.collection[inAdvisories[advisoryIndex].id]=inAdvisories[advisoryIndex];
 					}
 					//calculate max safe distance
