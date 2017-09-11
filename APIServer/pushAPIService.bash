@@ -43,4 +43,4 @@ pdoc --html --overwrite APIServerUser.py
 
 
 docker build -t lesterthomas/droneapiserver:$VERSION .
-docker run -p 1235:1234 -d --link redis:redis -e "DRONEAPI_URL=http://172.17.0.1:1235" -e "DOCKER_HOST_IP=172.17.0.1" -e "DOCKER_DRONESIM_IMAGE=lesterthomas/dronesim:1.7" --name droneapiserver lesterthomas/droneapiserver:$VERSION
+docker run -p 1235:1234 -d --link redis:redis -e "DRONEAPI_URL=http://localhost:1235" -e "DOCKER_HOST_IP=172.17.0.1" -e "DOCKER_DRONESIM_IMAGE=lesterthomas/dronesim:1.7" --name droneapiserver lesterthomas/droneapiserver:$VERSION

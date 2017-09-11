@@ -550,8 +550,7 @@
 							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
 							"var jsonData = JSON.parse(responseBody);",
 							"tests[\"Self link returned\"] = jsonData._links.self.href === request.url;",
-							"tests[\"items value returned \"] = (jsonData.items);",
-							"tests[\"_actions value returned \"] = (jsonData._actions);",
+							"tests[\"home_location value returned \"] = (jsonData.home_location);",
 							""
 						]
 					}
