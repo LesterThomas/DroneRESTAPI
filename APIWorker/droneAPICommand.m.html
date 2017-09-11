@@ -1,0 +1,2377 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>droneAPICommand API documentation</title>
+    <meta name="description" content="This module manages the API endpoint to manage an individual vehicles commands." />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    max-width: 850px;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow: hidden;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#droneAPICommand.my_logger">my_logger</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#droneAPICommand.arm">arm</a></li>
+    <li class="mono"><a href="#droneAPICommand.auto">auto</a></li>
+    <li class="mono"><a href="#droneAPICommand.get_location_metres">get_location_metres</a></li>
+    <li class="mono"><a href="#droneAPICommand.goto">goto</a></li>
+    <li class="mono"><a href="#droneAPICommand.gotoRelative">gotoRelative</a></li>
+    <li class="mono"><a href="#droneAPICommand.goto_absolute">goto_absolute</a></li>
+    <li class="mono"><a href="#droneAPICommand.land">land</a></li>
+    <li class="mono"><a href="#droneAPICommand.roi">roi</a></li>
+    <li class="mono"><a href="#droneAPICommand.rtl">rtl</a></li>
+    <li class="mono"><a href="#droneAPICommand.takeoff">takeoff</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#droneAPICommand.CannotArmException">CannotArmException</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#droneAPICommand.Command">Command</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#droneAPICommand.Command.__init__">__init__</a></li>
+    <li class="mono"><a href="#droneAPICommand.Command.POST">POST</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#droneAPICommand.InvalidLocationException">InvalidLocationException</a></span>
+        
+        </li>
+      </ul>
+    </li>
+
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">droneAPICommand</span> module</h1>
+  <p>This module manages the API endpoint to manage an individual vehicles commands.</p>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand" class="source">
+    <pre><code>"""This module manages the API endpoint to manage an individual vehicles commands."""
+
+# Import DroneKit-Python
+from dronekit import VehicleMode, LocationGlobal, LocationGlobalRelative, mavutil
+
+import web
+import logging
+import traceback
+import json
+import time
+import math
+import droneAPIUtils
+
+my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
+
+
+class CannotArmException(Exception):
+    """This is a custom exception class raised when the vehicle won't arm"""
+    pass
+
+
+class InvalidLocationException(Exception):
+    """This is a custom exception class raised when an invalid Location object is passed"""
+    pass
+
+
+class Command(object):
+    """THis class handles the /vehicle/*/command URL for the drone API."""
+
+    def __init__(self):
+        return
+
+    def POST(self, vehicle_id):
+        """This method handles the POST requests to send a new command to the drone."""
+        try:
+            droneAPIUtils.applyHeadders()
+            data = json.loads(web.data())
+            user_id = data["user_id"]
+            my_logger.info("POST: vehicle_id: %s, user_id:%s" + str(vehicle_id))
+            try:
+                inVehicle = droneAPIUtils.connectVehicle(user_id, vehicle_id)
+            except Warning:
+                my_logger.warn("vehicle_status:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
+                return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
+            except Exception:  # pylint: disable=W0703
+                my_logger.warn("vehicle_status:GET Cant connect to vehicle" + str(vehicle_id))
+                return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
+            # get latest data (inc home_location from vehicle)
+            my_logger.debug("Getting commands:")
+
+            cmds = inVehicle.commands
+            my_logger.debug("Download:")
+
+            cmds.download()
+            my_logger.debug("Wait until ready:")
+            cmds.wait_ready()
+
+            my_logger.debug("Data:")
+            my_logger.debug(data)
+            value = data["name"]
+            my_logger.debug("Value:")
+            my_logger.debug(value)
+            output_obj = {}
+            if value == "Return-to-Launch":
+                output_obj['command'] = rtl(inVehicle)
+            elif value == "Arm":
+                my_logger.debug("Armiong")
+                output_obj['command'] = arm(inVehicle, vehicle_id)
+            elif value == "Takeoff":
+                height = data.get("height", 20)  # get height - default to 20
+                my_logger.debug("Taking off to height of " + str(height))
+                output_obj['command'] = takeoff(inVehicle, float(height))
+            elif value == "Start-Mission":
+                output_obj['command'] = auto(inVehicle)
+            elif value == "Land":
+                output_obj['command'] = land(inVehicle)
+            elif value == "Goto-Absolute":
+                default_location = inVehicle.location.global_frame  # default to current position
+                my_logger.debug("Global Frame" + str(default_location))
+                in_lat = data.get("lat", default_location.lat)
+                in_lon = data.get("lon", default_location.lon)
+                in_alt = data.get("alt", default_location.alt)
+                location_obj = {'lat': float(in_lat), 'lon': float(in_lon), 'alt': float(in_alt)}
+                output_obj['command'] = goto_absolute(inVehicle, location_obj)
+            elif value == "Goto-Relative-Home":
+                in_north = float(data.get("north", 0))
+                in_east = float(data.get("east", 0))
+                in_down = -float(data.get("up", 0))
+                my_logger.debug("Goto-Relative-Home")
+                my_logger.debug(in_north)
+                my_logger.debug(in_east)
+                my_logger.debug(in_down)
+                output_obj['command'] = gotoRelative(inVehicle, in_north, in_east, in_down)
+            elif value == "Goto-Relative-Current":
+                in_north = float(data.get("north", 0))
+                in_east = float(data.get("east", 0))
+                in_down = -float(data.get("up", 0))
+                output_obj['command'] = goto(inVehicle, in_north, in_east, in_down)
+            elif value == "Region-of-Interest":
+                cmds = inVehicle.commands
+                cmds.download()
+                cmds.wait_ready()
+                default_location = inVehicle.home_location
+                in_lat = data.get("lat", default_location.lat)
+                in_lon = data.get("lon", default_location.lon)
+                in_alt = data.get("alt", default_location.alt)
+                location_obj = {'lat': float(in_lat), 'lon': float(in_lon), 'alt': float(in_alt)}
+                output_obj['command'] = roi(inVehicle, location_obj)
+            else:
+                output_obj['command'] = {"status": "error", "name": value, "error": "No command found with name '" + value + "'."}
+            #command_array = droneAPIUtils.commandArrayDict[vehicle_id]
+            json_str = droneAPIUtils.redisdB.get('vehicle_commands:' + user_id + ":" + str(vehicle_id))
+            my_logger.info('############################vehicle_commands from Redis######################################')
+            my_logger.info(json_str)
+            command_array_obj = json.loads(str(json_str))
+            command_array = command_array_obj['commands']
+
+            if len(command_array) == 0:
+                output_obj['command']['id'] = 0
+            else:
+                output_obj['command']['id'] = command_array[len(command_array) - 1]['command']['id'] + 1
+            command_array.append(output_obj)
+            if len(command_array) > 10:
+                command_array.pop(0)
+            droneAPIUtils.redisdB.set('vehicle_commands:' + user_id + ":" + str(vehicle_id), json.dumps({"commands": command_array}))
+            output_obj['href'] = droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command"
+            my_logger.info("Return: =" + json.dumps(output_obj))
+
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            traceback_str = traceback.format_exc()
+            trace_lines = traceback_str.split("\n")
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": trace_lines})
+
+        return json.dumps(output_obj)
+
+
+def rtl(inVehicle):
+    """This function sends a rtl (return-to-launch) command to the drone."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Return-to-Launch"
+        output_obj["status"] = "success"
+        # coodinates are same as home
+        home_location = inVehicle.home_location
+        output_obj["coordinate"] = [home_location.lat, home_location.lon, home_location.alt]
+        output_obj["param1"] = 0
+        output_obj["param2"] = 0
+        output_obj["param3"] = 0
+        output_obj["param4"] = 0
+        output_obj["command"] = 20
+        my_logger.info("Returning to Launch")
+        inVehicle.mode = VehicleMode("RTL")
+    else:
+        output_obj["name"] = "Return-to-Launch"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+        my_logger.warn("RTL error - Vehicle not armed")
+
+    return output_obj
+
+
+def arm(inVehicle, vehicle_id):
+    """This function arms the drone."""
+    try:
+        output_obj = {}
+        if inVehicle.is_armable:
+            output_obj["name"] = "Arm"
+            output_obj["status"] = "success"
+            # coodinates are same as current + height
+            currentLocation = inVehicle.location.global_relative_frame
+            output_obj["coordinate"] = [currentLocation.lat, currentLocation.lon, 0]
+            output_obj["param1"] = 1
+            output_obj["param2"] = 0
+            output_obj["param3"] = 0
+            output_obj["param4"] = 0
+            output_obj["command"] = 400
+            my_logger.info("Arming motors")
+            # If vehicle is in a non armable mode, change to GUIDED mode
+            if (inVehicle.mode.name == 'RTL') or (inVehicle.mode.name == 'Land') or (inVehicle.mode.name == 'AUTO'):
+                inVehicle.mode = VehicleMode("GUIDED")
+            inVehicle.armed = True
+
+            output_obj["zone"] = {
+                "shape": {
+                    "name": "circle",
+                    "lat": currentLocation.lat,
+                    "lon": currentLocation.lon,
+                    "radius": 500}}
+            if output_obj["zone"]["shape"]["lat"] != 0:  # only automatically assign a zone if it is not 0,0,0,0
+                droneAPIUtils.authorizedZoneDict[vehicle_id] = output_obj["zone"]
+
+            # Confirm vehicle armed before attempting to take off - if drone doesn't arm in 5s then raise exception
+            start_time = time.time()  # start time in seconds since the epoch
+            while not inVehicle.armed:
+                my_logger.info(" Waiting for arming...")
+                if time.time() - start_time > 5:  # if more than 5 seconds then raise Exception
+                    raise CannotArmException("Drone did not arm within 5 seconds")
+                time.sleep(1)
+        else:
+            output_obj["name"] = "Arm"
+            output_obj["status"] = "Error"
+            output_obj["error"] = "vehicle not armable"
+            my_logger.warn("vehicle not armable")
+
+    except CannotArmException:
+        output_obj["name"] = "Arm"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "vehicle did not arm within 5 seconds."
+        my_logger.warn("vehicle did not arm within 5 seconds.")
+
+    return output_obj
+
+
+def takeoff(inVehicle, inHeight):
+    """This function sends a takeoff command to the drone."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Takeoff"
+        output_obj["height"] = inHeight
+        output_obj["status"] = "success"
+        # coodinates are same as current + height
+        currentLocation = inVehicle.location.global_relative_frame
+        output_obj["coordinate"] = [currentLocation.lat, currentLocation.lon, inHeight]
+        output_obj["param1"] = 0
+        output_obj["param2"] = 0
+        output_obj["param3"] = 0
+        output_obj["param4"] = 0
+        output_obj["command"] = 22
+        inVehicle.mode = VehicleMode("GUIDED")
+        my_logger.info("Taking off!")
+        inVehicle.simple_takeoff(inHeight)  # Take off to target altitude
+    else:
+        output_obj["name"] = "Takeoff"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "vehicle not armed"
+        my_logger.warn("vehicle not armed")
+    return output_obj
+
+
+def auto(inVehicle):
+    """This function puts the drone in auto mode to follow whatever mission
+    was previously uploaded to the drone."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Start-Mission"
+        output_obj["status"] = "success"
+        my_logger.info("Auto mission")
+        if inVehicle.mode.name == "AUTO":
+            # vehicle already in auto mode - swap it into GUIDED first.
+            inVehicle.mode = VehicleMode("GUIDED")
+            time.sleep(1)
+        inVehicle.mode = VehicleMode("AUTO")
+    else:
+        output_obj["name"] = "Start-Mission"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+    return output_obj
+
+
+def land(inVehicle):
+    """This function sends a land command to the drone."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Land"
+        output_obj["status"] = "success"
+        # coodinates are same as current
+        currentLocation = inVehicle.location.global_relative_frame
+        output_obj["coordinate"] = [currentLocation.lat, currentLocation.lon, 0]
+        output_obj["param1"] = 0
+        output_obj["param2"] = 0
+        output_obj["param3"] = 0
+        output_obj["param4"] = 0
+        output_obj["command"] = 23
+        my_logger.info("Landing")
+        inVehicle.mode = VehicleMode("LAND")
+    else:
+        output_obj["name"] = "Land"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+    return output_obj
+
+
+def goto(inVehicle, dNorth, dEast, dDown):
+    """This function moves the vehicle to a position dNorth metres North and dEast metres East of the current position."""
+    output_obj = {}
+    if inVehicle.armed:
+        distance = round(math.sqrt(dNorth * dNorth + dEast * dEast))
+        my_logger.info("Goto a distance of " + str(distance) + "m.")
+        if distance > 1000:
+            output_obj["status"] = "Error"
+            output_obj["error"] = "Can not go more than " + str(1000) + "m in single command. Action was to go " + str(distance) + " m."
+            output_obj["name"] = "Max-Distance-Error"
+        else:
+            output_obj["name"] = "Goto-Relative-Current"
+            output_obj["status"] = "success"
+            inVehicle.mode = VehicleMode("GUIDED")
+            currentLocation = inVehicle.location.global_relative_frame
+            target_location = get_location_metres(currentLocation, dNorth, dEast)
+            target_location.alt = target_location.alt - dDown
+            # coodinates are target
+            output_obj["coordinate"] = [target_location.lat, target_location.lon, target_location.alt]
+            output_obj["param1"] = 0
+            output_obj["param2"] = 0
+            output_obj["param3"] = 0
+            output_obj["param4"] = 0
+            output_obj["command"] = 16
+            inVehicle.simple_goto(target_location, groundspeed=10)
+    else:
+        output_obj["name"] = "Goto-Relative-Current"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+    return output_obj
+
+
+def get_location_metres(original_location, dNorth, dEast):
+    """
+    Returns a LocationGlobal object containing the latitude/longitude `dNorth` and `dEast` metres from the
+    specified `original_location`. The returned LocationGlobal has the same `alt` value
+    as `original_location`.
+
+    The function is useful when you want to move the vehicle around specifying locations relative to
+    the current vehicle position.
+    """
+    my_logger.debug("lat:" + str(original_location.lat) + " lon:" + str(original_location.lon))
+    my_logger.debug("north:" + str(dNorth) + " east:" + str(dEast))
+
+    earth_radius = 6378137.0  # Radius of "spherical" earth
+    # Coordinate offsets in radians
+    dLat = dNorth / earth_radius
+    dLon = dEast / (earth_radius * math.cos(math.pi * original_location.lat / 180))
+
+    # New position in decimal degrees
+    newlat = original_location.lat + (dLat * 180 / math.pi)
+    newlon = original_location.lon + (dLon * 180 / math.pi)
+    if isinstance(original_location, LocationGlobal):
+        target_location = LocationGlobal(newlat, newlon, original_location.alt)
+    elif isinstance(original_location, LocationGlobalRelative):
+        target_location = LocationGlobalRelative(newlat, newlon, original_location.alt)
+    else:
+        raise InvalidLocationException("Invalid Location object passed")
+    return target_location
+
+
+def gotoRelative(inVehicle, north, east, down):
+    """This function moves the vehicle to a position north metres North and east metres
+    East and down meters below the Home position."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Goto-Relative-Home"
+        output_obj["status"] = "success"
+        inVehicle.mode = VehicleMode("GUIDED")
+
+        home_location = inVehicle.home_location
+
+        # currentLocation = inVehicle.location.global_relative_frame
+        target_location = get_location_metres(home_location, north, east)
+        target_location.alt = home_location.alt - down
+        distance = round(
+            droneAPIUtils.distanceInMeters(
+                target_location.lat,
+                target_location.lon,
+                inVehicle.location.global_frame.lat,
+                inVehicle.location.global_frame.lon))
+        if distance > 1000:
+            output_obj["status"] = "Error"
+            output_obj["error"] = "Can not go more than " + str(1000) + "m in single command. Action was to go " + str(distance) + " m."
+            output_obj["name"] = "Max-Distance-Error"
+        else:
+            # coodinates are target
+            output_obj["coordinate"] = [target_location.lat, target_location.lon, -down]
+            output_obj["param1"] = 0
+            output_obj["param2"] = 0
+            output_obj["param3"] = 0
+            output_obj["param4"] = 0
+            output_obj["command"] = 16
+            inVehicle.simple_goto(target_location, groundspeed=10)
+    else:
+        output_obj["name"] = "Goto-Relative-Home"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+    return output_obj
+
+
+def goto_absolute(inVehicle, inLocation):
+    """This function moves the vehicle to a position defined by lat, lon, alt."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Goto-Absolute"
+        output_obj["status"] = "success"
+        my_logger.debug(" Goto Location: %s", inLocation)
+        my_logger.debug("lat %s", str(inLocation['lat']))
+
+        distance = round(
+            droneAPIUtils.distanceInMeters(
+                inLocation['lat'],
+                inLocation['lon'],
+                inVehicle.location.global_frame.lat,
+                inVehicle.location.global_frame.lon))
+        if distance > 1000:
+            output_obj["status"] = "Error"
+            output_obj["error"] = "Can not go more than " + str(1000) + "m in single command. Action was to go " + str(distance) + " m."
+            output_obj["name"] = "Max-Distance-Error"
+        else:
+            inVehicle.mode = VehicleMode("GUIDED")
+            # coodinates are target
+            output_obj["coordinate"] = [inLocation['lat'], inLocation['lon'], inLocation['alt']]
+            output_obj["param1"] = 0
+            output_obj["param2"] = 0
+            output_obj["param3"] = 0
+            output_obj["param4"] = 0
+            output_obj["command"] = 16
+
+            inVehicle.simple_goto(LocationGlobal(inLocation['lat'], inLocation['lon'], inLocation['alt']), groundspeed=10)
+    else:
+        output_obj["name"] = "Goto-Absolute"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+    return output_obj
+
+
+def roi(inVehicle, inLocation):
+    """This function points the vehicle in the direction of a roi (region
+    of interest)."""
+    output_obj = {}
+    output_obj["name"] = "Region-of-Interest"
+    output_obj["status"] = "success"
+    my_logger.debug(" Home Location: %s", inLocation)
+    my_logger.debug("lat %s", str(inLocation['lat']))
+    # coodinates are target
+    output_obj["coordinate"] = [inLocation['lat'], inLocation['lon'], inLocation['alt']]
+    output_obj["param1"] = 0
+    output_obj["param2"] = 0
+    output_obj["param3"] = 0
+    output_obj["param4"] = 0
+    output_obj["command"] = 80
+    # create the MAV_CMD_DO_SET_ROI command
+    msg = inVehicle.message_factory.command_long_encode(
+        0, 0,    # target system, target component
+        mavutil.mavlink.MAV_CMD_DO_SET_ROI,  # command
+        0,  # confirmation
+        0, 0, 0, 0,  # params 1-4
+        inLocation['lat'],
+        inLocation['lon'],
+        inLocation['alt']
+    )
+    # send command to vehicle
+    inVehicle.send_mavlink(msg)
+    return output_obj
+</code></pre>
+  </div>
+
+  </header>
+
+  <section id="section-items">
+    <h2 class="section-title" id="header-variables">Module variables</h2>
+      <div class="item">
+      <p id="droneAPICommand.my_logger" class="name">var <span class="ident">my_logger</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="droneAPICommand.arm">
+    <p>def <span class="ident">arm</span>(</p><p>inVehicle, vehicle_id)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This function arms the drone.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.arm', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.arm" class="source">
+    <pre><code>def arm(inVehicle, vehicle_id):
+    """This function arms the drone."""
+    try:
+        output_obj = {}
+        if inVehicle.is_armable:
+            output_obj["name"] = "Arm"
+            output_obj["status"] = "success"
+            # coodinates are same as current + height
+            currentLocation = inVehicle.location.global_relative_frame
+            output_obj["coordinate"] = [currentLocation.lat, currentLocation.lon, 0]
+            output_obj["param1"] = 1
+            output_obj["param2"] = 0
+            output_obj["param3"] = 0
+            output_obj["param4"] = 0
+            output_obj["command"] = 400
+            my_logger.info("Arming motors")
+            # If vehicle is in a non armable mode, change to GUIDED mode
+            if (inVehicle.mode.name == 'RTL') or (inVehicle.mode.name == 'Land') or (inVehicle.mode.name == 'AUTO'):
+                inVehicle.mode = VehicleMode("GUIDED")
+            inVehicle.armed = True
+
+            output_obj["zone"] = {
+                "shape": {
+                    "name": "circle",
+                    "lat": currentLocation.lat,
+                    "lon": currentLocation.lon,
+                    "radius": 500}}
+            if output_obj["zone"]["shape"]["lat"] != 0:  # only automatically assign a zone if it is not 0,0,0,0
+                droneAPIUtils.authorizedZoneDict[vehicle_id] = output_obj["zone"]
+
+            # Confirm vehicle armed before attempting to take off - if drone doesn't arm in 5s then raise exception
+            start_time = time.time()  # start time in seconds since the epoch
+            while not inVehicle.armed:
+                my_logger.info(" Waiting for arming...")
+                if time.time() - start_time > 5:  # if more than 5 seconds then raise Exception
+                    raise CannotArmException("Drone did not arm within 5 seconds")
+                time.sleep(1)
+        else:
+            output_obj["name"] = "Arm"
+            output_obj["status"] = "Error"
+            output_obj["error"] = "vehicle not armable"
+            my_logger.warn("vehicle not armable")
+
+    except CannotArmException:
+        output_obj["name"] = "Arm"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "vehicle did not arm within 5 seconds."
+        my_logger.warn("vehicle did not arm within 5 seconds.")
+
+    return output_obj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPICommand.auto">
+    <p>def <span class="ident">auto</span>(</p><p>inVehicle)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This function puts the drone in auto mode to follow whatever mission
+was previously uploaded to the drone.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.auto', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.auto" class="source">
+    <pre><code>def auto(inVehicle):
+    """This function puts the drone in auto mode to follow whatever mission
+    was previously uploaded to the drone."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Start-Mission"
+        output_obj["status"] = "success"
+        my_logger.info("Auto mission")
+        if inVehicle.mode.name == "AUTO":
+            # vehicle already in auto mode - swap it into GUIDED first.
+            inVehicle.mode = VehicleMode("GUIDED")
+            time.sleep(1)
+        inVehicle.mode = VehicleMode("AUTO")
+    else:
+        output_obj["name"] = "Start-Mission"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+    return output_obj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPICommand.get_location_metres">
+    <p>def <span class="ident">get_location_metres</span>(</p><p>original_location, dNorth, dEast)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Returns a LocationGlobal object containing the latitude/longitude <code>dNorth</code> and <code>dEast</code> metres from the
+specified <code>original_location</code>. The returned LocationGlobal has the same <code>alt</code> value
+as <code>original_location</code>.</p>
+<p>The function is useful when you want to move the vehicle around specifying locations relative to
+the current vehicle position.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.get_location_metres', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.get_location_metres" class="source">
+    <pre><code>def get_location_metres(original_location, dNorth, dEast):
+    """
+    Returns a LocationGlobal object containing the latitude/longitude `dNorth` and `dEast` metres from the
+    specified `original_location`. The returned LocationGlobal has the same `alt` value
+    as `original_location`.
+
+    The function is useful when you want to move the vehicle around specifying locations relative to
+    the current vehicle position.
+    """
+    my_logger.debug("lat:" + str(original_location.lat) + " lon:" + str(original_location.lon))
+    my_logger.debug("north:" + str(dNorth) + " east:" + str(dEast))
+
+    earth_radius = 6378137.0  # Radius of "spherical" earth
+    # Coordinate offsets in radians
+    dLat = dNorth / earth_radius
+    dLon = dEast / (earth_radius * math.cos(math.pi * original_location.lat / 180))
+
+    # New position in decimal degrees
+    newlat = original_location.lat + (dLat * 180 / math.pi)
+    newlon = original_location.lon + (dLon * 180 / math.pi)
+    if isinstance(original_location, LocationGlobal):
+        target_location = LocationGlobal(newlat, newlon, original_location.alt)
+    elif isinstance(original_location, LocationGlobalRelative):
+        target_location = LocationGlobalRelative(newlat, newlon, original_location.alt)
+    else:
+        raise InvalidLocationException("Invalid Location object passed")
+    return target_location
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPICommand.goto">
+    <p>def <span class="ident">goto</span>(</p><p>inVehicle, dNorth, dEast, dDown)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This function moves the vehicle to a position dNorth metres North and dEast metres East of the current position.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.goto', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.goto" class="source">
+    <pre><code>def goto(inVehicle, dNorth, dEast, dDown):
+    """This function moves the vehicle to a position dNorth metres North and dEast metres East of the current position."""
+    output_obj = {}
+    if inVehicle.armed:
+        distance = round(math.sqrt(dNorth * dNorth + dEast * dEast))
+        my_logger.info("Goto a distance of " + str(distance) + "m.")
+        if distance > 1000:
+            output_obj["status"] = "Error"
+            output_obj["error"] = "Can not go more than " + str(1000) + "m in single command. Action was to go " + str(distance) + " m."
+            output_obj["name"] = "Max-Distance-Error"
+        else:
+            output_obj["name"] = "Goto-Relative-Current"
+            output_obj["status"] = "success"
+            inVehicle.mode = VehicleMode("GUIDED")
+            currentLocation = inVehicle.location.global_relative_frame
+            target_location = get_location_metres(currentLocation, dNorth, dEast)
+            target_location.alt = target_location.alt - dDown
+            # coodinates are target
+            output_obj["coordinate"] = [target_location.lat, target_location.lon, target_location.alt]
+            output_obj["param1"] = 0
+            output_obj["param2"] = 0
+            output_obj["param3"] = 0
+            output_obj["param4"] = 0
+            output_obj["command"] = 16
+            inVehicle.simple_goto(target_location, groundspeed=10)
+    else:
+        output_obj["name"] = "Goto-Relative-Current"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+    return output_obj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPICommand.gotoRelative">
+    <p>def <span class="ident">gotoRelative</span>(</p><p>inVehicle, north, east, down)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This function moves the vehicle to a position north metres North and east metres
+East and down meters below the Home position.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.gotoRelative', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.gotoRelative" class="source">
+    <pre><code>def gotoRelative(inVehicle, north, east, down):
+    """This function moves the vehicle to a position north metres North and east metres
+    East and down meters below the Home position."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Goto-Relative-Home"
+        output_obj["status"] = "success"
+        inVehicle.mode = VehicleMode("GUIDED")
+
+        home_location = inVehicle.home_location
+
+        # currentLocation = inVehicle.location.global_relative_frame
+        target_location = get_location_metres(home_location, north, east)
+        target_location.alt = home_location.alt - down
+        distance = round(
+            droneAPIUtils.distanceInMeters(
+                target_location.lat,
+                target_location.lon,
+                inVehicle.location.global_frame.lat,
+                inVehicle.location.global_frame.lon))
+        if distance > 1000:
+            output_obj["status"] = "Error"
+            output_obj["error"] = "Can not go more than " + str(1000) + "m in single command. Action was to go " + str(distance) + " m."
+            output_obj["name"] = "Max-Distance-Error"
+        else:
+            # coodinates are target
+            output_obj["coordinate"] = [target_location.lat, target_location.lon, -down]
+            output_obj["param1"] = 0
+            output_obj["param2"] = 0
+            output_obj["param3"] = 0
+            output_obj["param4"] = 0
+            output_obj["command"] = 16
+            inVehicle.simple_goto(target_location, groundspeed=10)
+    else:
+        output_obj["name"] = "Goto-Relative-Home"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+    return output_obj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPICommand.goto_absolute">
+    <p>def <span class="ident">goto_absolute</span>(</p><p>inVehicle, inLocation)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This function moves the vehicle to a position defined by lat, lon, alt.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.goto_absolute', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.goto_absolute" class="source">
+    <pre><code>def goto_absolute(inVehicle, inLocation):
+    """This function moves the vehicle to a position defined by lat, lon, alt."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Goto-Absolute"
+        output_obj["status"] = "success"
+        my_logger.debug(" Goto Location: %s", inLocation)
+        my_logger.debug("lat %s", str(inLocation['lat']))
+
+        distance = round(
+            droneAPIUtils.distanceInMeters(
+                inLocation['lat'],
+                inLocation['lon'],
+                inVehicle.location.global_frame.lat,
+                inVehicle.location.global_frame.lon))
+        if distance > 1000:
+            output_obj["status"] = "Error"
+            output_obj["error"] = "Can not go more than " + str(1000) + "m in single command. Action was to go " + str(distance) + " m."
+            output_obj["name"] = "Max-Distance-Error"
+        else:
+            inVehicle.mode = VehicleMode("GUIDED")
+            # coodinates are target
+            output_obj["coordinate"] = [inLocation['lat'], inLocation['lon'], inLocation['alt']]
+            output_obj["param1"] = 0
+            output_obj["param2"] = 0
+            output_obj["param3"] = 0
+            output_obj["param4"] = 0
+            output_obj["command"] = 16
+
+            inVehicle.simple_goto(LocationGlobal(inLocation['lat'], inLocation['lon'], inLocation['alt']), groundspeed=10)
+    else:
+        output_obj["name"] = "Goto-Absolute"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+    return output_obj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPICommand.land">
+    <p>def <span class="ident">land</span>(</p><p>inVehicle)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This function sends a land command to the drone.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.land', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.land" class="source">
+    <pre><code>def land(inVehicle):
+    """This function sends a land command to the drone."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Land"
+        output_obj["status"] = "success"
+        # coodinates are same as current
+        currentLocation = inVehicle.location.global_relative_frame
+        output_obj["coordinate"] = [currentLocation.lat, currentLocation.lon, 0]
+        output_obj["param1"] = 0
+        output_obj["param2"] = 0
+        output_obj["param3"] = 0
+        output_obj["param4"] = 0
+        output_obj["command"] = 23
+        my_logger.info("Landing")
+        inVehicle.mode = VehicleMode("LAND")
+    else:
+        output_obj["name"] = "Land"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+    return output_obj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPICommand.roi">
+    <p>def <span class="ident">roi</span>(</p><p>inVehicle, inLocation)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This function points the vehicle in the direction of a roi (region
+of interest).</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.roi', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.roi" class="source">
+    <pre><code>def roi(inVehicle, inLocation):
+    """This function points the vehicle in the direction of a roi (region
+    of interest)."""
+    output_obj = {}
+    output_obj["name"] = "Region-of-Interest"
+    output_obj["status"] = "success"
+    my_logger.debug(" Home Location: %s", inLocation)
+    my_logger.debug("lat %s", str(inLocation['lat']))
+    # coodinates are target
+    output_obj["coordinate"] = [inLocation['lat'], inLocation['lon'], inLocation['alt']]
+    output_obj["param1"] = 0
+    output_obj["param2"] = 0
+    output_obj["param3"] = 0
+    output_obj["param4"] = 0
+    output_obj["command"] = 80
+    # create the MAV_CMD_DO_SET_ROI command
+    msg = inVehicle.message_factory.command_long_encode(
+        0, 0,    # target system, target component
+        mavutil.mavlink.MAV_CMD_DO_SET_ROI,  # command
+        0,  # confirmation
+        0, 0, 0, 0,  # params 1-4
+        inLocation['lat'],
+        inLocation['lon'],
+        inLocation['alt']
+    )
+    # send command to vehicle
+    inVehicle.send_mavlink(msg)
+    return output_obj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPICommand.rtl">
+    <p>def <span class="ident">rtl</span>(</p><p>inVehicle)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This function sends a rtl (return-to-launch) command to the drone.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.rtl', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.rtl" class="source">
+    <pre><code>def rtl(inVehicle):
+    """This function sends a rtl (return-to-launch) command to the drone."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Return-to-Launch"
+        output_obj["status"] = "success"
+        # coodinates are same as home
+        home_location = inVehicle.home_location
+        output_obj["coordinate"] = [home_location.lat, home_location.lon, home_location.alt]
+        output_obj["param1"] = 0
+        output_obj["param2"] = 0
+        output_obj["param3"] = 0
+        output_obj["param4"] = 0
+        output_obj["command"] = 20
+        my_logger.info("Returning to Launch")
+        inVehicle.mode = VehicleMode("RTL")
+    else:
+        output_obj["name"] = "Return-to-Launch"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "Vehicle not armed"
+        my_logger.warn("RTL error - Vehicle not armed")
+
+    return output_obj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPICommand.takeoff">
+    <p>def <span class="ident">takeoff</span>(</p><p>inVehicle, inHeight)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This function sends a takeoff command to the drone.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.takeoff', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.takeoff" class="source">
+    <pre><code>def takeoff(inVehicle, inHeight):
+    """This function sends a takeoff command to the drone."""
+    output_obj = {}
+    if inVehicle.armed:
+        output_obj["name"] = "Takeoff"
+        output_obj["height"] = inHeight
+        output_obj["status"] = "success"
+        # coodinates are same as current + height
+        currentLocation = inVehicle.location.global_relative_frame
+        output_obj["coordinate"] = [currentLocation.lat, currentLocation.lon, inHeight]
+        output_obj["param1"] = 0
+        output_obj["param2"] = 0
+        output_obj["param3"] = 0
+        output_obj["param4"] = 0
+        output_obj["command"] = 22
+        inVehicle.mode = VehicleMode("GUIDED")
+        my_logger.info("Taking off!")
+        inVehicle.simple_takeoff(inHeight)  # Take off to target altitude
+    else:
+        output_obj["name"] = "Takeoff"
+        output_obj["status"] = "Error"
+        output_obj["error"] = "vehicle not armed"
+        my_logger.warn("vehicle not armed")
+    return output_obj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="droneAPICommand.CannotArmException" class="name">class <span class="ident">CannotArmException</span></p>
+      
+  
+    <div class="desc"><p>This is a custom exception class raised when the vehicle won't arm</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.CannotArmException', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.CannotArmException" class="source">
+    <pre><code>class CannotArmException(Exception):
+    """This is a custom exception class raised when the vehicle won't arm"""
+    pass
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#droneAPICommand.CannotArmException">CannotArmException</a></li>
+          <li>exceptions.Exception</li>
+          <li>exceptions.BaseException</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="droneAPICommand.CannotArmException.args" class="name">var <span class="ident">args</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="droneAPICommand.CannotArmException.message" class="name">var <span class="ident">message</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="droneAPICommand.Command" class="name">class <span class="ident">Command</span></p>
+      
+  
+    <div class="desc"><p>THis class handles the /vehicle/*/command URL for the drone API.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.Command', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.Command" class="source">
+    <pre><code>class Command(object):
+    """THis class handles the /vehicle/*/command URL for the drone API."""
+
+    def __init__(self):
+        return
+
+    def POST(self, vehicle_id):
+        """This method handles the POST requests to send a new command to the drone."""
+        try:
+            droneAPIUtils.applyHeadders()
+            data = json.loads(web.data())
+            user_id = data["user_id"]
+            my_logger.info("POST: vehicle_id: %s, user_id:%s" + str(vehicle_id))
+            try:
+                inVehicle = droneAPIUtils.connectVehicle(user_id, vehicle_id)
+            except Warning:
+                my_logger.warn("vehicle_status:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
+                return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
+            except Exception:  # pylint: disable=W0703
+                my_logger.warn("vehicle_status:GET Cant connect to vehicle" + str(vehicle_id))
+                return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
+            # get latest data (inc home_location from vehicle)
+            my_logger.debug("Getting commands:")
+
+            cmds = inVehicle.commands
+            my_logger.debug("Download:")
+
+            cmds.download()
+            my_logger.debug("Wait until ready:")
+            cmds.wait_ready()
+
+            my_logger.debug("Data:")
+            my_logger.debug(data)
+            value = data["name"]
+            my_logger.debug("Value:")
+            my_logger.debug(value)
+            output_obj = {}
+            if value == "Return-to-Launch":
+                output_obj['command'] = rtl(inVehicle)
+            elif value == "Arm":
+                my_logger.debug("Armiong")
+                output_obj['command'] = arm(inVehicle, vehicle_id)
+            elif value == "Takeoff":
+                height = data.get("height", 20)  # get height - default to 20
+                my_logger.debug("Taking off to height of " + str(height))
+                output_obj['command'] = takeoff(inVehicle, float(height))
+            elif value == "Start-Mission":
+                output_obj['command'] = auto(inVehicle)
+            elif value == "Land":
+                output_obj['command'] = land(inVehicle)
+            elif value == "Goto-Absolute":
+                default_location = inVehicle.location.global_frame  # default to current position
+                my_logger.debug("Global Frame" + str(default_location))
+                in_lat = data.get("lat", default_location.lat)
+                in_lon = data.get("lon", default_location.lon)
+                in_alt = data.get("alt", default_location.alt)
+                location_obj = {'lat': float(in_lat), 'lon': float(in_lon), 'alt': float(in_alt)}
+                output_obj['command'] = goto_absolute(inVehicle, location_obj)
+            elif value == "Goto-Relative-Home":
+                in_north = float(data.get("north", 0))
+                in_east = float(data.get("east", 0))
+                in_down = -float(data.get("up", 0))
+                my_logger.debug("Goto-Relative-Home")
+                my_logger.debug(in_north)
+                my_logger.debug(in_east)
+                my_logger.debug(in_down)
+                output_obj['command'] = gotoRelative(inVehicle, in_north, in_east, in_down)
+            elif value == "Goto-Relative-Current":
+                in_north = float(data.get("north", 0))
+                in_east = float(data.get("east", 0))
+                in_down = -float(data.get("up", 0))
+                output_obj['command'] = goto(inVehicle, in_north, in_east, in_down)
+            elif value == "Region-of-Interest":
+                cmds = inVehicle.commands
+                cmds.download()
+                cmds.wait_ready()
+                default_location = inVehicle.home_location
+                in_lat = data.get("lat", default_location.lat)
+                in_lon = data.get("lon", default_location.lon)
+                in_alt = data.get("alt", default_location.alt)
+                location_obj = {'lat': float(in_lat), 'lon': float(in_lon), 'alt': float(in_alt)}
+                output_obj['command'] = roi(inVehicle, location_obj)
+            else:
+                output_obj['command'] = {"status": "error", "name": value, "error": "No command found with name '" + value + "'."}
+            #command_array = droneAPIUtils.commandArrayDict[vehicle_id]
+            json_str = droneAPIUtils.redisdB.get('vehicle_commands:' + user_id + ":" + str(vehicle_id))
+            my_logger.info('############################vehicle_commands from Redis######################################')
+            my_logger.info(json_str)
+            command_array_obj = json.loads(str(json_str))
+            command_array = command_array_obj['commands']
+
+            if len(command_array) == 0:
+                output_obj['command']['id'] = 0
+            else:
+                output_obj['command']['id'] = command_array[len(command_array) - 1]['command']['id'] + 1
+            command_array.append(output_obj)
+            if len(command_array) > 10:
+                command_array.pop(0)
+            droneAPIUtils.redisdB.set('vehicle_commands:' + user_id + ":" + str(vehicle_id), json.dumps({"commands": command_array}))
+            output_obj['href'] = droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command"
+            my_logger.info("Return: =" + json.dumps(output_obj))
+
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            traceback_str = traceback.format_exc()
+            trace_lines = traceback_str.split("\n")
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": trace_lines})
+
+        return json.dumps(output_obj)
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#droneAPICommand.Command">Command</a></li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="droneAPICommand.Command.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.Command.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.Command.__init__" class="source">
+    <pre><code>def __init__(self):
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPICommand.Command.POST">
+    <p>def <span class="ident">POST</span>(</p><p>self, vehicle_id)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This method handles the POST requests to send a new command to the drone.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.Command.POST', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.Command.POST" class="source">
+    <pre><code>def POST(self, vehicle_id):
+    """This method handles the POST requests to send a new command to the drone."""
+    try:
+        droneAPIUtils.applyHeadders()
+        data = json.loads(web.data())
+        user_id = data["user_id"]
+        my_logger.info("POST: vehicle_id: %s, user_id:%s" + str(vehicle_id))
+        try:
+            inVehicle = droneAPIUtils.connectVehicle(user_id, vehicle_id)
+        except Warning:
+            my_logger.warn("vehicle_status:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
+            return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
+        except Exception:  # pylint: disable=W0703
+            my_logger.warn("vehicle_status:GET Cant connect to vehicle" + str(vehicle_id))
+            return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
+        # get latest data (inc home_location from vehicle)
+        my_logger.debug("Getting commands:")
+        cmds = inVehicle.commands
+        my_logger.debug("Download:")
+        cmds.download()
+        my_logger.debug("Wait until ready:")
+        cmds.wait_ready()
+        my_logger.debug("Data:")
+        my_logger.debug(data)
+        value = data["name"]
+        my_logger.debug("Value:")
+        my_logger.debug(value)
+        output_obj = {}
+        if value == "Return-to-Launch":
+            output_obj['command'] = rtl(inVehicle)
+        elif value == "Arm":
+            my_logger.debug("Armiong")
+            output_obj['command'] = arm(inVehicle, vehicle_id)
+        elif value == "Takeoff":
+            height = data.get("height", 20)  # get height - default to 20
+            my_logger.debug("Taking off to height of " + str(height))
+            output_obj['command'] = takeoff(inVehicle, float(height))
+        elif value == "Start-Mission":
+            output_obj['command'] = auto(inVehicle)
+        elif value == "Land":
+            output_obj['command'] = land(inVehicle)
+        elif value == "Goto-Absolute":
+            default_location = inVehicle.location.global_frame  # default to current position
+            my_logger.debug("Global Frame" + str(default_location))
+            in_lat = data.get("lat", default_location.lat)
+            in_lon = data.get("lon", default_location.lon)
+            in_alt = data.get("alt", default_location.alt)
+            location_obj = {'lat': float(in_lat), 'lon': float(in_lon), 'alt': float(in_alt)}
+            output_obj['command'] = goto_absolute(inVehicle, location_obj)
+        elif value == "Goto-Relative-Home":
+            in_north = float(data.get("north", 0))
+            in_east = float(data.get("east", 0))
+            in_down = -float(data.get("up", 0))
+            my_logger.debug("Goto-Relative-Home")
+            my_logger.debug(in_north)
+            my_logger.debug(in_east)
+            my_logger.debug(in_down)
+            output_obj['command'] = gotoRelative(inVehicle, in_north, in_east, in_down)
+        elif value == "Goto-Relative-Current":
+            in_north = float(data.get("north", 0))
+            in_east = float(data.get("east", 0))
+            in_down = -float(data.get("up", 0))
+            output_obj['command'] = goto(inVehicle, in_north, in_east, in_down)
+        elif value == "Region-of-Interest":
+            cmds = inVehicle.commands
+            cmds.download()
+            cmds.wait_ready()
+            default_location = inVehicle.home_location
+            in_lat = data.get("lat", default_location.lat)
+            in_lon = data.get("lon", default_location.lon)
+            in_alt = data.get("alt", default_location.alt)
+            location_obj = {'lat': float(in_lat), 'lon': float(in_lon), 'alt': float(in_alt)}
+            output_obj['command'] = roi(inVehicle, location_obj)
+        else:
+            output_obj['command'] = {"status": "error", "name": value, "error": "No command found with name '" + value + "'."}
+        #command_array = droneAPIUtils.commandArrayDict[vehicle_id]
+        json_str = droneAPIUtils.redisdB.get('vehicle_commands:' + user_id + ":" + str(vehicle_id))
+        my_logger.info('############################vehicle_commands from Redis######################################')
+        my_logger.info(json_str)
+        command_array_obj = json.loads(str(json_str))
+        command_array = command_array_obj['commands']
+        if len(command_array) == 0:
+            output_obj['command']['id'] = 0
+        else:
+            output_obj['command']['id'] = command_array[len(command_array) - 1]['command']['id'] + 1
+        command_array.append(output_obj)
+        if len(command_array) > 10:
+            command_array.pop(0)
+        droneAPIUtils.redisdB.set('vehicle_commands:' + user_id + ":" + str(vehicle_id), json.dumps({"commands": command_array}))
+        output_obj['href'] = droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command"
+        my_logger.info("Return: =" + json.dumps(output_obj))
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
+        traceback_str = traceback.format_exc()
+        trace_lines = traceback_str.split("\n")
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": trace_lines})
+    return json.dumps(output_obj)
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="droneAPICommand.InvalidLocationException" class="name">class <span class="ident">InvalidLocationException</span></p>
+      
+  
+    <div class="desc"><p>This is a custom exception class raised when an invalid Location object is passed</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPICommand.InvalidLocationException', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPICommand.InvalidLocationException" class="source">
+    <pre><code>class InvalidLocationException(Exception):
+    """This is a custom exception class raised when an invalid Location object is passed"""
+    pass
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#droneAPICommand.InvalidLocationException">InvalidLocationException</a></li>
+          <li>exceptions.Exception</li>
+          <li>exceptions.BaseException</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="droneAPICommand.InvalidLocationException.args" class="name">var <span class="ident">args</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="droneAPICommand.InvalidLocationException.message" class="name">var <span class="ident">message</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
+</div>
+</body>
+</html>

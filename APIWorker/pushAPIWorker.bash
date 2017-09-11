@@ -24,7 +24,7 @@ echo "Applying Python Code styling"
 autopep8 -a -a -v -i --max-line-length 140 *.py
 
 echo "Generating Python pdoc documentation"
-pdoc --html --overwrite droneAPIAction.py
+pdoc --html --overwrite droneAPICommand.py
 pdoc --html --overwrite droneAPIHomeLocation.py
 pdoc --html --overwrite droneAPISimulator.py
 pdoc --html --overwrite droneAPIVehicleStatus.py
