@@ -71,7 +71,7 @@ class VehicleStatus:
             my_logger.info("DELETE: vehicle_id=" + str(vehicle_id))
             user_id = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
-            result = requests.delete(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
+            result = requests.delete(APIServerUtils.getWorkerURLforVehicle(user_id, vehicle_id) +
                                      "/vehicle/" + str(vehicle_id) + "?user_id=" + user_id)
             my_logger.debug("HTTP Proxy result status_code %s reason %s", result.status_code, result.reason)
             my_logger.debug("HTTP Proxy result text %s ", result.text)
@@ -80,7 +80,7 @@ class VehicleStatus:
             return json.dumps({"error": "Authorization failure",
                                "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
-            my_logger.exception(e)
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
             return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})

@@ -48,7 +48,7 @@ def initaliseLogger():
 def rebuildDockerHostsArray():
     # reset dockerHostsArray
     dockerHostsArray = [{"internalIP": defaultDockerHost, "usedPorts": []}]
-    keys = redisdB.keys("connection_string:*")
+    keys = redisdB.keys("vehicle:*")
     for key in keys:
 
         json_str = redisdB.get(key)
@@ -107,16 +107,27 @@ def getEnvironmentVariable(inVariable):
 
 def getNewWorkerURL():
     """Return the URL to a Worker container with capacity available to launch new vehicles."""
+    keys = redisdB.keys("worker:*")
+    min_number_managed = 1000
+    worker_url = ''
+    for key in keys:
+        worker = json.loads(redisdB.get(key))
+
+        containers_being_managed = worker['containers_being_managed']
+        if containers_being_managed < min_number_managed:
+            worker_url = worker['worker_url']
+            min_number_managed = containers_being_managed
 
     # FOr the time being there is only 1 worker running at port 1236
-    return "http://" + defaultDockerHost + ":1236"
+    return "http://" + worker_url
 
 
-def getWorkerURLforVehicle(vehicle_id):
+def getWorkerURLforVehicle(user_id, vehicle_id):
     """Return the URL to the correct Worker container for a given vehicle id."""
 
-    # FOr the time being there is only 1 worker running at port 1236
-    return "http://" + defaultDockerHost + ":1236"
+    vehicle = json.loads(redisdB.get("vehicle:" + user_id + ":" + vehicle_id))
+    worker_url = vehicle['host_details']['worker_url']
+    return "http://" + worker_url
 
 
 def getAllWorkerURLs():

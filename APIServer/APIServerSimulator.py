@@ -22,11 +22,11 @@ class Simulator:
         try:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
             my_logger.debug("vehicle_id = '" + vehicle_id + "'")
-            user = APIServerUtils.getUserAuthorization()
+            user_id = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
 
-            result = requests.get(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
-                                  "/vehicle/" + str(vehicle_id) + "/simulator?user_id=" + user)
+            result = requests.get(APIServerUtils.getWorkerURLforVehicle(user_id, vehicle_id) +
+                                  "/vehicle/" + str(vehicle_id) + "/simulator?user_id=" + user_id)
             my_logger.info("Return:%s", str(result))
         except APIServerUtils.AuthFailedException as ex:
             return json.dumps({"error": "Authorization failure",
@@ -42,19 +42,14 @@ class Simulator:
         """This method handles the POST HTTP verb to change a simulator parameter. In this stateless server, it simply forwards the HTTP POST to the correct worker."""
         try:
             my_logger.info("POST: vehicle_id=" + str(vehicle_id))
-            user = APIServerUtils.getUserAuthorization()
+            user_id = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
 
             dataStr = web.data()
             data_obj = json.loads(dataStr)
-            data_obj['user_id'] = user
+            data_obj['user_id'] = user_id
 
-            my_logger.debug(
-                "HTTP Proxy calling http post at %s with data %s",
-                APIServerUtils.getWorkerURLforVehicle(vehicle_id) + "/vehicle/" + str(vehicle_id) + "/simulator",
-                dataStr)
-
-            result = requests.post(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
+            result = requests.post(APIServerUtils.getWorkerURLforVehicle(user_id, vehicle_id) +
                                    "/vehicle/" + str(vehicle_id) + "/simulator", data=json.dumps(data_obj))
 
             my_logger.info("Return:%s", str(result))

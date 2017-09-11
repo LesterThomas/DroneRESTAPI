@@ -47,13 +47,14 @@ def initaliseLogger():
 
 
 def initaliseGlobals():
-    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
     defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
     workerURL = getEnvironmentVariable('WORKER_URL')
+    workerMaster = False
 
     # set global variables
     connectionDict = {}  # holds a dictionary of DroneKit connection objects
@@ -113,66 +114,70 @@ def validateAndRefreshContainers():
             json_str = redisdB.get(key)
             my_logger.debug("redisDbObj = '" + json_str + "'")
             json_obj = json.loads(json_str)
-            vehicle_details = json_obj['vehicle_details']
-            host_details = json_obj['host_details']
-            connection_string = vehicle_details['connection_string']
-            vehicleName = vehicle_details['name']
-            vehicle_type = vehicle_details['vehicle_type']
-            docker_container_id = host_details['docker_container_id']
-            droneId = key[-8:]
-            user_id = key[8:-9]
-            hostIp = connection_string[4:-6]
-            port = connection_string[-5:]
-            my_logger.info("connection_string:%s vehicleName:%s vehicle_type:%s droneId:%s hostIp:%s port:%s user_id:%s ",
-                           connection_string, vehicleName, vehicle_type, droneId, hostIp, port, user_id)
 
-            # stop and start this container (or start a new one if it doesn't exist)
-            dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
-            dockerAPIClient = docker.APIClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
-            containerFound = False
-            for container in dockerClient.containers.list(all=True):
-                if (container.id == docker_container_id):
-                    containerFound = True
-                    my_logger.info("Container %s found - restarting", container.id)
-                    container.restart()
-            if (containerFound == False):
-                my_logger.info("Container not found - creating")
+            worker_url = json_obj['host_details']['worker_url']
+            if worker_url == workerURL:  # if this vehicle is managed by this worker component then process
 
-                # check if there is a container on this host already using this port
-                containerWithPort = False
-                for container in dockerClient.containers.list():
+                vehicle_details = json_obj['vehicle_details']
+                host_details = json_obj['host_details']
+                connection_string = vehicle_details['connection_string']
+                vehicleName = vehicle_details['name']
+                vehicle_type = vehicle_details['vehicle_type']
+                docker_container_id = host_details['docker_container_id']
+                droneId = key[-8:]
+                user_id = key[8:-9]
+                hostIp = connection_string[4:-6]
+                port = connection_string[-5:]
+                my_logger.info("connection_string:%s vehicleName:%s vehicle_type:%s droneId:%s hostIp:%s port:%s user_id:%s ",
+                               connection_string, vehicleName, vehicle_type, droneId, hostIp, port, user_id)
 
-                    contPortObj = dockerAPIClient.port(container.id, 14550)
-                    if (contPortObj is not None):
-                        my_logger.info("Testing Container %s port %s", container.id, contPortObj)
-                        if (contPortObj[0]['HostPort'] == port):
-                            # container found. restart
-                            my_logger.info("Container found - restarting")
-                            containerWithPort = True
-                            container.restart()
-                            # update Redis with new container Id
-                            docker_container_id = container.id
-                            redisdB.set(key,
-                                        json.dumps({"vehicle_details": {"connection_string": connection_string,
-                                                                        "name": vehicleName,
-                                                                        "vehicle_type": vehicle_type,
-                                                                        "start_time": time.time(),
-                                                                        "docker_container_id": docker_container_id}}))
+                # stop and start this container (or start a new one if it doesn't exist)
+                dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
+                dockerAPIClient = docker.APIClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
+                containerFound = False
+                for container in dockerClient.containers.list(all=True):
+                    if (container.id == docker_container_id):
+                        containerFound = True
+                        my_logger.info("Container %s found - restarting", container.id)
+                        container.restart()
+                if (containerFound == False):
+                    my_logger.info("Container not found - creating")
 
-                if (containerWithPort == False):
-                    my_logger.info("Container not found - creating new")
+                    # check if there is a container on this host already using this port
+                    containerWithPort = False
+                    for container in dockerClient.containers.list():
 
-                    createDrone(vehicle_type, vehicleName, '51.4049', '1.3049', '105', '0', user_id)
+                        contPortObj = dockerAPIClient.port(container.id, 14550)
+                        if (contPortObj is not None):
+                            my_logger.info("Testing Container %s port %s", container.id, contPortObj)
+                            if (contPortObj[0]['HostPort'] == port):
+                                # container found. restart
+                                my_logger.info("Container found - restarting")
+                                containerWithPort = True
+                                container.restart()
+                                # update Redis with new container Id
+                                docker_container_id = container.id
+                                redisdB.set(key,
+                                            json.dumps({"vehicle_details": {"connection_string": connection_string,
+                                                                            "name": vehicleName,
+                                                                            "vehicle_type": vehicle_type,
+                                                                            "start_time": time.time(),
+                                                                            "docker_container_id": docker_container_id}}))
 
-                    #dockerContainer = dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port}, name=droneId)
-                    #docker_container_id = dockerContainer.id
-                    # update redis
-                    # redisdB.set(key,
-                    #            json.dumps({"connection_string": connection_string,
-                    #                        "name": vehicleName,
-                    #                        "vehicle_type": vehicle_type,
-                    #                        "start_time": time.time(),
-                    #                        "docker_container_id": docker_container_id}))
+                    if (containerWithPort == False):
+                        my_logger.info("Container not found - creating new")
+
+                        createDrone(vehicle_type, vehicleName, '51.4049', '1.3049', '105', '0', user_id)
+
+                        #dockerContainer = dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port}, name=droneId)
+                        #docker_container_id = dockerContainer.id
+                        # update redis
+                        # redisdB.set(key,
+                        #            json.dumps({"connection_string": connection_string,
+                        #                        "name": vehicleName,
+                        #                        "vehicle_type": vehicle_type,
+                        #                        "start_time": time.time(),
+                        #                        "docker_container_id": docker_container_id}))
 
     except Exception as e:
         my_logger.warn("Caught exception: Unexpected error in validateAndRefreshContainers:")
@@ -474,50 +479,188 @@ class worker(Thread):
     This allows the GET URL requests to be served in a stateless manner from the Redis database."""
 
     def run(self):
+        global webApp
         try:
-            x = 1
-            while True:
-                x = x + 1
+            worker_iterations = 1
+            continue_iterating = True
+            while continue_iterating:
+                worker_iterations = worker_iterations + 1
                 start_time = time.time()
+                containers_being_managed = 0
                 keys = redisdB.keys("vehicle:*")
                 for key in keys:
                     my_logger.debug("key = '%s'", key)
                     json_str = redisdB.get(key)
                     if json_str is not None:  # vehicle may have been deleted
                         my_logger.debug("redisDbObj = '%s'", json_str)
-                        json_obj = json.loads(json_str)
-                        vehicle_id = key[-8:]
-                        user_id = key[8:-9]
-                        my_logger.debug("vehicle_id: %s ", vehicle_id)
-                        my_logger.debug("user_id: %s", user_id)
-                        try:
-                            vehicle_obj = connectVehicle(user_id, vehicle_id)
-                            vehicle_status = getVehicleStatus(vehicle_obj, vehicle_id)
-                            json_obj['vehicle_status'] = vehicle_status
-                            redisdB.set(key, json.dumps(json_obj))
-                        except Warning as warn:
-                            my_logger.info("Caught warning in worker.run connectVehicle:%s ", str(warn))
-                        except APIException as ex:
-                            # these can safely be ignored during vehicle startup
-                            my_logger.info("Caught exception: APIException in worker.run connectVehicle")
-                            my_logger.exception(ex)
-                        except Exception as ex:
-                            tracebackStr = traceback.format_exc()
-                            traceLines = tracebackStr.split("\n")
-                            my_logger.warn("Caught exception: Unexpected error in worker.run connectVehicle. %s ", traceLines)
-                            my_logger.exception(ex)
+                        vehicle = json.loads(json_str)
+                        worker_url = vehicle['host_details']['worker_url']
+                        if worker_url == workerURL:  # if this vehicle is managed by this worker component then process
+                            containers_being_managed = containers_being_managed + 1
+                            vehicle_id = key[-8:]
+                            user_id = key[8:-9]
+                            my_logger.debug("vehicle_id: %s ", vehicle_id)
+                            my_logger.debug("user_id: %s", user_id)
+                            self.executeUpdate(user_id, vehicle_id, vehicle, key)
 
                 elapsed_time = time.time() - start_time
-                my_logger.info("Background processing %i took %f", x, elapsed_time)
+                my_logger.info("Background processing %i took %f", worker_iterations, elapsed_time)
 
-                worker_record = {'master': False, 'worker_URL': workerURL, 'elapsed_time': elapsed_time, 'worker_iterations': x}
+                if (worker_iterations % 10 == 0):  # perform check every 100 iterations
+                    self.checkToTakeoverMaster()
+
+                worker_record = {
+                    'master': workerMaster,
+                    'worker_url': workerURL,
+                    'containers_being_managed': containers_being_managed,
+                    'elapsed_time': elapsed_time,
+                    'worker_iterations': worker_iterations,
+                    'last_heartbeat': time.time()}
                 redisdB.set('worker:' + workerURL, json.dumps(worker_record))
+
+                continue_iterating = self.checkIfWorkerFinished(containers_being_managed, worker_iterations)
+
+                if (worker_iterations % 100 == 0):  # perform check every 100 iterations
+                    if workerMaster:
+                        self.performMasterActions()
 
                 if (elapsed_time < .25):
                     time.sleep(.25 - elapsed_time)
+
+            # clean-up worker record
+            my_logger.info("Cleaning-up and exiting")
+            redisdB.delete('worker:' + workerURL)
+            webApp.stop()
+            sys.exit()
+
         except Exception as ex:
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
             my_logger.warn("Caught exception: Unexpected error in worker.run  %s ", traceLines)
+            my_logger.exception(ex)
+        return
+
+    def executeUpdate(self, user_id, vehicle_id, vehicle, key):
+        try:
+            vehicle_obj = connectVehicle(user_id, vehicle_id)
+            vehicle_status = getVehicleStatus(vehicle_obj, vehicle_id)
+            vehicle['vehicle_status'] = vehicle_status
+            vehicle['host_details']['update_heartbeat'] = time.time()
+            redisdB.set(key, json.dumps(vehicle))
+        except Warning as warn:
+            my_logger.info("Caught warning in worker.run connectVehicle:%s ", str(warn))
+        except APIException as ex:
+            # these can safely be ignored during vehicle startup
+            my_logger.info("Caught exception: APIException in worker.run connectVehicle")
+            my_logger.exception(ex)
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in worker.run connectVehicle. %s ", traceLines)
+            my_logger.exception(ex)
+        return
+
+    def checkIfWorkerFinished(self, containers_being_managed, worker_iterations):
+        if ((worker_iterations > 250) and (containers_being_managed == 0)
+            ):  # if this worker has been going a long time and it is not managing any containers then stop this loop
+            keys = redisdB.keys("worker:*")
+            if len(keys) > 1:  # if this is not the last worker
+                return False
+        return True
+
+    def checkToTakeoverMaster(self):
+        # query redis to see if any other containers are the master. If none then takeover.
+        global workerMaster
+        if not workerMaster:
+            keys = redisdB.keys("worker:*")
+            master_found = False
+            for key in keys:
+                worker = json.loads(redisdB.get(key))
+                if worker['master']:
+                    master_found = True
+            if not master_found:
+                workerMaster = True
+
+        return
+
+    def performMasterActions(self):
+        # query redis to see if any other containers are the master. If none then takeover.
+        my_logger.info("Performing Master actions")
+
+        service_parameters = json.loads(redisdB.get("service_parameters"))
+        number_of_workers = service_parameters['number_of_workers']
+        worker_port_range_start = service_parameters['worker_port_range_start']
+        keys = redisdB.keys("worker:*")
+
+        for key in keys:
+            worker = json.loads(redisdB.get(key))
+            my_logger.info(worker)
+
+        if len(keys) < number_of_workers:
+            # start a new worker
+
+            nextPortNumber = worker_port_range_start
+            thisWorkerIP = workerURL[:-5]
+            my_logger.info("thisWorkerIP: %s", thisWorkerIP)
+            emptyPortFound = False
+
+            while (emptyPortFound == False):
+                nextPost = redisdB.keys("worker:" + thisWorkerIP + ":" + str(nextPortNumber))
+                my_logger.info("Testing if there is a worker at: %s", "worker:" + thisWorkerIP + ":" + str(nextPortNumber))
+                if len(nextPost) == 0:
+                    emptyPortFound = True
+                else:
+                    nextPortNumber = nextPortNumber + 1
+
+            self.createWorker(thisWorkerIP, nextPortNumber)
+
+        return
+
+    def createWorker(self, worker_ip, worker_port):
+        global workerURL, defaultDockerHost
+        try:
+            my_logger.info("Creating a new worker at: %s", "worker:" + worker_ip + ":" + str(worker_port))
+
+            connection = None
+            docker_container_id = "N/A"
+            uuidVal = uuid.uuid4()
+            key = str(uuidVal)[:8]
+
+            # build simulated drone or proxy via Docker
+            # docker api available on host at
+            # http://172.17.0.1:4243/containers/json
+            dockerClient = docker.DockerClient(
+                version='1.27',
+                base_url='tcp://' +
+                defaultDockerHost +
+                ':4243')
+
+            dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
+
+            dockerContainer = None
+            containerName = 'lesterthomas/droneapiworker:2.0.15'
+            dockerContainer = dockerClient.containers.run(
+                containerName,
+                environment=[
+                    "DRONEAPI_URL=http://localhost:1235",
+                    "DOCKER_HOST_IP=172.17.0.1",
+                    "DOCKER_DRONESIM_IMAGE=lesterthomas/dronesim:1.7",
+                    "WORKER_URL=" +
+                    worker_ip +
+                    ":" +
+                    str(worker_port)],
+                links={
+                    "redis": "redis"},
+                detach=True,
+                ports={
+                    '1234/tcp': worker_port},
+                name=key)
+
+            docker_container_id = dockerContainer.id
+            my_logger.info("container Id=%s", str(docker_container_id))
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in createWorker. %s ", traceLines)
             my_logger.exception(ex)
         return

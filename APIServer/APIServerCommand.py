@@ -190,17 +190,10 @@ class Command(object):
 
             dataStr = web.data()
 
-            my_logger.debug(
-                "HTTP Proxy calling http post at %s with data %s",
-                APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
-                "/vehicle/" +
-                str(vehicle_id) +
-                "/command",
-                dataStr)
             data_obj = json.loads(dataStr)
             data_obj['user_id'] = user_id
 
-            result = requests.post(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
+            result = requests.post(APIServerUtils.getWorkerURLforVehicle(user_id, vehicle_id) +
                                    "/vehicle/" + str(vehicle_id) + "/command", data=json.dumps(data_obj))
             my_logger.debug("HTTP Proxy result status_code %s reason %s", result.status_code, result.reason)
             my_logger.debug("HTTP Proxy result text %s ", result.text)

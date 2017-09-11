@@ -27,7 +27,7 @@ class Index(object):  # pylint: disable=R0903
         try:
             my_logger.info("GET")
 
-            user = APIServerUtils.getUserAuthorization()
+            user_id = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
             output_obj = {}
             output_obj['description'] = """Welcome to the Drone API homepage. WARNING: This API is
@@ -72,7 +72,7 @@ class CatchAll(object):
         """THis method handles any unknown GET URL requests for the API."""
         try:
             my_logger.info("GET - CatchAll")
-            user = APIServerUtils.getUserAuthorization()
+            user_id = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
             my_logger.debug(APIServerUtils.homeDomain)
             output_obj = {
@@ -131,7 +131,7 @@ class CatchAll(object):
         """THis method handles any unknown DELETE URL requests for the API."""
         try:
             my_logger.info("DELETE - CatchAll")
-            user = APIServerUtils.getUserAuthorization()
+            user_id = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
             output_obj = {
                 "Error": "No API endpoint found. Try navigating to " +

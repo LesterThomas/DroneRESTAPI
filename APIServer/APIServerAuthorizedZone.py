@@ -23,12 +23,12 @@ class AuthorizedZone:
         try:
             my_logger.info("POST: vehicle_id=" + str(vehicle_id))
             my_logger.debug("vehicle_id = '" + vehicle_id + "'")
-            user = APIServerUtils.getUserAuthorization()
+            user_id = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
             data_obj = json.loads(dataStr)
-            data_obj['user_id'] = user
+            data_obj['user_id'] = user_id
 
-            result = requests.post(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
+            result = requests.post(APIServerUtils.getWorkerURLforVehicle(user_id, vehicle_id) +
                                    "/vehicle/" + str(vehicle_id) + "/command", data=json.dumps(data_obj))
             my_logger.debug("HTTP Proxy result status_code %s reason %s", result.status_code, result.reason)
             my_logger.debug("HTTP Proxy result text %s ", result.text)

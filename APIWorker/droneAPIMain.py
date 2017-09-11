@@ -108,9 +108,9 @@ def startup():
     droneAPIUtils.initaliseLogger()
     droneAPIUtils.initaliseGlobals()
     droneAPIUtils.initiliseRedisDB()
-
     droneAPIUtils.validateAndRefreshContainers()
     droneAPIUtils.startBackgroundWorker()
+
     # set API url endpoints and class handlers. Each handler class is in its
     # own python module
     urls = (
@@ -127,8 +127,9 @@ def startup():
     )
 
     # start API web application server
-    app = web.application(urls, globals())
-    app.run()
+    droneAPIUtils.webApp = web.application(urls, globals())
+    droneAPIUtils.webApp.run()
+
     return
 
 
