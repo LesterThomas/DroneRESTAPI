@@ -39,7 +39,7 @@ def initaliseLogger():
     my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
     my_logger.info("##################################################################################")
-    my_logger.info("Starting DroneAPI at %s" , str(time.time()))
+    my_logger.info("Starting DroneAPI at %s", str(time.time()))
     my_logger.info("##################################################################################")
     my_logger.info("Logging level:" + str(logging.INFO))
 
@@ -53,7 +53,7 @@ def initaliseGlobals():
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
     defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
-    workerURL=getEnvironmentVariable('WORKER_URL')
+    workerURL = getEnvironmentVariable('WORKER_URL')
 
     # set global variables
     connectionDict = {}  # holds a dictionary of DroneKit connection objects
@@ -196,6 +196,7 @@ def applyHeadders():
     web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
     web.header('Access-Control-Allow-Headers', 'Content-Type')
     return
+
 
 def rebuildDockerHostsArray():
     # reset dockerHostsArray
@@ -441,7 +442,7 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
 
     my_logger.debug(connection)
 
-    my_logger.info("adding vehicle to Redis db with key 'vehicle:%s:%s'", str(user_id),str(key))
+    my_logger.info("adding vehicle to Redis db with key 'vehicle:%s:%s'", str(user_id), str(key))
     droneDBDetails = {"vehicle_details": {"connection_string": connection,
                                           "name": vehicleName,
                                           "port": hostAndPort['port'],
@@ -455,8 +456,8 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
         droneDBDetails['vehicle_details']['drone_connect_to'] = hostAndPort['port'] + 10
         droneDBDetails['vehicle_details']['groundstation_connect_to'] = hostAndPort['port'] + 20
 
-    redisdB.set("vehicle:"+str(user_id) + ":"+ key, json.dumps(droneDBDetails))
-    redisdB.set("vehicle_commands:" +str(user_id) + ":"+ key, json.dumps({"commands": []}))
+    redisdB.set("vehicle:" + str(user_id) + ":" + key, json.dumps(droneDBDetails))
+    redisdB.set("vehicle_commands:" + str(user_id) + ":" + key, json.dumps({"commands": []}))
 
     outputObj = {}
     outputObj["connection"] = connection
@@ -482,7 +483,7 @@ class worker(Thread):
                 for key in keys:
                     my_logger.debug("key = '%s'", key)
                     json_str = redisdB.get(key)
-                    if json_str is not None: #vehicle may have been deleted
+                    if json_str is not None:  # vehicle may have been deleted
                         my_logger.debug("redisDbObj = '%s'", json_str)
                         json_obj = json.loads(json_str)
                         vehicle_id = key[-8:]
@@ -503,20 +504,20 @@ class worker(Thread):
                         except Exception as ex:
                             tracebackStr = traceback.format_exc()
                             traceLines = tracebackStr.split("\n")
-                            my_logger.warn("Caught exception: Unexpected error in worker.run connectVehicle. %s ",traceLines)
+                            my_logger.warn("Caught exception: Unexpected error in worker.run connectVehicle. %s ", traceLines)
                             my_logger.exception(ex)
 
                 elapsed_time = time.time() - start_time
                 my_logger.info("Background processing %i took %f", x, elapsed_time)
 
-                worker_record={'master':False, 'worker_URL':workerURL,'elapsed_time':elapsed_time,'worker_iterations':x}
-                redisdB.set('worker:'+workerURL,json.dumps(worker_record))
+                worker_record = {'master': False, 'worker_URL': workerURL, 'elapsed_time': elapsed_time, 'worker_iterations': x}
+                redisdB.set('worker:' + workerURL, json.dumps(worker_record))
 
                 if (elapsed_time < .25):
                     time.sleep(.25 - elapsed_time)
         except Exception as ex:
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            my_logger.warn("Caught exception: Unexpected error in worker.run  %s ",traceLines)
+            my_logger.warn("Caught exception: Unexpected error in worker.run  %s ", traceLines)
             my_logger.exception(ex)
         return

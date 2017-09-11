@@ -1019,6 +1019,8 @@ import logging
 import traceback
 import json
 import droneAPIUtils
+import redis
+import web
 
 my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
@@ -1034,8 +1036,11 @@ class homeLocation:
             statusVal = ''  # removed statusVal which used to have the fields) from the URL because of the trailing / issue
             my_logger.debug("vehicleId = '" + vehicleId + "', statusVal = '" + statusVal + "'")
             droneAPIUtils.applyHeadders()
+            query_parameters = web.input()
+            user_id = query_parameters['user_id']
+
             try:
-                inVehicle = droneAPIUtils.connectVehicle(vehicleId)
+                inVehicle = droneAPIUtils.connectVehicle(user_id, vehicleId)
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
@@ -1059,6 +1064,7 @@ class homeLocation:
                     "home_location": droneAPIUtils.latLonAltObj(
                         inVehicle.home_location)})
             my_logger.info("Return: =" + output)
+
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
@@ -1102,8 +1108,11 @@ class homeLocation:
             statusVal = ''  # removed statusVal which used to have the fields) from the URL because of the trailing / issue
             my_logger.debug("vehicleId = '" + vehicleId + "', statusVal = '" + statusVal + "'")
             droneAPIUtils.applyHeadders()
+            query_parameters = web.input()
+            user_id = query_parameters['user_id']
+
             try:
-                inVehicle = droneAPIUtils.connectVehicle(vehicleId)
+                inVehicle = droneAPIUtils.connectVehicle(user_id, vehicleId)
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
@@ -1127,6 +1136,7 @@ class homeLocation:
                     "home_location": droneAPIUtils.latLonAltObj(
                         inVehicle.home_location)})
             my_logger.info("Return: =" + output)
+
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
@@ -1182,8 +1192,10 @@ class homeLocation:
         statusVal = ''  # removed statusVal which used to have the fields) from the URL because of the trailing / issue
         my_logger.debug("vehicleId = '" + vehicleId + "', statusVal = '" + statusVal + "'")
         droneAPIUtils.applyHeadders()
+        query_parameters = web.input()
+        user_id = query_parameters['user_id']
         try:
-            inVehicle = droneAPIUtils.connectVehicle(vehicleId)
+            inVehicle = droneAPIUtils.connectVehicle(user_id, vehicleId)
         except Warning:
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicleId))
             return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})

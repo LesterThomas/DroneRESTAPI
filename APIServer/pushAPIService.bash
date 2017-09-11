@@ -29,7 +29,7 @@ echo "Applying Python Code styling"
 autopep8 -a -a -v -i --max-line-length 140 *.py
 
 echo "Generating Python pdoc documentation"
-pdoc --html --overwrite APIServerAction.py
+pdoc --html --overwrite APIServerCommand.py
 pdoc --html --overwrite APIServerHomeLocation.py
 pdoc --html --overwrite APIServerSimulator.py
 pdoc --html --overwrite APIServerVehicleStatus.py

@@ -5,7 +5,7 @@ cd APIServer
 source "pushAPIService.bash"
 
 
-cd ../APIworker
+cd ../APIWorker
 source "pushAPIWorker.bash"
 
 cd ..

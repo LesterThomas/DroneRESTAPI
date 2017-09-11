@@ -24,7 +24,7 @@ class homeLocation:
             my_logger.debug("vehicleId = '" + vehicleId + "', statusVal = '" + statusVal + "'")
             droneAPIUtils.applyHeadders()
             query_parameters = web.input()
-            user_id=query_parameters['user_id']
+            user_id = query_parameters['user_id']
 
             try:
                 inVehicle = droneAPIUtils.connectVehicle(user_id, vehicleId)

@@ -25,8 +25,8 @@ class authorizedZone:
             droneAPIUtils.applyHeadders()
             try:
                 data = json.loads(web.data())
-                user_id=data["user_id"]
-                inVehicle = droneAPIUtils.connectVehicle(user_id,vehicle_id)
+                user_id = data["user_id"]
+                inVehicle = droneAPIUtils.connectVehicle(user_id, vehicle_id)
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})

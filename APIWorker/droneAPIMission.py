@@ -24,8 +24,8 @@ class mission:
             my_logger.debug("vehicle_id = '" + vehicle_id + "'")
             droneAPIUtils.applyHeadders()
             query_parameters = web.input()
-            user_id=query_parameters['user_id']
-            output = getMissionActions(user_id,vehicle_id)
+            user_id = query_parameters['user_id']
+            output = getMissionActions(user_id, vehicle_id)
             my_logger.info("Return: =" + output)
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
@@ -40,7 +40,7 @@ class mission:
             droneAPIUtils.applyHeadders()
             try:
                 data = json.loads(web.data())
-                user_id=data["user_id"]
+                user_id = data["user_id"]
                 inVehicle = droneAPIUtils.connectVehicle(user_id, vehicle_id)
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
@@ -103,7 +103,7 @@ class mission:
 def getMissionActions(user_id, vehicle_id):
     try:
         try:
-            inVehicle = droneAPIUtils.connectVehicle(user_id,vehicle_id)
+            inVehicle = droneAPIUtils.connectVehicle(user_id, vehicle_id)
         except Warning:
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
