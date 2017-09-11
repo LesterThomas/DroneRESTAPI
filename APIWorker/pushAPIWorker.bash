@@ -1,4 +1,7 @@
 #!/bin/bash
+echo "**************************************************************************************************************"
+echo "Running APIWorker bash script"
+echo "**************************************************************************************************************"
 
 #expects MAJOR_VERSION and MINOR_VERSION environment variables
 MAJOR_VERSION=$(<"MajorVersion.txt" )

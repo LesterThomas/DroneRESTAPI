@@ -1,10 +1,12 @@
 #!/bin/bash
 
+
 cd APIServer
 source "pushAPIService.bash"
 
+
 cd ../APIworker
-source "pushAPIService.bash"
+source "pushAPIWorker.bash"
 
 cd ..
 
