@@ -26,6 +26,8 @@ class Index(object):  # pylint: disable=R0903
         a simple description field for the API"""
         try:
             my_logger.info("GET")
+
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
             output_obj = {}
             output_obj['description'] = """Welcome to the Drone API homepage. WARNING: This API is
@@ -47,6 +49,9 @@ class Index(object):  # pylint: disable=R0903
                     "/vehicle"}}
             output = json.dumps(output_obj)
             my_logger.info("Return: =" + output)
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             traceback_str = traceback.format_exc()
@@ -63,10 +68,11 @@ class CatchAll(object):
     """THis class handles any unknown URLs for the API. It provides Error and help information back
     to the client. It has methods for GET, POST and DELETE."""
 
-    def GET(self):  # pylint: disable=R0201
+    def GET(self, url):  # pylint: disable=R0201
         """THis method handles any unknown GET URL requests for the API."""
         try:
             my_logger.info("GET - CatchAll")
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
             my_logger.debug(APIServerUtils.homeDomain)
             output_obj = {
@@ -79,6 +85,9 @@ class CatchAll(object):
                          "/vehicle/<vehicle_id>/action for the list of actions available for "
                          "vehicle <vehicle_id>."}
             my_logger.info("Return: =" + json.dumps(output_obj))
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             traceback_str = traceback.format_exc()
@@ -89,10 +98,11 @@ class CatchAll(object):
                                "traceback": trace_lines})
         return json.dumps(output_obj)
 
-    def POST(self):  # pylint: disable=R0201
+    def POST(self, url):  # pylint: disable=R0201
         """THis method handles any unknown POST URL requests for the API."""
         try:
             my_logger.info("POST - CatchAll")
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
             output_obj = {
                 "Error": "No API endpoint found. Try navigating to " +
@@ -104,6 +114,9 @@ class CatchAll(object):
                          "/vehicle/<vehicle_id>/action for the list of actions available for "
                          "vehicle <vehicle_id>."}
             my_logger.info("Return: =" + json.dumps(output_obj))
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             traceback_str = traceback.format_exc()
@@ -114,10 +127,11 @@ class CatchAll(object):
                                "traceback": trace_lines})
         return json.dumps(output_obj)
 
-    def DELETE(self):  # pylint: disable=R0201
+    def DELETE(self, url):  # pylint: disable=R0201
         """THis method handles any unknown DELETE URL requests for the API."""
         try:
             my_logger.info("DELETE - CatchAll")
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
             output_obj = {
                 "Error": "No API endpoint found. Try navigating to " +
@@ -129,6 +143,9 @@ class CatchAll(object):
                          "/vehicle/<vehicle_id>/action for the list of actions available for "
                          "vehicle <vehicle_id>."}
             my_logger.info("Return: =" + json.dumps(output_obj))
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             traceback_str = traceback.format_exc()

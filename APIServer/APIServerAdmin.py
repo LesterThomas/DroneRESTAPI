@@ -19,7 +19,9 @@ class Admin:
     def GET(self):
         try:
             my_logger.info("GET")
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
+
             outputObj = {}
             outputObj['_links'] = {"self": {"href": APIServerUtils.homeDomain +
                                             "/admin", "title": "Administration functions for the Drone API service"}}
@@ -67,16 +69,20 @@ class Admin:
 
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
     def POST(self):
         try:
             my_logger.info("POST")
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
 
             dataStr = web.data()
@@ -101,11 +107,14 @@ class Admin:
 
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 
     def OPTIONS(self):
@@ -118,9 +127,9 @@ class Admin:
             outputObj = {}
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output

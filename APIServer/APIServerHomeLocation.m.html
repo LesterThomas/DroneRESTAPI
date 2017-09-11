@@ -988,6 +988,7 @@ table {
   <ul>
     <li class="mono"><a href="#APIServerHomeLocation.HomeLocation.__init__">__init__</a></li>
     <li class="mono"><a href="#APIServerHomeLocation.HomeLocation.GET">GET</a></li>
+    <li class="mono"><a href="#APIServerHomeLocation.HomeLocation.OPTIONS">OPTIONS</a></li>
   </ul>
 
         </li>
@@ -1033,17 +1034,37 @@ class HomeLocation:
         """This method handles the GET HTTP verb to get the homeLocation. In this stateless server, it simply forwards the HTTP GET to the correct worker."""
         try:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
 
-            result = requests.get(APIServerUtils.getWorkerURLforVehicle(vehicle_id) + "/vehicle/" + str(vehicle_id) + "/homeLocation")
+            result = requests.get(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
+                                  "/vehicle/" + str(vehicle_id) + "/homeLocation?user_id=" + user)
             my_logger.info("Return:%s", str(result))
 
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
             return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return result
+
+    def OPTIONS(self, vehicle_id):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
+        try:
+            my_logger.info("OPTIONS: ")
+            APIServerUtils.applyHeadders()
+            outputObj = {}
+            output = json.dumps(outputObj)
+            my_logger.info("Return: =" + output)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
+        return output
 </code></pre>
   </div>
 
@@ -1079,17 +1100,37 @@ class HomeLocation:
         """This method handles the GET HTTP verb to get the homeLocation. In this stateless server, it simply forwards the HTTP GET to the correct worker."""
         try:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
 
-            result = requests.get(APIServerUtils.getWorkerURLforVehicle(vehicle_id) + "/vehicle/" + str(vehicle_id) + "/homeLocation")
+            result = requests.get(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
+                                  "/vehicle/" + str(vehicle_id) + "/homeLocation?user_id=" + user)
             my_logger.info("Return:%s", str(result))
 
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
             return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return result
+
+    def OPTIONS(self, vehicle_id):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
+        try:
+            my_logger.info("OPTIONS: ")
+            APIServerUtils.applyHeadders()
+            outputObj = {}
+            output = json.dumps(outputObj)
+            my_logger.info("Return: =" + output)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
+        return output
 </code></pre>
   </div>
 </div>
@@ -1138,15 +1179,53 @@ class HomeLocation:
     """This method handles the GET HTTP verb to get the homeLocation. In this stateless server, it simply forwards the HTTP GET to the correct worker."""
     try:
         my_logger.info("GET: vehicle_id=" + str(vehicle_id))
+        user = APIServerUtils.getUserAuthorization()
         APIServerUtils.applyHeadders()
-        result = requests.get(APIServerUtils.getWorkerURLforVehicle(vehicle_id) + "/vehicle/" + str(vehicle_id) + "/homeLocation")
+        result = requests.get(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
+                              "/vehicle/" + str(vehicle_id) + "/homeLocation?user_id=" + user)
         my_logger.info("Return:%s", str(result))
+    except APIServerUtils.AuthFailedException as ex:
+        return json.dumps({"error": "Authorization failure",
+                           "details": ex.message})
     except Exception as ex:  # pylint: disable=W0703
         my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
         return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return result
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="APIServerHomeLocation.HomeLocation.OPTIONS">
+    <p>def <span class="ident">OPTIONS</span>(</p><p>self, vehicle_id)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This method handles the OPTIONS HTTP verb, required for CORS support.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerHomeLocation.HomeLocation.OPTIONS', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerHomeLocation.HomeLocation.OPTIONS" class="source">
+    <pre><code>def OPTIONS(self, vehicle_id):
+    """This method handles the OPTIONS HTTP verb, required for CORS support."""
+    try:
+        my_logger.info("OPTIONS: ")
+        APIServerUtils.applyHeadders()
+        outputObj = {}
+        output = json.dumps(outputObj)
+        my_logger.info("Return: =" + output)
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
+    return output
 </code></pre>
   </div>
 </div>

@@ -19,35 +19,42 @@ class AuthorizedZone:
         return
 
     def POST(self, vehicle_id):
+        """This method handles the POST requests to create a new Authorized Zone. In this stateless server, it simply forwards the HTTP POST to the correct worker."""
         try:
             my_logger.info("POST: vehicle_id=" + str(vehicle_id))
             my_logger.debug("vehicle_id = '" + vehicle_id + "'")
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
-            try:
-                inVehicle = APIServerUtils.connectVehicle(vehicle_id)
-            except Warning:
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
-                return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
-            except Exception:  # pylint: disable=W0703
-                my_logger.warn("vehicleStatus:GET Cant connect to vehicle" + str(vehicle_id))
-                return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
-            vehicleStatus = APIServerUtils.getVehicleStatus(inVehicle, vehicle_id)
-            my_logger.info(vehicleStatus)
-            data = json.loads(web.data())
-            zone = data["zone"]
-            # validate and enrich data
-            if (zone["shape"]["name"] == "circle"):
-                if (zone.get("lat", -1) == -1):  # if there is no lat,lon add current location as default
-                    zone["shape"]["lat"] = vehicleStatus["global_frame"]["lat"]
-                    zone["shape"]["lon"] = vehicleStatus["global_frame"]["lon"]
-                    zone["shape"]["radius"] = 500  # default radius of 500
-            outputObj = {}
-            outputObj["zone"] = zone
-            APIServerUtils.authorizedZoneDict[vehicle_id] = zone
-            my_logger.info("Return: =" + json.dumps(outputObj))
+            data_obj = json.loads(dataStr)
+            data_obj['user_id'] = user
+
+            result = requests.post(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
+                                   "/vehicle/" + str(vehicle_id) + "/command", data=json.dumps(data_obj))
+            my_logger.debug("HTTP Proxy result status_code %s reason %s", result.status_code, result.reason)
+            my_logger.debug("HTTP Proxy result text %s ", result.text)
+
+            my_logger.info("Return: %s", result.text)
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
             return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
-        return json.dumps(outputObj)
+        return result.text
+
+    def OPTIONS(self, vehicle_id):
+        """This method handles the OPTIONS HTTP verb, required for CORS support."""
+        try:
+            my_logger.info("OPTIONS: ")
+            APIServerUtils.applyHeadders()
+            outputObj = {}
+            output = json.dumps(outputObj)
+            my_logger.info("Return: =" + output)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
+        return output

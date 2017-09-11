@@ -22,9 +22,15 @@ class Simulator:
         try:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
             my_logger.debug("vehicle_id = '" + vehicle_id + "'")
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
-            result = requests.get(APIServerUtils.getWorkerURLforVehicle(vehicle_id) + "/vehicle/" + str(vehicle_id) + "/simulator")
+
+            result = requests.get(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
+                                  "/vehicle/" + str(vehicle_id) + "/simulator?user_id=" + user)
             my_logger.info("Return:%s", str(result))
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
@@ -36,17 +42,25 @@ class Simulator:
         """This method handles the POST HTTP verb to change a simulator parameter. In this stateless server, it simply forwards the HTTP POST to the correct worker."""
         try:
             my_logger.info("POST: vehicle_id=" + str(vehicle_id))
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
+
             dataStr = web.data()
+            data_obj = json.loads(dataStr)
+            data_obj['user_id'] = user
+
             my_logger.debug(
                 "HTTP Proxy calling http post at %s with data %s",
                 APIServerUtils.getWorkerURLforVehicle(vehicle_id) + "/vehicle/" + str(vehicle_id) + "/simulator",
                 dataStr)
 
             result = requests.post(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
-                                   "/vehicle/" + str(vehicle_id) + "/simulator", data=dataStr)
+                                   "/vehicle/" + str(vehicle_id) + "/simulator", data=json.dumps(data_obj))
 
             my_logger.info("Return:%s", str(result))
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:
             my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
@@ -64,6 +78,9 @@ class Simulator:
             outputObj = {}
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             tracebackStr = traceback.format_exc()

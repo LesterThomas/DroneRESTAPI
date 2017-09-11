@@ -1,5 +1,5 @@
 angular.module('droneFrontendApp')
-.service('droneService',['$http','$interval', function($http,$interval) {
+.service('droneService',['$http','$interval','$rootScope', function($http,$interval,$rootScope) {
 	var self=this;
     this.droneId=-1;
     this.apiURL='HTTP://droneapi.ddns.net:1235/'
@@ -17,7 +17,8 @@ angular.module('droneFrontendApp')
 	updateDrones();
 	//this.queryAdvisories(51.3793,-1.1954);
 	function updateDrones() {
-			$http.get(self.apiURL + 'vehicle?status=true').
+        if ( $rootScope.loggedInUser) {
+			$http.get(self.apiURL + 'vehicle?status=true',{headers: {'API_KEY': $rootScope.loggedInUser.api_key }}).
 			    then(function(data, status, headers, config) {
 						console.debug('API get success',data,status);
 						self.drones.collection=data.data._embedded.vehicle;
@@ -59,7 +60,7 @@ angular.module('droneFrontendApp')
 					  // log error
 						console.log('API get error',data, status, headers, config);
 					});
-
+            }
 		}
 
 	this.queryAdvisories=function(inLat,inLon){

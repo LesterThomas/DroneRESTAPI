@@ -1,7 +1,8 @@
-"""This module has utility functions used by all the other modules in this App"""
+"This module has utility functions used by all the other modules in this App"""
 # Import DroneKit-Python
 from dronekit import connect, APIException
 
+import sys
 import web
 import logging
 import watchtower
@@ -23,7 +24,7 @@ def initaliseLogger():
     # Set logging framework
     main_logger = logging.getLogger("DroneAPIServer")
     LOG_FILENAME = 'droneapi.log'
-    main_logger.setLevel(logging.DEBUG)
+    main_logger.setLevel(logging.INFO)
     handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=2000000, backupCount=5)
     formatter = logging.Formatter("%(levelname)s - %(message)s")
     handler.setFormatter(formatter)
@@ -31,14 +32,14 @@ def initaliseLogger():
     main_logger.propegate = False
 
     try:
-        main_logger.addHandler(watchtower.CloudWatchLogHandler())
+        main_logger.addHandler(watchtower.CloudWatchLogHandler(send_interval=10))
     except BaseException:
         main_logger.warn("Can not add CloudWatch Log Handler")
 
     my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
     my_logger.info("##################################################################################")
-    my_logger.info("Starting DroneAPI at  " + str(time.time()))
+    my_logger.info("Starting DroneAPI at %s" , str(time.time()))
     my_logger.info("##################################################################################")
     my_logger.info("Logging level:" + str(logging.INFO))
 
@@ -46,12 +47,13 @@ def initaliseLogger():
 
 
 def initaliseGlobals():
-    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
     defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
+    workerURL=getEnvironmentVariable('WORKER_URL')
 
     # set global variables
     connectionDict = {}  # holds a dictionary of DroneKit connection objects
@@ -105,7 +107,7 @@ def validateAndRefreshContainers():
         # there is also a dockerHostsArray that contains a simplified view of the same data for performance
         # we will start/stop each docker container
 
-        keys = redisdB.keys("connection_string:*")
+        keys = redisdB.keys("vehicle:*")
         for key in keys:
             my_logger.debug("key = '" + key + "'")
             json_str = redisdB.get(key)
@@ -117,11 +119,12 @@ def validateAndRefreshContainers():
             vehicleName = vehicle_details['name']
             vehicle_type = vehicle_details['vehicle_type']
             docker_container_id = host_details['docker_container_id']
-            droneId = key[18:]
+            droneId = key[-8:]
+            user_id = key[8:-9]
             hostIp = connection_string[4:-6]
             port = connection_string[-5:]
-            my_logger.info("connection_string:%s vehicleName:%s vehicle_type:%s droneId:%s hostIp:%s port:%s ",
-                           connection_string, vehicleName, vehicle_type, droneId, hostIp, port)
+            my_logger.info("connection_string:%s vehicleName:%s vehicle_type:%s droneId:%s hostIp:%s port:%s user_id:%s ",
+                           connection_string, vehicleName, vehicle_type, droneId, hostIp, port, user_id)
 
             # stop and start this container (or start a new one if it doesn't exist)
             dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
@@ -159,7 +162,7 @@ def validateAndRefreshContainers():
                 if (containerWithPort == False):
                     my_logger.info("Container not found - creating new")
 
-                    createDrone(vehicle_type, vehicleName, '51.4049', '1.3049', '105', '0')
+                    createDrone(vehicle_type, vehicleName, '51.4049', '1.3049', '105', '0', user_id)
 
                     #dockerContainer = dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port}, name=droneId)
                     #docker_container_id = dockerContainer.id
@@ -194,15 +197,43 @@ def applyHeadders():
     web.header('Access-Control-Allow-Headers', 'Content-Type')
     return
 
+def rebuildDockerHostsArray():
+    # reset dockerHostsArray
+    dockerHostsArray = [{"internalIP": defaultDockerHost, "usedPorts": []}]
+    keys = redisdB.keys("connection_string:*")
+    for key in keys:
 
-def connectVehicle(inVehicleId):
+        json_str = redisdB.get(key)
+        json_obj = json.loads(json_str)
+        vehicle_details = json_obj['vehicle_details']
+        connection_string = vehicle_details['connection_string']
+        hostIp = connection_string[4:-6]
+        port = connection_string[-5:]
+        # check if this host already exists in dockerHostsArray
+        found = False
+        for host in dockerHostsArray:
+            if (host['internalIP'] == hostIp):
+                found = True
+        if (found == False):
+            dockerHostsArray.append({"internalIP": hostIp, "usedPorts": []})
+        # add this drone to docker host
+        for host in dockerHostsArray:
+            if (host['internalIP'] == hostIp):
+                host['usedPorts'].append(int(port))
+    my_logger.info("dockerHostsArray (rebuilt)")
+    my_logger.info(dockerHostsArray)
+    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
+    return
+
+
+def connectVehicle(user_id, inVehicleId):
     #global connection_string_array
     global redisdB
     global connectionDict
     try:
         my_logger.debug("connectVehicle called with inVehicleId = " + str(inVehicleId))
         # connection_string=connection_string_array[inVehicleId]
-        json_str = redisdB.get('connection_string:' + str(inVehicleId))
+        json_str = redisdB.get('vehicle:' + user_id + ":" + str(inVehicleId))
         my_logger.debug("Redis returns '" + str(json_str) + "'")
         if (json_str is None):
             my_logger.warn("Raising Vehicle not found warning")
@@ -359,7 +390,8 @@ def getNexthostAndPort():
     return {"image": dockerHostsArray[0]['internalIP'], "port": firstFreePort}
 
 
-def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir):
+def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id):
+    global workerURL
     connection = None
     docker_container_id = "N/A"
     uuidVal = uuid.uuid4()
@@ -409,21 +441,22 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
 
     my_logger.debug(connection)
 
-    my_logger.info("adding connection_string to Redis db with key 'connection_string:%s'", str(key))
+    my_logger.info("adding vehicle to Redis db with key 'vehicle:%s:%s'", str(user_id),str(key))
     droneDBDetails = {"vehicle_details": {"connection_string": connection,
                                           "name": vehicleName,
                                           "port": hostAndPort['port'],
                                           "vehicle_type": droneType},
                       "host_details": {"host": hostAndPort['image'],
                                        "start_time": time.time(),
-                                       "docker_container_id": docker_container_id}}
+                                       "docker_container_id": docker_container_id,
+                                       "worker_url": workerURL}}
 
     if (droneType == 'real'):
         droneDBDetails['vehicle_details']['drone_connect_to'] = hostAndPort['port'] + 10
         droneDBDetails['vehicle_details']['groundstation_connect_to'] = hostAndPort['port'] + 20
 
-    redisdB.set("connection_string:" + key, json.dumps(droneDBDetails))
-    redisdB.set("vehicle_commands:" + key, json.dumps({"commands": []}))
+    redisdB.set("vehicle:"+str(user_id) + ":"+ key, json.dumps(droneDBDetails))
+    redisdB.set("vehicle_commands:" +str(user_id) + ":"+ key, json.dumps({"commands": []}))
 
     outputObj = {}
     outputObj["connection"] = connection
@@ -445,37 +478,45 @@ class worker(Thread):
             while True:
                 x = x + 1
                 start_time = time.time()
-                keys = redisdB.keys("connection_string:*")
+                keys = redisdB.keys("vehicle:*")
                 for key in keys:
                     my_logger.debug("key = '%s'", key)
                     json_str = redisdB.get(key)
-                    my_logger.debug("redisDbObj = '%s'", json_str)
-                    json_obj = json.loads(json_str)
-                    vehicle_id = key[18:]
-                    try:
-                        vehicle_obj = connectVehicle(vehicle_id)
-                        vehicle_status = getVehicleStatus(vehicle_obj, vehicle_id)
-                        json_obj['vehicle_status'] = vehicle_status
-                        redisdB.set(key, json.dumps(json_obj))
-                    except Warning as warn:
-                        my_logger.info("Caught warning in worker.run connectVehicle:%s ", str(warn))
-                    except APIException as ex:
-                        # these can safely be ignored during vehicle startup
-                        my_logger.info("Caught exception: APIException in worker.run connectVehicle")
-                        my_logger.exception(ex)
-                    except Exception as ex:
-                        my_logger.warn("Caught exception: Unexpected error in worker.run connectVehicle")
-                        my_logger.exception(ex)
-                        tracebackStr = traceback.format_exc()
-                        traceLines = tracebackStr.split("\n")
+                    if json_str is not None: #vehicle may have been deleted
+                        my_logger.debug("redisDbObj = '%s'", json_str)
+                        json_obj = json.loads(json_str)
+                        vehicle_id = key[-8:]
+                        user_id = key[8:-9]
+                        my_logger.debug("vehicle_id: %s ", vehicle_id)
+                        my_logger.debug("user_id: %s", user_id)
+                        try:
+                            vehicle_obj = connectVehicle(user_id, vehicle_id)
+                            vehicle_status = getVehicleStatus(vehicle_obj, vehicle_id)
+                            json_obj['vehicle_status'] = vehicle_status
+                            redisdB.set(key, json.dumps(json_obj))
+                        except Warning as warn:
+                            my_logger.info("Caught warning in worker.run connectVehicle:%s ", str(warn))
+                        except APIException as ex:
+                            # these can safely be ignored during vehicle startup
+                            my_logger.info("Caught exception: APIException in worker.run connectVehicle")
+                            my_logger.exception(ex)
+                        except Exception as ex:
+                            tracebackStr = traceback.format_exc()
+                            traceLines = tracebackStr.split("\n")
+                            my_logger.warn("Caught exception: Unexpected error in worker.run connectVehicle. %s ",traceLines)
+                            my_logger.exception(ex)
 
                 elapsed_time = time.time() - start_time
                 my_logger.info("Background processing %i took %f", x, elapsed_time)
+
+                worker_record={'master':False, 'worker_URL':workerURL,'elapsed_time':elapsed_time,'worker_iterations':x}
+                redisdB.set('worker:'+workerURL,json.dumps(worker_record))
+
                 if (elapsed_time < .25):
                     time.sleep(.25 - elapsed_time)
         except Exception as ex:
-            my_logger.warn("Caught exception: Unexpected error in worker.run")
-            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in worker.run  %s ",traceLines)
+            my_logger.exception(ex)
         return

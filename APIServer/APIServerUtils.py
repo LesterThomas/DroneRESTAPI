@@ -23,7 +23,7 @@ def initaliseLogger():
     # Set logging framework
     main_logger = logging.getLogger("DroneAPIServer")
     LOG_FILENAME = 'droneapi.log'
-    main_logger.setLevel(logging.DEBUG)
+    main_logger.setLevel(logging.INFO)
     handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=2000000, backupCount=5)
     formatter = logging.Formatter("%(levelname)s - %(message)s")
     handler.setFormatter(formatter)
@@ -132,8 +132,38 @@ def applyHeadders():
     web.header('Access-Control-Allow-Origin', '*')
     web.header('Access-Control-Allow-Credentials', 'true')
     web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
-    web.header('Access-Control-Allow-Headers', 'Content-Type')
+    web.header('Access-Control-Allow-Headers', 'Content-Type, API_KEY')
     return
+
+
+class AuthFailedException(Exception):
+    """This is a custom exception class raised when the the user is not authorized"""
+    pass
+
+
+def getUserAuthorization():
+    # my_logger.debug('getUserAuthorization')
+    # my_logger.debug("web.ctx.env:%s",str(web.ctx.env))
+
+    api_key = web.ctx.env.get('HTTP_API_KEY')
+    if api_key is None:
+        my_logger.warn("No api_key included in the HTTP header")
+        my_logger.warn(web.ctx)
+        raise AuthFailedException("No api_key included in the HTTP header")
+
+    my_logger.info("api_key:%s", api_key)
+
+    api_key_record = redisdB.get("api_key:" + api_key)
+    if api_key_record:
+        user_id = json.loads(api_key_record)['user']
+        my_logger.info("user_id:%s", user_id)
+
+    else:
+        my_logger.warn("api_key %s is not valid", api_key)
+        my_logger.warn(web.ctx)
+        raise AuthFailedException("api_key is not valid")
+
+    return user_id
 
 
 def latLonAltObj(inObj):

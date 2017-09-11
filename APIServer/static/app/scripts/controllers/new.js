@@ -9,7 +9,7 @@
  */
 
 angular.module('droneFrontendApp')
-  .controller('NewCtrl', ['$scope', '$http','$interval','$location','droneService','ModalService',function ($scope,$http,$interval,$location,droneService,ModalService) {
+  .controller('NewCtrl', ['$scope', '$http','$interval','$location','droneService','ModalService','$rootScope',function ($scope,$http,$interval,$location,droneService,ModalService,$rootScope) {
 
     $scope.apiURL=droneService.apiURL;
     $scope.consoleRootURL=droneService.consoleRootURL;
@@ -50,7 +50,7 @@ angular.module('droneFrontendApp')
     payload['connection_string']=$scope.connectionString;
     console.log('Sending POST with payload ',payload);
 
-    $http.post($scope.apiURL + 'vehicle',payload,{headers : { 'Content-Type' : 'application/json; charset=UTF-8'  }}).then(function(data, status, headers, config) {
+    $http.post($scope.apiURL + 'vehicle',payload,{headers : { 'Content-Type' : 'application/json; charset=UTF-8' ,'API_KEY': $rootScope.loggedInUser.api_key }}).then(function(data, status, headers, config) {
       console.log('API action POST success',data,status);
       $location.path($scope.consoleRootURL)
     },

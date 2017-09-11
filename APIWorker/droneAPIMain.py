@@ -105,14 +105,13 @@ def startup():
     Redis database and refreshes the drone docker containers. Finally it starts the web
     application that serves the API HTTP traffic."""
 
-    print "Starting up at " + str(time.time())
 
     droneAPIUtils.initaliseLogger()
     droneAPIUtils.initaliseGlobals()
     droneAPIUtils.initiliseRedisDB()
+
     droneAPIUtils.validateAndRefreshContainers()
     droneAPIUtils.startBackgroundWorker()
-
     # set API url endpoints and class handlers. Each handler class is in its
     # own python module
     urls = (

@@ -978,6 +978,7 @@ table {
     <li class="mono"><a href="#APIServerUtils.getAllWorkerURLs">getAllWorkerURLs</a></li>
     <li class="mono"><a href="#APIServerUtils.getEnvironmentVariable">getEnvironmentVariable</a></li>
     <li class="mono"><a href="#APIServerUtils.getNewWorkerURL">getNewWorkerURL</a></li>
+    <li class="mono"><a href="#APIServerUtils.getUserAuthorization">getUserAuthorization</a></li>
     <li class="mono"><a href="#APIServerUtils.getWorkerURLforVehicle">getWorkerURLforVehicle</a></li>
     <li class="mono"><a href="#APIServerUtils.initaliseGlobals">initaliseGlobals</a></li>
     <li class="mono"><a href="#APIServerUtils.initaliseLogger">initaliseLogger</a></li>
@@ -988,6 +989,14 @@ table {
 
     </li>
 
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#APIServerUtils.AuthFailedException">AuthFailedException</a></span>
+        
+        </li>
+      </ul>
+    </li>
 
     </ul>
   </div>
@@ -1030,7 +1039,7 @@ def initaliseLogger():
     # Set logging framework
     main_logger = logging.getLogger("DroneAPIServer")
     LOG_FILENAME = 'droneapi.log'
-    main_logger.setLevel(logging.DEBUG)
+    main_logger.setLevel(logging.INFO)
     handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=2000000, backupCount=5)
     formatter = logging.Formatter("%(levelname)s - %(message)s")
     handler.setFormatter(formatter)
@@ -1139,8 +1148,38 @@ def applyHeadders():
     web.header('Access-Control-Allow-Origin', '*')
     web.header('Access-Control-Allow-Credentials', 'true')
     web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
-    web.header('Access-Control-Allow-Headers', 'Content-Type')
+    web.header('Access-Control-Allow-Headers', 'Content-Type, API_KEY')
     return
+
+
+class AuthFailedException(Exception):
+    """This is a custom exception class raised when the the user is not authorized"""
+    pass
+
+
+def getUserAuthorization():
+    # my_logger.debug('getUserAuthorization')
+    # my_logger.debug("web.ctx.env:%s",str(web.ctx.env))
+
+    api_key = web.ctx.env.get('HTTP_API_KEY')
+    if api_key is None:
+        my_logger.warn("No api_key included in the HTTP header")
+        my_logger.warn(web.ctx)
+        raise AuthFailedException("No api_key included in the HTTP header")
+
+    my_logger.info("api_key:%s", api_key)
+
+    api_key_record = redisdB.get("api_key:" + api_key)
+    if api_key_record:
+        user_id = json.loads(api_key_record)['user']
+        my_logger.info("user_id:%s", user_id)
+
+    else:
+        my_logger.warn("api_key %s is not valid", api_key)
+        my_logger.warn(web.ctx)
+        raise AuthFailedException("api_key is not valid")
+
+    return user_id
 
 
 def latLonAltObj(inObj):
@@ -1190,7 +1229,7 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
     web.header('Access-Control-Allow-Origin', '*')
     web.header('Access-Control-Allow-Credentials', 'true')
     web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
-    web.header('Access-Control-Allow-Headers', 'Content-Type')
+    web.header('Access-Control-Allow-Headers', 'Content-Type, API_KEY')
     return
 </code></pre>
   </div>
@@ -1309,6 +1348,47 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
   
       
   <div class="item">
+    <div class="name def" id="APIServerUtils.getUserAuthorization">
+    <p>def <span class="ident">getUserAuthorization</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.getUserAuthorization', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.getUserAuthorization" class="source">
+    <pre><code>def getUserAuthorization():
+    # my_logger.debug('getUserAuthorization')
+    # my_logger.debug("web.ctx.env:%s",str(web.ctx.env))
+
+    api_key = web.ctx.env.get('HTTP_API_KEY')
+    if api_key is None:
+        my_logger.warn("No api_key included in the HTTP header")
+        my_logger.warn(web.ctx)
+        raise AuthFailedException("No api_key included in the HTTP header")
+
+    my_logger.info("api_key:%s", api_key)
+
+    api_key_record = redisdB.get("api_key:" + api_key)
+    if api_key_record:
+        user_id = json.loads(api_key_record)['user']
+        my_logger.info("user_id:%s", user_id)
+
+    else:
+        my_logger.warn("api_key %s is not valid", api_key)
+        my_logger.warn(web.ctx)
+        raise AuthFailedException("api_key is not valid")
+
+    return user_id
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
     <div class="name def" id="APIServerUtils.getWorkerURLforVehicle">
     <p>def <span class="ident">getWorkerURLforVehicle</span>(</p><p>vehicle_id)</p>
     </div>
@@ -1374,7 +1454,7 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
     # Set logging framework
     main_logger = logging.getLogger("DroneAPIServer")
     LOG_FILENAME = 'droneapi.log'
-    main_logger.setLevel(logging.DEBUG)
+    main_logger.setLevel(logging.INFO)
     handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=2000000, backupCount=5)
     formatter = logging.Formatter("%(levelname)s - %(message)s")
     handler.setFormatter(formatter)
@@ -1494,6 +1574,55 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
   </div>
   
 
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="APIServerUtils.AuthFailedException" class="name">class <span class="ident">AuthFailedException</span></p>
+      
+  
+    <div class="desc"><p>This is a custom exception class raised when the the user is not authorized</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.AuthFailedException', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.AuthFailedException" class="source">
+    <pre><code>class AuthFailedException(Exception):
+    """This is a custom exception class raised when the the user is not authorized"""
+    pass
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#APIServerUtils.AuthFailedException">AuthFailedException</a></li>
+          <li>exceptions.Exception</li>
+          <li>exceptions.BaseException</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="APIServerUtils.AuthFailedException.args" class="name">var <span class="ident">args</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="APIServerUtils.AuthFailedException.message" class="name">var <span class="ident">message</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
 
   </section>
 

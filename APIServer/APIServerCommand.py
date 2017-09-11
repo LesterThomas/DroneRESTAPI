@@ -23,7 +23,6 @@ class Command(object):
         try:
             my_logger.info("OPTIONS: vehicle_id=" + str(vehicle_id))
             APIServerUtils.applyHeadders()
-
             output_obj = {}
             output = json.dumps(output_obj)
             my_logger.info("Return: =" + output)
@@ -41,8 +40,11 @@ class Command(object):
         try:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
 
+            user_id = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
-            json_str = APIServerUtils.redisdB.get('connection_string:' + str(vehicle_id))
+
+            json_str = APIServerUtils.redisdB.get("vehicle:" + user_id + ":" + str(vehicle_id))
+            my_logger.info("individual_vehicle: %s", "vehicle:" + user_id + ":" + str(vehicle_id))
             individual_vehicle = json.loads(str(json_str))
             if not('vehicle_status' in individual_vehicle.keys()):  # if the vehicle is starting up there will be no vehicle_status
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
@@ -165,9 +167,12 @@ class Command(object):
 
             output_obj['_actions'] = available_commands
             my_logger.debug(output_obj)
-            output_obj['commands'] = updateActionStatus(vehicle_status, vehicle_id)
+            output_obj['commands'] = updateActionStatus(user_id, vehicle_status, vehicle_id)
             output = json.dumps(output_obj)
             my_logger.info("Return: =" + output)
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             traceback_str = traceback.format_exc()
@@ -180,8 +185,11 @@ class Command(object):
         try:
             my_logger.info("POST: vehicle_id=" + str(vehicle_id))
 
+            user_id = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
+
             dataStr = web.data()
+
             my_logger.debug(
                 "HTTP Proxy calling http post at %s with data %s",
                 APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
@@ -189,12 +197,17 @@ class Command(object):
                 str(vehicle_id) +
                 "/command",
                 dataStr)
+            data_obj = json.loads(dataStr)
+            data_obj['user_id'] = user_id
 
             result = requests.post(APIServerUtils.getWorkerURLforVehicle(vehicle_id) +
-                                   "/vehicle/" + str(vehicle_id) + "/command", data=dataStr)
+                                   "/vehicle/" + str(vehicle_id) + "/command", data=json.dumps(data_obj))
             my_logger.debug("HTTP Proxy result status_code %s reason %s", result.status_code, result.reason)
             my_logger.debug("HTTP Proxy result text %s ", result.text)
 
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
             traceback_str = traceback.format_exc()
@@ -204,7 +217,7 @@ class Command(object):
         return result.text
 
 
-def updateActionStatus(vehicle_status, vehicle_id):
+def updateActionStatus(user_id, vehicle_status, vehicle_id):
     """This function allows you to monitor the progress of the last command.
     It updates the command status until it is complete (or errors) or is superceeded."""
     my_logger.info("############# in updateActionStatus")
@@ -215,7 +228,7 @@ def updateActionStatus(vehicle_status, vehicle_id):
 
     #command_array = APIServerUtils.commandArrayDict[vehicle_id]
 
-    json_str = APIServerUtils.redisdB.get('vehicle_commands:' + str(vehicle_id))
+    json_str = APIServerUtils.redisdB.get('vehicle_commands:' + user_id + ":" + str(vehicle_id))
     my_logger.info('vehicle_commands from Redis')
     my_logger.info(json_str)
     command_array_obj = json.loads(str(json_str))
@@ -270,6 +283,6 @@ def updateActionStatus(vehicle_status, vehicle_id):
                 previousAction['completeStatus'] = 'Interrupted'
                 previousAction['complete'] = False
 
-    APIServerUtils.redisdB.set('vehicle_commands:' + str(vehicle_id), json.dumps({"commands": command_array}))
+    APIServerUtils.redisdB.set('vehicle_commands:' + user_id + ":" + str(vehicle_id), json.dumps({"commands": command_array}))
 
     return command_array

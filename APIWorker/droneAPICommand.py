@@ -33,17 +33,18 @@ class Command(object):
     def POST(self, vehicle_id):
         """This method handles the POST requests to send a new command to the drone."""
         try:
-            my_logger.info("POST: vehicle_id=" + str(vehicle_id))
+            droneAPIUtils.applyHeadders()
+            data = json.loads(web.data())
+            user_id=data["user_id"]
+            my_logger.info("POST: vehicle_id: %s, user_id:%s" + str(vehicle_id))
             try:
-                inVehicle = droneAPIUtils.connectVehicle(vehicle_id)
+                inVehicle = droneAPIUtils.connectVehicle(user_id, vehicle_id)
             except Warning:
                 my_logger.warn("vehicle_status:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
             except Exception:  # pylint: disable=W0703
                 my_logger.warn("vehicle_status:GET Cant connect to vehicle" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle " + str(vehicle_id)})
-            droneAPIUtils.applyHeadders()
-            data = json.loads(web.data())
             # get latest data (inc home_location from vehicle)
             my_logger.debug("Getting commands:")
 
@@ -108,8 +109,8 @@ class Command(object):
             else:
                 output_obj['command'] = {"status": "error", "name": value, "error": "No command found with name '" + value + "'."}
             #command_array = droneAPIUtils.commandArrayDict[vehicle_id]
-            json_str = droneAPIUtils.redisdB.get('vehicle_commands:' + str(vehicle_id))
-            my_logger.info('vehicle_commands from Redis')
+            json_str = droneAPIUtils.redisdB.get('vehicle_commands:'+user_id+":" + str(vehicle_id))
+            my_logger.info('############################vehicle_commands from Redis######################################')
             my_logger.info(json_str)
             command_array_obj = json.loads(str(json_str))
             command_array = command_array_obj['commands']
@@ -121,7 +122,7 @@ class Command(object):
             command_array.append(output_obj)
             if len(command_array) > 10:
                 command_array.pop(0)
-            droneAPIUtils.redisdB.set('vehicle_commands:' + str(vehicle_id), json.dumps({"commands": command_array}))
+            droneAPIUtils.redisdB.set('vehicle_commands:'+user_id+":" + str(vehicle_id), json.dumps({"commands": command_array}))
             output_obj['href'] = droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command"
             my_logger.info("Return: =" + json.dumps(output_obj))
 

@@ -31,6 +31,7 @@ class vehicleIndex:
             dataStr = web.data()
             my_logger.info(dataStr)
             data = json.loads(dataStr)
+            user_id = data["user_id"]
             droneType = data["vehicle_type"]
             vehicleName = data["name"]
             drone_lat = data.get('lat', '51.4049')
@@ -38,7 +39,7 @@ class vehicleIndex:
             drone_alt = data.get('alt', '105')
             drone_dir = data.get('dir', '0')
 
-            outputObj = droneAPIUtils.createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir)
+            outputObj = droneAPIUtils.createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id)
 
         except Exception as e:
             my_logger.exception(e)

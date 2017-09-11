@@ -1037,7 +1037,9 @@ class VehicleIndex:
     def GET(self):
         try:
             my_logger.debug("GET")
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
+
             outputObj = []
 
             my_logger.info("Called by IP %s", web.ctx.ip)
@@ -1045,13 +1047,13 @@ class VehicleIndex:
             # get the query parameters
             query_parameters = web.input()
             my_logger.debug("Query parameters %s", str(query_parameters))
-            keys = APIServerUtils.redisdB.keys("connection_string:*")
+            keys = APIServerUtils.redisdB.keys("vehicle:" + user + ":*")
             for key in keys:
                 my_logger.debug("key = '" + key + "'")
                 json_str = APIServerUtils.redisdB.get(key)
                 my_logger.debug("redisDbObj = '" + json_str + "'")
                 individual_vehicle = json.loads(json_str)
-                vehicle_id = key[18:]
+                vehicle_id = key[-8:]
                 individual_vehicle["_links"] = {
                     "self": {
                         "href": APIServerUtils.homeDomain +
@@ -1075,11 +1077,14 @@ class VehicleIndex:
             jsonResponse = '{"_embedded":{"vehicle":' + \
                 json.dumps(outputObj) + '},"_actions":' + actions + ',"_links":' + json.dumps(self) + '}'
             my_logger.debug("Return: =" + jsonResponse)
-        except Exception as e:
-            my_logger.exception(e)
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
 
         return jsonResponse
 
@@ -1087,17 +1092,25 @@ class VehicleIndex:
         """This method handles the POST HTTP verb to create a new vehicle. In this stateless server, it simply forwards the HTTP POST to the correct worker."""
         try:
             my_logger.info("POST:")
-            APIServerUtils.applyHeadders()
             dataStr = web.data()
-            result = requests.post(APIServerUtils.getNewWorkerURL() + "/vehicle", data=dataStr)
+            data_obj = json.loads(dataStr)
+            user = APIServerUtils.getUserAuthorization()
+            APIServerUtils.applyHeadders()
+
+            data_obj = json.loads(dataStr)
+            data_obj['user_id'] = user
+            result = requests.post(APIServerUtils.getNewWorkerURL() + "/vehicle", data=json.dumps(data_obj))
             my_logger.debug("HTTP Proxy result status_code %s reason %s", result.status_code, result.reason)
             my_logger.debug("HTTP Proxy result text %s ", result.text)
 
-        except Exception as e:
-            my_logger.exception(e)
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return result.text
 
     def OPTIONS(self):
@@ -1105,15 +1118,14 @@ class VehicleIndex:
         try:
             my_logger.info("OPTIONS: ")
             APIServerUtils.applyHeadders()
-
             outputObj = {}
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 </code></pre>
   </div>
@@ -1149,7 +1161,9 @@ class VehicleIndex:
     def GET(self):
         try:
             my_logger.debug("GET")
+            user = APIServerUtils.getUserAuthorization()
             APIServerUtils.applyHeadders()
+
             outputObj = []
 
             my_logger.info("Called by IP %s", web.ctx.ip)
@@ -1157,13 +1171,13 @@ class VehicleIndex:
             # get the query parameters
             query_parameters = web.input()
             my_logger.debug("Query parameters %s", str(query_parameters))
-            keys = APIServerUtils.redisdB.keys("connection_string:*")
+            keys = APIServerUtils.redisdB.keys("vehicle:" + user + ":*")
             for key in keys:
                 my_logger.debug("key = '" + key + "'")
                 json_str = APIServerUtils.redisdB.get(key)
                 my_logger.debug("redisDbObj = '" + json_str + "'")
                 individual_vehicle = json.loads(json_str)
-                vehicle_id = key[18:]
+                vehicle_id = key[-8:]
                 individual_vehicle["_links"] = {
                     "self": {
                         "href": APIServerUtils.homeDomain +
@@ -1187,11 +1201,14 @@ class VehicleIndex:
             jsonResponse = '{"_embedded":{"vehicle":' + \
                 json.dumps(outputObj) + '},"_actions":' + actions + ',"_links":' + json.dumps(self) + '}'
             my_logger.debug("Return: =" + jsonResponse)
-        except Exception as e:
-            my_logger.exception(e)
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
 
         return jsonResponse
 
@@ -1199,17 +1216,25 @@ class VehicleIndex:
         """This method handles the POST HTTP verb to create a new vehicle. In this stateless server, it simply forwards the HTTP POST to the correct worker."""
         try:
             my_logger.info("POST:")
-            APIServerUtils.applyHeadders()
             dataStr = web.data()
-            result = requests.post(APIServerUtils.getNewWorkerURL() + "/vehicle", data=dataStr)
+            data_obj = json.loads(dataStr)
+            user = APIServerUtils.getUserAuthorization()
+            APIServerUtils.applyHeadders()
+
+            data_obj = json.loads(dataStr)
+            data_obj['user_id'] = user
+            result = requests.post(APIServerUtils.getNewWorkerURL() + "/vehicle", data=json.dumps(data_obj))
             my_logger.debug("HTTP Proxy result status_code %s reason %s", result.status_code, result.reason)
             my_logger.debug("HTTP Proxy result text %s ", result.text)
 
-        except Exception as e:
-            my_logger.exception(e)
+        except APIServerUtils.AuthFailedException as ex:
+            return json.dumps({"error": "Authorization failure",
+                               "details": ex.message})
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return result.text
 
     def OPTIONS(self):
@@ -1217,15 +1242,14 @@ class VehicleIndex:
         try:
             my_logger.info("OPTIONS: ")
             APIServerUtils.applyHeadders()
-
             outputObj = {}
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)
-        except Exception as e:
-            my_logger.exception(e)
+        except Exception as ex:  # pylint: disable=W0703
+            my_logger.exception(ex)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+            return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
         return output
 </code></pre>
   </div>
@@ -1273,19 +1297,20 @@ class VehicleIndex:
     <pre><code>def GET(self):
     try:
         my_logger.debug("GET")
+        user = APIServerUtils.getUserAuthorization()
         APIServerUtils.applyHeadders()
         outputObj = []
         my_logger.info("Called by IP %s", web.ctx.ip)
         # get the query parameters
         query_parameters = web.input()
         my_logger.debug("Query parameters %s", str(query_parameters))
-        keys = APIServerUtils.redisdB.keys("connection_string:*")
+        keys = APIServerUtils.redisdB.keys("vehicle:" + user + ":*")
         for key in keys:
             my_logger.debug("key = '" + key + "'")
             json_str = APIServerUtils.redisdB.get(key)
             my_logger.debug("redisDbObj = '" + json_str + "'")
             individual_vehicle = json.loads(json_str)
-            vehicle_id = key[18:]
+            vehicle_id = key[-8:]
             individual_vehicle["_links"] = {
                 "self": {
                     "href": APIServerUtils.homeDomain +
@@ -1308,11 +1333,14 @@ class VehicleIndex:
         jsonResponse = '{"_embedded":{"vehicle":' + \
             json.dumps(outputObj) + '},"_actions":' + actions + ',"_links":' + json.dumps(self) + '}'
         my_logger.debug("Return: =" + jsonResponse)
-    except Exception as e:
-        my_logger.exception(e)
+    except APIServerUtils.AuthFailedException as ex:
+        return json.dumps({"error": "Authorization failure",
+                           "details": ex.message})
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return jsonResponse
 </code></pre>
   </div>
@@ -1341,11 +1369,11 @@ class VehicleIndex:
         outputObj = {}
         output = json.dumps(outputObj)
         my_logger.info("Return: =" + output)
-    except Exception as e:
-        my_logger.exception(e)
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return output
 </code></pre>
   </div>
@@ -1370,16 +1398,23 @@ class VehicleIndex:
     """This method handles the POST HTTP verb to create a new vehicle. In this stateless server, it simply forwards the HTTP POST to the correct worker."""
     try:
         my_logger.info("POST:")
-        APIServerUtils.applyHeadders()
         dataStr = web.data()
-        result = requests.post(APIServerUtils.getNewWorkerURL() + "/vehicle", data=dataStr)
+        data_obj = json.loads(dataStr)
+        user = APIServerUtils.getUserAuthorization()
+        APIServerUtils.applyHeadders()
+        data_obj = json.loads(dataStr)
+        data_obj['user_id'] = user
+        result = requests.post(APIServerUtils.getNewWorkerURL() + "/vehicle", data=json.dumps(data_obj))
         my_logger.debug("HTTP Proxy result status_code %s reason %s", result.status_code, result.reason)
         my_logger.debug("HTTP Proxy result text %s ", result.text)
-    except Exception as e:
-        my_logger.exception(e)
+    except APIServerUtils.AuthFailedException as ex:
+        return json.dumps({"error": "Authorization failure",
+                           "details": ex.message})
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
-        return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
+        return json.dumps({"error": "An unknown Error occurred ", "details": ex.message, "args": ex.args, "traceback": traceLines})
     return result.text
 </code></pre>
   </div>

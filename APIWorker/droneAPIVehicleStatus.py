@@ -25,20 +25,22 @@ class vehicleStatus:
 
     def DELETE(self, vehicle_id):
         try:
-            my_logger.info("DELETE: vehicle_id=" + str(vehicle_id))
+            query_parameters = web.input()
+            user_id=query_parameters['user_id']
+            my_logger.info("DELETE: vehicle_id: %s, user_id: %s", str(vehicle_id), user_id)
 
             # remove reference t dronekit object
             droneAPIUtils.connectionDict[vehicle_id] = None
             # delete docker container for this vehicle
-            json_str = droneAPIUtils.redisdB.get('connection_string:' + str(vehicle_id))
+            json_str = droneAPIUtils.redisdB.get('vehicle:'+user_id+":" + str(vehicle_id))
             my_logger.debug("redisDbObj = '" + json_str + "'")
             json_obj = json.loads(json_str)
             connection_string = json_obj['vehicle_details']['connection_string']
 
-            droneAPIUtils.redisdB.delete("connection_string:" + vehicle_id)
-            droneAPIUtils.redisdB.delete("vehicle_commands:" + vehicle_id)
-            droneAPIUtils.connectionDict.pop("connection_string:" + vehicle_id, None)
-            dockerHostsArray = json.loads(droneAPIUtils.redisdB.get("dockerHostsArray"))
+            droneAPIUtils.redisdB.delete('vehicle:'+user_id+":" + str(vehicle_id))
+            droneAPIUtils.redisdB.delete('vehicle_commands:'+user_id+":" + str(vehicle_id))
+            #droneAPIUtils.connectionDict.pop("connection_string:" + vehicle_id, None)
+            #dockerHostsArray = json.loads(droneAPIUtils.redisdB.get("dockerHostsArray"))
 
             ipAddress = connection_string[4:-6]
             connection_stringLength = len(connection_string)

@@ -21,7 +21,9 @@ class simulator:
             my_logger.info("GET: vehicle_id=" + str(vehicle_id))
             my_logger.debug("vehicle_id = '" + vehicle_id + "'")
             droneAPIUtils.applyHeadders()
-            output = getSimulatorParams(vehicle_id)
+            query_parameters = web.input()
+            user_id=query_parameters['user_id']
+            output = getSimulatorParams(user_id, vehicle_id)
             my_logger.info("Return: =" + output)
         except Exception as ex:  # pylint: disable=W0703
             my_logger.exception(ex)
@@ -35,7 +37,9 @@ class simulator:
             my_logger.info("POST: vehicle_id=" + str(vehicle_id))
             droneAPIUtils.applyHeadders()
             try:
-                inVehicle = droneAPIUtils.connectVehicle(vehicle_id)
+                data = json.loads(web.data())
+                user_id=data["user_id"]
+                inVehicle = droneAPIUtils.connectVehicle(user_id,vehicle_id)
             except Warning:
                 my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
                 return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})
@@ -52,7 +56,7 @@ class simulator:
             inVehicle.parameters[simKey] = float(simValue)
             my_logger.debug('Updated parameter')
 
-            output = getSimulatorParams(vehicle_id)
+            output = getSimulatorParams(user_id,vehicle_id)
             my_logger.info("Return: =" + output)
         except Exception as ex:
             my_logger.exception(ex)
@@ -79,10 +83,10 @@ class simulator:
         return output
 
 
-def getSimulatorParams(vehicle_id):
+def getSimulatorParams(user_id, vehicle_id):
     try:
         try:
-            inVehicle = droneAPIUtils.connectVehicle(vehicle_id)
+            inVehicle = droneAPIUtils.connectVehicle(user_id, vehicle_id)
         except Warning:
             my_logger.warn("vehicleStatus:GET Cant connect to vehicle - vehicle starting up" + str(vehicle_id))
             return json.dumps({"error": "Cant connect to vehicle - vehicle starting up "})

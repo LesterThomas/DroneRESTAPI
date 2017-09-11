@@ -9,7 +9,7 @@
  */
 
 angular.module('droneFrontendApp')
-  .controller('ModalCtrl', ['$scope','$http','$interval','$location','droneService',function ($scope, $http, $interval, $location,droneService,close) {
+  .controller('ModalCtrl', ['$scope','$http','$interval','$location','droneService','close','$rootScope',function ($scope, $http, $interval, $location,droneService,close,$rootScope) {
 
 
   	console.log('Started modal controller');
@@ -33,7 +33,7 @@ angular.module('droneFrontendApp')
 
 	console.log('Sending POST with payload ',payload);
 
-	$http.post($scope.apiURL + 'vehicle',payload,{headers : { 'Content-Type' : 'application/json; charset=UTF-8'  }}).then(function(data, status, headers, config) {
+	$http.post($scope.apiURL + 'vehicle',payload,{headers : { 'Content-Type' : 'application/json; charset=UTF-8' ,'API_KEY': $rootScope.loggedInUser.api_key }}).then(function(data, status, headers, config) {
 		console.log('API action POST success',data,status);
 		$scope.progress[0]=true;
 		$scope.progressClass[0]='alert-success';
