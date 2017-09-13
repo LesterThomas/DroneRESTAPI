@@ -154,7 +154,7 @@ angular.module('droneFrontendApp')
 	//console.log('Calling API');
 	getSimEnvironment();
 	function getSimEnvironment() {
-	$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator',{headers: {'API_KEY': $rootScope.loggedInUser.api_key }}).
+	$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator',{headers: {'APIKEY': $rootScope.loggedInUser.api_key }}).
 	    then(function(data, status, headers, config) {
 				console.log('getSimEnvironment API get success',data,status);
 				$scope.simEnvironment=data.data.simulatorParams;
@@ -173,7 +173,7 @@ angular.module('droneFrontendApp')
 		$http.post($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator',payload,{
 		    headers : {
 		        'Content-Type' : 'application/json; charset=UTF-8',
-                'API_KEY': $rootScope.loggedInUser.api_key
+                'APIKEY': $rootScope.loggedInUser.api_key
 		    }
 			}).then(function(data, status, headers, config) {
 					var actionItem=data.data.action;
@@ -378,7 +378,7 @@ angular.module('droneFrontendApp')
 	}
 
 	$scope.getMission = function() {
-		$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/mission',{headers: {'API_KEY': $rootScope.loggedInUser.api_key }}).
+		$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/mission',{headers: {'APIKEY': $rootScope.loggedInUser.api_key }}).
 		    then(function(data, status, headers, config) {
 					console.log('API mission get success',data,status);
 					$scope.mission=data.data;
@@ -441,7 +441,7 @@ angular.module('droneFrontendApp')
 			$http.delete($scope.apiURL + 'vehicle/'+droneService.droneId,{
 			    headers : {
 			        'Content-Type' : 'application/json; charset=UTF-8',
-                    'API_KEY': $rootScope.loggedInUser.api_key
+                    'APIKEY': $rootScope.loggedInUser.api_key
 			    }}).then(function(data, status, headers, config) {
 				console.log('API  action DELETE success',data,status);
 
@@ -469,7 +469,7 @@ angular.module('droneFrontendApp')
 		$http.post($scope.apiURL + 'vehicle/'+droneService.droneId+'/command',payload,{
 			headers : {
 				'Content-Type' : 'application/json; charset=UTF-8',
-                'API_KEY': $rootScope.loggedInUser.api_key
+                'APIKEY': $rootScope.loggedInUser.api_key
 			}
 		}).then(function(data, status, headers, config) {
 			var commandItem=data.data.command;
@@ -492,7 +492,7 @@ angular.module('droneFrontendApp')
 		redrawAdvisories();
 		$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/command',{
             headers : {
-                'API_KEY': $rootScope.loggedInUser.api_key
+                'APIKEY': $rootScope.loggedInUser.api_key
             }
         }).
 		    then(function(data, status, headers, config) {

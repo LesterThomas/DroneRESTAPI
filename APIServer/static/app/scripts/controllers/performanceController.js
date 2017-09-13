@@ -9,24 +9,27 @@
 angular.module('droneFrontendApp')
   .controller('PerformanceCtrl', ['$scope', '$timeout','$interval','$http',   function ($scope, $timeout,$interval,$http) {
   $scope.stats=[];
-   
+
   //graph data for Battery
   $scope.containers=[];
   $scope.containerIndex=[];
   $scope.proxyIndex=[];
   $scope.utilityContainerIndex=[];
-  $scope.mainAPIIndex=[];
+  $scope.serverAPIIndex=[];
+  $scope.workerAPIIndex=[];
 
   function addGraphBaseline(containerId){
-  
+
     if ($scope.stats[containerId].image.includes('dronesim')){
       $scope.containerIndex.push(containerId);
     }
     else if ($scope.stats[containerId].image.includes('droneproxy')){
       $scope.containerIndex.push(containerId);
-    } else if  ($scope.stats[containerId].image.includes('droneapi')){
-      $scope.mainAPIIndex.push(containerId);  
-    }    
+    } else if  ($scope.stats[containerId].image.includes('droneapiserver')){
+      $scope.serverAPIIndex.push(containerId);
+    } else if  ($scope.stats[containerId].image.includes('droneapiworker')){
+      $scope.workerAPIIndex.push(containerId);
+    }
     else {
       $scope.utilityContainerIndex.push(containerId);
     }
@@ -35,7 +38,7 @@ angular.module('droneFrontendApp')
     $scope.containers[containerId].labels= ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''];
     $scope.containers[containerId].series= ['CPU','Memory'];
     $scope.containers[containerId].data=  [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
-    $scope.containers[containerId].options= { animation:false, scaleOverride:true, scaleStepWidth: 50, scaleStartValue: 0, scaleSteps:10,   scaleBeginAtZero: true, 
+    $scope.containers[containerId].options= { animation:false, scaleOverride:true, scaleStepWidth: 50, scaleStartValue: 0, scaleSteps:10,   scaleBeginAtZero: true,
     scales: {
                     xAxes: [{
                             display: false,
@@ -72,11 +75,11 @@ angular.module('droneFrontendApp')
                         }]
     }
   };
-  
+
   $scope.containers[containerId].datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
 
   }
-  
+
     //$scope.container.onClick= function (points, evt) {
     //    console.log(points, evt);
     //  };
@@ -86,7 +89,7 @@ angular.module('droneFrontendApp')
   function getContainerStats() {
   $http.get('http://droneapi.ddns.net:4000/stats').
       then(function(data, status, headers, config) {
-        console.log('getContainerStats API get success',data,status); 
+        console.log('getContainerStats API get success',data,status);
         //data has id, image, cpu
         //we want an array of the latest stat objects
         //$scope.stats.splice(0, $scope.stats.length);  //reset stats array to zero elements (without creating new array)
@@ -96,12 +99,12 @@ angular.module('droneFrontendApp')
 
         for(var statObj in data.data) {
           var containerObj=data.data[statObj];
-          //console.log(containerObj); 
+          //console.log(containerObj);
           $scope.stats[containerObj.id]=containerObj;
         }
 
-        //console.log($scope.stats.length); 
-        //console.log($scope.stats); 
+        //console.log($scope.stats.length);
+        //console.log($scope.stats);
         for(var stat in $scope.stats) {
           var statObj=$scope.stats[stat];
 
@@ -117,7 +120,7 @@ angular.module('droneFrontendApp')
 
         //go through each container and check there are still stats for container
         for (var containerIndex in $scope.containers){
-          
+
 
           var containerFound=false;
           for(var stat in $scope.stats) {
@@ -145,9 +148,14 @@ angular.module('droneFrontendApp')
                 $scope.utilityContainerIndex.splice(i,1);
               }
             }
-            for (var i in $scope.mainAPIIndex){
-              if ($scope.mainAPIIndex[i]==containerIndex){
-                $scope.mainAPIIndex.splice(i,1);
+            for (var i in $scope.serverAPIIndex){
+              if ($scope.serverAPIIndex[i]==containerIndex){
+                $scope.serverAPIIndex.splice(i,1);
+              }
+            }
+            for (var i in $scope.workerAPIIndex){
+              if ($scope.workerAPIIndex[i]==containerIndex){
+                $scope.workerAPIIndex.splice(i,1);
               }
             }
             delete $scope.containers[containerIndex];
@@ -163,13 +171,13 @@ angular.module('droneFrontendApp')
 
   $scope.$on('$destroy', function() {
     // clean up stuff
-      console.log('###################################################'); 
-      console.log('Unloading Performance Controller'); 
+      console.log('###################################################');
+      console.log('Unloading Performance Controller');
     $interval.cancel(statsTimer);
-  })    
+  })
   var statsTimer = $interval(getContainerStats, 1000);
 
-  console.log('###################################################'); 
-  console.log('Loading Performance Controller'); 
+  console.log('###################################################');
+  console.log('Loading Performance Controller');
 
 }]);

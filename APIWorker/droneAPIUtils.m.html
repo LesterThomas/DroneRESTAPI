@@ -1084,11 +1084,13 @@ def initaliseLogger():
 
 
 def initaliseGlobals():
-    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster, workerImage, serverImage
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
+    workerImage = getEnvironmentVariable('DOCKER_WORKER_IMAGE')
+    serverImage = getEnvironmentVariable('DOCKER_SERVER_IMAGE')
     defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
     workerURL = getEnvironmentVariable('WORKER_URL')
     workerMaster = False
@@ -1654,7 +1656,7 @@ class worker(Thread):
         return
 
     def createWorker(self, worker_ip, worker_port):
-        global workerURL, defaultDockerHost
+        global workerURL, defaultDockerHost, workerImage
         try:
             my_logger.info("Creating a new worker at: %s", "worker:" + worker_ip + ":" + str(worker_port))
 
@@ -1675,13 +1677,13 @@ class worker(Thread):
             dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
 
             dockerContainer = None
-            containerName = 'lesterthomas/droneapiworker:2.0.15'
+            containerName = workerImage
             dockerContainer = dockerClient.containers.run(
                 containerName,
                 environment=[
-                    "DRONEAPI_URL=http://localhost:1235",
+                    "DRONEAPI_URL=" + homeDomain,
                     "DOCKER_HOST_IP=172.17.0.1",
-                    "DOCKER_DRONESIM_IMAGE=lesterthomas/dronesim:1.7",
+                    "DOCKER_DRONESIM_IMAGE=" + dronesimImage,
                     "WORKER_URL=" +
                     worker_ip +
                     ":" +
@@ -2090,11 +2092,13 @@ class worker(Thread):
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.initaliseGlobals', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIUtils.initaliseGlobals" class="source">
     <pre><code>def initaliseGlobals():
-    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster, workerImage, serverImage
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
+    workerImage = getEnvironmentVariable('DOCKER_WORKER_IMAGE')
+    serverImage = getEnvironmentVariable('DOCKER_SERVER_IMAGE')
     defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
     workerURL = getEnvironmentVariable('WORKER_URL')
     workerMaster = False
@@ -2542,7 +2546,7 @@ This allows the GET URL requests to be served in a stateless manner from the Red
         return
 
     def createWorker(self, worker_ip, worker_port):
-        global workerURL, defaultDockerHost
+        global workerURL, defaultDockerHost, workerImage
         try:
             my_logger.info("Creating a new worker at: %s", "worker:" + worker_ip + ":" + str(worker_port))
 
@@ -2563,13 +2567,13 @@ This allows the GET URL requests to be served in a stateless manner from the Red
             dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
 
             dockerContainer = None
-            containerName = 'lesterthomas/droneapiworker:2.0.15'
+            containerName = workerImage
             dockerContainer = dockerClient.containers.run(
                 containerName,
                 environment=[
-                    "DRONEAPI_URL=http://localhost:1235",
+                    "DRONEAPI_URL=" + homeDomain,
                     "DOCKER_HOST_IP=172.17.0.1",
-                    "DOCKER_DRONESIM_IMAGE=lesterthomas/dronesim:1.7",
+                    "DOCKER_DRONESIM_IMAGE=" + dronesimImage,
                     "WORKER_URL=" +
                     worker_ip +
                     ":" +
@@ -2780,7 +2784,7 @@ else to the thread.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.createWorker', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIUtils.worker.createWorker" class="source">
     <pre><code>def createWorker(self, worker_ip, worker_port):
-    global workerURL, defaultDockerHost
+    global workerURL, defaultDockerHost, workerImage
     try:
         my_logger.info("Creating a new worker at: %s", "worker:" + worker_ip + ":" + str(worker_port))
         connection = None
@@ -2797,13 +2801,13 @@ else to the thread.</p></div>
             ':4243')
         dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
         dockerContainer = None
-        containerName = 'lesterthomas/droneapiworker:2.0.15'
+        containerName = workerImage
         dockerContainer = dockerClient.containers.run(
             containerName,
             environment=[
-                "DRONEAPI_URL=http://localhost:1235",
+                "DRONEAPI_URL=" + homeDomain,
                 "DOCKER_HOST_IP=172.17.0.1",
-                "DOCKER_DRONESIM_IMAGE=lesterthomas/dronesim:1.7",
+                "DOCKER_DRONESIM_IMAGE=" + dronesimImage,
                 "WORKER_URL=" +
                 worker_ip +
                 ":" +

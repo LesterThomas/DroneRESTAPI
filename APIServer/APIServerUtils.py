@@ -143,7 +143,7 @@ def applyHeadders():
     web.header('Access-Control-Allow-Origin', '*')
     web.header('Access-Control-Allow-Credentials', 'true')
     web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
-    web.header('Access-Control-Allow-Headers', 'Content-Type, API_KEY')
+    web.header('Access-Control-Allow-Headers', 'Content-Type, APIKEY')
     return
 
 
@@ -156,7 +156,7 @@ def getUserAuthorization():
     # my_logger.debug('getUserAuthorization')
     # my_logger.debug("web.ctx.env:%s",str(web.ctx.env))
 
-    api_key = web.ctx.env.get('HTTP_API_KEY')
+    api_key = web.ctx.env.get('HTTP_APIKEY')
     if api_key is None:
         my_logger.warn("No api_key included in the HTTP header")
         my_logger.warn(web.ctx)
