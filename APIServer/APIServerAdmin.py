@@ -7,6 +7,8 @@ import json
 import APIServerUtils
 import requests
 import web
+import time
+import math
 
 my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
 
@@ -41,31 +43,31 @@ class Admin:
                 "method": "POST",
                 "fields": [{"name": "name", "type": "string", "value": "Refresh containers"}]
             })
-            outputObj['dockerHostsArray'] = APIServerUtils.redisdB.get('dockerHostsArray')
-            outputObj['Connections'] = []
-            keys = APIServerUtils.redisdB.keys("connectionString:*")
+            outputObj['dockerHostsArray'] = json.loads(APIServerUtils.redisdB.get('dockerHostsArray'))
+            outputObj['_actions'] = availableActions
+
+            workers = []
+            keys = APIServerUtils.redisdB.keys("worker:*")
             for key in keys:
-                jsonObjStr = APIServerUtils.redisdB.get(key)
-                jsonObj = json.loads(jsonObjStr)
-                connectionString = jsonObj['connectionString']
-                dockerContainerId = jsonObj['dockerContainerId']
+                worker = json.loads(APIServerUtils.redisdB.get(key))
+                worker['id'] = key
+                time_since_heartbeat = time.time() - worker['last_heartbeat']
+                worker['time_since_heartbeat'] = round(time_since_heartbeat, 1)
+                workers.append(worker)
 
-                vehicleName = jsonObj['name']
-                vehicleType = jsonObj['vehicleType']
-                dockerContainerId = jsonObj['dockerContainerId']
-                droneId = key[17:]
-                hostIp = connectionString[4:-6]
-                port = connectionString[-5:]
-                outputObj['Connections'].append({"connectionString": connectionString,
-                                                 "dockerContainerId": dockerContainerId,
-                                                 "vehicleName": vehicleName,
-                                                 "vehicleType": vehicleType,
-                                                 "droneId": droneId,
-                                                 "hostIp": hostIp,
-                                                 "port": port})
+            outputObj['workers'] = workers
 
-            outputObj['_actions'] = availableActions
-            outputObj['_actions'] = availableActions
+            servers = []
+            keys = APIServerUtils.redisdB.keys("server:*")
+            for key in keys:
+                server = json.loads(APIServerUtils.redisdB.get(key))
+                server['id'] = key
+                time_since_heartbeat = time.time() - server['last_heartbeat']
+                server['time_since_heartbeat'] = round(time_since_heartbeat, 1)
+                servers.append(server)
+            outputObj['servers'] = servers
+
+            outputObj['service_parameters'] = json.loads(APIServerUtils.redisdB.get('service_parameters'))
 
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)

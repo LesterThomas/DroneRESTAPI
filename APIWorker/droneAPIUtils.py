@@ -13,6 +13,7 @@ import math
 import os
 import uuid
 import redis
+import socket
 import docker
 from threading import Thread
 import droneAPICommand
@@ -47,7 +48,7 @@ def initaliseLogger():
 
 
 def initaliseGlobals():
-    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster, workerImage, serverImage
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster, workerImage, serverImage, workerHostname
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
@@ -57,6 +58,7 @@ def initaliseGlobals():
     defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
     workerURL = getEnvironmentVariable('WORKER_URL')
     workerMaster = False
+    workerHostname = socket.gethostname()
 
     # set global variables
     connectionDict = {}  # holds a dictionary of DroneKit connection objects
@@ -481,7 +483,7 @@ class worker(Thread):
     This allows the GET URL requests to be served in a stateless manner from the Redis database."""
 
     def run(self):
-        global webApp
+        global webApp, workerHostname
         try:
             worker_iterations = 1
             continue_iterating = True
@@ -517,8 +519,8 @@ class worker(Thread):
                     'containers_being_managed': containers_being_managed,
                     'elapsed_time': elapsed_time,
                     'worker_iterations': worker_iterations,
-                    'last_heartbeat': time.time()}
-                redisdB.set('worker:' + workerURL, json.dumps(worker_record))
+                    'last_heartbeat': round(time.time(), 1)}
+                redisdB.set('worker:' + workerHostname, json.dumps(worker_record))
 
                 continue_iterating = self.checkIfWorkerFinished(containers_being_managed, worker_iterations)
 
@@ -531,7 +533,7 @@ class worker(Thread):
 
             # clean-up worker record
             my_logger.info("Cleaning-up and exiting")
-            redisdB.delete('worker:' + workerURL)
+            redisdB.delete('worker:' + workerHostname)
             webApp.stop()
             sys.exit()
 
@@ -564,7 +566,7 @@ class worker(Thread):
 
     def checkIfWorkerFinished(self, containers_being_managed, worker_iterations):
         if ((worker_iterations > 250) and (containers_being_managed == 0)
-            ):  # if this worker has been going a long time and it is not managing any containers then stop this loop
+                ):  # if this worker has been going a long time and it is not managing any containers then stop this loop
             keys = redisdB.keys("worker:*")
             if len(keys) > 1:  # if this is not the last worker
                 return False
@@ -586,40 +588,55 @@ class worker(Thread):
         return
 
     def performMasterActions(self):
+        global workerURL
         # query redis to see if any other containers are the master. If none then takeover.
         my_logger.info("Performing Master actions")
 
         service_parameters = json.loads(redisdB.get("service_parameters"))
         number_of_workers = service_parameters['number_of_workers']
+        number_of_servers = service_parameters['number_of_servers']
         worker_port_range_start = service_parameters['worker_port_range_start']
-        keys = redisdB.keys("worker:*")
+        thisWorkerIP = workerURL[:-5]
 
+        keys = redisdB.keys("worker:*")
+        worker_urls_used = {}
         for key in keys:
             worker = json.loads(redisdB.get(key))
             my_logger.info(worker)
+            worker_urls_used[worker['worker_url']] = True
+            my_logger.info("Urls and Ports Used: %s", worker_urls_used)
 
         if len(keys) < number_of_workers:
             # start a new worker
 
             nextPortNumber = worker_port_range_start
-            thisWorkerIP = workerURL[:-5]
             my_logger.info("thisWorkerIP: %s", thisWorkerIP)
             emptyPortFound = False
 
             while (emptyPortFound == False):
-                nextPost = redisdB.keys("worker:" + thisWorkerIP + ":" + str(nextPortNumber))
-                my_logger.info("Testing if there is a worker at: %s", "worker:" + thisWorkerIP + ":" + str(nextPortNumber))
-                if len(nextPost) == 0:
+                test_key = thisWorkerIP + ":" + str(nextPortNumber)
+                url_used = test_key in worker_urls_used
+                my_logger.info("Testing if there is a worker at: %s returns %s", thisWorkerIP + ":" + str(nextPortNumber), str(url_used))
+                if not url_used:
                     emptyPortFound = True
                 else:
                     nextPortNumber = nextPortNumber + 1
 
             self.createWorker(thisWorkerIP, nextPortNumber)
 
+        keys = redisdB.keys("server:*")
+        for key in keys:
+            server = json.loads(redisdB.get(key))
+            my_logger.info(server)
+
+        if len(keys) < number_of_servers:
+            # start a new server
+            self.createServer(thisWorkerIP)
+
         return
 
     def createWorker(self, worker_ip, worker_port):
-        global workerURL, defaultDockerHost, workerImage
+        global defaultDockerHost, workerImage, serverImage, dronesimImage, homeDomain
         try:
             my_logger.info("Creating a new worker at: %s", "worker:" + worker_ip + ":" + str(worker_port))
 
@@ -645,17 +662,65 @@ class worker(Thread):
                 containerName,
                 environment=[
                     "DRONEAPI_URL=" + homeDomain,
-                    "DOCKER_HOST_IP=172.17.0.1",
                     "DOCKER_DRONESIM_IMAGE=" + dronesimImage,
-                    "WORKER_URL=" +
-                    worker_ip +
-                    ":" +
-                    str(worker_port)],
+                    "DOCKER_WORKER_IMAGE=" + workerImage,
+                    "DOCKER_SERVER_IMAGE=" + serverImage,
+                    "DOCKER_HOST_IP=172.17.0.1",
+                    "WORKER_URL=" + worker_ip + ":" + str(worker_port)],
                 links={
                     "redis": "redis"},
                 detach=True,
                 ports={
                     '1234/tcp': worker_port},
+                name=key)
+
+            docker_container_id = dockerContainer.id
+            my_logger.info("container Id=%s", str(docker_container_id))
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in createWorker. %s ", traceLines)
+            my_logger.exception(ex)
+        return
+
+    def createServer(self, worker_ip):
+
+        global defaultDockerHost, serverImage, dronesimImage, homeDomain
+        try:
+            my_logger.info("Creating a new server at: %s", "worker:" + worker_ip)
+
+            virtual_host_list = homeDomain.split("/")
+            virtual_host = virtual_host_list[-1]
+            my_logger.info("virtual_host: %s", virtual_host)
+
+            connection = None
+            docker_container_id = "N/A"
+            uuidVal = uuid.uuid4()
+            key = str(uuidVal)[:8]
+
+            # build simulated drone or proxy via Docker
+            # docker api available on host at
+            # http://172.17.0.1:4243/containers/json
+            dockerClient = docker.DockerClient(
+                version='1.27',
+                base_url='tcp://' +
+                defaultDockerHost +
+                ':4243')
+
+            dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
+
+            dockerContainer = None
+            containerName = serverImage
+
+            dockerContainer = dockerClient.containers.run(
+                containerName,
+                environment=[
+                    "DRONEAPI_URL=" + homeDomain,
+                    "VIRTUAL_HOST=" + virtual_host,
+                    "DOCKER_HOST_IP=172.17.0.1"],
+                links={
+                    "redis": "redis"},
+                detach=True,
                 name=key)
 
             docker_container_id = dockerContainer.id

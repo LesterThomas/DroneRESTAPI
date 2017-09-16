@@ -985,6 +985,7 @@ table {
     <li class="mono"><a href="#APIServerUtils.initiliseRedisDB">initiliseRedisDB</a></li>
     <li class="mono"><a href="#APIServerUtils.latLonAltObj">latLonAltObj</a></li>
     <li class="mono"><a href="#APIServerUtils.rebuildDockerHostsArray">rebuildDockerHostsArray</a></li>
+    <li class="mono"><a href="#APIServerUtils.startBackgroundWorker">startBackgroundWorker</a></li>
   </ul>
 
     </li>
@@ -994,6 +995,25 @@ table {
         <li class="mono">
         <span class="class_name"><a href="#APIServerUtils.AuthFailedException">AuthFailedException</a></span>
         
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#APIServerUtils.worker">worker</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#APIServerUtils.worker.__init__">__init__</a></li>
+    <li class="mono"><a href="#APIServerUtils.worker.checkIfServerFinished">checkIfServerFinished</a></li>
+    <li class="mono"><a href="#APIServerUtils.worker.getName">getName</a></li>
+    <li class="mono"><a href="#APIServerUtils.worker.isAlive">isAlive</a></li>
+    <li class="mono"><a href="#APIServerUtils.worker.isDaemon">isDaemon</a></li>
+    <li class="mono"><a href="#APIServerUtils.worker.is_alive">is_alive</a></li>
+    <li class="mono"><a href="#APIServerUtils.worker.join">join</a></li>
+    <li class="mono"><a href="#APIServerUtils.worker.run">run</a></li>
+    <li class="mono"><a href="#APIServerUtils.worker.setDaemon">setDaemon</a></li>
+    <li class="mono"><a href="#APIServerUtils.worker.setName">setName</a></li>
+    <li class="mono"><a href="#APIServerUtils.worker.start">start</a></li>
+  </ul>
+
         </li>
       </ul>
     </li>
@@ -1018,6 +1038,7 @@ table {
 # Import DroneKit-Python
 from dronekit import connect, APIException
 
+import sys
 import web
 import logging
 import watchtower
@@ -1029,6 +1050,7 @@ import os
 import uuid
 import redis
 import docker
+import socket
 from threading import Thread
 import APIServerCommand
 
@@ -1091,11 +1113,14 @@ def rebuildDockerHostsArray():
 
 
 def initaliseGlobals():
-    global homeDomain, defaultDockerHost
+    global homeDomain, defaultDockerHost, serverHostname, pagesServed
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
+    serverHostname = socket.gethostname()
+    pagesServed = 0
+    my_logger.info("initaliseGlobals pagesServed: %i", pagesServed)
     return
 
 
@@ -1119,6 +1144,11 @@ def getEnvironmentVariable(inVariable):
         traceLines = tracebackStr.split("\n")
         my_logger.exception(traceLines)
     return ""
+
+
+def startBackgroundWorker():
+    worker().start()
+    return
 
 
 def getNewWorkerURL():
@@ -1154,12 +1184,15 @@ def getAllWorkerURLs():
 
 
 def applyHeadders():
+    global pagesServed
     my_logger.debug('Applying HTTP headers')
     web.header('Content-Type', 'application/json')
     web.header('Access-Control-Allow-Origin', '*')
     web.header('Access-Control-Allow-Credentials', 'true')
     web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
     web.header('Access-Control-Allow-Headers', 'Content-Type, APIKEY')
+    my_logger.info("applyHeadders pagesServed: %i", pagesServed)
+    pagesServed = pagesServed + 1
     return
 
 
@@ -1214,6 +1247,49 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = R * c
     return distance * 1000
+
+
+class worker(Thread):
+    """This class provides a background worker thread that polls all the drone objects and updates the Redis database.
+    This allows the GET URL requests to be served in a stateless manner from the Redis database."""
+
+    def run(self):
+        global webApp, pagesServed, serverHostname
+
+        try:
+            worker_iterations = 1
+            continue_iterating = True
+            while continue_iterating:
+                worker_iterations = worker_iterations + 1
+
+                server_record = {
+                    'pages_served': pagesServed,
+                    'worker_iterations': worker_iterations,
+                    'last_heartbeat': round(time.time(), 1)}
+                redisdB.set('server:' + serverHostname, json.dumps(server_record))
+                time.sleep(1)
+                continue_iterating = self.checkIfServerFinished(worker_iterations)
+
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in server.run  %s ", traceLines)
+            my_logger.exception(ex)
+
+        # clean-up worker record
+        my_logger.info("Cleaning-up and exiting")
+        redisdB.delete('server:' + serverHostname)
+        webApp.stop()
+        sys.exit()
+
+        return
+
+    def checkIfServerFinished(self, worker_iterations):
+        if worker_iterations > 100:  # if this server has been going a long time
+            keys = redisdB.keys("server:*")
+            if len(keys) > 1:  # if this is not the last worker
+                return False
+        return True
 </code></pre>
   </div>
 
@@ -1235,12 +1311,15 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.applyHeadders', this);">Show source &equiv;</a></p>
   <div id="source-APIServerUtils.applyHeadders" class="source">
     <pre><code>def applyHeadders():
+    global pagesServed
     my_logger.debug('Applying HTTP headers')
     web.header('Content-Type', 'application/json')
     web.header('Access-Control-Allow-Origin', '*')
     web.header('Access-Control-Allow-Credentials', 'true')
     web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
     web.header('Access-Control-Allow-Headers', 'Content-Type, APIKEY')
+    my_logger.info("applyHeadders pagesServed: %i", pagesServed)
+    pagesServed = pagesServed + 1
     return
 </code></pre>
   </div>
@@ -1446,11 +1525,14 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.initaliseGlobals', this);">Show source &equiv;</a></p>
   <div id="source-APIServerUtils.initaliseGlobals" class="source">
     <pre><code>def initaliseGlobals():
-    global homeDomain, defaultDockerHost
+    global homeDomain, defaultDockerHost, serverHostname, pagesServed
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
+    serverHostname = socket.gethostname()
+    pagesServed = 0
+    my_logger.info("initaliseGlobals pagesServed: %i", pagesServed)
     return
 </code></pre>
   </div>
@@ -1595,6 +1677,27 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
 
   </div>
   
+      
+  <div class="item">
+    <div class="name def" id="APIServerUtils.startBackgroundWorker">
+    <p>def <span class="ident">startBackgroundWorker</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.startBackgroundWorker', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.startBackgroundWorker" class="source">
+    <pre><code>def startBackgroundWorker():
+    worker().start()
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
 
     <h2 class="section-title" id="header-classes">Classes</h2>
       
@@ -1643,6 +1746,515 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
 </div>
 
             </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="APIServerUtils.worker" class="name">class <span class="ident">worker</span></p>
+      
+  
+    <div class="desc"><p>This class provides a background worker thread that polls all the drone objects and updates the Redis database.
+This allows the GET URL requests to be served in a stateless manner from the Redis database.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker" class="source">
+    <pre><code>class worker(Thread):
+    """This class provides a background worker thread that polls all the drone objects and updates the Redis database.
+    This allows the GET URL requests to be served in a stateless manner from the Redis database."""
+
+    def run(self):
+        global webApp, pagesServed, serverHostname
+
+        try:
+            worker_iterations = 1
+            continue_iterating = True
+            while continue_iterating:
+                worker_iterations = worker_iterations + 1
+
+                server_record = {
+                    'pages_served': pagesServed,
+                    'worker_iterations': worker_iterations,
+                    'last_heartbeat': round(time.time(), 1)}
+                redisdB.set('server:' + serverHostname, json.dumps(server_record))
+                time.sleep(1)
+                continue_iterating = self.checkIfServerFinished(worker_iterations)
+
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in server.run  %s ", traceLines)
+            my_logger.exception(ex)
+
+        # clean-up worker record
+        my_logger.info("Cleaning-up and exiting")
+        redisdB.delete('server:' + serverHostname)
+        webApp.stop()
+        sys.exit()
+
+        return
+
+    def checkIfServerFinished(self, worker_iterations):
+        if worker_iterations > 100:  # if this server has been going a long time
+            keys = redisdB.keys("server:*")
+            if len(keys) > 1:  # if this is not the last worker
+                return False
+        return True
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#APIServerUtils.worker">worker</a></li>
+          <li>threading.Thread</li>
+          <li>threading._Verbose</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="APIServerUtils.worker.daemon" class="name">var <span class="ident">daemon</span></p>
+            
+
+            
+  
+    <div class="desc"><p>A boolean value indicating whether this thread is a daemon thread (True) or not (False).</p>
+<p>This must be set before start() is called, otherwise RuntimeError is
+raised. Its initial value is inherited from the creating thread; the
+main thread is not a daemon thread and therefore all threads created in
+the main thread default to daemon = False.</p>
+<p>The entire Python program exits when no alive non-daemon threads are
+left.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="APIServerUtils.worker.ident" class="name">var <span class="ident">ident</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Thread identifier of this thread or None if it has not been started.</p>
+<p>This is a nonzero integer. See the thread.get_ident() function. Thread
+identifiers may be recycled when a thread exits and another thread is
+created. The identifier is available even after the thread has exited.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="APIServerUtils.worker.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+    <div class="desc"><p>A string used for identification purposes only.</p>
+<p>It has no semantics. Multiple threads may be given the same name. The
+initial name is set by the constructor.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="APIServerUtils.worker.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, group=None, target=None, name=None, args=(), kwargs=None, verbose=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This constructor should always be called with keyword arguments. Arguments are:</p>
+<p><em>group</em> should be None; reserved for future extension when a ThreadGroup
+class is implemented.</p>
+<p><em>target</em> is the callable object to be invoked by the run()
+method. Defaults to None, meaning nothing is called.</p>
+<p><em>name</em> is the thread name. By default, a unique name is constructed of
+the form "Thread-N" where N is a small decimal number.</p>
+<p><em>args</em> is the argument tuple for the target invocation. Defaults to ().</p>
+<p><em>kwargs</em> is a dictionary of keyword arguments for the target
+invocation. Defaults to {}.</p>
+<p>If a subclass overrides the constructor, it must make sure to invoke
+the base class constructor (Thread.<strong>init</strong>()) before doing anything
+else to the thread.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker.__init__" class="source">
+    <pre><code>def __init__(self, group=None, target=None, name=None,
+             args=(), kwargs=None, verbose=None):
+    """This constructor should always be called with keyword arguments. Arguments are:
+    *group* should be None; reserved for future extension when a ThreadGroup
+    class is implemented.
+    *target* is the callable object to be invoked by the run()
+    method. Defaults to None, meaning nothing is called.
+    *name* is the thread name. By default, a unique name is constructed of
+    the form "Thread-N" where N is a small decimal number.
+    *args* is the argument tuple for the target invocation. Defaults to ().
+    *kwargs* is a dictionary of keyword arguments for the target
+    invocation. Defaults to {}.
+    If a subclass overrides the constructor, it must make sure to invoke
+    the base class constructor (Thread.__init__()) before doing anything
+    else to the thread.
+    assert group is None, "group argument must be None for now"
+    _Verbose.__init__(self, verbose)
+    if kwargs is None:
+        kwargs = {}
+    self.__target = target
+    self.__name = str(name or _newname())
+    self.__args = args
+    self.__kwargs = kwargs
+    self.__daemonic = self._set_daemon()
+    self.__ident = None
+    self.__started = Event()
+    self.__stopped = False
+    self.__block = Condition(Lock())
+    self.__initialized = True
+    # sys.stderr is not stored in the class like
+    # sys.exc_info since it can be changed between instances
+    self.__stderr = _sys.stderr
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="APIServerUtils.worker.checkIfServerFinished">
+    <p>def <span class="ident">checkIfServerFinished</span>(</p><p>self, worker_iterations)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.checkIfServerFinished', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker.checkIfServerFinished" class="source">
+    <pre><code>def checkIfServerFinished(self, worker_iterations):
+    if worker_iterations > 100:  # if this server has been going a long time
+        keys = redisdB.keys("server:*")
+        if len(keys) > 1:  # if this is not the last worker
+            return False
+    return True
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="APIServerUtils.worker.getName">
+    <p>def <span class="ident">getName</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.getName', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker.getName" class="source">
+    <pre><code>def getName(self):
+    return self.name
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="APIServerUtils.worker.isAlive">
+    <p>def <span class="ident">isAlive</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return whether the thread is alive.</p>
+<p>This method returns True just before the run() method starts until just
+after the run() method terminates. The module function enumerate()
+returns a list of all alive threads.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.isAlive', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker.isAlive" class="source">
+    <pre><code>def isAlive(self):
+    """Return whether the thread is alive.
+    This method returns True just before the run() method starts until just
+    after the run() method terminates. The module function enumerate()
+    returns a list of all alive threads.
+    """
+    assert self.__initialized, "Thread.__init__() not called"
+    return self.__started.is_set() and not self.__stopped
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="APIServerUtils.worker.isDaemon">
+    <p>def <span class="ident">isDaemon</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.isDaemon', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker.isDaemon" class="source">
+    <pre><code>def isDaemon(self):
+    return self.daemon
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="APIServerUtils.worker.is_alive">
+    <p>def <span class="ident">is_alive</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return whether the thread is alive.</p>
+<p>This method returns True just before the run() method starts until just
+after the run() method terminates. The module function enumerate()
+returns a list of all alive threads.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.is_alive', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker.is_alive" class="source">
+    <pre><code>def isAlive(self):
+    """Return whether the thread is alive.
+    This method returns True just before the run() method starts until just
+    after the run() method terminates. The module function enumerate()
+    returns a list of all alive threads.
+    """
+    assert self.__initialized, "Thread.__init__() not called"
+    return self.__started.is_set() and not self.__stopped
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="APIServerUtils.worker.join">
+    <p>def <span class="ident">join</span>(</p><p>self, timeout=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Wait until the thread terminates.</p>
+<p>This blocks the calling thread until the thread whose join() method is
+called terminates -- either normally or through an unhandled exception
+or until the optional timeout occurs.</p>
+<p>When the timeout argument is present and not None, it should be a
+floating point number specifying a timeout for the operation in seconds
+(or fractions thereof). As join() always returns None, you must call
+isAlive() after join() to decide whether a timeout happened -- if the
+thread is still alive, the join() call timed out.</p>
+<p>When the timeout argument is not present or None, the operation will
+block until the thread terminates.</p>
+<p>A thread can be join()ed many times.</p>
+<p>join() raises a RuntimeError if an attempt is made to join the current
+thread as that would cause a deadlock. It is also an error to join() a
+thread before it has been started and attempts to do so raises the same
+exception.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.join', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker.join" class="source">
+    <pre><code>def join(self, timeout=None):
+    """Wait until the thread terminates.
+    This blocks the calling thread until the thread whose join() method is
+    called terminates -- either normally or through an unhandled exception
+    or until the optional timeout occurs.
+    When the timeout argument is present and not None, it should be a
+    floating point number specifying a timeout for the operation in seconds
+    (or fractions thereof). As join() always returns None, you must call
+    isAlive() after join() to decide whether a timeout happened -- if the
+    thread is still alive, the join() call timed out.
+    When the timeout argument is not present or None, the operation will
+    block until the thread terminates.
+    A thread can be join()ed many times.
+    join() raises a RuntimeError if an attempt is made to join the current
+    thread as that would cause a deadlock. It is also an error to join() a
+    thread before it has been started and attempts to do so raises the same
+    exception.
+    """
+    if not self.__initialized:
+        raise RuntimeError("Thread.__init__() not called")
+    if not self.__started.is_set():
+        raise RuntimeError("cannot join thread before it is started")
+    if self is current_thread():
+        raise RuntimeError("cannot join current thread")
+    if __debug__:
+        if not self.__stopped:
+            self._note("%s.join(): waiting until thread stops", self)
+    self.__block.acquire()
+    try:
+        if timeout is None:
+            while not self.__stopped:
+                self.__block.wait()
+            if __debug__:
+                self._note("%s.join(): thread stopped", self)
+        else:
+            deadline = _time() + timeout
+            while not self.__stopped:
+                delay = deadline - _time()
+                if delay <= 0:
+                    if __debug__:
+                        self._note("%s.join(): timed out", self)
+                    break
+                self.__block.wait(delay)
+            else:
+                if __debug__:
+                    self._note("%s.join(): thread stopped", self)
+    finally:
+        self.__block.release()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="APIServerUtils.worker.run">
+    <p>def <span class="ident">run</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.run', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker.run" class="source">
+    <pre><code>def run(self):
+    global webApp, pagesServed, serverHostname
+    try:
+        worker_iterations = 1
+        continue_iterating = True
+        while continue_iterating:
+            worker_iterations = worker_iterations + 1
+            server_record = {
+                'pages_served': pagesServed,
+                'worker_iterations': worker_iterations,
+                'last_heartbeat': round(time.time(), 1)}
+            redisdB.set('server:' + serverHostname, json.dumps(server_record))
+            time.sleep(1)
+            continue_iterating = self.checkIfServerFinished(worker_iterations)
+    except Exception as ex:
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        my_logger.warn("Caught exception: Unexpected error in server.run  %s ", traceLines)
+        my_logger.exception(ex)
+    # clean-up worker record
+    my_logger.info("Cleaning-up and exiting")
+    redisdB.delete('server:' + serverHostname)
+    webApp.stop()
+    sys.exit()
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="APIServerUtils.worker.setDaemon">
+    <p>def <span class="ident">setDaemon</span>(</p><p>self, daemonic)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.setDaemon', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker.setDaemon" class="source">
+    <pre><code>def setDaemon(self, daemonic):
+    self.daemon = daemonic
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="APIServerUtils.worker.setName">
+    <p>def <span class="ident">setName</span>(</p><p>self, name)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.setName', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker.setName" class="source">
+    <pre><code>def setName(self, name):
+    self.name = name
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="APIServerUtils.worker.start">
+    <p>def <span class="ident">start</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Start the thread's activity.</p>
+<p>It must be called at most once per thread object. It arranges for the
+object's run() method to be invoked in a separate thread of control.</p>
+<p>This method will raise a RuntimeError if called more than once on the
+same thread object.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.start', this);">Show source &equiv;</a></p>
+  <div id="source-APIServerUtils.worker.start" class="source">
+    <pre><code>def start(self):
+    """Start the thread's activity.
+    It must be called at most once per thread object. It arranges for the
+    object's run() method to be invoked in a separate thread of control.
+    This method will raise a RuntimeError if called more than once on the
+    same thread object.
+    """
+    if not self.__initialized:
+        raise RuntimeError("thread.__init__() not called")
+    if self.__started.is_set():
+        raise RuntimeError("threads can only be started once")
+    if __debug__:
+        self._note("%s.start(): starting thread", self)
+    with _active_limbo_lock:
+        _limbo[self] = self
+    try:
+        _start_new_thread(self.__bootstrap, ())
+    except Exception:
+        with _active_limbo_lock:
+            del _limbo[self]
+        raise
+    self.__started.wait()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
       </div>
       </div>
 

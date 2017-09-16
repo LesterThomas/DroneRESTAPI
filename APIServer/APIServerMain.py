@@ -172,6 +172,7 @@ def startup():
     APIServerUtils.initaliseLogger()
     APIServerUtils.initaliseGlobals()
     APIServerUtils.initiliseRedisDB()
+    APIServerUtils.startBackgroundWorker()
 
     # set API url endpoints and class handlers. Each handler class is in its
     # own python module
@@ -191,8 +192,8 @@ def startup():
     )
 
     # start API web application server
-    app = web.application(urls, globals())
-    app.run()
+    APIServerUtils.webApp = web.application(urls, globals())
+    APIServerUtils.webApp.run()
     return
 
 

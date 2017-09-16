@@ -2,6 +2,7 @@
 # Import DroneKit-Python
 from dronekit import connect, APIException
 
+import sys
 import web
 import logging
 import watchtower
@@ -13,6 +14,7 @@ import os
 import uuid
 import redis
 import docker
+import socket
 from threading import Thread
 import APIServerCommand
 
@@ -75,11 +77,14 @@ def rebuildDockerHostsArray():
 
 
 def initaliseGlobals():
-    global homeDomain, defaultDockerHost
+    global homeDomain, defaultDockerHost, serverHostname, pagesServed
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
+    serverHostname = socket.gethostname()
+    pagesServed = 0
+    my_logger.info("initaliseGlobals pagesServed: %i", pagesServed)
     return
 
 
@@ -103,6 +108,11 @@ def getEnvironmentVariable(inVariable):
         traceLines = tracebackStr.split("\n")
         my_logger.exception(traceLines)
     return ""
+
+
+def startBackgroundWorker():
+    worker().start()
+    return
 
 
 def getNewWorkerURL():
@@ -138,12 +148,15 @@ def getAllWorkerURLs():
 
 
 def applyHeadders():
+    global pagesServed
     my_logger.debug('Applying HTTP headers')
     web.header('Content-Type', 'application/json')
     web.header('Access-Control-Allow-Origin', '*')
     web.header('Access-Control-Allow-Credentials', 'true')
     web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
     web.header('Access-Control-Allow-Headers', 'Content-Type, APIKEY')
+    my_logger.info("applyHeadders pagesServed: %i", pagesServed)
+    pagesServed = pagesServed + 1
     return
 
 
@@ -198,3 +211,46 @@ def distanceInMeters(lat1, lon1, lat2, lon2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = R * c
     return distance * 1000
+
+
+class worker(Thread):
+    """This class provides a background worker thread that polls all the drone objects and updates the Redis database.
+    This allows the GET URL requests to be served in a stateless manner from the Redis database."""
+
+    def run(self):
+        global webApp, pagesServed, serverHostname
+
+        try:
+            worker_iterations = 1
+            continue_iterating = True
+            while continue_iterating:
+                worker_iterations = worker_iterations + 1
+
+                server_record = {
+                    'pages_served': pagesServed,
+                    'worker_iterations': worker_iterations,
+                    'last_heartbeat': round(time.time(), 1)}
+                redisdB.set('server:' + serverHostname, json.dumps(server_record))
+                time.sleep(1)
+                continue_iterating = self.checkIfServerFinished(worker_iterations)
+
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in server.run  %s ", traceLines)
+            my_logger.exception(ex)
+
+        # clean-up worker record
+        my_logger.info("Cleaning-up and exiting")
+        redisdB.delete('server:' + serverHostname)
+        webApp.stop()
+        sys.exit()
+
+        return
+
+    def checkIfServerFinished(self, worker_iterations):
+        if worker_iterations > 100:  # if this server has been going a long time
+            keys = redisdB.keys("server:*")
+            if len(keys) > 1:  # if this is not the last worker
+                return False
+        return True

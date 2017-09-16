@@ -17,8 +17,8 @@ echo "VERSION"
 echo $VERSION
 
 echo "Running locally"
-docker stop $(docker ps -a -q -f name=droneapiworker)
-docker rm $(docker ps -a -q -f name=droneapiworker)
+docker ps -a | awk '{ print $1,$2 }' | grep droneapiworker | awk '{print $1 }' | xargs -I {} docker stop {}
+docker ps -a | awk '{ print $1,$2 }' | grep droneapiworker | awk '{print $1 }' | xargs -I {} docker rm {}
 
 echo "Applying Python Code styling"
 autopep8 -a -a -v -i --max-line-length 140 *.py
@@ -37,5 +37,4 @@ pdoc --html --overwrite droneAPIVehicleIndex.py
 
 
 docker build -t lesterthomas/droneapiworker:$VERSION .
-docker run -p 1236:1234 -d --link redis:redis -e "DRONEAPI_URL=http://localhost:1235" -e "DOCKER_HOST_IP=172.17.0.1" -e "DOCKER_DRONESIM_IMAGE=lesterthomas/dronesim:1.7" -e "WORKER_URL=192.168.1.67:1236" --name droneapiworker lesterthomas/droneapiworker:$VERSION
-
+docker run -d -p 8000:1234 --link redis:redis -e "DRONEAPI_URL=http://localhost" -e "DOCKER_HOST_IP=172.17.0.1" -e "DOCKER_DRONESIM_IMAGE=lesterthomas/dronesim:1.7"  -e "DOCKER_WORKER_IMAGE=lesterthomas/droneapiworker:$VERSION"  -e "DOCKER_SERVER_IMAGE=lesterthomas/droneapiserver:$VERSION" -e "WORKER_URL=localhost:8000"  lesterthomas/droneapiworker:$VERSION

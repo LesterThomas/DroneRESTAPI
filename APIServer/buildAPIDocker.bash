@@ -17,3 +17,4 @@ docker ps -a | awk '{ print $1,$2 }' | grep droneapiserver | awk '{print $1 }' |
 docker ps -a | awk '{ print $1,$2 }' | grep droneapiserver | awk '{print $1 }' | xargs -I {} docker rm {}
 docker build -t lesterthomas/droneapiserver:$VERSION .
 docker run -d  --link redis:redis -e "DRONEAPI_URL=http://test.droneapi.net" -e "DOCKER_HOST_IP=172.17.0.1" -e "VIRTUAL_HOST=test.droneapi.net"  lesterthomas/droneapiserver:$VERSION
+

@@ -28,7 +28,7 @@
 				"method": "GET",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -62,7 +62,7 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -98,7 +98,7 @@
 				"method": "GET",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -163,7 +163,7 @@
 				"method": "GET",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -200,7 +200,7 @@
 				"method": "GET",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -239,7 +239,7 @@
 						"description": ""
 					},
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -281,7 +281,7 @@
 						"description": ""
 					},
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -321,7 +321,7 @@
 						"description": ""
 					},
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -356,7 +356,7 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -391,7 +391,7 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -426,7 +426,7 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -467,7 +467,7 @@
 						"description": ""
 					},
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -525,7 +525,7 @@
 				"method": "GET",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -535,47 +535,6 @@
 					"raw": "{\"name\":\"test\",\"vehicleType\":\"simulated\"}"
 				},
 				"description": "Return the collection of available vehicles"
-			},
-			"response": []
-		},
-		{
-			"name": "http://droneapi.ddns.net:1235/vehicle/{{droneId}}/homeLocation",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
-							"var jsonData = JSON.parse(responseBody);",
-							"tests[\"Self link returned\"] = jsonData._links.self.href === request.url;",
-							"tests[\"home_location value returned \"] = (jsonData.home_location);",
-							""
-						]
-					}
-				}
-			],
-			"request": {
-				"url": "http://{{url}}/vehicle/{{droneId}}/homeLocation",
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
-					},
-					{
-						"key": "api_key",
-						"value": "{{api_key}}",
-						"description": ""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "\r\n[{\"coordinate\":[51.405, -1.305, 30], \"command\":16,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0},\r\n{\"coordinate\":[51.4157, -1.3196, 30], \"command\":16,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0},\r\n{\"coordinate\":[51.405, -1.305, 30], \"command\":16,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0},\r\n{\"coordinate\":[51.405, -1.305, 30], \"command\":20,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0}]\r\n"
-				},
-				"description": "Get home location for drone 7147a58f"
 			},
 			"response": []
 		},
@@ -606,13 +565,74 @@
 				"method": "DELETE",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
 				],
 				"body": {},
 				"description": "GET status for vehicle 7147a58f"
+			},
+			"response": []
+		},
+		{
+			"name": "http://droneapi.ddns.net:1235/vehicle?status=true (pick-up ID)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"vehicle_array=jsonData._embedded.vehicle",
+							"if (vehicle_array.length>0){",
+							"    tests[\"Additional drone found\"] = true;",
+							"    postman.setEnvironmentVariable(\"droneId\", vehicle_array[0].id);",
+							"    postman.setNextRequest(\"DEL-http://droneapi.ddns.net:1235/vehicle/{{droneId}}\"); ",
+							"} else {",
+							"    tests[\"No drone found\"] = true;",
+							"",
+							"}",
+							"",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://{{url}}/vehicle?status=true",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"vehicle"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "true",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "apikey",
+						"value": "{{api_key}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"test\",\"vehicleType\":\"simulated\"}"
+				},
+				"description": "Return the collection of available vehicles"
 			},
 			"response": []
 		},
@@ -641,7 +661,7 @@
 				"method": "GET",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -676,7 +696,7 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "api_key",
+						"key": "apikey",
 						"value": "{{api_key}}",
 						"description": ""
 					}
@@ -686,6 +706,47 @@
 					"raw": "{\"name\":\"Rebuild dockerHostsArray\"}"
 				},
 				"description": "POST an Admin function"
+			},
+			"response": []
+		},
+		{
+			"name": "http://droneapi.ddns.net:1235/vehicle/{{droneId}}/homeLocation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Response time is less than 2s\"] = responseTime < 2000;",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Self link returned\"] = jsonData._links.self.href === request.url;",
+							"tests[\"home_location value returned \"] = (jsonData.home_location);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://{{url}}/vehicle/{{droneId}}/homeLocation",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "apikey",
+						"value": "{{api_key}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n[{\"coordinate\":[51.405, -1.305, 30], \"command\":16,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0},\r\n{\"coordinate\":[51.4157, -1.3196, 30], \"command\":16,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0},\r\n{\"coordinate\":[51.405, -1.305, 30], \"command\":16,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0},\r\n{\"coordinate\":[51.405, -1.305, 30], \"command\":20,\"param1\":0,\"param2\":0,\"param3\":0,\"param4\":0}]\r\n"
+				},
+				"description": "Get home location for drone 7147a58f"
 			},
 			"response": []
 		},

@@ -22,8 +22,8 @@ sed -i -e 's/192.168.1.67/droneapi.ddns.net/g' static/app/scripts/controllers/pe
 sed -i -e 's/1988760538025932/136908103594406/g' static/app/scripts/app.js
 
 echo "Running locally"
-docker stop $(docker ps -a -q -f name=droneapiserver)
-docker rm $(docker ps -a -q -f name=droneapiserver)
+docker ps -a | awk '{ print $1,$2 }' | grep droneapiserver | awk '{print $1 }' | xargs -I {} docker stop {}
+docker ps -a | awk '{ print $1,$2 }' | grep droneapiserver | awk '{print $1 }' | xargs -I {} docker rm {}
 
 echo "Applying Python Code styling"
 autopep8 -a -a -v -i --max-line-length 140 *.py
@@ -42,5 +42,6 @@ pdoc --html --overwrite APIServerVehicleIndex.py
 pdoc --html --overwrite APIServerUser.py
 
 
+
 docker build -t lesterthomas/droneapiserver:$VERSION .
-docker run -p 1235:1234 -d --link redis:redis -e "DRONEAPI_URL=http://localhost:1235" -e "DOCKER_HOST_IP=172.17.0.1" -e "DOCKER_DRONESIM_IMAGE=lesterthomas/dronesim:1.7" --name droneapiserver lesterthomas/droneapiserver:$VERSION
+docker run -d  --link redis:redis -e "DRONEAPI_URL=http://localhost" -e "DOCKER_HOST_IP=172.17.0.1" -e "VIRTUAL_HOST=localhost"  lesterthomas/droneapiserver:$VERSION
