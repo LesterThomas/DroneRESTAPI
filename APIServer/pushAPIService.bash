@@ -17,8 +17,8 @@ echo "VERSION"
 echo $VERSION
 
 echo "Changing UI to point to prod api and prod facebook id"
-sed -i -e 's/192.168.1.67/droneapi.ddns.net/g' static/app/scripts/services/droneService.js
-sed -i -e 's/192.168.1.67/droneapi.ddns.net/g' static/app/scripts/controllers/performanceController.js
+sed -i -e 's/test.droneapi.net/droneapi.ddns.net/g' static/app/scripts/services/droneService.js
+sed -i -e 's/test.droneapi.net/droneapi.ddns.net/g' static/app/scripts/controllers/performanceController.js
 sed -i -e 's/1988760538025932/136908103594406/g' static/app/scripts/app.js
 
 echo "Running locally"
@@ -44,4 +44,4 @@ pdoc --html --overwrite APIServerUser.py
 
 
 docker build -t lesterthomas/droneapiserver:$VERSION .
-docker run -d  --link redis:redis -e "DRONEAPI_URL=http://localhost" -e "DOCKER_HOST_IP=172.17.0.1" -e "VIRTUAL_HOST=localhost"  lesterthomas/droneapiserver:$VERSION
+docker run -d  --link redis:redis -e "DRONEAPI_URL=http://test.droneapi.net" -e "DOCKER_HOST_IP=172.17.0.1" -e "VIRTUAL_HOST=test.droneapi.net"  lesterthomas/droneapiserver:$VERSION

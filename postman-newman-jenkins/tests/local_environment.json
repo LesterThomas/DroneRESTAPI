@@ -1,6 +1,6 @@
 {
-  "id": "bc22db90-073d-c472-de6f-a54f18b8e2ac",
-  "name": "Drone localhost",
+  "id": "3ffa2259-4b26-9a4d-1aee-c79918ed0d74",
+  "name": "Drone test.droneapi.net",
   "values": [
     {
       "enabled": true,
@@ -11,19 +11,13 @@
     {
       "enabled": true,
       "key": "url",
-      "value": "localhost:1235",
+      "value": "test.droneapi.net",
       "type": "text"
     },
     {
       "enabled": true,
       "key": "droneId2",
-      "value": "beda4dd7",
-      "type": "text"
-    },
-    {
-      "enabled": true,
-      "key": "droneId3",
-      "value": "No Drone",
+      "value": "7958c652",
       "type": "text"
     },
     {
@@ -33,8 +27,8 @@
       "type": "text"
     }
   ],
-  "timestamp": 1505122039034,
+  "timestamp": 1505338236048,
   "_postman_variable_scope": "environment",
-  "_postman_exported_at": "2017-09-11T11:23:13.182Z",
+  "_postman_exported_at": "2017-09-16T12:06:30.697Z",
   "_postman_exported_using": "Postman/5.2.0"
 }
