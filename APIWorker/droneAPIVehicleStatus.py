@@ -57,7 +57,7 @@ class vehicleStatus:
             my_logger.info("containerId = '" + docker_container_id + "'")
             dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + ipAddress + ':4243')  # docker.from_env(version='1.27')
             container = dockerClient.containers.get(docker_container_id)
-            container.stop()
+            container.kill()
             dockerClient.containers.prune(filters=None)
 
             outputObj = {"status": "success"}
