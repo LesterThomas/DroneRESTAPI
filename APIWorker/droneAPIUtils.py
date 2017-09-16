@@ -631,7 +631,7 @@ class worker(Thread):
 
         if len(keys) < number_of_servers:
             # start a new server
-            self.createServer(thisWorkerIP)
+            self.createServer()
 
         return
 
@@ -642,8 +642,6 @@ class worker(Thread):
 
             connection = None
             docker_container_id = "N/A"
-            uuidVal = uuid.uuid4()
-            key = str(uuidVal)[:8]
 
             # build simulated drone or proxy via Docker
             # docker api available on host at
@@ -671,8 +669,7 @@ class worker(Thread):
                     "redis": "redis"},
                 detach=True,
                 ports={
-                    '1234/tcp': worker_port},
-                name=key)
+                    '1234/tcp': worker_port})
 
             docker_container_id = dockerContainer.id
             my_logger.info("container Id=%s", str(docker_container_id))
@@ -683,11 +680,11 @@ class worker(Thread):
             my_logger.exception(ex)
         return
 
-    def createServer(self, worker_ip):
+    def createServer(self):
 
         global defaultDockerHost, serverImage, dronesimImage, homeDomain
         try:
-            my_logger.info("Creating a new server at: %s", "worker:" + worker_ip)
+            my_logger.info("Creating a new server")
 
             virtual_host_list = homeDomain.split("/")
             virtual_host = virtual_host_list[-1]
@@ -695,8 +692,6 @@ class worker(Thread):
 
             connection = None
             docker_container_id = "N/A"
-            uuidVal = uuid.uuid4()
-            key = str(uuidVal)[:8]
 
             # build simulated drone or proxy via Docker
             # docker api available on host at
@@ -720,8 +715,7 @@ class worker(Thread):
                     "DOCKER_HOST_IP=172.17.0.1"],
                 links={
                     "redis": "redis"},
-                detach=True,
-                name=key)
+                detach=True)
 
             docker_container_id = dockerContainer.id
             my_logger.info("container Id=%s", str(docker_container_id))

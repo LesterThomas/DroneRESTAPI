@@ -1669,7 +1669,7 @@ class worker(Thread):
 
         if len(keys) < number_of_servers:
             # start a new server
-            self.createServer(thisWorkerIP)
+            self.createServer()
 
         return
 
@@ -1680,8 +1680,6 @@ class worker(Thread):
 
             connection = None
             docker_container_id = "N/A"
-            uuidVal = uuid.uuid4()
-            key = str(uuidVal)[:8]
 
             # build simulated drone or proxy via Docker
             # docker api available on host at
@@ -1709,8 +1707,7 @@ class worker(Thread):
                     "redis": "redis"},
                 detach=True,
                 ports={
-                    '1234/tcp': worker_port},
-                name=key)
+                    '1234/tcp': worker_port})
 
             docker_container_id = dockerContainer.id
             my_logger.info("container Id=%s", str(docker_container_id))
@@ -1721,11 +1718,11 @@ class worker(Thread):
             my_logger.exception(ex)
         return
 
-    def createServer(self, worker_ip):
+    def createServer(self):
 
         global defaultDockerHost, serverImage, dronesimImage, homeDomain
         try:
-            my_logger.info("Creating a new server at: %s", "worker:" + worker_ip)
+            my_logger.info("Creating a new server")
 
             virtual_host_list = homeDomain.split("/")
             virtual_host = virtual_host_list[-1]
@@ -1733,8 +1730,6 @@ class worker(Thread):
 
             connection = None
             docker_container_id = "N/A"
-            uuidVal = uuid.uuid4()
-            key = str(uuidVal)[:8]
 
             # build simulated drone or proxy via Docker
             # docker api available on host at
@@ -1758,8 +1753,7 @@ class worker(Thread):
                     "DOCKER_HOST_IP=172.17.0.1"],
                 links={
                     "redis": "redis"},
-                detach=True,
-                name=key)
+                detach=True)
 
             docker_container_id = dockerContainer.id
             my_logger.info("container Id=%s", str(docker_container_id))
@@ -2623,7 +2617,7 @@ This allows the GET URL requests to be served in a stateless manner from the Red
 
         if len(keys) < number_of_servers:
             # start a new server
-            self.createServer(thisWorkerIP)
+            self.createServer()
 
         return
 
@@ -2634,8 +2628,6 @@ This allows the GET URL requests to be served in a stateless manner from the Red
 
             connection = None
             docker_container_id = "N/A"
-            uuidVal = uuid.uuid4()
-            key = str(uuidVal)[:8]
 
             # build simulated drone or proxy via Docker
             # docker api available on host at
@@ -2663,8 +2655,7 @@ This allows the GET URL requests to be served in a stateless manner from the Red
                     "redis": "redis"},
                 detach=True,
                 ports={
-                    '1234/tcp': worker_port},
-                name=key)
+                    '1234/tcp': worker_port})
 
             docker_container_id = dockerContainer.id
             my_logger.info("container Id=%s", str(docker_container_id))
@@ -2675,11 +2666,11 @@ This allows the GET URL requests to be served in a stateless manner from the Red
             my_logger.exception(ex)
         return
 
-    def createServer(self, worker_ip):
+    def createServer(self):
 
         global defaultDockerHost, serverImage, dronesimImage, homeDomain
         try:
-            my_logger.info("Creating a new server at: %s", "worker:" + worker_ip)
+            my_logger.info("Creating a new server")
 
             virtual_host_list = homeDomain.split("/")
             virtual_host = virtual_host_list[-1]
@@ -2687,8 +2678,6 @@ This allows the GET URL requests to be served in a stateless manner from the Red
 
             connection = None
             docker_container_id = "N/A"
-            uuidVal = uuid.uuid4()
-            key = str(uuidVal)[:8]
 
             # build simulated drone or proxy via Docker
             # docker api available on host at
@@ -2712,8 +2701,7 @@ This allows the GET URL requests to be served in a stateless manner from the Red
                     "DOCKER_HOST_IP=172.17.0.1"],
                 links={
                     "redis": "redis"},
-                detach=True,
-                name=key)
+                detach=True)
 
             docker_container_id = dockerContainer.id
             my_logger.info("container Id=%s", str(docker_container_id))
@@ -2904,7 +2892,7 @@ else to the thread.</p></div>
             
   <div class="item">
     <div class="name def" id="droneAPIUtils.worker.createServer">
-    <p>def <span class="ident">createServer</span>(</p><p>self, worker_ip)</p>
+    <p>def <span class="ident">createServer</span>(</p><p>self)</p>
     </div>
     
 
@@ -2913,17 +2901,15 @@ else to the thread.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.createServer', this);">Show source &equiv;</a></p>
   <div id="source-droneAPIUtils.worker.createServer" class="source">
-    <pre><code>def createServer(self, worker_ip):
+    <pre><code>def createServer(self):
     global defaultDockerHost, serverImage, dronesimImage, homeDomain
     try:
-        my_logger.info("Creating a new server at: %s", "worker:" + worker_ip)
+        my_logger.info("Creating a new server")
         virtual_host_list = homeDomain.split("/")
         virtual_host = virtual_host_list[-1]
         my_logger.info("virtual_host: %s", virtual_host)
         connection = None
         docker_container_id = "N/A"
-        uuidVal = uuid.uuid4()
-        key = str(uuidVal)[:8]
         # build simulated drone or proxy via Docker
         # docker api available on host at
         # http://172.17.0.1:4243/containers/json
@@ -2943,8 +2929,7 @@ else to the thread.</p></div>
                 "DOCKER_HOST_IP=172.17.0.1"],
             links={
                 "redis": "redis"},
-            detach=True,
-            name=key)
+            detach=True)
         docker_container_id = dockerContainer.id
         my_logger.info("container Id=%s", str(docker_container_id))
     except Exception as ex:
@@ -2977,8 +2962,6 @@ else to the thread.</p></div>
         my_logger.info("Creating a new worker at: %s", "worker:" + worker_ip + ":" + str(worker_port))
         connection = None
         docker_container_id = "N/A"
-        uuidVal = uuid.uuid4()
-        key = str(uuidVal)[:8]
         # build simulated drone or proxy via Docker
         # docker api available on host at
         # http://172.17.0.1:4243/containers/json
@@ -3003,8 +2986,7 @@ else to the thread.</p></div>
                 "redis": "redis"},
             detach=True,
             ports={
-                '1234/tcp': worker_port},
-            name=key)
+                '1234/tcp': worker_port})
         docker_container_id = dockerContainer.id
         my_logger.info("container Id=%s", str(docker_container_id))
     except Exception as ex:
@@ -3286,7 +3268,7 @@ exception.</p></div>
         my_logger.info(server)
     if len(keys) < number_of_servers:
         # start a new server
-        self.createServer(thisWorkerIP)
+        self.createServer()
     return
 </code></pre>
   </div>
