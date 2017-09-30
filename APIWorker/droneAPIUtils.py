@@ -522,9 +522,8 @@ class worker(Thread):
                     'last_heartbeat': round(time.time(), 1)}
                 redisdB.set('worker:' + workerHostname, json.dumps(worker_record))
 
-                continue_iterating = self.checkIfWorkerFinished(containers_being_managed, worker_iterations)
-
-                if (worker_iterations % 100 == 0):  # perform check every 100 iterations
+                if (worker_iterations % 10 == 0):  # perform check every 10 iterations
+                    continue_iterating = self.checkIfWorkerFinished(containers_being_managed, worker_iterations)
                     if workerMaster:
                         self.performMasterActions()
 
@@ -565,10 +564,14 @@ class worker(Thread):
         return
 
     def checkIfWorkerFinished(self, containers_being_managed, worker_iterations):
-        if ((worker_iterations > 250) and (containers_being_managed == 0)
-                ):  # if this worker has been going a long time and it is not managing any containers then stop this loop
+        service_parameters = json.loads(redisdB.get("service_parameters"))
+        max_worker_iterations = service_parameters['max_worker_iterations']
+        min_number_of_workers = service_parameters['min_number_of_workers']
+
+        if ((worker_iterations > max_worker_iterations) and (containers_being_managed == 0)
+            ):  # if this worker has been going a long time and it is not managing any containers then stop this loop
             keys = redisdB.keys("worker:*")
-            if len(keys) > 1:  # if this is not the last worker
+            if len(keys) > min_number_of_workers:
                 return False
         return True
 
@@ -581,7 +584,11 @@ class worker(Thread):
             for key in keys:
                 worker = json.loads(redisdB.get(key))
                 if worker['master']:
-                    master_found = True
+                    # test if still active
+                    last_heartbeat = worker['last_heartbeat']
+                    time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+                    if time_since_heartbeat < 10:
+                        master_found = True
             if not master_found:
                 workerMaster = True
 
@@ -593,20 +600,30 @@ class worker(Thread):
         my_logger.info("Performing Master actions")
 
         service_parameters = json.loads(redisdB.get("service_parameters"))
-        number_of_workers = service_parameters['number_of_workers']
-        number_of_servers = service_parameters['number_of_servers']
+        target_number_of_workers = service_parameters['target_number_of_workers']
+        target_number_of_servers = service_parameters['target_number_of_servers']
         worker_port_range_start = service_parameters['worker_port_range_start']
         thisWorkerIP = workerURL[:-5]
 
+        # *************************************************************
+        # Check if I should create a new worker
         keys = redisdB.keys("worker:*")
         worker_urls_used = {}
         for key in keys:
             worker = json.loads(redisdB.get(key))
             my_logger.info(worker)
-            worker_urls_used[worker['worker_url']] = True
-            my_logger.info("Urls and Ports Used: %s", worker_urls_used)
+            # Check if any workers are unresponsive
+            last_heartbeat = worker['last_heartbeat']
+            time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+            my_logger.info("time_since_heartbeat:%f", time_since_heartbeat)
+            if time_since_heartbeat > 10:
+                redisdB.delete(key)
+            else:
+                worker_urls_used[worker['worker_url']] = True
+                my_logger.info("Urls and Ports Used: %s", worker_urls_used)
 
-        if len(keys) < number_of_workers:
+        keys = redisdB.keys("worker:*")
+        if len(keys) < target_number_of_workers:
             # start a new worker
 
             nextPortNumber = worker_port_range_start
@@ -624,12 +641,25 @@ class worker(Thread):
 
             self.createWorker(thisWorkerIP, nextPortNumber)
 
+        # *************************************************************
+        # Check if I should create a new server
+        keys = redisdB.keys("server:*")
+        for key in keys:
+            server = json.loads(redisdB.get(key))
+            my_logger.info(server)
+            # Check if any server are unresponsive
+            last_heartbeat = server['last_heartbeat']
+            time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+            my_logger.info("time_since_heartbeat:%f", time_since_heartbeat)
+            if time_since_heartbeat > 10:
+                redisdB.delete(key)
+
         keys = redisdB.keys("server:*")
         for key in keys:
             server = json.loads(redisdB.get(key))
             my_logger.info(server)
 
-        if len(keys) < number_of_servers:
+        if len(keys) < target_number_of_servers:
             # start a new server
             self.createServer()
 

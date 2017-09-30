@@ -249,8 +249,12 @@ class worker(Thread):
         return
 
     def checkIfServerFinished(self, worker_iterations):
-        if worker_iterations > 100:  # if this server has been going a long time
+        service_parameters = json.loads(redisdB.get("service_parameters"))
+        max_server_iterations = service_parameters['max_server_iterations']
+        min_number_of_servers = service_parameters['min_number_of_servers']
+
+        if worker_iterations > max_server_iterations:  # if this server has been going a long time
             keys = redisdB.keys("server:*")
-            if len(keys) > 1:  # if this is not the last worker
+            if len(keys) > min_number_of_servers:
                 return False
         return True
