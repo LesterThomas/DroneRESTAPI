@@ -15,6 +15,7 @@ import uuid
 import redis
 import docker
 import socket
+import psutil
 from threading import Thread
 import APIServerCommand
 
@@ -225,11 +226,15 @@ class worker(Thread):
             continue_iterating = True
             while continue_iterating:
                 worker_iterations = worker_iterations + 1
+                process = psutil.Process(os.getpid())
 
                 server_record = {
                     'pages_served': pagesServed,
                     'worker_iterations': worker_iterations,
-                    'last_heartbeat': round(time.time(), 1)}
+                    'last_heartbeat': round(time.time(), 1),
+                    'memory': process.memory_info().rss,
+                    'cpu': psutil.cpu_percent(interval=0)}
+
                 redisdB.set('server:' + serverHostname, json.dumps(server_record))
                 time.sleep(1)
                 continue_iterating = self.checkIfServerFinished(worker_iterations)

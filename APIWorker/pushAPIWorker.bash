@@ -17,7 +17,7 @@ echo "VERSION"
 echo $VERSION
 
 echo "Running locally"
-docker ps -a | awk '{ print $1,$2 }' | grep droneapiworker | awk '{print $1 }' | xargs -I {} docker stop {}
+docker ps -a | awk '{ print $1,$2 }' | grep droneapiworker | awk '{print $1 }' | xargs -I {} docker kill {}
 docker ps -a | awk '{ print $1,$2 }' | grep droneapiworker | awk '{print $1 }' | xargs -I {} docker rm {}
 
 echo "Applying Python Code styling"

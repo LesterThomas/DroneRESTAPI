@@ -15,6 +15,7 @@ import uuid
 import redis
 import socket
 import docker
+import psutil
 from threading import Thread
 import droneAPICommand
 
@@ -513,13 +514,17 @@ class worker(Thread):
                 if (worker_iterations % 10 == 0):  # perform check every 100 iterations
                     self.checkToTakeoverMaster()
 
+                process = psutil.Process(os.getpid())
+
                 worker_record = {
                     'master': workerMaster,
                     'worker_url': workerURL,
                     'containers_being_managed': containers_being_managed,
                     'elapsed_time': elapsed_time,
                     'worker_iterations': worker_iterations,
-                    'last_heartbeat': round(time.time(), 1)}
+                    'last_heartbeat': round(time.time(), 1),
+                    'memory': process.memory_info().rss,
+                    'cpu': psutil.cpu_percent(interval=0)}
                 redisdB.set('worker:' + workerHostname, json.dumps(worker_record))
 
                 if (worker_iterations % 10 == 0):  # perform check every 10 iterations
@@ -569,7 +574,7 @@ class worker(Thread):
         min_number_of_workers = service_parameters['min_number_of_workers']
 
         if ((worker_iterations > max_worker_iterations) and (containers_being_managed == 0)
-            ):  # if this worker has been going a long time and it is not managing any containers then stop this loop
+                ):  # if this worker has been going a long time and it is not managing any containers then stop this loop
             keys = redisdB.keys("worker:*")
             if len(keys) > min_number_of_workers:
                 return False

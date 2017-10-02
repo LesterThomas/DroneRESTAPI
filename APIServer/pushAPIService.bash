@@ -22,7 +22,7 @@ sed -i -e 's/test.droneapi.net/droneapi.ddns.net/g' static/app/scripts/controlle
 sed -i -e 's/1988760538025932/136908103594406/g' static/app/scripts/app.js
 
 echo "Running locally"
-docker ps -a | awk '{ print $1,$2 }' | grep droneapiserver | awk '{print $1 }' | xargs -I {} docker stop {}
+docker ps -a | awk '{ print $1,$2 }' | grep droneapiserver | awk '{print $1 }' | xargs -I {} docker kill {}
 docker ps -a | awk '{ print $1,$2 }' | grep droneapiserver | awk '{print $1 }' | xargs -I {} docker rm {}
 
 echo "Applying Python Code styling"
