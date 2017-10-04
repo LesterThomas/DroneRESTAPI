@@ -6,7 +6,7 @@ import time
 import json
 import traceback
 import os
-import requests
+import docker
 import web
 
 
@@ -30,22 +30,31 @@ class CatchAll(object):
             output_obj = {}
             docker_host_ip=os.environ['DOCKER_HOST_IP']
             print("Getting containers from Docker Host")
-            result = requests.get('http://'+ docker_host_ip + ":4243/v1.24/containers/json")
-            containerArray=json.loads(result.text)
-            output={"containers":[]}
-            for  container in containerArray:
-                print(container['Image'])
 
-                perfData = requests.get('http://'+ docker_host_ip + ":4243/v1.24/containers/"+container['Id']+"/top?ps_args=aux")
-                performance_obj=json.loads(perfData.text)
+
+            docker_client = docker.DockerClient(
+            version='1.27',
+            base_url='tcp://' + docker_host_ip + ':4243')  # docker.from_env(version='1.27')
+
+            #result = requests.get('http://'+ docker_host_ip + ":4243/v1.24/containers/json")
+            container_array=docker_client.containers.list()
+
+            #container_array=json.loads(result.text)
+            output={"containers":[]}
+            for  container in container_array:
+                print(str(container.image)[9:-2])
+
+                #perfData = requests.get('http://'+ docker_host_ip + ":4243/v1.24/containers/"+container['Id']+"/top?ps_args=aux")
+                #performance_obj=json.loads(perfData.text)
                 perf_output={"processes":[]}
                 total_cpu=0
                 total_memory=0
+                performance_obj=container.top(ps_args="aux")
                 for process in performance_obj['Processes']:
                     perf_output['processes'].append({"pid":process[1],"cpu":process[2],"memory":process[3],"command":process[10]})
                     total_cpu=total_cpu+float(process[2])
                     total_memory=total_memory+float(process[3])
-                output['containers'].append({"image":container['Image'],"id":container['Id'],"perf":perf_output,"total_cpu":total_cpu,"total_memory":total_memory})
+                output['containers'].append({"image":str(container.image),"id":container.id,"perf":perf_output,"total_cpu":round(total_cpu,1),"total_memory":round(total_memory,1)})
 
 
         except Exception as ex:  # pylint: disable=W0703

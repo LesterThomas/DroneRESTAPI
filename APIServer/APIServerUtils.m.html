@@ -1051,6 +1051,7 @@ import uuid
 import redis
 import docker
 import socket
+import psutil
 from threading import Thread
 import APIServerCommand
 
@@ -1261,11 +1262,15 @@ class worker(Thread):
             continue_iterating = True
             while continue_iterating:
                 worker_iterations = worker_iterations + 1
+                process = psutil.Process(os.getpid())
 
                 server_record = {
                     'pages_served': pagesServed,
                     'worker_iterations': worker_iterations,
-                    'last_heartbeat': round(time.time(), 1)}
+                    'last_heartbeat': round(time.time(), 1),
+                    'memory': process.memory_info().rss,
+                    'cpu': psutil.cpu_percent(interval=0)}
+
                 redisdB.set('server:' + serverHostname, json.dumps(server_record))
                 time.sleep(1)
                 continue_iterating = self.checkIfServerFinished(worker_iterations)
@@ -1285,9 +1290,13 @@ class worker(Thread):
         return
 
     def checkIfServerFinished(self, worker_iterations):
-        if worker_iterations > 100:  # if this server has been going a long time
+        service_parameters = json.loads(redisdB.get("service_parameters"))
+        max_server_iterations = service_parameters['max_server_iterations']
+        min_number_of_servers = service_parameters['min_number_of_servers']
+
+        if worker_iterations > max_server_iterations:  # if this server has been going a long time
             keys = redisdB.keys("server:*")
-            if len(keys) > 1:  # if this is not the last worker
+            if len(keys) > min_number_of_servers:
                 return False
         return True
 </code></pre>
@@ -1770,11 +1779,15 @@ This allows the GET URL requests to be served in a stateless manner from the Red
             continue_iterating = True
             while continue_iterating:
                 worker_iterations = worker_iterations + 1
+                process = psutil.Process(os.getpid())
 
                 server_record = {
                     'pages_served': pagesServed,
                     'worker_iterations': worker_iterations,
-                    'last_heartbeat': round(time.time(), 1)}
+                    'last_heartbeat': round(time.time(), 1),
+                    'memory': process.memory_info().rss,
+                    'cpu': psutil.cpu_percent(interval=0)}
+
                 redisdB.set('server:' + serverHostname, json.dumps(server_record))
                 time.sleep(1)
                 continue_iterating = self.checkIfServerFinished(worker_iterations)
@@ -1794,9 +1807,13 @@ This allows the GET URL requests to be served in a stateless manner from the Red
         return
 
     def checkIfServerFinished(self, worker_iterations):
-        if worker_iterations > 100:  # if this server has been going a long time
+        service_parameters = json.loads(redisdB.get("service_parameters"))
+        max_server_iterations = service_parameters['max_server_iterations']
+        min_number_of_servers = service_parameters['min_number_of_servers']
+
+        if worker_iterations > max_server_iterations:  # if this server has been going a long time
             keys = redisdB.keys("server:*")
-            if len(keys) > 1:  # if this is not the last worker
+            if len(keys) > min_number_of_servers:
                 return False
         return True
 </code></pre>
@@ -1934,9 +1951,12 @@ else to the thread.</p></div>
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-APIServerUtils.worker.checkIfServerFinished', this);">Show source &equiv;</a></p>
   <div id="source-APIServerUtils.worker.checkIfServerFinished" class="source">
     <pre><code>def checkIfServerFinished(self, worker_iterations):
-    if worker_iterations > 100:  # if this server has been going a long time
+    service_parameters = json.loads(redisdB.get("service_parameters"))
+    max_server_iterations = service_parameters['max_server_iterations']
+    min_number_of_servers = service_parameters['min_number_of_servers']
+    if worker_iterations > max_server_iterations:  # if this server has been going a long time
         keys = redisdB.keys("server:*")
-        if len(keys) > 1:  # if this is not the last worker
+        if len(keys) > min_number_of_servers:
             return False
     return True
 </code></pre>
@@ -2146,10 +2166,13 @@ exception.</p></div>
         continue_iterating = True
         while continue_iterating:
             worker_iterations = worker_iterations + 1
+            process = psutil.Process(os.getpid())
             server_record = {
                 'pages_served': pagesServed,
                 'worker_iterations': worker_iterations,
-                'last_heartbeat': round(time.time(), 1)}
+                'last_heartbeat': round(time.time(), 1),
+                'memory': process.memory_info().rss,
+                'cpu': psutil.cpu_percent(interval=0)}
             redisdB.set('server:' + serverHostname, json.dumps(server_record))
             time.sleep(1)
             continue_iterating = self.checkIfServerFinished(worker_iterations)

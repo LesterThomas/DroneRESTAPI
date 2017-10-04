@@ -16,6 +16,6 @@ echo $VERSION
 docker ps -a | awk '{ print $1,$2 }' | grep dockerperf | awk '{print $1 }' | xargs -I {} docker kill {}
 docker ps -a | awk '{ print $1,$2 }' | grep dockerperf | awk '{print $1 }' | xargs -I {} docker rm {}
 docker build -t lesterthomas/dockerperf:$VERSION .
-docker run -t -i -p 4000:1234  -e "DOCKER_HOST_IP=172.17.0.1"   lesterthomas/dockerperf:$VERSION
+docker run -d --restart=always -p 4000:1234  -e "DOCKER_HOST_IP=172.17.0.1"   lesterthomas/dockerperf:$VERSION
 
 
