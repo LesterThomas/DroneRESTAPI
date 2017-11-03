@@ -179,6 +179,8 @@ def arm(inVehicle, vehicle_id):
             # If vehicle is in a non armable mode, change to GUIDED mode
             if (inVehicle.mode.name == 'RTL') or (inVehicle.mode.name == 'Land') or (inVehicle.mode.name == 'AUTO'):
                 inVehicle.mode = VehicleMode("GUIDED")
+                time.sleep(1)
+
             inVehicle.armed = True
 
             output_obj["zone"] = {

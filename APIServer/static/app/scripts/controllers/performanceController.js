@@ -53,11 +53,7 @@ angular.module('droneFrontendApp')
                   labelString: 'CPU (%)'
                 },
                             ticks: {
-                beginAtZero: true,
-                                steps: 10,
-                                stepValue: 10,
-                                max: 200
-                            }
+                beginAtZero: true                            }
                         },{
               position: 'right',
               id: 'y-axis-2',
@@ -67,11 +63,7 @@ angular.module('droneFrontendApp')
                   labelString: 'Memory (%)'
                 },
                             ticks: {
-                beginAtZero: true,
-                                steps: 10,
-                                stepValue: 10,
-                                max: 100
-                            }
+                beginAtZero: true                            }
                         }]
     }
   };
@@ -180,7 +172,7 @@ angular.module('droneFrontendApp')
       console.log('Unloading Performance Controller');
     $interval.cancel(statsTimer);
   })
-  var statsTimer = $interval(getContainerStats, 1000);
+  var statsTimer = $interval(getContainerStats, 2000);
 
   console.log('###################################################');
   console.log('Loading Performance Controller');
