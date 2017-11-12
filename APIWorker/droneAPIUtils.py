@@ -265,8 +265,13 @@ def connectVehicle(user_id, inVehicleId):
             raise Warning('Vehicle starting up ')
 
         my_logger.debug("connection string for vehicle " + str(inVehicleId) + "='" + connection_string + "'")
+
+        if host_details['worker_url'] == 'Power-Off':
+            my_logger.warn("Raising Drone is Powered-Off warning")
+            raise Warning('Drone is Powered-Off')
+
         # Connect to the Vehicle.
-        if not connectionDict.get(inVehicleId):
+        elif not connectionDict.get(inVehicleId):
             my_logger.info("connection_string: %s" % (connection_string,))
             my_logger.info("Connecting to vehicle on: %s" % (connection_string,))
             connectionNameTypeDict[inVehicleId] = {"name": vehicleName, "vehicle_type": vehicle_type}
@@ -401,12 +406,20 @@ def getNexthostAndPort():
     return {"image": dockerHostsArray[0]['internalIP'], "port": firstFreePort}
 
 
-def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id):
+def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id, in_key=''):
     global workerURL
     connection = None
     docker_container_id = "N/A"
-    uuidVal = uuid.uuid4()
-    key = str(uuidVal)[:8]
+    my_logger.info("************ Creating Drone %s : %s : %s : %s : %s : %s : %s : %s ***********",
+                   droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id, in_key)
+
+    key = ''
+
+    if (in_key == ''):
+        uuidVal = uuid.uuid4()
+        key = str(uuidVal)[:8]
+    else:
+        key = in_key
 
     environmentString = 'LOCATION=' + str(drone_lat) + ',' + str(drone_lon) + ',' + str(drone_alt) + ',' + str(drone_dir)
     my_logger.info("Start location environement %s", environmentString)
@@ -490,6 +503,9 @@ class worker(Thread):
             continue_iterating = True
             while continue_iterating:
                 worker_iterations = worker_iterations + 1
+                service_parameters = json.loads(redisdB.get("service_parameters"))
+                iteration_time = service_parameters['iteration_time']
+
                 start_time = time.time()
                 containers_being_managed = 0
                 keys = redisdB.keys("vehicle:*")
@@ -504,7 +520,7 @@ class worker(Thread):
                             containers_being_managed = containers_being_managed + 1
                             vehicle_id = key[-8:]
                             user_id = key[8:-9]
-                            my_logger.debug("vehicle_id: %s ", vehicle_id)
+                            my_logger.info("Execute update for vehicle_id: %s ", vehicle_id)
                             my_logger.debug("user_id: %s", user_id)
                             self.executeUpdate(user_id, vehicle_id, vehicle, key)
 
@@ -532,8 +548,8 @@ class worker(Thread):
                     if workerMaster:
                         self.performMasterActions()
 
-                if (elapsed_time < .25):
-                    time.sleep(.25 - elapsed_time)
+                if (elapsed_time < iteration_time):
+                    time.sleep(iteration_time - elapsed_time)
 
             # clean-up worker record
             my_logger.info("Cleaning-up and exiting")

@@ -62,13 +62,29 @@ class Command(object):
             available_commands = []
             # available when armed
             my_logger.info("global_relative_frame.alt=%s", vehicle_status["global_relative_frame"]["alt"])
-            if vehicle_status["armed"] == False:
+
+            if individual_vehicle["host_details"]["worker_url"] == "Power-Off":
+                available_commands.append({
+                    "name": "Power-On",
+                    "title": "Turn the Drone power on.",
+                    "href": APIServerUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
+                    "method": "POST",
+                    "fields": [{"name": "name", "type": "string", "value": "Power-On"}]
+                })
+            elif vehicle_status["armed"] == False:
                 available_commands.append({
                     "name": "Arm",
                     "title": "Arm drone.",
                     "href": APIServerUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
                     "method": "POST",
                     "fields": [{"name": "name", "type": "string", "value": "Arm"}]
+                })
+                available_commands.append({
+                    "name": "Power-Off",
+                    "title": "Turn the Drone power off.",
+                    "href": APIServerUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command",
+                    "method": "POST",
+                    "fields": [{"name": "name", "type": "string", "value": "Power-Off"}]
                 })
             elif vehicle_status["global_relative_frame"]["alt"] > 1:  # if at height of >1 m
                 available_commands.append({"name": "Region-of-Interest",
@@ -192,9 +208,24 @@ class Command(object):
 
             data_obj = json.loads(dataStr)
             data_obj['user_id'] = user_id
+            my_logger.info("Command called so check value")
 
-            result = requests.post(APIServerUtils.getWorkerURLforVehicle(user_id, vehicle_id) +
-                                   "/vehicle/" + str(vehicle_id) + "/command", data=json.dumps(data_obj))
+            value = data_obj["name"]
+            my_logger.info("Command value: %s", value)
+
+            result = {}
+
+            if value == "Power-On":
+                my_logger.info("Power-On command so send post to any Worker")
+
+                result = requests.post(APIServerUtils.getNewWorkerURL() +
+                                       "/vehicle/" + str(vehicle_id) + "/command", data=json.dumps(data_obj))
+                my_logger.info("Result %s", result.text)
+
+            else:
+                result = requests.post(APIServerUtils.getWorkerURLforVehicle(user_id, vehicle_id) +
+                                       "/vehicle/" + str(vehicle_id) + "/command", data=json.dumps(data_obj))
+
             my_logger.debug("HTTP Proxy result status_code %s reason %s", result.status_code, result.reason)
             my_logger.debug("HTTP Proxy result text %s ", result.text)
 

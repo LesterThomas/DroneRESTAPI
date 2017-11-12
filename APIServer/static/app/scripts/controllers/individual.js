@@ -347,10 +347,18 @@ angular.module('droneFrontendApp')
 		if (inAction.command==22){
 			textDescription="Takeoff to an altitude of " + Math.round(inAction.coordinate[2]*100)/100 + "m.";
 		}
-		//Arm
-		if (inAction.command==400){
-			textDescription="Vehicle armed.";
-		}
+        //Arm
+        if (inAction.command==400){
+            textDescription="Vehicle armed.";
+        }
+        //Power on
+        if (inAction.command==401){
+            textDescription="Vehicle powered on.";
+        }
+        //Power off
+        if (inAction.command==402){
+            textDescription="Vehicle powered off.";
+        }
 		//Region of Interest
 		if (inAction.command==80){
 			textDescription="Set the Region of Interest to " + latLonAltText + ".";
