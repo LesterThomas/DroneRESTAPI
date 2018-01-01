@@ -1,0 +1,12 @@
+Current issues
+==============
+
+
+New deployment
+--------------
+
+Doesn't initialise the RedisDb (lazy-initialisation would be good)
+Startup should use Docker Compose or similar
+Better error messages for not finding docker demon
+Script to initialise dronesim image (API doesnot run if image not present)
+

@@ -64,6 +64,6 @@ angular
       });
   })
   .constant('facebookConfigSettings', {
-    'appID' : '136908103594406',
+    'appID' : '1988760538025932',
     'routingEnabled':true
 });
