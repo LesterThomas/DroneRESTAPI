@@ -166,34 +166,50 @@ def startup():
     """This function starts the application. It initialises the logger, global data structures,
     Redis database and refreshes the drone docker containers. Finally it starts the web
     application that serves the API HTTP traffic."""
+    try:
 
-    print "Starting up at " + str(time.time())
+        print "Starting up at " + str(time.time())
 
-    APIServerUtils.initaliseLogger()
-    APIServerUtils.initaliseGlobals()
-    APIServerUtils.initiliseRedisDB()
-    APIServerUtils.startBackgroundWorker()
+        APIServerUtils.initaliseLogger()
+        print "initaliseLogger"
+        APIServerUtils.initaliseGlobals()
+        print "initaliseGlobals"
+        APIServerUtils.initiliseRedisDB()
+        print "initiliseRedisDB"
+        APIServerUtils.startBackgroundWorker()
+        print "startBackgroundWorker"
 
-    # set API url endpoints and class handlers. Each handler class is in its
-    # own python module
-    urls = (
-        '/', 'Index',
-        '/vehicle/(.*)/command', 'APIServerCommand.Command',
-        '/vehicle/(.*)/homeLocation', 'APIServerHomeLocation.HomeLocation',
-        '/vehicle/(.*)/mission', 'APIServerMission.Mission',
-        '/vehicle/(.*)/authorizedZone', 'APIServerAuthorizedZone.AuthorizedZone',
-        '/vehicle/(.*)/simulator', 'APIServerSimulator.Simulator',
-        '/vehicle', 'APIServerVehicleIndex.VehicleIndex',
-        '/admin', 'APIServerAdmin.Admin',
-        '/user', 'APIServerUser.User',
-        # was     '/vehicle/(.*)/(.*)', 'vehicleStatus',
-        '/vehicle/(.*)', 'APIServerVehicleStatus.VehicleStatus',
-        '/(.*)', 'CatchAll'
-    )
+        # set API url endpoints and class handlers. Each handler class is in its
+        # own python module
+        urls = (
+            '/', 'Index',
+            '/vehicle/(.*)/command', 'APIServerCommand.Command',
+            '/vehicle/(.*)/homeLocation', 'APIServerHomeLocation.HomeLocation',
+            '/vehicle/(.*)/mission', 'APIServerMission.Mission',
+            '/vehicle/(.*)/authorizedZone', 'APIServerAuthorizedZone.AuthorizedZone',
+            '/vehicle/(.*)/simulator', 'APIServerSimulator.Simulator',
+            '/vehicle', 'APIServerVehicleIndex.VehicleIndex',
+            '/admin', 'APIServerAdmin.Admin',
+            '/user', 'APIServerUser.User',
+            # was     '/vehicle/(.*)/(.*)', 'vehicleStatus',
+            '/vehicle/(.*)', 'APIServerVehicleStatus.VehicleStatus',
+            '/(.*)', 'CatchAll'
+        )
 
-    # start API web application server
-    APIServerUtils.webApp = web.application(urls, globals())
-    APIServerUtils.webApp.run()
+        # start API web application server
+        APIServerUtils.webApp = web.application(urls, globals())
+        APIServerUtils.webApp.run()
+    except Exception as ex:  # pylint: disable=W0703
+        my_logger.exception(ex)
+        traceback_str = traceback.format_exc()
+        trace_lines = traceback_str.split("\n")
+        print "ex.message"
+        print ex.message
+        print "ex.args"
+        print ex.args
+        print "trace_lines"
+        print trace_lines
+
     return
 
 

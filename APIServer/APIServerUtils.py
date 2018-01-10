@@ -90,9 +90,31 @@ def initaliseGlobals():
 
 
 def initiliseRedisDB():
+    my_logger.info("initiliseRedisDB connecting to redis using host redis and port 6379")
 
     global redisdB
     redisdB = redis.Redis(host='redis', port=6379)  # redis or localhost
+    my_logger.info("initiliseRedisDB connected to redis")
+
+    my_logger.info("Getting all keys")
+
+    keys = redisdB.keys("*")
+    for key in keys:
+        my_logger.info(key)
+
+    my_logger.info("Finished getting all keys")
+
+
+    my_logger.info("Finished getting all keys")
+    my_logger.info("Checking for mandatory key service_parameters")
+
+    service_parameters_str = redisdB.get("service_parameters")
+    if service_parameters_str:
+        my_logger.info("service_parameters found OK")
+    else:
+        service_parameters={"max_server_iterations":1000, "min_number_of_servers":1, "iteration_time":0.25, "max_worker_iterations":1000, "min_number_of_workers":1, "target_number_of_workers":1, "target_number_of_servers":1, "worker_port_range_start":8000 }
+        service_parameters_str=json.dumps(service_parameters)
+        redisdB.set("service_parameters",service_parameters_str)
 
     return
 

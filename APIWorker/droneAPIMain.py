@@ -108,7 +108,7 @@ def startup():
     droneAPIUtils.initaliseLogger()
     droneAPIUtils.initaliseGlobals()
     droneAPIUtils.initiliseRedisDB()
-    droneAPIUtils.validateAndRefreshContainers()
+    #droneAPIUtils.validateAndRefreshContainers()
     droneAPIUtils.startBackgroundWorker()
 
     # set API url endpoints and class handlers. Each handler class is in its

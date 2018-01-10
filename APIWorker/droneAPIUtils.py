@@ -16,6 +16,9 @@ import redis
 import socket
 import docker
 import psutil
+import yaml
+from kubernetes import client, config
+
 from threading import Thread
 import droneAPICommand
 
@@ -49,15 +52,13 @@ def initaliseLogger():
 
 
 def initaliseGlobals():
-    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster, workerImage, serverImage, workerHostname
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster,   workerHostname
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
-    workerImage = getEnvironmentVariable('DOCKER_WORKER_IMAGE')
-    serverImage = getEnvironmentVariable('DOCKER_SERVER_IMAGE')
     defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
-    workerURL = getEnvironmentVariable('WORKER_URL')
+    workerURL = "droneapiworker:1236" #static linked to service getEnvironmentVariable('WORKER_URL')
     workerMaster = False
     workerHostname = socket.gethostname()
 
@@ -406,8 +407,71 @@ def getNexthostAndPort():
     return {"image": dockerHostsArray[0]['internalIP'], "port": firstFreePort}
 
 
+
+
+#kubernetes helper functions ***************************************************************************
+def create_deployment_object(inName, inImage, inEnvironment):
+    # Configureate Pod template container
+    container = client.V1Container(
+        name=inName,
+        image=inImage,
+        ports=[client.V1ContainerPort(container_port=14550, name=inName)],
+        env=inEnvironment)
+    # Create and configurate a spec section
+    template = client.V1PodTemplateSpec(
+        metadata=client.V1ObjectMeta(labels={"app": inName, "tier": "backend"}),
+        spec=client.V1PodSpec(containers=[container]))
+    # Create the specification of deployment
+    spec = client.ExtensionsV1beta1DeploymentSpec(
+        replicas=1,
+        template=template)
+    # Instantiate the deployment object
+    deployment = client.ExtensionsV1beta1Deployment(
+        api_version="extensions/v1beta1",
+        kind="Deployment",
+        metadata=client.V1ObjectMeta(name=inName),
+        spec=spec)
+
+    my_logger.info("Deployment object created.")
+    my_logger.info(deployment)
+    return deployment
+
+
+def create_deployment(api_instance, deployment, inName):
+    # Create deployement
+    api_response = api_instance.create_namespaced_deployment(
+        body=deployment,
+        namespace="default")
+    my_logger.info("Deployment created. status='%s'" % str(api_response.status))
+
+
+def update_deployment(api_instance, deployment, inName):
+    # Update container image
+    deployment.spec.template.spec.containers[0].image = "nginx:1.9.1"
+    # Update the deployment
+    api_response = api_instance.patch_namespaced_deployment(
+        name=inName,
+        namespace="default",
+        body=deployment)
+    my_logger.info("Deployment updated. status='%s'" % str(api_response.status))
+
+
+def delete_deployment(api_instance, inName):
+    # Delete deployment
+    api_response = api_instance.delete_namespaced_deployment(
+        name=inName,
+        namespace="default",
+        body=client.V1DeleteOptions(
+            propagation_policy='Foreground',
+            grace_period_seconds=5))
+    my_logger.info("Deployment deleted. status='%s'" % str(api_response.status))
+
+#kubernetes helper functions END***************************************************************************
+
+
+
 def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id, in_key=''):
-    global workerURL
+    global workerURL, dronesimImage
     connection = None
     docker_container_id = "N/A"
     my_logger.info("************ Creating Drone %s : %s : %s : %s : %s : %s : %s : %s ***********",
@@ -417,7 +481,7 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
 
     if (in_key == ''):
         uuidVal = uuid.uuid4()
-        key = str(uuidVal)[:8]
+        key = "d"+str(uuidVal)[:7]
     else:
         key = in_key
 
@@ -425,11 +489,7 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
     my_logger.info("Start location environement %s", environmentString)
 
     # build simulated drone or proxy via Docker
-    # docker api available on host at
-    # http://172.17.0.1:4243/containers/json
-
-    #private_ip_address=this.launchCloudImage('ami-5be0f43f', 't2.micro', ['sg-fd0c8394'])
-    #connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
+    '''
     hostAndPort = getNexthostAndPort()
     dockerClient = docker.DockerClient(
         version='1.27',
@@ -457,27 +517,82 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
                 '14551/tcp': hostAndPort['port'],
                 '14552/tcp': hostAndPort['port'] + 20},
             name=key)
-
     docker_container_id = dockerContainer.id
+
+    '''
+
+    #build simulated container using kubernetes
+    deploymentName=key
+    containerImageName = dronesimImage
+    my_logger.info("Kubernetes deployment name %s | image name %s",deploymentName, containerImageName)
+    config.load_incluster_config()
+    extensions_v1beta1 = client.ExtensionsV1beta1Api()
+    environmentObj=[{"name":"LOCATION","value": str(drone_lat) + ',' + str(drone_lon) + ',' + str(drone_alt) + ',' + str(drone_dir)}]
+
+    deployment = create_deployment_object(deploymentName, containerImageName,environmentObj)
+    create_deployment(extensions_v1beta1, deployment,deploymentName)
+
+
+
+
+    #Create Service
+    api_instance = client.CoreV1Api()
+    namespace = 'default'
+    manifest = {
+        "kind": "Service",
+        "apiVersion": "v1",
+        "metadata": {
+            "name": deploymentName,
+            "labels":{
+                "app": deploymentName,
+                "tier":"backend"
+            }
+        },
+        "spec": {
+            "selector": {
+                "app": deploymentName,
+                "tier": "backend"
+            },
+            "type": "NodePort",
+            "ports": [
+                {
+                    "protocol": "TCP",
+                    "port": 14550,
+                    "targetPort": deploymentName,
+                    "name": deploymentName
+                }
+            ]
+        }
+    }
+
+    api_response = api_instance.create_namespaced_service(namespace, manifest, pretty=True)
+
+
+    #create Service End
+    docker_container_id = deploymentName
     my_logger.info("container Id=%s", str(docker_container_id))
 
-    connection = "tcp:" + hostAndPort['image'] + ":" + str(hostAndPort['port'])
+    #get the external identifier
+
+    #connection = "tcp:" + hostAndPort['image'] + ":" + str(hostAndPort['port'])
+    port=14550
+    connection = "tcp:" + deploymentName + ":" + str(port)
 
     my_logger.debug(connection)
 
     my_logger.info("adding vehicle to Redis db with key 'vehicle:%s:%s'", str(user_id), str(key))
     droneDBDetails = {"vehicle_details": {"connection_string": connection,
                                           "name": vehicleName,
-                                          "port": hostAndPort['port'],
+                                          "port": port,
                                           "vehicle_type": droneType},
-                      "host_details": {"host": hostAndPort['image'],
+                      "host_details": {"host": docker_container_id,
                                        "start_time": time.time(),
                                        "docker_container_id": docker_container_id,
                                        "worker_url": workerURL}}
 
     if (droneType == 'real'):
-        droneDBDetails['vehicle_details']['drone_connect_to'] = hostAndPort['port'] + 10
-        droneDBDetails['vehicle_details']['groundstation_connect_to'] = hostAndPort['port'] + 20
+        droneDBDetails['vehicle_details']['drone_connect_to'] = port + 10
+        droneDBDetails['vehicle_details']['groundstation_connect_to'] = port + 20
 
     redisdB.set("vehicle:" + str(user_id) + ":" + key, json.dumps(droneDBDetails))
     redisdB.set("vehicle_commands:" + str(user_id) + ":" + key, json.dumps({"commands": []}))
@@ -485,8 +600,8 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
     outputObj = {}
     outputObj["connection"] = connection
     if (droneType == "real"):
-        outputObj["drone_connect_to"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 10)
-        outputObj["groundstation_connect_to"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 20)
+        outputObj["drone_connect_to"] = "tcp:droneapi.ddns.net:" + str(port + 10)
+        outputObj["groundstation_connect_to"] = "tcp:droneapi.ddns.net:" + str(port + 20)
     outputObj["id"] = key
     my_logger.info("Return: =" + json.dumps(outputObj))
     return outputObj
@@ -616,163 +731,13 @@ class worker(Thread):
         return
 
     def performMasterActions(self):
-        global workerURL
         # query redis to see if any other containers are the master. If none then takeover.
         my_logger.info("Performing Master actions")
 
         service_parameters = json.loads(redisdB.get("service_parameters"))
-        target_number_of_workers = service_parameters['target_number_of_workers']
-        target_number_of_servers = service_parameters['target_number_of_servers']
         worker_port_range_start = service_parameters['worker_port_range_start']
-        thisWorkerIP = workerURL[:-5]
 
-        # *************************************************************
-        # Check if I should create a new worker
-        keys = redisdB.keys("worker:*")
-        worker_urls_used = {}
-        for key in keys:
-            worker = json.loads(redisdB.get(key))
-            my_logger.info(worker)
-            # Check if any workers are unresponsive
-            last_heartbeat = worker['last_heartbeat']
-            time_since_heartbeat = round(time.time() - last_heartbeat, 1)
-            my_logger.info("time_since_heartbeat:%f", time_since_heartbeat)
-            if time_since_heartbeat > 10:
-                redisdB.delete(key)
-            else:
-                worker_urls_used[worker['worker_url']] = True
-                my_logger.info("Urls and Ports Used: %s", worker_urls_used)
-
-        keys = redisdB.keys("worker:*")
-        if len(keys) < target_number_of_workers:
-            # start a new worker
-
-            nextPortNumber = worker_port_range_start
-            my_logger.info("thisWorkerIP: %s", thisWorkerIP)
-            emptyPortFound = False
-
-            while (emptyPortFound == False):
-                test_key = thisWorkerIP + ":" + str(nextPortNumber)
-                url_used = test_key in worker_urls_used
-                my_logger.info("Testing if there is a worker at: %s returns %s", thisWorkerIP + ":" + str(nextPortNumber), str(url_used))
-                if not url_used:
-                    emptyPortFound = True
-                else:
-                    nextPortNumber = nextPortNumber + 1
-
-            self.createWorker(thisWorkerIP, nextPortNumber)
-
-        # *************************************************************
-        # Check if I should create a new server
-        keys = redisdB.keys("server:*")
-        for key in keys:
-            server = json.loads(redisdB.get(key))
-            my_logger.info(server)
-            # Check if any server are unresponsive
-            last_heartbeat = server['last_heartbeat']
-            time_since_heartbeat = round(time.time() - last_heartbeat, 1)
-            my_logger.info("time_since_heartbeat:%f", time_since_heartbeat)
-            if time_since_heartbeat > 10:
-                redisdB.delete(key)
-
-        keys = redisdB.keys("server:*")
-        for key in keys:
-            server = json.loads(redisdB.get(key))
-            my_logger.info(server)
-
-        if len(keys) < target_number_of_servers:
-            # start a new server
-            self.createServer()
 
         return
 
-    def createWorker(self, worker_ip, worker_port):
-        global defaultDockerHost, workerImage, serverImage, dronesimImage, homeDomain
-        try:
-            my_logger.info("Creating a new worker at: %s", "worker:" + worker_ip + ":" + str(worker_port))
 
-            connection = None
-            docker_container_id = "N/A"
-
-            # build simulated drone or proxy via Docker
-            # docker api available on host at
-            # http://172.17.0.1:4243/containers/json
-            dockerClient = docker.DockerClient(
-                version='1.27',
-                base_url='tcp://' +
-                defaultDockerHost +
-                ':4243')
-
-            dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
-
-            dockerContainer = None
-            containerName = workerImage
-            dockerContainer = dockerClient.containers.run(
-                containerName,
-                environment=[
-                    "DRONEAPI_URL=" + homeDomain,
-                    "DOCKER_DRONESIM_IMAGE=" + dronesimImage,
-                    "DOCKER_WORKER_IMAGE=" + workerImage,
-                    "DOCKER_SERVER_IMAGE=" + serverImage,
-                    "DOCKER_HOST_IP=172.17.0.1",
-                    "WORKER_URL=" + worker_ip + ":" + str(worker_port)],
-                links={
-                    "redis": "redis"},
-                detach=True,
-                ports={
-                    '1234/tcp': worker_port})
-
-            docker_container_id = dockerContainer.id
-            my_logger.info("container Id=%s", str(docker_container_id))
-        except Exception as ex:
-            tracebackStr = traceback.format_exc()
-            traceLines = tracebackStr.split("\n")
-            my_logger.warn("Caught exception: Unexpected error in createWorker. %s ", traceLines)
-            my_logger.exception(ex)
-        return
-
-    def createServer(self):
-
-        global defaultDockerHost, serverImage, dronesimImage, homeDomain
-        try:
-            my_logger.info("Creating a new server")
-
-            virtual_host_list = homeDomain.split("/")
-            virtual_host = virtual_host_list[-1]
-            my_logger.info("virtual_host: %s", virtual_host)
-
-            connection = None
-            docker_container_id = "N/A"
-
-            # build simulated drone or proxy via Docker
-            # docker api available on host at
-            # http://172.17.0.1:4243/containers/json
-            dockerClient = docker.DockerClient(
-                version='1.27',
-                base_url='tcp://' +
-                defaultDockerHost +
-                ':4243')
-
-            dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
-
-            dockerContainer = None
-            containerName = serverImage
-
-            dockerContainer = dockerClient.containers.run(
-                containerName,
-                environment=[
-                    "DRONEAPI_URL=" + homeDomain,
-                    "VIRTUAL_HOST=" + virtual_host,
-                    "DOCKER_HOST_IP=172.17.0.1"],
-                links={
-                    "redis": "redis"},
-                detach=True)
-
-            docker_container_id = dockerContainer.id
-            my_logger.info("container Id=%s", str(docker_container_id))
-        except Exception as ex:
-            tracebackStr = traceback.format_exc()
-            traceLines = tracebackStr.split("\n")
-            my_logger.warn("Caught exception: Unexpected error in createWorker. %s ", traceLines)
-            my_logger.exception(ex)
-        return

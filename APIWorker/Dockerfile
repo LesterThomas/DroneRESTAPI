@@ -22,9 +22,12 @@ RUN pip install boto3
 RUN pip install docker
 RUN pip install watchtower
 RUN pip install psutil
+RUN pip install kubernetes
+RUN pip install pyyaml
 
 RUN apt-get install -y awscli
 COPY *.py /
-EXPOSE 1234
-CMD python /droneAPIMain.py 1234
+COPY *.yaml /
+EXPOSE 1236
+CMD python /droneAPIMain.py 1236
 
