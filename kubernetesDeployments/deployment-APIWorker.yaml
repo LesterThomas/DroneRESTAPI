@@ -1,0 +1,27 @@
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: droneapiworker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: droneapiworker
+  template:
+    metadata:
+      labels:
+        app: droneapiworker
+        tier: backend
+    spec:
+      containers:
+      - name: droneapiworker
+        image: lesterthomas/droneapiworker:3.0.0
+        env:
+        - name: DRONEAPI_URL
+          value: http://test.droneapi.net
+        - name: DOCKER_DRONESIM_IMAGE
+          value: lesterthomas/dronesim:1.8
+        ports:
+        - name: droneapiworker
+          containerPort: 1236

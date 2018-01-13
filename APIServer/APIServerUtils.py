@@ -22,29 +22,18 @@ import APIServerCommand
 
 def initaliseLogger():
     global my_logger
-
     # Set logging framework
-    main_logger = logging.getLogger("DroneAPIServer")
-    LOG_FILENAME = 'droneapi.log'
-    main_logger.setLevel(logging.DEBUG)
-    handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=2000000, backupCount=5)
-    formatter = logging.Formatter("%(levelname)s - %(message)s")
+    my_logger = logging.getLogger("DroneAPIWorker." + str(__name__))
+    my_logger.setLevel(logging.DEBUG)
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
-    main_logger.addHandler(handler)
-    main_logger.propegate = False
-
-    try:
-        main_logger.addHandler(watchtower.CloudWatchLogHandler())
-    except BaseException:
-        main_logger.warn("Can not add CloudWatch Log Handler")
-
-    my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
-
+    my_logger.addHandler(handler)
     my_logger.info("##################################################################################")
-    my_logger.info("Starting APIServer at  " + str(time.time()))
+    my_logger.info("Starting DroneAPIServer at %s", str(time.time()))
     my_logger.info("##################################################################################")
-    my_logger.info("Logging level:" + str(logging.INFO))
-
+    my_logger.info("Logging level:" + str(logging.DEBUG))
     return
 
 

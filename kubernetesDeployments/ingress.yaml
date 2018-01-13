@@ -1,0 +1,10 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: droneapiserver
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  backend:
+    serviceName: droneapiserver # This is the name of the service to be exposed.
+    servicePort: 1234  # This is the port on which the service is exposed.

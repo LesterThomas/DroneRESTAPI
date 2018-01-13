@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: droneapiserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: droneapiserver
+  template:
+    metadata:
+      labels:
+        app: droneapiserver
+        tier: frontend
+    spec:
+      containers:
+      - name: droneapiserver
+        image: lesterthomas/droneapiserver:3.0.0
+        env:
+        - name: DRONEAPI_URL
+          value: http://test.droneapi.net
+        - name: DOCKER_HOST_IP
+          value: 172.17.0.1
+        - name: VIRTUAL_HOST
+          value: test.droneapi.net
+        ports:
+        - name: droneapiserver
+          containerPort: 1234
+
