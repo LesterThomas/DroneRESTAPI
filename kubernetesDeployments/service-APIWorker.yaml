@@ -8,9 +8,8 @@ metadata:
 spec:
   ports:
   - port: 1236
-    targetPort: droneapiworker
     name: droneapiworker
-  type: NodePort
+  clusterIP: None
   selector:
     app: droneapiworker
     tier: backend

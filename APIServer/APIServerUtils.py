@@ -20,6 +20,7 @@ from threading import Thread
 import APIServerCommand
 
 
+
 def initaliseLogger():
     global my_logger
     # Set logging framework
@@ -36,34 +37,6 @@ def initaliseLogger():
     my_logger.info("Logging level:" + str(logging.DEBUG))
     return
 
-
-def rebuildDockerHostsArray():
-    # reset dockerHostsArray
-    dockerHostsArray = [{"internalIP": defaultDockerHost, "usedPorts": []}]
-    keys = redisdB.keys("vehicle:*")
-    for key in keys:
-
-        json_str = redisdB.get(key)
-        json_obj = json.loads(json_str)
-        vehicle_details = json_obj['vehicle_details']
-        connection_string = vehicle_details['connection_string']
-        hostIp = connection_string[4:-6]
-        port = connection_string[-5:]
-        # check if this host already exists in dockerHostsArray
-        found = False
-        for host in dockerHostsArray:
-            if (host['internalIP'] == hostIp):
-                found = True
-        if (found == False):
-            dockerHostsArray.append({"internalIP": hostIp, "usedPorts": []})
-        # add this drone to docker host
-        for host in dockerHostsArray:
-            if (host['internalIP'] == hostIp):
-                host['usedPorts'].append(int(port))
-    my_logger.info("dockerHostsArray (rebuilt)")
-    my_logger.info(dockerHostsArray)
-    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
-    return
 
 
 def initaliseGlobals():
@@ -108,6 +81,9 @@ def initiliseRedisDB():
     return
 
 
+
+
+
 def getEnvironmentVariable(inVariable):
     try:
         envVariable = os.environ[inVariable]
@@ -129,6 +105,7 @@ def startBackgroundWorker():
 
 def getNewWorkerURL():
     """Return the URL to a Worker container with capacity available to launch new vehicles."""
+    my_logger.info("getNewWorkerURL")
     keys = redisdB.keys("worker:*")
     min_number_managed = 1000
     worker_url = ''
@@ -139,8 +116,10 @@ def getNewWorkerURL():
         if containers_being_managed < min_number_managed:
             worker_url = worker['worker_url']
             min_number_managed = containers_being_managed
+        my_logger.info("Candidate worker %s has %s connections",key,containers_being_managed)
 
-    # FOr the time being there is only 1 worker running at port 1236
+    my_logger.info("getNewWorkrURL selected worker URL %s ", worker_url)
+
     return "http://" + worker_url
 
 

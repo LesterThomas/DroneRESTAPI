@@ -23,7 +23,7 @@ spec:
           name: redis
         volumeMounts:
         - name: redis-data
-          mountPath: /var/lib/redis
+          mountPath: /data
   volumeClaimTemplates:
   - metadata:
       name: redis-data

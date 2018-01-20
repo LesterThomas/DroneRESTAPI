@@ -22,6 +22,13 @@ from kubernetes import client, config
 from threading import Thread
 import droneAPICommand
 
+def cleanUp():
+    global webApp, workerHostname
+    # clean-up worker record
+    my_logger.info("Cleaning-up and exiting")
+    redisdB.delete('worker:' + workerHostname)
+    webApp.stop()
+    sys.exit()
 
 def initaliseLogger():
     global my_logger
@@ -46,25 +53,46 @@ def initaliseGlobals():
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
-    workerURL = "droneapiworker:1236" #static linked to service getEnvironmentVariable('WORKER_URL')
     workerMaster = False
     workerHostname = socket.gethostname()
+    workerURL = workerHostname+".droneapiworker:1236"
 
     # set global variables
     connectionDict = {}  # holds a dictionary of DroneKit connection objects
     connectionNameTypeDict = {}  # holds the additonal name, type and start_time for the conections
     authorizedZoneDict = {}  # holds zone authorizations for each drone
 
+
+
     return
+
 
 
 def initiliseRedisDB():
+    my_logger.info("initiliseRedisDB connecting to redis using host redis and port 6379")
 
     global redisdB
+    time.sleep(10)
+    my_logger.info("initiliseRedisDB attempting to connect to redis")
     redisdB = redis.Redis(host='redis', port=6379)  # redis or localhost
 
-    return
+    my_logger.info("Getting all keys")
+    keys = redisdB.keys("*")
+    for key in keys:
+        my_logger.info(key)
+    my_logger.info("Finished getting all keys")
 
+
+    my_logger.info("Checking for mandatory key service_parameters")
+    service_parameters_str = redisdB.get("service_parameters")
+    if service_parameters_str:
+        my_logger.info("service_parameters found OK")
+    else:
+        service_parameters={"max_server_iterations":1000, "min_number_of_servers":1, "iteration_time":0.25, "max_worker_iterations":1000, "min_number_of_workers":1, "target_number_of_workers":1, "target_number_of_servers":1, "worker_port_range_start":8000 }
+        service_parameters_str=json.dumps(service_parameters)
+        redisdB.set("service_parameters",service_parameters_str)
+
+    return
 
 def getEnvironmentVariable(inVariable):
     try:
@@ -470,11 +498,8 @@ class worker(Thread):
                 if (elapsed_time < iteration_time):
                     time.sleep(iteration_time - elapsed_time)
 
-            # clean-up worker record
-            my_logger.info("Cleaning-up and exiting")
-            redisdB.delete('worker:' + workerHostname)
-            webApp.stop()
-            sys.exit()
+            cleanUp()
+
 
         except Exception as ex:
             tracebackStr = traceback.format_exc()
@@ -482,6 +507,8 @@ class worker(Thread):
             my_logger.warn("Caught exception: Unexpected error in worker.run  %s ", traceLines)
             my_logger.exception(ex)
         return
+
+
 
     def executeUpdate(self, user_id, vehicle_id, vehicle, key):
         try:
@@ -543,5 +570,7 @@ class worker(Thread):
 
 
         return
+
+
 
 
