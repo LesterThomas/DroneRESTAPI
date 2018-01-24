@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: droneapiserver
 spec:
-  replicas: 1
+  replicas: 5
   selector:
     matchLabels:
       app: droneapiserver
@@ -15,10 +15,10 @@ spec:
     spec:
       containers:
       - name: droneapiserver
-        image: lesterthomas/droneapiserver:3.0.0
+        image: lesterthomas/droneapiserver:3.0.5
         env:
         - name: DRONEAPI_URL
-          value: http://test.droneapi.net
+          value: http://droneapi.ddns.net
         - name: DOCKER_HOST_IP
           value: 172.17.0.1
         - name: VIRTUAL_HOST

@@ -3,11 +3,12 @@ kind: StatefulSet
 metadata:
   name: droneapiworker
 spec:
+  podManagementPolicy: Parallel
   selector:
     matchLabels:
       app: droneapiworker # has to match .spec.template.metadata.labels
   serviceName: "droneapiworker"
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -17,7 +18,7 @@ spec:
       terminationGracePeriodSeconds: 1
       containers:
       - name: droneapiworker
-        image: lesterthomas/droneapiworker:3.0.0
+        image: lesterthomas/droneapiworker:3.0.6
         env:
         - name: DRONEAPI_URL
           value: http://test.droneapi.net
