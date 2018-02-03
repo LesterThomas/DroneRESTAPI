@@ -1,0 +1,120 @@
+###################################################################
+# Persistent storage for Redis 
+###################################################################
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-data-redis-0
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: default
+---
+###################################################################
+# Redis Database
+###################################################################
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis # has to match .spec.template.metadata.labels
+  serviceName: "redis"
+  replicas: 1 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: redis # has to match .spec.selector.matchLabels
+        tier: backend
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: redis
+        image: redis
+        ports:
+        - containerPort: 6379
+          name: redis
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: manual
+      resources:
+        requests:
+          storage: 20Gi
+---
+###################################################################
+# Service that exposes Redis Database
+###################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+    tier: backend
+spec:
+  ports:
+  - port: 6379
+    targetPort: redis
+    name: redis
+  selector:
+    app: redis
+    tier: backend
+---
+###################################################################
+# Redis User Interface deployment
+###################################################################
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis-commander
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-commander
+  template:
+    metadata:
+      labels:
+        app: redis-commander
+        tier: backend
+    spec:
+      containers:
+      - name: redis-commander
+        image: rediscommander/redis-commander
+        env:
+        - name: REDIS_HOSTS
+          value: instance1:redis:6379
+        ports:
+        - name: redis-commander
+          containerPort: 8081
+---          
+###################################################################
+# Service that exposes Redis UI
+###################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-commander
+  labels:
+    app: redis-commander
+    tier: backend
+spec:
+  ports:
+  - port: 8081
+    targetPort: redis-commander
+    name: redis-commander
+  type: LoadBalancer
+  selector:
+    app: redis-commander
+    tier: backend
