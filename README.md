@@ -1,36 +1,21 @@
 # DroneRESTAPI
 
-This project provides a simple hypermedia REST API on top of the Python SDK (http://python.dronekit.io/).
+This project provides a simple hypermedia REST API on top of the Python DroneKit SDK (http://python.dronekit.io/). It consists of a set of micro-services running in docker containers deployed in kubernetes.
 
 ## Installation
 
-### Simple installation
+Ensure your kubectl is correctly configured and pointing to a kubernetes cluster, then type the following command
+```kubectl apply -f https://raw.githubusercontent.com/LesterThomas/DroneRESTAPI/master/kubernetes_all```
 
-This is available as a two Docker images containing the API and a Drone simulator (ArduCopter flight-controller running in a simulator-SITL). On a Docker environment, simply run the following command (which will install the image if not already installed).
+Thats it! It may take a couple of minutes foe all the docker images to download and build. Once deployment is complete, see instructions below for using the API and provided Web console.
 
-```
-docker run -p 1235:1234 lesterthomas/droneapi:1.7
-```
-
-The docker image will expose the API on port `1235`. Test the API in a browser or POSTMAN by going to the root of the API `http://localhost:1235/`.
-
-There is a static HTML5 web page built on top of the API that gives a simple demonstration set of controls. This is available at `http://localhost:1235/static/app/index.html`.
-
-
-### Detailed installation
-
-To install the API and simulator outside of Docker, you can follow the commands in the three Dockerfiles (the instructions are based on  http://python.dronekit.io/guide/quick_start.html#installation). 
-
-The first Dockerfile (baselineDockerfile/Dockerfile) is for the baseline installation of python development environment, MAVProxy, dronekit and Ardupilot. 
-
-The second Dockerfile (APIDockerBuild/Dockerfile) installs the API (which is a single Python script in rest.py) and the static HTML5 client.
-
-The third Dockerfile (DroneSIMDockerBuild) installs a drone simulator
 
 
 ## Using API
 
-Using a browser or REST API Client (I recommend Postman), browse to the root of the server. `http://localhost:1234`
+Using a browser or REST API Client (I recommend Postman), browse to the root of the service exposed by kubernetes (this is created by the kubernetes Ingress. If this is working correctly, you should get a `API Key Error` returned in the response. You need to create an account which will automatically create an API key before the service will work fully.
+
+
 
 The returned payload is the EntryPoint (or homepage) of the API and shows the APIs available. The following images capture a sample of browsing through the API.
 
@@ -40,6 +25,8 @@ The returned payload is the EntryPoint (or homepage) of the API and shows the AP
 ![Vehicle Actions](Images/Vehicle1Actions.png)
 
 
+
+#Build instructions
 
 ## Building Docker image
 
