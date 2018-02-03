@@ -1,15 +1,4 @@
 ###################################################################
-# Define storage class default (used by persistent storage) 
-###################################################################
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: default
-provisioner: kubernetes.io/gce-pd
-parameters:
-  type: pd-standard
----
-###################################################################
 # Persistent storage for Redis 
 ###################################################################
 apiVersion: v1
