@@ -230,11 +230,11 @@ spec:
   selector:
     app: droneapiserver
     tier: frontend
-apiVersion: extensions/v1beta1
 ---          
 ###################################################################
 # Ingress that exposes http traffic to outside world
 ###################################################################
+apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: droneapiserver
