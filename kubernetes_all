@@ -8,6 +8,7 @@ metadata:
 provisioner: kubernetes.io/gce-pd
 parameters:
   type: pd-standard
+---
 ###################################################################
 # Persistent storage for Redis 
 ###################################################################
