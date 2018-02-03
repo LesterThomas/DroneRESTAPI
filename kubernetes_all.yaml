@@ -177,7 +177,7 @@ spec:
   clusterIP: None
   selector:
     app: droneapiworker
-    tier: 
+    tier: backend
 ---          
 ###################################################################
 # droneapiserver stateless container deployment
