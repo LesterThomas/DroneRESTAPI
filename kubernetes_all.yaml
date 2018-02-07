@@ -132,7 +132,7 @@ spec:
     matchLabels:
       app: droneapiworker 
   serviceName: "droneapiworker"
-  replicas: 2
+  replicas: 4
   template:
     metadata:
       labels:
@@ -179,7 +179,7 @@ kind: Deployment
 metadata:
   name: droneapiserver
 spec:
-  replicas: 5
+  replicas: 40
   selector:
     matchLabels:
       app: droneapiserver
