@@ -5,7 +5,10 @@ This project provides a simple hypermedia REST API on top of the Python DroneKit
 ## Installation
 
 Ensure your kubectl is correctly configured and pointing to a kubernetes cluster, then type the following command
-```kubectl apply -f https://raw.githubusercontent.com/LesterThomas/DroneRESTAPI/master/kubernetes_all```
+
+```
+kubectl apply -f https://raw.githubusercontent.com/LesterThomas/DroneRESTAPI/master/kubernetes_all
+```
 
 Thats it! It may take a couple of minutes foe all the docker images to download and build. Once deployment is complete, see instructions below for using the API and provided Web console.
 
