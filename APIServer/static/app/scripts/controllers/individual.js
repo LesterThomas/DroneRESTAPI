@@ -244,8 +244,16 @@ angular.module('droneFrontendApp')
 	});
 
 	var intervalTimer = $interval(updateDrone, 250);
-	var intervalActionsTimer = $interval(updateCommands, 2000);
+	var intervalActionsTimer = $interval(updateCommands, 1000);
 	function updateDrone() {
+
+        if(typeof $scope.drones.collection[$scope.droneIndex] === 'undefined') {
+            // does not exist
+        }
+        else {
+            // does exist
+
+
 
 			NgMap.getMap().then(function(map) {
 			if ($scope.markers.length>0) {
@@ -312,8 +320,8 @@ angular.module('droneFrontendApp')
 			//console.log('Map center', map.getCenter());
 		  });
 
-
-			}
+        }
+	}
 
 	function setActionText(inAction) {
 		var latLonAltText='';
@@ -480,11 +488,24 @@ angular.module('droneFrontendApp')
                 'APIKEY': $rootScope.loggedInUser.api_key
 			}
 		}).then(function(data, status, headers, config) {
-			var commandItem=data.data.command;
-			commandItem['textDescription']=setActionText(commandItem);
 
-			$scope.commandLog.items.push(commandItem);
-			console.log('API  command POST success',data,status);
+            //test for error
+            if (typeof data.data.error  === 'undefined') {
+        			var commandItem=data.data.command;
+        			commandItem['textDescription']=setActionText(commandItem);
+
+        			$scope.commandLog.items.push(commandItem);
+        			console.log('API command POST success',data,status);
+                }
+                else {
+                    var commandItem={"name":"Power-On","error":"Unknown error","status":"Error" }
+                    commandItem['textDescription']=setActionText(commandItem);
+
+                    $scope.commandLog.items.push(commandItem);
+                    console.log('API command POST returned error',data,status);
+
+
+                }
 
 		},
 		function(data, status, headers, config) {

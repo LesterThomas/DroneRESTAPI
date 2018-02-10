@@ -2,8 +2,8 @@ angular.module('droneFrontendApp')
 .service('droneService',['$http','$interval','$rootScope', function($http,$interval,$rootScope) {
 	var self=this;
     this.droneId=-1;
-    this.apiURL='HTTP://test.droneapi.net/'
-    this.consoleRootURL='HTTP://test.droneapi.net/static/app'
+    this.apiURL='HTTP://35.227.223.254/'
+    this.consoleRootURL='HTTP://35.227.223.254'
     this.droneName='';
     this.lat=0;
     this.lon=0;
@@ -13,7 +13,7 @@ angular.module('droneFrontendApp')
 	this.advisories={"collection":{},"max_safe_distance":0};
 
 
-	var intervalTimer = $interval(updateDrones, 250);
+	var intervalTimer = $interval(updateDrones, 500);
 	updateDrones();
 	//this.queryAdvisories(51.3793,-1.1954);
 	function updateDrones() {
