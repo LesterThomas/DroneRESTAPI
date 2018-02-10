@@ -1,3 +1,6 @@
+###################################################################
+# Redis Database stateful container
+###################################################################
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
@@ -5,13 +8,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: redis # has to match .spec.template.metadata.labels
+      app: redis
   serviceName: "redis"
   replicas: 1 # by default is 1
   template:
     metadata:
       labels:
-        app: redis # has to match .spec.selector.matchLabels
+        app: redis
         tier: backend
     spec:
       terminationGracePeriodSeconds: 10
@@ -33,4 +36,3 @@ spec:
       resources:
         requests:
           storage: 20Gi
-
