@@ -114,7 +114,7 @@ spec:
   - port: 8081
     targetPort: redis-commander
     name: redis-commander
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: redis-commander
     tier: backend
