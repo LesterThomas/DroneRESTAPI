@@ -7,7 +7,7 @@ This project provides a simple hypermedia REST API on top of the Python DroneKit
 Ensure your kubectl is correctly configured and pointing to a kubernetes cluster, then type the following command
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/LesterThomas/DroneRESTAPI/master/kubernetes_all
+kubectl apply -f https://raw.githubusercontent.com/LesterThomas/DroneRESTAPI/master/kubernetesManifests/kubernetes_all.yaml
 ```
 
 Thats it! It may take a couple of minutes foe all the docker images to download and build. Once deployment is complete, see instructions below for using the API and provided Web console.
@@ -22,10 +22,10 @@ Using a browser or REST API Client (I recommend Postman), browse to the root of 
 
 The returned payload is the EntryPoint (or homepage) of the API and shows the APIs available. The following images capture a sample of browsing through the API.
 
-![EntryPoint](Images/EntryPoint.png)
-![Vehicle Collection](Images/VehicleCollection.png)
-![Vehicle Details](Images/Vehicle1.png)
-![Vehicle Actions](Images/Vehicle1Actions.png)
+![EntryPoint](documentation/Images/EntryPoint.png)
+![Vehicle Collection](documentation/Images/VehicleCollection.png)
+![Vehicle Details](documentation/Images/Vehicle1.png)
+![Vehicle Actions](documentation/Images/Vehicle1Actions.png)
 
 
 
@@ -35,7 +35,7 @@ The returned payload is the EntryPoint (or homepage) of the API and shows the AP
 
 The Dockerfile builds on top of the baselineDocker file (that creates the `lesterthomas/sitlbase:1.0` image). To re-build the Docker image execute the command:
 
-```docker build -t lesterthomas/dronesim:1.5 .```
+```docker build -t lesterthomas/dronesim:1.8 .```
 
 ## Python module documentation
 
