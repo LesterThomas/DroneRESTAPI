@@ -1,0 +1,3590 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>droneAPIUtils API documentation</title>
+    <meta name="description" content="This module has utility functions used by all the other modules in this App" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    max-width: 850px;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow: hidden;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#droneAPIUtils.applyHeadders">applyHeadders</a></li>
+    <li class="mono"><a href="#droneAPIUtils.connectVehicle">connectVehicle</a></li>
+    <li class="mono"><a href="#droneAPIUtils.createDrone">createDrone</a></li>
+    <li class="mono"><a href="#droneAPIUtils.distanceInMeters">distanceInMeters</a></li>
+    <li class="mono"><a href="#droneAPIUtils.getEnvironmentVariable">getEnvironmentVariable</a></li>
+    <li class="mono"><a href="#droneAPIUtils.getNexthostAndPort">getNexthostAndPort</a></li>
+    <li class="mono"><a href="#droneAPIUtils.getVehicleStatus">getVehicleStatus</a></li>
+    <li class="mono"><a href="#droneAPIUtils.initaliseGlobals">initaliseGlobals</a></li>
+    <li class="mono"><a href="#droneAPIUtils.initaliseLogger">initaliseLogger</a></li>
+    <li class="mono"><a href="#droneAPIUtils.initiliseRedisDB">initiliseRedisDB</a></li>
+    <li class="mono"><a href="#droneAPIUtils.latLonAltObj">latLonAltObj</a></li>
+    <li class="mono"><a href="#droneAPIUtils.rebuildDockerHostsArray">rebuildDockerHostsArray</a></li>
+    <li class="mono"><a href="#droneAPIUtils.startBackgroundWorker">startBackgroundWorker</a></li>
+    <li class="mono"><a href="#droneAPIUtils.validateAndRefreshContainers">validateAndRefreshContainers</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#droneAPIUtils.worker">worker</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#droneAPIUtils.worker.__init__">__init__</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.checkIfWorkerFinished">checkIfWorkerFinished</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.checkToTakeoverMaster">checkToTakeoverMaster</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.createServer">createServer</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.createWorker">createWorker</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.executeUpdate">executeUpdate</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.getName">getName</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.isAlive">isAlive</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.isDaemon">isDaemon</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.is_alive">is_alive</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.join">join</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.performMasterActions">performMasterActions</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.run">run</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.setDaemon">setDaemon</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.setName">setName</a></li>
+    <li class="mono"><a href="#droneAPIUtils.worker.start">start</a></li>
+  </ul>
+
+        </li>
+      </ul>
+    </li>
+
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">droneAPIUtils</span> module</h1>
+  <p>This module has utility functions used by all the other modules in this App</p>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils" class="source">
+    <pre><code>"This module has utility functions used by all the other modules in this App"""
+# Import DroneKit-Python
+from dronekit import connect, APIException
+
+import sys
+import web
+import logging
+import watchtower
+import traceback
+import json
+import time
+import math
+import os
+import uuid
+import redis
+import socket
+import docker
+import psutil
+from threading import Thread
+import droneAPICommand
+
+
+def initaliseLogger():
+    global my_logger
+
+    # Set logging framework
+    main_logger = logging.getLogger("DroneAPIServer")
+    LOG_FILENAME = 'droneapi.log'
+    main_logger.setLevel(logging.INFO)
+    handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=2000000, backupCount=5)
+    formatter = logging.Formatter("%(levelname)s - %(message)s")
+    handler.setFormatter(formatter)
+    main_logger.addHandler(handler)
+    main_logger.propegate = False
+
+    try:
+        main_logger.addHandler(watchtower.CloudWatchLogHandler(send_interval=10))
+    except BaseException:
+        main_logger.warn("Can not add CloudWatch Log Handler")
+
+    my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
+
+    my_logger.info("##################################################################################")
+    my_logger.info("Starting DroneAPI at %s", str(time.time()))
+    my_logger.info("##################################################################################")
+    my_logger.info("Logging level:" + str(logging.INFO))
+
+    return
+
+
+def initaliseGlobals():
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster, workerImage, serverImage, workerHostname
+
+    # Set environment variables
+    homeDomain = getEnvironmentVariable('DRONEAPI_URL')
+    dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
+    workerImage = getEnvironmentVariable('DOCKER_WORKER_IMAGE')
+    serverImage = getEnvironmentVariable('DOCKER_SERVER_IMAGE')
+    defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
+    workerURL = getEnvironmentVariable('WORKER_URL')
+    workerMaster = False
+    workerHostname = socket.gethostname()
+
+    # set global variables
+    connectionDict = {}  # holds a dictionary of DroneKit connection objects
+    connectionNameTypeDict = {}  # holds the additonal name, type and start_time for the conections
+    authorizedZoneDict = {}  # holds zone authorizations for each drone
+
+    return
+
+
+def initiliseRedisDB():
+
+    global redisdB
+    redisdB = redis.Redis(host='redis', port=6379)  # redis or localhost
+
+    return
+
+
+def getEnvironmentVariable(inVariable):
+    try:
+        envVariable = os.environ[inVariable]
+        my_logger.info("Env variable " + inVariable + "=" + envVariable)
+        return envVariable
+    except Exception as e:
+        my_logger.error("Can't get environment variable " + inVariable)
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        my_logger.exception(traceLines)
+    return ""
+
+
+def validateAndRefreshContainers():
+    try:
+        # test the redis dB
+        # remove any old entries (and any old docker containers)
+        my_logger.info("Connecting to Redis dB and removing any existing entries and stopping any existing containers at " + str(time.time()))
+
+        dockerHostsArray = []
+        redisdB.set('foo', 'bar')
+        my_logger.info("RedisSet " + str(time.time()))
+
+        value = redisdB.get('foo')
+        my_logger.info("RedisGet " + str(time.time()))
+        if (value == 'bar'):
+            my_logger.info("Connected to Redis dB")
+        else:
+            my_logger.error("Can not connect to Redis dB")
+            raise Exception('Can not connect to Redis dB on port 6379')
+
+        # drone reference data is in Redis database with a key for each drone
+        # there is also a dockerHostsArray that contains a simplified view of the same data for performance
+        # we will start/stop each docker container
+
+        keys = redisdB.keys("vehicle:*")
+        for key in keys:
+            my_logger.debug("key = '" + key + "'")
+            json_str = redisdB.get(key)
+            my_logger.debug("redisDbObj = '" + json_str + "'")
+            json_obj = json.loads(json_str)
+
+            worker_url = json_obj['host_details']['worker_url']
+            if worker_url == workerURL:  # if this vehicle is managed by this worker component then process
+
+                vehicle_details = json_obj['vehicle_details']
+                host_details = json_obj['host_details']
+                connection_string = vehicle_details['connection_string']
+                vehicleName = vehicle_details['name']
+                vehicle_type = vehicle_details['vehicle_type']
+                docker_container_id = host_details['docker_container_id']
+                droneId = key[-8:]
+                user_id = key[8:-9]
+                hostIp = connection_string[4:-6]
+                port = connection_string[-5:]
+                my_logger.info("connection_string:%s vehicleName:%s vehicle_type:%s droneId:%s hostIp:%s port:%s user_id:%s ",
+                               connection_string, vehicleName, vehicle_type, droneId, hostIp, port, user_id)
+
+                # stop and start this container (or start a new one if it doesn't exist)
+                dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
+                dockerAPIClient = docker.APIClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
+                containerFound = False
+                for container in dockerClient.containers.list(all=True):
+                    if (container.id == docker_container_id):
+                        containerFound = True
+                        my_logger.info("Container %s found - restarting", container.id)
+                        container.restart()
+                if (containerFound == False):
+                    my_logger.info("Container not found - creating")
+
+                    # check if there is a container on this host already using this port
+                    containerWithPort = False
+                    for container in dockerClient.containers.list():
+
+                        contPortObj = dockerAPIClient.port(container.id, 14550)
+                        if (contPortObj is not None):
+                            my_logger.info("Testing Container %s port %s", container.id, contPortObj)
+                            if (contPortObj[0]['HostPort'] == port):
+                                # container found. restart
+                                my_logger.info("Container found - restarting")
+                                containerWithPort = True
+                                container.restart()
+                                # update Redis with new container Id
+                                docker_container_id = container.id
+                                redisdB.set(key,
+                                            json.dumps({"vehicle_details": {"connection_string": connection_string,
+                                                                            "name": vehicleName,
+                                                                            "vehicle_type": vehicle_type,
+                                                                            "start_time": time.time(),
+                                                                            "docker_container_id": docker_container_id}}))
+
+                    if (containerWithPort == False):
+                        my_logger.info("Container not found - creating new")
+
+                        createDrone(vehicle_type, vehicleName, '51.4049', '1.3049', '105', '0', user_id)
+
+                        #dockerContainer = dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port}, name=droneId)
+                        #docker_container_id = dockerContainer.id
+                        # update redis
+                        # redisdB.set(key,
+                        #            json.dumps({"connection_string": connection_string,
+                        #                        "name": vehicleName,
+                        #                        "vehicle_type": vehicle_type,
+                        #                        "start_time": time.time(),
+                        #                        "docker_container_id": docker_container_id}))
+
+    except Exception as e:
+        my_logger.warn("Caught exception: Unexpected error in validateAndRefreshContainers:")
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+
+    return
+
+
+def startBackgroundWorker():
+    worker().start()
+    return
+
+
+def applyHeadders():
+    my_logger.debug('Applying HTTP headers')
+    web.header('Content-Type', 'application/json')
+    web.header('Access-Control-Allow-Origin', '*')
+    web.header('Access-Control-Allow-Credentials', 'true')
+    web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
+    web.header('Access-Control-Allow-Headers', 'Content-Type')
+    return
+
+
+def rebuildDockerHostsArray():
+    # reset dockerHostsArray
+    dockerHostsArray = [{"internalIP": defaultDockerHost, "usedPorts": []}]
+    keys = redisdB.keys("connection_string:*")
+    for key in keys:
+
+        json_str = redisdB.get(key)
+        json_obj = json.loads(json_str)
+        vehicle_details = json_obj['vehicle_details']
+        connection_string = vehicle_details['connection_string']
+        hostIp = connection_string[4:-6]
+        port = connection_string[-5:]
+        # check if this host already exists in dockerHostsArray
+        found = False
+        for host in dockerHostsArray:
+            if (host['internalIP'] == hostIp):
+                found = True
+        if (found == False):
+            dockerHostsArray.append({"internalIP": hostIp, "usedPorts": []})
+        # add this drone to docker host
+        for host in dockerHostsArray:
+            if (host['internalIP'] == hostIp):
+                host['usedPorts'].append(int(port))
+    my_logger.info("dockerHostsArray (rebuilt)")
+    my_logger.info(dockerHostsArray)
+    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
+    return
+
+
+def connectVehicle(user_id, inVehicleId):
+    #global connection_string_array
+    global redisdB
+    global connectionDict
+    try:
+        my_logger.debug("connectVehicle called with inVehicleId = " + str(inVehicleId))
+        # connection_string=connection_string_array[inVehicleId]
+        json_str = redisdB.get('vehicle:' + user_id + ":" + str(inVehicleId))
+        my_logger.debug("Redis returns '" + str(json_str) + "'")
+        if (json_str is None):
+            my_logger.warn("Raising Vehicle not found warning")
+            raise Warning('Vehicle not found ')
+        my_logger.debug("redisDbObj = '" + json_str + "'")
+        json_obj = json.loads(json_str)
+        vehicle_details = json_obj['vehicle_details']
+        host_details = json_obj['host_details']
+        connection_string = vehicle_details['connection_string']
+        vehicleName = vehicle_details['name']
+        vehicle_type = vehicle_details['vehicle_type']
+        vehicle_start_time = host_details['start_time']
+        currentTime = time.time()
+        timeSinceStart = currentTime - vehicle_start_time
+        my_logger.debug("timeSinceStart= " + str(timeSinceStart))
+        if (timeSinceStart < 12):  # less than 10 seconds so throw Exception
+            my_logger.warn("Raising Vehicle starting up warning")
+            raise Warning('Vehicle starting up ')
+
+        my_logger.debug("connection string for vehicle " + str(inVehicleId) + "='" + connection_string + "'")
+
+        if host_details['worker_url'] == 'Power-Off':
+            my_logger.warn("Raising Drone is Powered-Off warning")
+            raise Warning('Drone is Powered-Off')
+
+        # Connect to the Vehicle.
+        elif not connectionDict.get(inVehicleId):
+            my_logger.info("connection_string: %s" % (connection_string,))
+            my_logger.info("Connecting to vehicle on: %s" % (connection_string,))
+            connectionNameTypeDict[inVehicleId] = {"name": vehicleName, "vehicle_type": vehicle_type}
+            connectionDict[inVehicleId] = connect(connection_string, wait_ready=True, heartbeat_timeout=10)
+        else:
+            my_logger.debug("Already connected to vehicle")
+    except Warning as w:
+        my_logger.warn("Caught warning: " + str(w))
+        raise Warning(str(w))
+    except Exception as e:
+        my_logger.warn("Caught exceptio: Unexpected error in connectVehicle:")
+        my_logger.warn("VehicleId=" + str(inVehicleId))
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        raise Exception('Unexpected error connecting to vehicle ' + str(inVehicleId))
+    return connectionDict[inVehicleId]
+
+
+def latLonAltObj(inObj):
+    output = {}
+    output["lat"] = (inObj.lat)
+    output["lon"] = (inObj.lon)
+    output["alt"] = (inObj.alt)
+    return output
+
+
+def distanceInMeters(lat1, lon1, lat2, lon2):
+    # approximate radius of earth in km
+    R = 6373.0
+    lat1 = math.radians(lat1)
+    lon1 = math.radians(lon1)
+    lat2 = math.radians(lat2)
+    lon2 = math.radians(lon2)
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = (math.sin(dlat / 2))**2 + math.cos(lat1) * math.cos(lat2) * (math.sin(dlon / 2))**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distance = R * c
+    return distance * 1000
+
+
+def getVehicleStatus(inVehicle, inVehicleId):
+    # inVehicle is an instance of the Vehicle class
+    outputObj = {}
+    my_logger.debug("Autopilot Firmware version: %s", inVehicle.version)
+    outputObj["version"] = str(inVehicle.version)
+    my_logger.debug("Global Location: %s", inVehicle.location.global_frame)
+    global_frame = latLonAltObj(inVehicle.location.global_frame)
+    outputObj["global_frame"] = global_frame
+    my_logger.debug("Global Location (relative altitude): %s", inVehicle.location.global_relative_frame)
+    global_relative_frame = latLonAltObj(inVehicle.location.global_relative_frame)
+    outputObj["global_relative_frame"] = global_relative_frame
+    my_logger.debug("Local Location: %s", inVehicle.location.local_frame)  # NED
+    local_frame = {}
+    local_frame["north"] = (inVehicle.location.local_frame.north)
+    local_frame["east"] = (inVehicle.location.local_frame.east)
+    local_frame["down"] = (inVehicle.location.local_frame.down)
+    outputObj["local_frame"] = local_frame
+    my_logger.debug("Attitude: %s", inVehicle.attitude)
+    outputObj["attitude"] = {"pitch": inVehicle.attitude.pitch, "roll": inVehicle.attitude.roll, "yaw": inVehicle.attitude.yaw}
+    my_logger.debug("Velocity: %s", inVehicle.velocity)
+    outputObj["velocity"] = (inVehicle.velocity)
+    my_logger.debug("GPS: %s", inVehicle.gps_0)
+    outputObj["gps_0"] = {
+        "eph": (
+            inVehicle.gps_0.eph), "epv": (
+            inVehicle.gps_0.eph), "fix_type": (
+                inVehicle.gps_0.fix_type), "satellites_visible": (
+                    inVehicle.gps_0.satellites_visible)}
+    my_logger.debug("Groundspeed: %s", inVehicle.groundspeed)
+    outputObj["groundspeed"] = (inVehicle.groundspeed)
+    my_logger.debug("Airspeed: %s", inVehicle.airspeed)
+    outputObj["airspeed"] = (inVehicle.airspeed)
+    my_logger.debug("Gimbal status: %s", inVehicle.gimbal)
+    outputObj["gimbal"] = {"pitch": inVehicle.gimbal.pitch, "roll": inVehicle.gimbal.roll, "yaw": inVehicle.gimbal.yaw}
+    my_logger.debug("Battery: %s", inVehicle.battery)
+    outputObj["battery"] = {"voltage": inVehicle.battery.voltage, "current": inVehicle.battery.current, "level": inVehicle.battery.level}
+    my_logger.debug("EKF OK?: %s", inVehicle.ekf_ok)
+    outputObj["ekf_ok"] = (inVehicle.ekf_ok)
+    my_logger.debug("Last Heartbeat: %s", inVehicle.last_heartbeat)
+    outputObj["last_heartbeat"] = (inVehicle.last_heartbeat)
+    my_logger.debug("Rangefinder: %s", inVehicle.rangefinder)
+    outputObj["rangefinder"] = {"distance": inVehicle.rangefinder.distance, "voltage": inVehicle.rangefinder.voltage}
+    my_logger.debug("Heading: %s", inVehicle.heading)
+    outputObj["heading"] = (inVehicle.heading)
+    my_logger.debug("Is Armable?: %s", inVehicle.is_armable)
+    outputObj["is_armable"] = (inVehicle.is_armable)
+    my_logger.debug("System status: %s", inVehicle.system_status.state)
+    outputObj["system_status"] = str(inVehicle.system_status.state)
+    my_logger.debug("Mode: %s", inVehicle.mode.name)  # settable
+    outputObj["mode"] = str(inVehicle.mode.name)
+    my_logger.debug("Armed: %s", inVehicle.armed)  # settable
+    outputObj["armed"] = (inVehicle.armed)
+
+    zone = authorizedZoneDict.get(inVehicleId, None)
+    if (zone is not None):
+        outputObj["zone"] = authorizedZoneDict.get(inVehicleId, None)
+        # check if vehicle still in zone
+        distance = distanceInMeters(
+            outputObj["zone"]["shape"]["lat"],
+            outputObj["zone"]["shape"]["lon"],
+            outputObj["global_frame"]["lat"],
+            outputObj["global_frame"]["lon"])
+        if (distance > 500):
+            droneAPICommand.rtl(inVehicle)
+    my_logger.debug("Vehicle status output: %s" % outputObj)
+
+    return outputObj
+
+# get the next image and port to launch dronesim docker image (create new image if necessary)
+
+
+def getNexthostAndPort():
+    firstFreePort = 0
+    keys = redisdB.keys("dockerHostsArray")
+    dockerHostsArray = json.loads(redisdB.get(keys[0]))
+    my_logger.info("dockerHostsArray")
+    my_logger.info(dockerHostsArray)
+
+    # initially always use current image
+    for i in range(14550, 14560):
+        # find first unused port
+        portList = dockerHostsArray[0]['usedPorts']  # [{"internalIP":"172.17.0.1","usedPorts":[]}]
+        if not(i in portList):
+            firstFreePort = i
+            break
+    dockerHostsArray[0]['usedPorts'].append(i)
+    my_logger.info("First unassigned port:" + str(firstFreePort))
+
+    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
+    return {"image": dockerHostsArray[0]['internalIP'], "port": firstFreePort}
+
+
+def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id, in_key=''):
+    global workerURL
+    connection = None
+    docker_container_id = "N/A"
+    my_logger.info("************ Creating Drone %s : %s : %s : %s : %s : %s : %s : %s ***********",
+                   droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id, in_key)
+
+    key = ''
+
+    if (in_key == ''):
+        uuidVal = uuid.uuid4()
+        key = str(uuidVal)[:8]
+    else:
+        key = in_key
+
+    environmentString = 'LOCATION=' + str(drone_lat) + ',' + str(drone_lon) + ',' + str(drone_alt) + ',' + str(drone_dir)
+    my_logger.info("Start location environement %s", environmentString)
+
+    # build simulated drone or proxy via Docker
+    # docker api available on host at
+    # http://172.17.0.1:4243/containers/json
+
+    #private_ip_address=this.launchCloudImage('ami-5be0f43f', 't2.micro', ['sg-fd0c8394'])
+    #connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
+    hostAndPort = getNexthostAndPort()
+    dockerClient = docker.DockerClient(
+        version='1.27',
+        base_url='tcp://' +
+        hostAndPort['image'] +
+        ':4243')  # docker.from_env(version='1.27')
+    dockerContainer = None
+    containerName = 'lesterthomas/droneproxy:1.0'
+    if (droneType == "simulated"):
+        containerName = 'lesterthomas/dronesim:1.8'
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            environment=[environmentString],
+            detach=True,
+            ports={
+                '14550/tcp': hostAndPort['port']},
+            name=key)
+    else:
+        containerName = 'lesterthomas/droneproxy:1.0'
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            detach=True,
+            ports={
+                '14550/tcp': hostAndPort['port'] + 10,
+                '14551/tcp': hostAndPort['port'],
+                '14552/tcp': hostAndPort['port'] + 20},
+            name=key)
+
+    docker_container_id = dockerContainer.id
+    my_logger.info("container Id=%s", str(docker_container_id))
+
+    connection = "tcp:" + hostAndPort['image'] + ":" + str(hostAndPort['port'])
+
+    my_logger.debug(connection)
+
+    my_logger.info("adding vehicle to Redis db with key 'vehicle:%s:%s'", str(user_id), str(key))
+    droneDBDetails = {"vehicle_details": {"connection_string": connection,
+                                          "name": vehicleName,
+                                          "port": hostAndPort['port'],
+                                          "vehicle_type": droneType},
+                      "host_details": {"host": hostAndPort['image'],
+                                       "start_time": time.time(),
+                                       "docker_container_id": docker_container_id,
+                                       "worker_url": workerURL}}
+
+    if (droneType == 'real'):
+        droneDBDetails['vehicle_details']['drone_connect_to'] = hostAndPort['port'] + 10
+        droneDBDetails['vehicle_details']['groundstation_connect_to'] = hostAndPort['port'] + 20
+
+    redisdB.set("vehicle:" + str(user_id) + ":" + key, json.dumps(droneDBDetails))
+    redisdB.set("vehicle_commands:" + str(user_id) + ":" + key, json.dumps({"commands": []}))
+
+    outputObj = {}
+    outputObj["connection"] = connection
+    if (droneType == "real"):
+        outputObj["drone_connect_to"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 10)
+        outputObj["groundstation_connect_to"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 20)
+    outputObj["id"] = key
+    my_logger.info("Return: =" + json.dumps(outputObj))
+    return outputObj
+
+
+class worker(Thread):
+    """This class provides a background worker thread that polls all the drone objects and updates the Redis database.
+    This allows the GET URL requests to be served in a stateless manner from the Redis database."""
+
+    def run(self):
+        global webApp, workerHostname
+        try:
+            worker_iterations = 1
+            continue_iterating = True
+            while continue_iterating:
+                worker_iterations = worker_iterations + 1
+                service_parameters = json.loads(redisdB.get("service_parameters"))
+                iteration_time = service_parameters['iteration_time']
+
+                start_time = time.time()
+                containers_being_managed = 0
+                keys = redisdB.keys("vehicle:*")
+                for key in keys:
+                    my_logger.debug("key = '%s'", key)
+                    json_str = redisdB.get(key)
+                    if json_str is not None:  # vehicle may have been deleted
+                        my_logger.debug("redisDbObj = '%s'", json_str)
+                        vehicle = json.loads(json_str)
+                        worker_url = vehicle['host_details']['worker_url']
+                        if worker_url == workerURL:  # if this vehicle is managed by this worker component then process
+                            containers_being_managed = containers_being_managed + 1
+                            vehicle_id = key[-8:]
+                            user_id = key[8:-9]
+                            my_logger.info("Execute update for vehicle_id: %s ", vehicle_id)
+                            my_logger.debug("user_id: %s", user_id)
+                            self.executeUpdate(user_id, vehicle_id, vehicle, key)
+
+                elapsed_time = time.time() - start_time
+                my_logger.info("Background processing %i took %f", worker_iterations, elapsed_time)
+
+                if (worker_iterations % 10 == 0):  # perform check every 100 iterations
+                    self.checkToTakeoverMaster()
+
+                process = psutil.Process(os.getpid())
+
+                worker_record = {
+                    'master': workerMaster,
+                    'worker_url': workerURL,
+                    'containers_being_managed': containers_being_managed,
+                    'elapsed_time': elapsed_time,
+                    'worker_iterations': worker_iterations,
+                    'last_heartbeat': round(time.time(), 1),
+                    'memory': process.memory_info().rss,
+                    'cpu': psutil.cpu_percent(interval=0)}
+                redisdB.set('worker:' + workerHostname, json.dumps(worker_record))
+
+                if (worker_iterations % 10 == 0):  # perform check every 10 iterations
+                    continue_iterating = self.checkIfWorkerFinished(containers_being_managed, worker_iterations)
+                    if workerMaster:
+                        self.performMasterActions()
+
+                if (elapsed_time < iteration_time):
+                    time.sleep(iteration_time - elapsed_time)
+
+            # clean-up worker record
+            my_logger.info("Cleaning-up and exiting")
+            redisdB.delete('worker:' + workerHostname)
+            webApp.stop()
+            sys.exit()
+
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in worker.run  %s ", traceLines)
+            my_logger.exception(ex)
+        return
+
+    def executeUpdate(self, user_id, vehicle_id, vehicle, key):
+        try:
+            vehicle_obj = connectVehicle(user_id, vehicle_id)
+            vehicle_status = getVehicleStatus(vehicle_obj, vehicle_id)
+            vehicle['vehicle_status'] = vehicle_status
+            vehicle['host_details']['update_heartbeat'] = time.time()
+            redisdB.set(key, json.dumps(vehicle))
+        except Warning as warn:
+            my_logger.info("Caught warning in worker.run connectVehicle:%s ", str(warn))
+        except APIException as ex:
+            # these can safely be ignored during vehicle startup
+            my_logger.info("Caught exception: APIException in worker.run connectVehicle")
+            my_logger.exception(ex)
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in worker.run connectVehicle. %s ", traceLines)
+            my_logger.exception(ex)
+        return
+
+    def checkIfWorkerFinished(self, containers_being_managed, worker_iterations):
+        service_parameters = json.loads(redisdB.get("service_parameters"))
+        max_worker_iterations = service_parameters['max_worker_iterations']
+        min_number_of_workers = service_parameters['min_number_of_workers']
+
+        if ((worker_iterations > max_worker_iterations) and (containers_being_managed == 0)
+                ):  # if this worker has been going a long time and it is not managing any containers then stop this loop
+            keys = redisdB.keys("worker:*")
+            if len(keys) > min_number_of_workers:
+                return False
+        return True
+
+    def checkToTakeoverMaster(self):
+        # query redis to see if any other containers are the master. If none then takeover.
+        global workerMaster
+        if not workerMaster:
+            keys = redisdB.keys("worker:*")
+            master_found = False
+            for key in keys:
+                worker = json.loads(redisdB.get(key))
+                if worker['master']:
+                    # test if still active
+                    last_heartbeat = worker['last_heartbeat']
+                    time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+                    if time_since_heartbeat < 10:
+                        master_found = True
+            if not master_found:
+                workerMaster = True
+
+        return
+
+    def performMasterActions(self):
+        global workerURL
+        # query redis to see if any other containers are the master. If none then takeover.
+        my_logger.info("Performing Master actions")
+
+        service_parameters = json.loads(redisdB.get("service_parameters"))
+        target_number_of_workers = service_parameters['target_number_of_workers']
+        target_number_of_servers = service_parameters['target_number_of_servers']
+        worker_port_range_start = service_parameters['worker_port_range_start']
+        thisWorkerIP = workerURL[:-5]
+
+        # *************************************************************
+        # Check if I should create a new worker
+        keys = redisdB.keys("worker:*")
+        worker_urls_used = {}
+        for key in keys:
+            worker = json.loads(redisdB.get(key))
+            my_logger.info(worker)
+            # Check if any workers are unresponsive
+            last_heartbeat = worker['last_heartbeat']
+            time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+            my_logger.info("time_since_heartbeat:%f", time_since_heartbeat)
+            if time_since_heartbeat > 10:
+                redisdB.delete(key)
+            else:
+                worker_urls_used[worker['worker_url']] = True
+                my_logger.info("Urls and Ports Used: %s", worker_urls_used)
+
+        keys = redisdB.keys("worker:*")
+        if len(keys) < target_number_of_workers:
+            # start a new worker
+
+            nextPortNumber = worker_port_range_start
+            my_logger.info("thisWorkerIP: %s", thisWorkerIP)
+            emptyPortFound = False
+
+            while (emptyPortFound == False):
+                test_key = thisWorkerIP + ":" + str(nextPortNumber)
+                url_used = test_key in worker_urls_used
+                my_logger.info("Testing if there is a worker at: %s returns %s", thisWorkerIP + ":" + str(nextPortNumber), str(url_used))
+                if not url_used:
+                    emptyPortFound = True
+                else:
+                    nextPortNumber = nextPortNumber + 1
+
+            self.createWorker(thisWorkerIP, nextPortNumber)
+
+        # *************************************************************
+        # Check if I should create a new server
+        keys = redisdB.keys("server:*")
+        for key in keys:
+            server = json.loads(redisdB.get(key))
+            my_logger.info(server)
+            # Check if any server are unresponsive
+            last_heartbeat = server['last_heartbeat']
+            time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+            my_logger.info("time_since_heartbeat:%f", time_since_heartbeat)
+            if time_since_heartbeat > 10:
+                redisdB.delete(key)
+
+        keys = redisdB.keys("server:*")
+        for key in keys:
+            server = json.loads(redisdB.get(key))
+            my_logger.info(server)
+
+        if len(keys) < target_number_of_servers:
+            # start a new server
+            self.createServer()
+
+        return
+
+    def createWorker(self, worker_ip, worker_port):
+        global defaultDockerHost, workerImage, serverImage, dronesimImage, homeDomain
+        try:
+            my_logger.info("Creating a new worker at: %s", "worker:" + worker_ip + ":" + str(worker_port))
+
+            connection = None
+            docker_container_id = "N/A"
+
+            # build simulated drone or proxy via Docker
+            # docker api available on host at
+            # http://172.17.0.1:4243/containers/json
+            dockerClient = docker.DockerClient(
+                version='1.27',
+                base_url='tcp://' +
+                defaultDockerHost +
+                ':4243')
+
+            dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
+
+            dockerContainer = None
+            containerName = workerImage
+            dockerContainer = dockerClient.containers.run(
+                containerName,
+                environment=[
+                    "DRONEAPI_URL=" + homeDomain,
+                    "DOCKER_DRONESIM_IMAGE=" + dronesimImage,
+                    "DOCKER_WORKER_IMAGE=" + workerImage,
+                    "DOCKER_SERVER_IMAGE=" + serverImage,
+                    "DOCKER_HOST_IP=172.17.0.1",
+                    "WORKER_URL=" + worker_ip + ":" + str(worker_port)],
+                links={
+                    "redis": "redis"},
+                detach=True,
+                ports={
+                    '1234/tcp': worker_port})
+
+            docker_container_id = dockerContainer.id
+            my_logger.info("container Id=%s", str(docker_container_id))
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in createWorker. %s ", traceLines)
+            my_logger.exception(ex)
+        return
+
+    def createServer(self):
+
+        global defaultDockerHost, serverImage, dronesimImage, homeDomain
+        try:
+            my_logger.info("Creating a new server")
+
+            virtual_host_list = homeDomain.split("/")
+            virtual_host = virtual_host_list[-1]
+            my_logger.info("virtual_host: %s", virtual_host)
+
+            connection = None
+            docker_container_id = "N/A"
+
+            # build simulated drone or proxy via Docker
+            # docker api available on host at
+            # http://172.17.0.1:4243/containers/json
+            dockerClient = docker.DockerClient(
+                version='1.27',
+                base_url='tcp://' +
+                defaultDockerHost +
+                ':4243')
+
+            dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
+
+            dockerContainer = None
+            containerName = serverImage
+
+            dockerContainer = dockerClient.containers.run(
+                containerName,
+                environment=[
+                    "DRONEAPI_URL=" + homeDomain,
+                    "VIRTUAL_HOST=" + virtual_host,
+                    "DOCKER_HOST_IP=172.17.0.1"],
+                links={
+                    "redis": "redis"},
+                detach=True)
+
+            docker_container_id = dockerContainer.id
+            my_logger.info("container Id=%s", str(docker_container_id))
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in createWorker. %s ", traceLines)
+            my_logger.exception(ex)
+        return
+</code></pre>
+  </div>
+
+  </header>
+
+  <section id="section-items">
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.applyHeadders">
+    <p>def <span class="ident">applyHeadders</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.applyHeadders', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.applyHeadders" class="source">
+    <pre><code>def applyHeadders():
+    my_logger.debug('Applying HTTP headers')
+    web.header('Content-Type', 'application/json')
+    web.header('Access-Control-Allow-Origin', '*')
+    web.header('Access-Control-Allow-Credentials', 'true')
+    web.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
+    web.header('Access-Control-Allow-Headers', 'Content-Type')
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.connectVehicle">
+    <p>def <span class="ident">connectVehicle</span>(</p><p>user_id, inVehicleId)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.connectVehicle', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.connectVehicle" class="source">
+    <pre><code>def connectVehicle(user_id, inVehicleId):
+    #global connection_string_array
+    global redisdB
+    global connectionDict
+    try:
+        my_logger.debug("connectVehicle called with inVehicleId = " + str(inVehicleId))
+        # connection_string=connection_string_array[inVehicleId]
+        json_str = redisdB.get('vehicle:' + user_id + ":" + str(inVehicleId))
+        my_logger.debug("Redis returns '" + str(json_str) + "'")
+        if (json_str is None):
+            my_logger.warn("Raising Vehicle not found warning")
+            raise Warning('Vehicle not found ')
+        my_logger.debug("redisDbObj = '" + json_str + "'")
+        json_obj = json.loads(json_str)
+        vehicle_details = json_obj['vehicle_details']
+        host_details = json_obj['host_details']
+        connection_string = vehicle_details['connection_string']
+        vehicleName = vehicle_details['name']
+        vehicle_type = vehicle_details['vehicle_type']
+        vehicle_start_time = host_details['start_time']
+        currentTime = time.time()
+        timeSinceStart = currentTime - vehicle_start_time
+        my_logger.debug("timeSinceStart= " + str(timeSinceStart))
+        if (timeSinceStart < 12):  # less than 10 seconds so throw Exception
+            my_logger.warn("Raising Vehicle starting up warning")
+            raise Warning('Vehicle starting up ')
+
+        my_logger.debug("connection string for vehicle " + str(inVehicleId) + "='" + connection_string + "'")
+
+        if host_details['worker_url'] == 'Power-Off':
+            my_logger.warn("Raising Drone is Powered-Off warning")
+            raise Warning('Drone is Powered-Off')
+
+        # Connect to the Vehicle.
+        elif not connectionDict.get(inVehicleId):
+            my_logger.info("connection_string: %s" % (connection_string,))
+            my_logger.info("Connecting to vehicle on: %s" % (connection_string,))
+            connectionNameTypeDict[inVehicleId] = {"name": vehicleName, "vehicle_type": vehicle_type}
+            connectionDict[inVehicleId] = connect(connection_string, wait_ready=True, heartbeat_timeout=10)
+        else:
+            my_logger.debug("Already connected to vehicle")
+    except Warning as w:
+        my_logger.warn("Caught warning: " + str(w))
+        raise Warning(str(w))
+    except Exception as e:
+        my_logger.warn("Caught exceptio: Unexpected error in connectVehicle:")
+        my_logger.warn("VehicleId=" + str(inVehicleId))
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        raise Exception('Unexpected error connecting to vehicle ' + str(inVehicleId))
+    return connectionDict[inVehicleId]
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.createDrone">
+    <p>def <span class="ident">createDrone</span>(</p><p>droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id, in_key=&#39;&#39;)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.createDrone', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.createDrone" class="source">
+    <pre><code>def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id, in_key=''):
+    global workerURL
+    connection = None
+    docker_container_id = "N/A"
+    my_logger.info("************ Creating Drone %s : %s : %s : %s : %s : %s : %s : %s ***********",
+                   droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id, in_key)
+
+    key = ''
+
+    if (in_key == ''):
+        uuidVal = uuid.uuid4()
+        key = str(uuidVal)[:8]
+    else:
+        key = in_key
+
+    environmentString = 'LOCATION=' + str(drone_lat) + ',' + str(drone_lon) + ',' + str(drone_alt) + ',' + str(drone_dir)
+    my_logger.info("Start location environement %s", environmentString)
+
+    # build simulated drone or proxy via Docker
+    # docker api available on host at
+    # http://172.17.0.1:4243/containers/json
+
+    #private_ip_address=this.launchCloudImage('ami-5be0f43f', 't2.micro', ['sg-fd0c8394'])
+    #connection="tcp:" + str(createresponse[0].private_ip_address) + ":14550"
+    hostAndPort = getNexthostAndPort()
+    dockerClient = docker.DockerClient(
+        version='1.27',
+        base_url='tcp://' +
+        hostAndPort['image'] +
+        ':4243')  # docker.from_env(version='1.27')
+    dockerContainer = None
+    containerName = 'lesterthomas/droneproxy:1.0'
+    if (droneType == "simulated"):
+        containerName = 'lesterthomas/dronesim:1.8'
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            environment=[environmentString],
+            detach=True,
+            ports={
+                '14550/tcp': hostAndPort['port']},
+            name=key)
+    else:
+        containerName = 'lesterthomas/droneproxy:1.0'
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            detach=True,
+            ports={
+                '14550/tcp': hostAndPort['port'] + 10,
+                '14551/tcp': hostAndPort['port'],
+                '14552/tcp': hostAndPort['port'] + 20},
+            name=key)
+
+    docker_container_id = dockerContainer.id
+    my_logger.info("container Id=%s", str(docker_container_id))
+
+    connection = "tcp:" + hostAndPort['image'] + ":" + str(hostAndPort['port'])
+
+    my_logger.debug(connection)
+
+    my_logger.info("adding vehicle to Redis db with key 'vehicle:%s:%s'", str(user_id), str(key))
+    droneDBDetails = {"vehicle_details": {"connection_string": connection,
+                                          "name": vehicleName,
+                                          "port": hostAndPort['port'],
+                                          "vehicle_type": droneType},
+                      "host_details": {"host": hostAndPort['image'],
+                                       "start_time": time.time(),
+                                       "docker_container_id": docker_container_id,
+                                       "worker_url": workerURL}}
+
+    if (droneType == 'real'):
+        droneDBDetails['vehicle_details']['drone_connect_to'] = hostAndPort['port'] + 10
+        droneDBDetails['vehicle_details']['groundstation_connect_to'] = hostAndPort['port'] + 20
+
+    redisdB.set("vehicle:" + str(user_id) + ":" + key, json.dumps(droneDBDetails))
+    redisdB.set("vehicle_commands:" + str(user_id) + ":" + key, json.dumps({"commands": []}))
+
+    outputObj = {}
+    outputObj["connection"] = connection
+    if (droneType == "real"):
+        outputObj["drone_connect_to"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 10)
+        outputObj["groundstation_connect_to"] = "tcp:droneapi.ddns.net:" + str(hostAndPort['port'] + 20)
+    outputObj["id"] = key
+    my_logger.info("Return: =" + json.dumps(outputObj))
+    return outputObj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.distanceInMeters">
+    <p>def <span class="ident">distanceInMeters</span>(</p><p>lat1, lon1, lat2, lon2)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.distanceInMeters', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.distanceInMeters" class="source">
+    <pre><code>def distanceInMeters(lat1, lon1, lat2, lon2):
+    # approximate radius of earth in km
+    R = 6373.0
+    lat1 = math.radians(lat1)
+    lon1 = math.radians(lon1)
+    lat2 = math.radians(lat2)
+    lon2 = math.radians(lon2)
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = (math.sin(dlat / 2))**2 + math.cos(lat1) * math.cos(lat2) * (math.sin(dlon / 2))**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distance = R * c
+    return distance * 1000
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.getEnvironmentVariable">
+    <p>def <span class="ident">getEnvironmentVariable</span>(</p><p>inVariable)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.getEnvironmentVariable', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.getEnvironmentVariable" class="source">
+    <pre><code>def getEnvironmentVariable(inVariable):
+    try:
+        envVariable = os.environ[inVariable]
+        my_logger.info("Env variable " + inVariable + "=" + envVariable)
+        return envVariable
+    except Exception as e:
+        my_logger.error("Can't get environment variable " + inVariable)
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        my_logger.exception(traceLines)
+    return ""
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.getNexthostAndPort">
+    <p>def <span class="ident">getNexthostAndPort</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.getNexthostAndPort', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.getNexthostAndPort" class="source">
+    <pre><code>def getNexthostAndPort():
+    firstFreePort = 0
+    keys = redisdB.keys("dockerHostsArray")
+    dockerHostsArray = json.loads(redisdB.get(keys[0]))
+    my_logger.info("dockerHostsArray")
+    my_logger.info(dockerHostsArray)
+
+    # initially always use current image
+    for i in range(14550, 14560):
+        # find first unused port
+        portList = dockerHostsArray[0]['usedPorts']  # [{"internalIP":"172.17.0.1","usedPorts":[]}]
+        if not(i in portList):
+            firstFreePort = i
+            break
+    dockerHostsArray[0]['usedPorts'].append(i)
+    my_logger.info("First unassigned port:" + str(firstFreePort))
+
+    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
+    return {"image": dockerHostsArray[0]['internalIP'], "port": firstFreePort}
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.getVehicleStatus">
+    <p>def <span class="ident">getVehicleStatus</span>(</p><p>inVehicle, inVehicleId)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.getVehicleStatus', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.getVehicleStatus" class="source">
+    <pre><code>def getVehicleStatus(inVehicle, inVehicleId):
+    # inVehicle is an instance of the Vehicle class
+    outputObj = {}
+    my_logger.debug("Autopilot Firmware version: %s", inVehicle.version)
+    outputObj["version"] = str(inVehicle.version)
+    my_logger.debug("Global Location: %s", inVehicle.location.global_frame)
+    global_frame = latLonAltObj(inVehicle.location.global_frame)
+    outputObj["global_frame"] = global_frame
+    my_logger.debug("Global Location (relative altitude): %s", inVehicle.location.global_relative_frame)
+    global_relative_frame = latLonAltObj(inVehicle.location.global_relative_frame)
+    outputObj["global_relative_frame"] = global_relative_frame
+    my_logger.debug("Local Location: %s", inVehicle.location.local_frame)  # NED
+    local_frame = {}
+    local_frame["north"] = (inVehicle.location.local_frame.north)
+    local_frame["east"] = (inVehicle.location.local_frame.east)
+    local_frame["down"] = (inVehicle.location.local_frame.down)
+    outputObj["local_frame"] = local_frame
+    my_logger.debug("Attitude: %s", inVehicle.attitude)
+    outputObj["attitude"] = {"pitch": inVehicle.attitude.pitch, "roll": inVehicle.attitude.roll, "yaw": inVehicle.attitude.yaw}
+    my_logger.debug("Velocity: %s", inVehicle.velocity)
+    outputObj["velocity"] = (inVehicle.velocity)
+    my_logger.debug("GPS: %s", inVehicle.gps_0)
+    outputObj["gps_0"] = {
+        "eph": (
+            inVehicle.gps_0.eph), "epv": (
+            inVehicle.gps_0.eph), "fix_type": (
+                inVehicle.gps_0.fix_type), "satellites_visible": (
+                    inVehicle.gps_0.satellites_visible)}
+    my_logger.debug("Groundspeed: %s", inVehicle.groundspeed)
+    outputObj["groundspeed"] = (inVehicle.groundspeed)
+    my_logger.debug("Airspeed: %s", inVehicle.airspeed)
+    outputObj["airspeed"] = (inVehicle.airspeed)
+    my_logger.debug("Gimbal status: %s", inVehicle.gimbal)
+    outputObj["gimbal"] = {"pitch": inVehicle.gimbal.pitch, "roll": inVehicle.gimbal.roll, "yaw": inVehicle.gimbal.yaw}
+    my_logger.debug("Battery: %s", inVehicle.battery)
+    outputObj["battery"] = {"voltage": inVehicle.battery.voltage, "current": inVehicle.battery.current, "level": inVehicle.battery.level}
+    my_logger.debug("EKF OK?: %s", inVehicle.ekf_ok)
+    outputObj["ekf_ok"] = (inVehicle.ekf_ok)
+    my_logger.debug("Last Heartbeat: %s", inVehicle.last_heartbeat)
+    outputObj["last_heartbeat"] = (inVehicle.last_heartbeat)
+    my_logger.debug("Rangefinder: %s", inVehicle.rangefinder)
+    outputObj["rangefinder"] = {"distance": inVehicle.rangefinder.distance, "voltage": inVehicle.rangefinder.voltage}
+    my_logger.debug("Heading: %s", inVehicle.heading)
+    outputObj["heading"] = (inVehicle.heading)
+    my_logger.debug("Is Armable?: %s", inVehicle.is_armable)
+    outputObj["is_armable"] = (inVehicle.is_armable)
+    my_logger.debug("System status: %s", inVehicle.system_status.state)
+    outputObj["system_status"] = str(inVehicle.system_status.state)
+    my_logger.debug("Mode: %s", inVehicle.mode.name)  # settable
+    outputObj["mode"] = str(inVehicle.mode.name)
+    my_logger.debug("Armed: %s", inVehicle.armed)  # settable
+    outputObj["armed"] = (inVehicle.armed)
+
+    zone = authorizedZoneDict.get(inVehicleId, None)
+    if (zone is not None):
+        outputObj["zone"] = authorizedZoneDict.get(inVehicleId, None)
+        # check if vehicle still in zone
+        distance = distanceInMeters(
+            outputObj["zone"]["shape"]["lat"],
+            outputObj["zone"]["shape"]["lon"],
+            outputObj["global_frame"]["lat"],
+            outputObj["global_frame"]["lon"])
+        if (distance > 500):
+            droneAPICommand.rtl(inVehicle)
+    my_logger.debug("Vehicle status output: %s" % outputObj)
+
+    return outputObj
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.initaliseGlobals">
+    <p>def <span class="ident">initaliseGlobals</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.initaliseGlobals', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.initaliseGlobals" class="source">
+    <pre><code>def initaliseGlobals():
+    global homeDomain, dronesimImage, defaultDockerHost, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster, workerImage, serverImage, workerHostname
+
+    # Set environment variables
+    homeDomain = getEnvironmentVariable('DRONEAPI_URL')
+    dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
+    workerImage = getEnvironmentVariable('DOCKER_WORKER_IMAGE')
+    serverImage = getEnvironmentVariable('DOCKER_SERVER_IMAGE')
+    defaultDockerHost = getEnvironmentVariable('DOCKER_HOST_IP')
+    workerURL = getEnvironmentVariable('WORKER_URL')
+    workerMaster = False
+    workerHostname = socket.gethostname()
+
+    # set global variables
+    connectionDict = {}  # holds a dictionary of DroneKit connection objects
+    connectionNameTypeDict = {}  # holds the additonal name, type and start_time for the conections
+    authorizedZoneDict = {}  # holds zone authorizations for each drone
+
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.initaliseLogger">
+    <p>def <span class="ident">initaliseLogger</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.initaliseLogger', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.initaliseLogger" class="source">
+    <pre><code>def initaliseLogger():
+    global my_logger
+
+    # Set logging framework
+    main_logger = logging.getLogger("DroneAPIServer")
+    LOG_FILENAME = 'droneapi.log'
+    main_logger.setLevel(logging.INFO)
+    handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=2000000, backupCount=5)
+    formatter = logging.Formatter("%(levelname)s - %(message)s")
+    handler.setFormatter(formatter)
+    main_logger.addHandler(handler)
+    main_logger.propegate = False
+
+    try:
+        main_logger.addHandler(watchtower.CloudWatchLogHandler(send_interval=10))
+    except BaseException:
+        main_logger.warn("Can not add CloudWatch Log Handler")
+
+    my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
+
+    my_logger.info("##################################################################################")
+    my_logger.info("Starting DroneAPI at %s", str(time.time()))
+    my_logger.info("##################################################################################")
+    my_logger.info("Logging level:" + str(logging.INFO))
+
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.initiliseRedisDB">
+    <p>def <span class="ident">initiliseRedisDB</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.initiliseRedisDB', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.initiliseRedisDB" class="source">
+    <pre><code>def initiliseRedisDB():
+
+    global redisdB
+    redisdB = redis.Redis(host='redis', port=6379)  # redis or localhost
+
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.latLonAltObj">
+    <p>def <span class="ident">latLonAltObj</span>(</p><p>inObj)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.latLonAltObj', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.latLonAltObj" class="source">
+    <pre><code>def latLonAltObj(inObj):
+    output = {}
+    output["lat"] = (inObj.lat)
+    output["lon"] = (inObj.lon)
+    output["alt"] = (inObj.alt)
+    return output
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.rebuildDockerHostsArray">
+    <p>def <span class="ident">rebuildDockerHostsArray</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.rebuildDockerHostsArray', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.rebuildDockerHostsArray" class="source">
+    <pre><code>def rebuildDockerHostsArray():
+    # reset dockerHostsArray
+    dockerHostsArray = [{"internalIP": defaultDockerHost, "usedPorts": []}]
+    keys = redisdB.keys("connection_string:*")
+    for key in keys:
+
+        json_str = redisdB.get(key)
+        json_obj = json.loads(json_str)
+        vehicle_details = json_obj['vehicle_details']
+        connection_string = vehicle_details['connection_string']
+        hostIp = connection_string[4:-6]
+        port = connection_string[-5:]
+        # check if this host already exists in dockerHostsArray
+        found = False
+        for host in dockerHostsArray:
+            if (host['internalIP'] == hostIp):
+                found = True
+        if (found == False):
+            dockerHostsArray.append({"internalIP": hostIp, "usedPorts": []})
+        # add this drone to docker host
+        for host in dockerHostsArray:
+            if (host['internalIP'] == hostIp):
+                host['usedPorts'].append(int(port))
+    my_logger.info("dockerHostsArray (rebuilt)")
+    my_logger.info(dockerHostsArray)
+    redisdB.set("dockerHostsArray", json.dumps(dockerHostsArray))
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.startBackgroundWorker">
+    <p>def <span class="ident">startBackgroundWorker</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.startBackgroundWorker', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.startBackgroundWorker" class="source">
+    <pre><code>def startBackgroundWorker():
+    worker().start()
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.validateAndRefreshContainers">
+    <p>def <span class="ident">validateAndRefreshContainers</span>(</p><p>)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.validateAndRefreshContainers', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.validateAndRefreshContainers" class="source">
+    <pre><code>def validateAndRefreshContainers():
+    try:
+        # test the redis dB
+        # remove any old entries (and any old docker containers)
+        my_logger.info("Connecting to Redis dB and removing any existing entries and stopping any existing containers at " + str(time.time()))
+
+        dockerHostsArray = []
+        redisdB.set('foo', 'bar')
+        my_logger.info("RedisSet " + str(time.time()))
+
+        value = redisdB.get('foo')
+        my_logger.info("RedisGet " + str(time.time()))
+        if (value == 'bar'):
+            my_logger.info("Connected to Redis dB")
+        else:
+            my_logger.error("Can not connect to Redis dB")
+            raise Exception('Can not connect to Redis dB on port 6379')
+
+        # drone reference data is in Redis database with a key for each drone
+        # there is also a dockerHostsArray that contains a simplified view of the same data for performance
+        # we will start/stop each docker container
+
+        keys = redisdB.keys("vehicle:*")
+        for key in keys:
+            my_logger.debug("key = '" + key + "'")
+            json_str = redisdB.get(key)
+            my_logger.debug("redisDbObj = '" + json_str + "'")
+            json_obj = json.loads(json_str)
+
+            worker_url = json_obj['host_details']['worker_url']
+            if worker_url == workerURL:  # if this vehicle is managed by this worker component then process
+
+                vehicle_details = json_obj['vehicle_details']
+                host_details = json_obj['host_details']
+                connection_string = vehicle_details['connection_string']
+                vehicleName = vehicle_details['name']
+                vehicle_type = vehicle_details['vehicle_type']
+                docker_container_id = host_details['docker_container_id']
+                droneId = key[-8:]
+                user_id = key[8:-9]
+                hostIp = connection_string[4:-6]
+                port = connection_string[-5:]
+                my_logger.info("connection_string:%s vehicleName:%s vehicle_type:%s droneId:%s hostIp:%s port:%s user_id:%s ",
+                               connection_string, vehicleName, vehicle_type, droneId, hostIp, port, user_id)
+
+                # stop and start this container (or start a new one if it doesn't exist)
+                dockerClient = docker.DockerClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
+                dockerAPIClient = docker.APIClient(version='1.27', base_url='tcp://' + hostIp + ':4243')  # docker.from_env(version='1.27')
+                containerFound = False
+                for container in dockerClient.containers.list(all=True):
+                    if (container.id == docker_container_id):
+                        containerFound = True
+                        my_logger.info("Container %s found - restarting", container.id)
+                        container.restart()
+                if (containerFound == False):
+                    my_logger.info("Container not found - creating")
+
+                    # check if there is a container on this host already using this port
+                    containerWithPort = False
+                    for container in dockerClient.containers.list():
+
+                        contPortObj = dockerAPIClient.port(container.id, 14550)
+                        if (contPortObj is not None):
+                            my_logger.info("Testing Container %s port %s", container.id, contPortObj)
+                            if (contPortObj[0]['HostPort'] == port):
+                                # container found. restart
+                                my_logger.info("Container found - restarting")
+                                containerWithPort = True
+                                container.restart()
+                                # update Redis with new container Id
+                                docker_container_id = container.id
+                                redisdB.set(key,
+                                            json.dumps({"vehicle_details": {"connection_string": connection_string,
+                                                                            "name": vehicleName,
+                                                                            "vehicle_type": vehicle_type,
+                                                                            "start_time": time.time(),
+                                                                            "docker_container_id": docker_container_id}}))
+
+                    if (containerWithPort == False):
+                        my_logger.info("Container not found - creating new")
+
+                        createDrone(vehicle_type, vehicleName, '51.4049', '1.3049', '105', '0', user_id)
+
+                        #dockerContainer = dockerClient.containers.run(dronesimImage, detach=True, ports={'14550/tcp': port}, name=droneId)
+                        #docker_container_id = dockerContainer.id
+                        # update redis
+                        # redisdB.set(key,
+                        #            json.dumps({"connection_string": connection_string,
+                        #                        "name": vehicleName,
+                        #                        "vehicle_type": vehicle_type,
+                        #                        "start_time": time.time(),
+                        #                        "docker_container_id": docker_container_id}))
+
+    except Exception as e:
+        my_logger.warn("Caught exception: Unexpected error in validateAndRefreshContainers:")
+        my_logger.exception(e)
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="droneAPIUtils.worker" class="name">class <span class="ident">worker</span></p>
+      
+  
+    <div class="desc"><p>This class provides a background worker thread that polls all the drone objects and updates the Redis database.
+This allows the GET URL requests to be served in a stateless manner from the Redis database.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker" class="source">
+    <pre><code>class worker(Thread):
+    """This class provides a background worker thread that polls all the drone objects and updates the Redis database.
+    This allows the GET URL requests to be served in a stateless manner from the Redis database."""
+
+    def run(self):
+        global webApp, workerHostname
+        try:
+            worker_iterations = 1
+            continue_iterating = True
+            while continue_iterating:
+                worker_iterations = worker_iterations + 1
+                service_parameters = json.loads(redisdB.get("service_parameters"))
+                iteration_time = service_parameters['iteration_time']
+
+                start_time = time.time()
+                containers_being_managed = 0
+                keys = redisdB.keys("vehicle:*")
+                for key in keys:
+                    my_logger.debug("key = '%s'", key)
+                    json_str = redisdB.get(key)
+                    if json_str is not None:  # vehicle may have been deleted
+                        my_logger.debug("redisDbObj = '%s'", json_str)
+                        vehicle = json.loads(json_str)
+                        worker_url = vehicle['host_details']['worker_url']
+                        if worker_url == workerURL:  # if this vehicle is managed by this worker component then process
+                            containers_being_managed = containers_being_managed + 1
+                            vehicle_id = key[-8:]
+                            user_id = key[8:-9]
+                            my_logger.info("Execute update for vehicle_id: %s ", vehicle_id)
+                            my_logger.debug("user_id: %s", user_id)
+                            self.executeUpdate(user_id, vehicle_id, vehicle, key)
+
+                elapsed_time = time.time() - start_time
+                my_logger.info("Background processing %i took %f", worker_iterations, elapsed_time)
+
+                if (worker_iterations % 10 == 0):  # perform check every 100 iterations
+                    self.checkToTakeoverMaster()
+
+                process = psutil.Process(os.getpid())
+
+                worker_record = {
+                    'master': workerMaster,
+                    'worker_url': workerURL,
+                    'containers_being_managed': containers_being_managed,
+                    'elapsed_time': elapsed_time,
+                    'worker_iterations': worker_iterations,
+                    'last_heartbeat': round(time.time(), 1),
+                    'memory': process.memory_info().rss,
+                    'cpu': psutil.cpu_percent(interval=0)}
+                redisdB.set('worker:' + workerHostname, json.dumps(worker_record))
+
+                if (worker_iterations % 10 == 0):  # perform check every 10 iterations
+                    continue_iterating = self.checkIfWorkerFinished(containers_being_managed, worker_iterations)
+                    if workerMaster:
+                        self.performMasterActions()
+
+                if (elapsed_time < iteration_time):
+                    time.sleep(iteration_time - elapsed_time)
+
+            # clean-up worker record
+            my_logger.info("Cleaning-up and exiting")
+            redisdB.delete('worker:' + workerHostname)
+            webApp.stop()
+            sys.exit()
+
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in worker.run  %s ", traceLines)
+            my_logger.exception(ex)
+        return
+
+    def executeUpdate(self, user_id, vehicle_id, vehicle, key):
+        try:
+            vehicle_obj = connectVehicle(user_id, vehicle_id)
+            vehicle_status = getVehicleStatus(vehicle_obj, vehicle_id)
+            vehicle['vehicle_status'] = vehicle_status
+            vehicle['host_details']['update_heartbeat'] = time.time()
+            redisdB.set(key, json.dumps(vehicle))
+        except Warning as warn:
+            my_logger.info("Caught warning in worker.run connectVehicle:%s ", str(warn))
+        except APIException as ex:
+            # these can safely be ignored during vehicle startup
+            my_logger.info("Caught exception: APIException in worker.run connectVehicle")
+            my_logger.exception(ex)
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in worker.run connectVehicle. %s ", traceLines)
+            my_logger.exception(ex)
+        return
+
+    def checkIfWorkerFinished(self, containers_being_managed, worker_iterations):
+        service_parameters = json.loads(redisdB.get("service_parameters"))
+        max_worker_iterations = service_parameters['max_worker_iterations']
+        min_number_of_workers = service_parameters['min_number_of_workers']
+
+        if ((worker_iterations > max_worker_iterations) and (containers_being_managed == 0)
+                ):  # if this worker has been going a long time and it is not managing any containers then stop this loop
+            keys = redisdB.keys("worker:*")
+            if len(keys) > min_number_of_workers:
+                return False
+        return True
+
+    def checkToTakeoverMaster(self):
+        # query redis to see if any other containers are the master. If none then takeover.
+        global workerMaster
+        if not workerMaster:
+            keys = redisdB.keys("worker:*")
+            master_found = False
+            for key in keys:
+                worker = json.loads(redisdB.get(key))
+                if worker['master']:
+                    # test if still active
+                    last_heartbeat = worker['last_heartbeat']
+                    time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+                    if time_since_heartbeat < 10:
+                        master_found = True
+            if not master_found:
+                workerMaster = True
+
+        return
+
+    def performMasterActions(self):
+        global workerURL
+        # query redis to see if any other containers are the master. If none then takeover.
+        my_logger.info("Performing Master actions")
+
+        service_parameters = json.loads(redisdB.get("service_parameters"))
+        target_number_of_workers = service_parameters['target_number_of_workers']
+        target_number_of_servers = service_parameters['target_number_of_servers']
+        worker_port_range_start = service_parameters['worker_port_range_start']
+        thisWorkerIP = workerURL[:-5]
+
+        # *************************************************************
+        # Check if I should create a new worker
+        keys = redisdB.keys("worker:*")
+        worker_urls_used = {}
+        for key in keys:
+            worker = json.loads(redisdB.get(key))
+            my_logger.info(worker)
+            # Check if any workers are unresponsive
+            last_heartbeat = worker['last_heartbeat']
+            time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+            my_logger.info("time_since_heartbeat:%f", time_since_heartbeat)
+            if time_since_heartbeat > 10:
+                redisdB.delete(key)
+            else:
+                worker_urls_used[worker['worker_url']] = True
+                my_logger.info("Urls and Ports Used: %s", worker_urls_used)
+
+        keys = redisdB.keys("worker:*")
+        if len(keys) < target_number_of_workers:
+            # start a new worker
+
+            nextPortNumber = worker_port_range_start
+            my_logger.info("thisWorkerIP: %s", thisWorkerIP)
+            emptyPortFound = False
+
+            while (emptyPortFound == False):
+                test_key = thisWorkerIP + ":" + str(nextPortNumber)
+                url_used = test_key in worker_urls_used
+                my_logger.info("Testing if there is a worker at: %s returns %s", thisWorkerIP + ":" + str(nextPortNumber), str(url_used))
+                if not url_used:
+                    emptyPortFound = True
+                else:
+                    nextPortNumber = nextPortNumber + 1
+
+            self.createWorker(thisWorkerIP, nextPortNumber)
+
+        # *************************************************************
+        # Check if I should create a new server
+        keys = redisdB.keys("server:*")
+        for key in keys:
+            server = json.loads(redisdB.get(key))
+            my_logger.info(server)
+            # Check if any server are unresponsive
+            last_heartbeat = server['last_heartbeat']
+            time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+            my_logger.info("time_since_heartbeat:%f", time_since_heartbeat)
+            if time_since_heartbeat > 10:
+                redisdB.delete(key)
+
+        keys = redisdB.keys("server:*")
+        for key in keys:
+            server = json.loads(redisdB.get(key))
+            my_logger.info(server)
+
+        if len(keys) < target_number_of_servers:
+            # start a new server
+            self.createServer()
+
+        return
+
+    def createWorker(self, worker_ip, worker_port):
+        global defaultDockerHost, workerImage, serverImage, dronesimImage, homeDomain
+        try:
+            my_logger.info("Creating a new worker at: %s", "worker:" + worker_ip + ":" + str(worker_port))
+
+            connection = None
+            docker_container_id = "N/A"
+
+            # build simulated drone or proxy via Docker
+            # docker api available on host at
+            # http://172.17.0.1:4243/containers/json
+            dockerClient = docker.DockerClient(
+                version='1.27',
+                base_url='tcp://' +
+                defaultDockerHost +
+                ':4243')
+
+            dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
+
+            dockerContainer = None
+            containerName = workerImage
+            dockerContainer = dockerClient.containers.run(
+                containerName,
+                environment=[
+                    "DRONEAPI_URL=" + homeDomain,
+                    "DOCKER_DRONESIM_IMAGE=" + dronesimImage,
+                    "DOCKER_WORKER_IMAGE=" + workerImage,
+                    "DOCKER_SERVER_IMAGE=" + serverImage,
+                    "DOCKER_HOST_IP=172.17.0.1",
+                    "WORKER_URL=" + worker_ip + ":" + str(worker_port)],
+                links={
+                    "redis": "redis"},
+                detach=True,
+                ports={
+                    '1234/tcp': worker_port})
+
+            docker_container_id = dockerContainer.id
+            my_logger.info("container Id=%s", str(docker_container_id))
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in createWorker. %s ", traceLines)
+            my_logger.exception(ex)
+        return
+
+    def createServer(self):
+
+        global defaultDockerHost, serverImage, dronesimImage, homeDomain
+        try:
+            my_logger.info("Creating a new server")
+
+            virtual_host_list = homeDomain.split("/")
+            virtual_host = virtual_host_list[-1]
+            my_logger.info("virtual_host: %s", virtual_host)
+
+            connection = None
+            docker_container_id = "N/A"
+
+            # build simulated drone or proxy via Docker
+            # docker api available on host at
+            # http://172.17.0.1:4243/containers/json
+            dockerClient = docker.DockerClient(
+                version='1.27',
+                base_url='tcp://' +
+                defaultDockerHost +
+                ':4243')
+
+            dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
+
+            dockerContainer = None
+            containerName = serverImage
+
+            dockerContainer = dockerClient.containers.run(
+                containerName,
+                environment=[
+                    "DRONEAPI_URL=" + homeDomain,
+                    "VIRTUAL_HOST=" + virtual_host,
+                    "DOCKER_HOST_IP=172.17.0.1"],
+                links={
+                    "redis": "redis"},
+                detach=True)
+
+            docker_container_id = dockerContainer.id
+            my_logger.info("container Id=%s", str(docker_container_id))
+        except Exception as ex:
+            tracebackStr = traceback.format_exc()
+            traceLines = tracebackStr.split("\n")
+            my_logger.warn("Caught exception: Unexpected error in createWorker. %s ", traceLines)
+            my_logger.exception(ex)
+        return
+</code></pre>
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#droneAPIUtils.worker">worker</a></li>
+          <li>threading.Thread</li>
+          <li>threading._Verbose</li>
+          <li>__builtin__.object</li>
+          </ul>
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="droneAPIUtils.worker.daemon" class="name">var <span class="ident">daemon</span></p>
+            
+
+            
+  
+    <div class="desc"><p>A boolean value indicating whether this thread is a daemon thread (True) or not (False).</p>
+<p>This must be set before start() is called, otherwise RuntimeError is
+raised. Its initial value is inherited from the creating thread; the
+main thread is not a daemon thread and therefore all threads created in
+the main thread default to daemon = False.</p>
+<p>The entire Python program exits when no alive non-daemon threads are
+left.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="droneAPIUtils.worker.ident" class="name">var <span class="ident">ident</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Thread identifier of this thread or None if it has not been started.</p>
+<p>This is a nonzero integer. See the thread.get_ident() function. Thread
+identifiers may be recycled when a thread exits and another thread is
+created. The identifier is available even after the thread has exited.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="droneAPIUtils.worker.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+    <div class="desc"><p>A string used for identification purposes only.</p>
+<p>It has no semantics. Multiple threads may be given the same name. The
+initial name is set by the constructor.</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+          <h3>Methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, group=None, target=None, name=None, args=(), kwargs=None, verbose=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>This constructor should always be called with keyword arguments. Arguments are:</p>
+<p><em>group</em> should be None; reserved for future extension when a ThreadGroup
+class is implemented.</p>
+<p><em>target</em> is the callable object to be invoked by the run()
+method. Defaults to None, meaning nothing is called.</p>
+<p><em>name</em> is the thread name. By default, a unique name is constructed of
+the form "Thread-N" where N is a small decimal number.</p>
+<p><em>args</em> is the argument tuple for the target invocation. Defaults to ().</p>
+<p><em>kwargs</em> is a dictionary of keyword arguments for the target
+invocation. Defaults to {}.</p>
+<p>If a subclass overrides the constructor, it must make sure to invoke
+the base class constructor (Thread.<strong>init</strong>()) before doing anything
+else to the thread.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.__init__" class="source">
+    <pre><code>def __init__(self, group=None, target=None, name=None,
+             args=(), kwargs=None, verbose=None):
+    """This constructor should always be called with keyword arguments. Arguments are:
+    *group* should be None; reserved for future extension when a ThreadGroup
+    class is implemented.
+    *target* is the callable object to be invoked by the run()
+    method. Defaults to None, meaning nothing is called.
+    *name* is the thread name. By default, a unique name is constructed of
+    the form "Thread-N" where N is a small decimal number.
+    *args* is the argument tuple for the target invocation. Defaults to ().
+    *kwargs* is a dictionary of keyword arguments for the target
+    invocation. Defaults to {}.
+    If a subclass overrides the constructor, it must make sure to invoke
+    the base class constructor (Thread.__init__()) before doing anything
+    else to the thread.
+    assert group is None, "group argument must be None for now"
+    _Verbose.__init__(self, verbose)
+    if kwargs is None:
+        kwargs = {}
+    self.__target = target
+    self.__name = str(name or _newname())
+    self.__args = args
+    self.__kwargs = kwargs
+    self.__daemonic = self._set_daemon()
+    self.__ident = None
+    self.__started = Event()
+    self.__stopped = False
+    self.__block = Condition(Lock())
+    self.__initialized = True
+    # sys.stderr is not stored in the class like
+    # sys.exc_info since it can be changed between instances
+    self.__stderr = _sys.stderr
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.checkIfWorkerFinished">
+    <p>def <span class="ident">checkIfWorkerFinished</span>(</p><p>self, containers_being_managed, worker_iterations)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.checkIfWorkerFinished', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.checkIfWorkerFinished" class="source">
+    <pre><code>def checkIfWorkerFinished(self, containers_being_managed, worker_iterations):
+    service_parameters = json.loads(redisdB.get("service_parameters"))
+    max_worker_iterations = service_parameters['max_worker_iterations']
+    min_number_of_workers = service_parameters['min_number_of_workers']
+    if ((worker_iterations > max_worker_iterations) and (containers_being_managed == 0)
+            ):  # if this worker has been going a long time and it is not managing any containers then stop this loop
+        keys = redisdB.keys("worker:*")
+        if len(keys) > min_number_of_workers:
+            return False
+    return True
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.checkToTakeoverMaster">
+    <p>def <span class="ident">checkToTakeoverMaster</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.checkToTakeoverMaster', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.checkToTakeoverMaster" class="source">
+    <pre><code>def checkToTakeoverMaster(self):
+    # query redis to see if any other containers are the master. If none then takeover.
+    global workerMaster
+    if not workerMaster:
+        keys = redisdB.keys("worker:*")
+        master_found = False
+        for key in keys:
+            worker = json.loads(redisdB.get(key))
+            if worker['master']:
+                # test if still active
+                last_heartbeat = worker['last_heartbeat']
+                time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+                if time_since_heartbeat < 10:
+                    master_found = True
+        if not master_found:
+            workerMaster = True
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.createServer">
+    <p>def <span class="ident">createServer</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.createServer', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.createServer" class="source">
+    <pre><code>def createServer(self):
+    global defaultDockerHost, serverImage, dronesimImage, homeDomain
+    try:
+        my_logger.info("Creating a new server")
+        virtual_host_list = homeDomain.split("/")
+        virtual_host = virtual_host_list[-1]
+        my_logger.info("virtual_host: %s", virtual_host)
+        connection = None
+        docker_container_id = "N/A"
+        # build simulated drone or proxy via Docker
+        # docker api available on host at
+        # http://172.17.0.1:4243/containers/json
+        dockerClient = docker.DockerClient(
+            version='1.27',
+            base_url='tcp://' +
+            defaultDockerHost +
+            ':4243')
+        dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
+        dockerContainer = None
+        containerName = serverImage
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            environment=[
+                "DRONEAPI_URL=" + homeDomain,
+                "VIRTUAL_HOST=" + virtual_host,
+                "DOCKER_HOST_IP=172.17.0.1"],
+            links={
+                "redis": "redis"},
+            detach=True)
+        docker_container_id = dockerContainer.id
+        my_logger.info("container Id=%s", str(docker_container_id))
+    except Exception as ex:
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        my_logger.warn("Caught exception: Unexpected error in createWorker. %s ", traceLines)
+        my_logger.exception(ex)
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.createWorker">
+    <p>def <span class="ident">createWorker</span>(</p><p>self, worker_ip, worker_port)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.createWorker', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.createWorker" class="source">
+    <pre><code>def createWorker(self, worker_ip, worker_port):
+    global defaultDockerHost, workerImage, serverImage, dronesimImage, homeDomain
+    try:
+        my_logger.info("Creating a new worker at: %s", "worker:" + worker_ip + ":" + str(worker_port))
+        connection = None
+        docker_container_id = "N/A"
+        # build simulated drone or proxy via Docker
+        # docker api available on host at
+        # http://172.17.0.1:4243/containers/json
+        dockerClient = docker.DockerClient(
+            version='1.27',
+            base_url='tcp://' +
+            defaultDockerHost +
+            ':4243')
+        dockerClient.containers.prune(filters=None)  # remove any old containers to free-up the ports
+        dockerContainer = None
+        containerName = workerImage
+        dockerContainer = dockerClient.containers.run(
+            containerName,
+            environment=[
+                "DRONEAPI_URL=" + homeDomain,
+                "DOCKER_DRONESIM_IMAGE=" + dronesimImage,
+                "DOCKER_WORKER_IMAGE=" + workerImage,
+                "DOCKER_SERVER_IMAGE=" + serverImage,
+                "DOCKER_HOST_IP=172.17.0.1",
+                "WORKER_URL=" + worker_ip + ":" + str(worker_port)],
+            links={
+                "redis": "redis"},
+            detach=True,
+            ports={
+                '1234/tcp': worker_port})
+        docker_container_id = dockerContainer.id
+        my_logger.info("container Id=%s", str(docker_container_id))
+    except Exception as ex:
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        my_logger.warn("Caught exception: Unexpected error in createWorker. %s ", traceLines)
+        my_logger.exception(ex)
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.executeUpdate">
+    <p>def <span class="ident">executeUpdate</span>(</p><p>self, user_id, vehicle_id, vehicle, key)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.executeUpdate', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.executeUpdate" class="source">
+    <pre><code>def executeUpdate(self, user_id, vehicle_id, vehicle, key):
+    try:
+        vehicle_obj = connectVehicle(user_id, vehicle_id)
+        vehicle_status = getVehicleStatus(vehicle_obj, vehicle_id)
+        vehicle['vehicle_status'] = vehicle_status
+        vehicle['host_details']['update_heartbeat'] = time.time()
+        redisdB.set(key, json.dumps(vehicle))
+    except Warning as warn:
+        my_logger.info("Caught warning in worker.run connectVehicle:%s ", str(warn))
+    except APIException as ex:
+        # these can safely be ignored during vehicle startup
+        my_logger.info("Caught exception: APIException in worker.run connectVehicle")
+        my_logger.exception(ex)
+    except Exception as ex:
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        my_logger.warn("Caught exception: Unexpected error in worker.run connectVehicle. %s ", traceLines)
+        my_logger.exception(ex)
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.getName">
+    <p>def <span class="ident">getName</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.getName', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.getName" class="source">
+    <pre><code>def getName(self):
+    return self.name
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.isAlive">
+    <p>def <span class="ident">isAlive</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return whether the thread is alive.</p>
+<p>This method returns True just before the run() method starts until just
+after the run() method terminates. The module function enumerate()
+returns a list of all alive threads.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.isAlive', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.isAlive" class="source">
+    <pre><code>def isAlive(self):
+    """Return whether the thread is alive.
+    This method returns True just before the run() method starts until just
+    after the run() method terminates. The module function enumerate()
+    returns a list of all alive threads.
+    """
+    assert self.__initialized, "Thread.__init__() not called"
+    return self.__started.is_set() and not self.__stopped
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.isDaemon">
+    <p>def <span class="ident">isDaemon</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.isDaemon', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.isDaemon" class="source">
+    <pre><code>def isDaemon(self):
+    return self.daemon
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.is_alive">
+    <p>def <span class="ident">is_alive</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return whether the thread is alive.</p>
+<p>This method returns True just before the run() method starts until just
+after the run() method terminates. The module function enumerate()
+returns a list of all alive threads.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.is_alive', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.is_alive" class="source">
+    <pre><code>def isAlive(self):
+    """Return whether the thread is alive.
+    This method returns True just before the run() method starts until just
+    after the run() method terminates. The module function enumerate()
+    returns a list of all alive threads.
+    """
+    assert self.__initialized, "Thread.__init__() not called"
+    return self.__started.is_set() and not self.__stopped
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.join">
+    <p>def <span class="ident">join</span>(</p><p>self, timeout=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Wait until the thread terminates.</p>
+<p>This blocks the calling thread until the thread whose join() method is
+called terminates -- either normally or through an unhandled exception
+or until the optional timeout occurs.</p>
+<p>When the timeout argument is present and not None, it should be a
+floating point number specifying a timeout for the operation in seconds
+(or fractions thereof). As join() always returns None, you must call
+isAlive() after join() to decide whether a timeout happened -- if the
+thread is still alive, the join() call timed out.</p>
+<p>When the timeout argument is not present or None, the operation will
+block until the thread terminates.</p>
+<p>A thread can be join()ed many times.</p>
+<p>join() raises a RuntimeError if an attempt is made to join the current
+thread as that would cause a deadlock. It is also an error to join() a
+thread before it has been started and attempts to do so raises the same
+exception.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.join', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.join" class="source">
+    <pre><code>def join(self, timeout=None):
+    """Wait until the thread terminates.
+    This blocks the calling thread until the thread whose join() method is
+    called terminates -- either normally or through an unhandled exception
+    or until the optional timeout occurs.
+    When the timeout argument is present and not None, it should be a
+    floating point number specifying a timeout for the operation in seconds
+    (or fractions thereof). As join() always returns None, you must call
+    isAlive() after join() to decide whether a timeout happened -- if the
+    thread is still alive, the join() call timed out.
+    When the timeout argument is not present or None, the operation will
+    block until the thread terminates.
+    A thread can be join()ed many times.
+    join() raises a RuntimeError if an attempt is made to join the current
+    thread as that would cause a deadlock. It is also an error to join() a
+    thread before it has been started and attempts to do so raises the same
+    exception.
+    """
+    if not self.__initialized:
+        raise RuntimeError("Thread.__init__() not called")
+    if not self.__started.is_set():
+        raise RuntimeError("cannot join thread before it is started")
+    if self is current_thread():
+        raise RuntimeError("cannot join current thread")
+    if __debug__:
+        if not self.__stopped:
+            self._note("%s.join(): waiting until thread stops", self)
+    self.__block.acquire()
+    try:
+        if timeout is None:
+            while not self.__stopped:
+                self.__block.wait()
+            if __debug__:
+                self._note("%s.join(): thread stopped", self)
+        else:
+            deadline = _time() + timeout
+            while not self.__stopped:
+                delay = deadline - _time()
+                if delay <= 0:
+                    if __debug__:
+                        self._note("%s.join(): timed out", self)
+                    break
+                self.__block.wait(delay)
+            else:
+                if __debug__:
+                    self._note("%s.join(): thread stopped", self)
+    finally:
+        self.__block.release()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.performMasterActions">
+    <p>def <span class="ident">performMasterActions</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.performMasterActions', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.performMasterActions" class="source">
+    <pre><code>def performMasterActions(self):
+    global workerURL
+    # query redis to see if any other containers are the master. If none then takeover.
+    my_logger.info("Performing Master actions")
+    service_parameters = json.loads(redisdB.get("service_parameters"))
+    target_number_of_workers = service_parameters['target_number_of_workers']
+    target_number_of_servers = service_parameters['target_number_of_servers']
+    worker_port_range_start = service_parameters['worker_port_range_start']
+    thisWorkerIP = workerURL[:-5]
+    # *************************************************************
+    # Check if I should create a new worker
+    keys = redisdB.keys("worker:*")
+    worker_urls_used = {}
+    for key in keys:
+        worker = json.loads(redisdB.get(key))
+        my_logger.info(worker)
+        # Check if any workers are unresponsive
+        last_heartbeat = worker['last_heartbeat']
+        time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+        my_logger.info("time_since_heartbeat:%f", time_since_heartbeat)
+        if time_since_heartbeat > 10:
+            redisdB.delete(key)
+        else:
+            worker_urls_used[worker['worker_url']] = True
+            my_logger.info("Urls and Ports Used: %s", worker_urls_used)
+    keys = redisdB.keys("worker:*")
+    if len(keys) < target_number_of_workers:
+        # start a new worker
+        nextPortNumber = worker_port_range_start
+        my_logger.info("thisWorkerIP: %s", thisWorkerIP)
+        emptyPortFound = False
+        while (emptyPortFound == False):
+            test_key = thisWorkerIP + ":" + str(nextPortNumber)
+            url_used = test_key in worker_urls_used
+            my_logger.info("Testing if there is a worker at: %s returns %s", thisWorkerIP + ":" + str(nextPortNumber), str(url_used))
+            if not url_used:
+                emptyPortFound = True
+            else:
+                nextPortNumber = nextPortNumber + 1
+        self.createWorker(thisWorkerIP, nextPortNumber)
+    # *************************************************************
+    # Check if I should create a new server
+    keys = redisdB.keys("server:*")
+    for key in keys:
+        server = json.loads(redisdB.get(key))
+        my_logger.info(server)
+        # Check if any server are unresponsive
+        last_heartbeat = server['last_heartbeat']
+        time_since_heartbeat = round(time.time() - last_heartbeat, 1)
+        my_logger.info("time_since_heartbeat:%f", time_since_heartbeat)
+        if time_since_heartbeat > 10:
+            redisdB.delete(key)
+    keys = redisdB.keys("server:*")
+    for key in keys:
+        server = json.loads(redisdB.get(key))
+        my_logger.info(server)
+    if len(keys) < target_number_of_servers:
+        # start a new server
+        self.createServer()
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.run">
+    <p>def <span class="ident">run</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.run', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.run" class="source">
+    <pre><code>def run(self):
+    global webApp, workerHostname
+    try:
+        worker_iterations = 1
+        continue_iterating = True
+        while continue_iterating:
+            worker_iterations = worker_iterations + 1
+            service_parameters = json.loads(redisdB.get("service_parameters"))
+            iteration_time = service_parameters['iteration_time']
+            start_time = time.time()
+            containers_being_managed = 0
+            keys = redisdB.keys("vehicle:*")
+            for key in keys:
+                my_logger.debug("key = '%s'", key)
+                json_str = redisdB.get(key)
+                if json_str is not None:  # vehicle may have been deleted
+                    my_logger.debug("redisDbObj = '%s'", json_str)
+                    vehicle = json.loads(json_str)
+                    worker_url = vehicle['host_details']['worker_url']
+                    if worker_url == workerURL:  # if this vehicle is managed by this worker component then process
+                        containers_being_managed = containers_being_managed + 1
+                        vehicle_id = key[-8:]
+                        user_id = key[8:-9]
+                        my_logger.info("Execute update for vehicle_id: %s ", vehicle_id)
+                        my_logger.debug("user_id: %s", user_id)
+                        self.executeUpdate(user_id, vehicle_id, vehicle, key)
+            elapsed_time = time.time() - start_time
+            my_logger.info("Background processing %i took %f", worker_iterations, elapsed_time)
+            if (worker_iterations % 10 == 0):  # perform check every 100 iterations
+                self.checkToTakeoverMaster()
+            process = psutil.Process(os.getpid())
+            worker_record = {
+                'master': workerMaster,
+                'worker_url': workerURL,
+                'containers_being_managed': containers_being_managed,
+                'elapsed_time': elapsed_time,
+                'worker_iterations': worker_iterations,
+                'last_heartbeat': round(time.time(), 1),
+                'memory': process.memory_info().rss,
+                'cpu': psutil.cpu_percent(interval=0)}
+            redisdB.set('worker:' + workerHostname, json.dumps(worker_record))
+            if (worker_iterations % 10 == 0):  # perform check every 10 iterations
+                continue_iterating = self.checkIfWorkerFinished(containers_being_managed, worker_iterations)
+                if workerMaster:
+                    self.performMasterActions()
+            if (elapsed_time < iteration_time):
+                time.sleep(iteration_time - elapsed_time)
+        # clean-up worker record
+        my_logger.info("Cleaning-up and exiting")
+        redisdB.delete('worker:' + workerHostname)
+        webApp.stop()
+        sys.exit()
+    except Exception as ex:
+        tracebackStr = traceback.format_exc()
+        traceLines = tracebackStr.split("\n")
+        my_logger.warn("Caught exception: Unexpected error in worker.run  %s ", traceLines)
+        my_logger.exception(ex)
+    return
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.setDaemon">
+    <p>def <span class="ident">setDaemon</span>(</p><p>self, daemonic)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.setDaemon', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.setDaemon" class="source">
+    <pre><code>def setDaemon(self, daemonic):
+    self.daemon = daemonic
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.setName">
+    <p>def <span class="ident">setName</span>(</p><p>self, name)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.setName', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.setName" class="source">
+    <pre><code>def setName(self, name):
+    self.name = name
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="droneAPIUtils.worker.start">
+    <p>def <span class="ident">start</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Start the thread's activity.</p>
+<p>It must be called at most once per thread object. It arranges for the
+object's run() method to be invoked in a separate thread of control.</p>
+<p>This method will raise a RuntimeError if called more than once on the
+same thread object.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-droneAPIUtils.worker.start', this);">Show source &equiv;</a></p>
+  <div id="source-droneAPIUtils.worker.start" class="source">
+    <pre><code>def start(self):
+    """Start the thread's activity.
+    It must be called at most once per thread object. It arranges for the
+    object's run() method to be invoked in a separate thread of control.
+    This method will raise a RuntimeError if called more than once on the
+    same thread object.
+    """
+    if not self.__initialized:
+        raise RuntimeError("thread.__init__() not called")
+    if self.__started.is_set():
+        raise RuntimeError("threads can only be started once")
+    if __debug__:
+        self._note("%s.start(): starting thread", self)
+    with _active_limbo_lock:
+        _limbo[self] = self
+    try:
+        _start_new_thread(self.__bootstrap, ())
+    except Exception:
+        with _active_limbo_lock:
+            del _limbo[self]
+        raise
+    self.__started.wait()
+</code></pre>
+  </div>
+</div>
+
+  </div>
+  
+      </div>
+      </div>
+
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
+</div>
+</body>
+</html>
