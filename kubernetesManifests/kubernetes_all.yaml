@@ -233,7 +233,6 @@ metadata:
   name: droneapiserver
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
-    ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - host: droneapi.ddns.net
