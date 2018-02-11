@@ -233,20 +233,19 @@ metadata:
   name: droneapiserver
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
-    ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - host: droneapi.ddns.net
     http:
       paths:
-      - path: /
+      - path: /*
         backend:
           serviceName: droneapiserver # This is the name of the service to be exposed.
           servicePort: 1234  # This is the port on which the service is exposed.
-  - host: redis.ddns.net
+  - host: redis-db.ddns.net
     http:
       paths:
-      - path: /
+      - path: /*
         backend:
           serviceName: redis-commander
           servicePort: 8081
