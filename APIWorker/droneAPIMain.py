@@ -10,8 +10,10 @@ import logging.handlers
 import traceback
 import web
 
+
 # Import  modules that are part of this app
 import droneAPIUtils
+
 
 
 class CatchAll(object):
@@ -104,34 +106,40 @@ def startup():
     """This function starts the application. It initialises the logger, global data structures,
     Redis database and refreshes the drone docker containers. Finally it starts the web
     application that serves the API HTTP traffic."""
+    try:
 
-    droneAPIUtils.initaliseLogger()
-    droneAPIUtils.initaliseGlobals()
-    droneAPIUtils.initiliseRedisDB()
-    droneAPIUtils.startBackgroundWorker()
+        droneAPIUtils.initaliseLogger()
+        droneAPIUtils.initaliseGlobals()
+        droneAPIUtils.initiliseRedisDB()
+        droneAPIUtils.startBackgroundWorker()
 
-    # set API url endpoints and class handlers. Each handler class is in its
-    # own python module
-    urls = (
-        '/vehicle/(.*)/command', 'droneAPICommand.Command',
-        '/vehicle/(.*)/homeLocation', 'droneAPIHomeLocation.homeLocation',
-        '/vehicle/(.*)/mission', 'droneAPIMission.mission',
-        '/vehicle/(.*)/authorizedZone', 'droneAPIAuthorizedZone.authorizedZone',
-        '/vehicle/(.*)/simulator', 'droneAPISimulator.simulator',
-        '/vehicle', 'droneAPIVehicleIndex.vehicleIndex',
-        '/admin', 'droneAPIAdmin.admin',
-        # was     '/vehicle/(.*)/(.*)', 'vehicleStatus',
-        '/vehicle/(.*)', 'droneAPIVehicleStatus.vehicleStatus',
-        '/(.*)', 'CatchAll'
-    )
+        # set API url endpoints and class handlers. Each handler class is in its
+        # own python module
+        urls = (
+            '/vehicle/(.*)/command', 'droneAPICommand.Command',
+            '/vehicle/(.*)/homeLocation', 'droneAPIHomeLocation.homeLocation',
+            '/vehicle/(.*)/mission', 'droneAPIMission.mission',
+            '/vehicle/(.*)/authorizedZone', 'droneAPIAuthorizedZone.authorizedZone',
+            '/vehicle/(.*)/simulator', 'droneAPISimulator.simulator',
+            '/vehicle', 'droneAPIVehicleIndex.vehicleIndex',
+            '/admin', 'droneAPIAdmin.admin',
+            # was     '/vehicle/(.*)/(.*)', 'vehicleStatus',
+            '/vehicle/(.*)', 'droneAPIVehicleStatus.vehicleStatus',
+            '/(.*)', 'CatchAll'
+        )
 
-    # start API web application server
-    droneAPIUtils.webApp = web.application(urls, globals())
-    droneAPIUtils.webApp.run()
+        # start API web application server
+        droneAPIUtils.webApp = web.application(urls, globals())
+        droneAPIUtils.webApp.run()
+    except Exception as ex:
+        my_logger.exception(ex)
+
+    my_logger.info("Exiting")
 
     return
 
 
 if __name__ == "__main__":
     my_logger = logging.getLogger("DroneAPIServer." + str(__name__))  # pylint: disable=C0103
+
     startup()

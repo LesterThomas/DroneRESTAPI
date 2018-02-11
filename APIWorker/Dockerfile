@@ -27,7 +27,6 @@ RUN pip install pyyaml
 
 RUN apt-get install -y awscli
 COPY *.py /
-COPY *.yaml /
 EXPOSE 1236
 CMD python /droneAPIMain.py 1236
 

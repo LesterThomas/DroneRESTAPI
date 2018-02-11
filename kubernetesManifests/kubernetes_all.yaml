@@ -1,5 +1,5 @@
 ###################################################################
-# Persistent storage for Redis 
+# Persistent storage for Redis
 ###################################################################
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -14,7 +14,7 @@ spec:
   storageClassName: standard
 ---
 ###################################################################
-# Redis Database stateful container 
+# Redis Database stateful container
 ###################################################################
 apiVersion: apps/v1beta1
 kind: StatefulSet
@@ -23,13 +23,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: redis 
+      app: redis
   serviceName: "redis"
   replicas: 1 # by default is 1
   template:
     metadata:
       labels:
-        app: redis 
+        app: redis
         tier: backend
     spec:
       terminationGracePeriodSeconds: 10
@@ -98,7 +98,7 @@ spec:
         ports:
         - name: redis-commander
           containerPort: 8081
----          
+---
 ###################################################################
 # Service that exposes Redis UI
 ###################################################################
@@ -118,7 +118,7 @@ spec:
   selector:
     app: redis-commander
     tier: backend
----          
+---
 ###################################################################
 # droneapiworker stateful container deployment
 ###################################################################
@@ -130,13 +130,13 @@ spec:
   podManagementPolicy: Parallel
   selector:
     matchLabels:
-      app: droneapiworker 
+      app: droneapiworker
   serviceName: "droneapiworker"
   replicas: 1
   template:
     metadata:
       labels:
-        app: droneapiworker 
+        app: droneapiworker
         tier: backend
     spec:
       terminationGracePeriodSeconds: 1
@@ -145,13 +145,18 @@ spec:
         image: lesterthomas/droneapiworker:3.0.8
         env:
         - name: DRONEAPI_URL
-          value: http://test.droneapi.net
+          value: http://droneapi.ddns.net
         - name: DOCKER_DRONESIM_IMAGE
           value: lesterthomas/dronesim:1.8
         ports:
         - containerPort: 1236
           name: droneapiworker
----          
+        livenessProbe:
+          httpGet:
+            path: /admin
+            port: 1236
+
+---
 ###################################################################
 # Service that exposes droneapiworker
 ###################################################################
@@ -170,10 +175,10 @@ spec:
   selector:
     app: droneapiworker
     tier: backend
----          
+---
 ###################################################################
 # droneapiserver stateless container deployment
-################################################################### 
+###################################################################
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -195,14 +200,10 @@ spec:
         env:
         - name: DRONEAPI_URL
           value: http://droneapi.ddns.net
-        - name: DOCKER_HOST_IP
-          value: 172.17.0.1
-        - name: VIRTUAL_HOST
-          value: test.droneapi.net
         ports:
         - name: droneapiserver
           containerPort: 1234
----          
+---
 ###################################################################
 # Service that exposes droneapiserver
 ###################################################################
@@ -222,7 +223,7 @@ spec:
   selector:
     app: droneapiserver
     tier: frontend
----          
+---
 ###################################################################
 # Ingress that exposes http traffic to outside world
 ###################################################################

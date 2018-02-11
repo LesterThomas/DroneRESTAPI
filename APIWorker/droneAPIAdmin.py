@@ -24,44 +24,14 @@ class admin:
                                             "/admin", "title": "Administration functions for the Drone API service"}}
 
             availableActions = []
-            availableActions.append({
-                "name": "Rebuild dockerHostsArray",
-                "title": "Rebuild the Array of available Docker Hosts and ports used.",
-                "href": droneAPIUtils.homeDomain + "/admin",
-                "method": "POST",
-                "fields": [{"name": "name", "type": "string", "value": "Rebuild dockerHostsArray"}]
-            })
-            availableActions.append({
-                "name": "Refresh containers",
-                "title": "Restart all the docker containers (and create new ones if required).",
-                "href": droneAPIUtils.homeDomain + "/admin",
-                "method": "POST",
-                "fields": [{"name": "name", "type": "string", "value": "Refresh containers"}]
-            })
-            outputObj['dockerHostsArray'] = droneAPIUtils.redisdB.get('dockerHostsArray')
-            outputObj['Connections'] = []
-            keys = droneAPIUtils.redisdB.keys("connectionString:*")
-            for key in keys:
-                jsonObjStr = droneAPIUtils.redisdB.get(key)
-                jsonObj = json.loads(jsonObjStr)
-                connectionString = jsonObj['connectionString']
-                dockerContainerId = jsonObj['dockerContainerId']
 
-                vehicleName = jsonObj['name']
-                vehicleType = jsonObj['vehicleType']
-                dockerContainerId = jsonObj['dockerContainerId']
-                droneId = key[17:]
-                hostIp = connectionString[4:-6]
-                port = connectionString[-5:]
-                outputObj['Connections'].append({"connectionString": connectionString,
-                                                 "dockerContainerId": dockerContainerId,
-                                                 "vehicleName": vehicleName,
-                                                 "vehicleType": vehicleType,
-                                                 "droneId": droneId,
-                                                 "hostIp": hostIp,
-                                                 "port": port})
+            #get this workers stats
+            outputObj['worker_record']=droneAPIUtils.getWorkerDetails()
+            if (outputObj['worker_record']['running']==False):
+                raise web.HTTPError(500)
 
-            outputObj['_actions'] = availableActions
+
+
             outputObj['_actions'] = availableActions
 
             output = json.dumps(outputObj)

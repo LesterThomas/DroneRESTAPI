@@ -24,10 +24,14 @@ import droneAPICommand
 
 def cleanUp():
     global webApp, workerHostname
-    # clean-up worker record
-    my_logger.info("Cleaning-up and exiting")
-    redisdB.delete('worker:' + workerHostname)
-    webApp.stop()
+    try:
+        # clean-up worker record
+        my_logger.info("Cleaning-up and exiting")
+        redisdB.delete('worker:' + workerHostname)
+        webApp.stop
+    except Exception as ex:
+        my_logger.exception(ex)
+
     sys.exit()
 
 def initaliseLogger():
@@ -88,7 +92,7 @@ def initiliseRedisDB():
     if service_parameters_str:
         my_logger.info("service_parameters found OK")
     else:
-        service_parameters={"max_server_iterations":1000, "min_number_of_servers":1, "iteration_time":0.25, "max_worker_iterations":1000, "min_number_of_workers":1, "target_number_of_workers":1, "target_number_of_servers":1, "worker_port_range_start":8000 }
+        service_parameters={"max_server_iterations":1000, "min_number_of_servers":1, "iteration_time":0.25, "max_worker_iterations":1000, "min_number_of_workers":1 }
         service_parameters_str=json.dumps(service_parameters)
         redisdB.set("service_parameters",service_parameters_str)
 
@@ -434,8 +438,30 @@ def deleteDrone(vehicle_id):
         pretty=True)
     my_logger.info("Service deleted. status='%s'" % str(api_response.status))
 
-
     return
+
+def getWorkerDetails():
+    global webApp, workerHostname
+    worker_record={}
+    try:
+        service_parameters = json.loads(redisdB.get("service_parameters"))
+        iteration_time = service_parameters['iteration_time']
+        keys = redisdB.keys("vehicle:*")
+        worker_record = json.loads(redisdB.get('worker:' + workerHostname))
+        current_time=round(time.time(), 1)
+        time_since_heartbeat=current_time-worker_record['last_heartbeat']
+        worker_record['time_since_heartbeat']=time_since_heartbeat
+        if (time_since_heartbeat>(iteration_time*2)):
+            worker_record['running']=False
+        else:
+            worker_record['running']=True
+
+    except Exception as ex:
+        my_logger.exception(ex)
+        worker_record['running']=False
+
+    return worker_record
+
 
 
 
@@ -449,54 +475,60 @@ class worker(Thread):
             worker_iterations = 1
             continue_iterating = True
             while continue_iterating:
-                worker_iterations = worker_iterations + 1
-                service_parameters = json.loads(redisdB.get("service_parameters"))
-                iteration_time = service_parameters['iteration_time']
+                try:
+                    worker_iterations = worker_iterations + 1
+                    service_parameters = json.loads(redisdB.get("service_parameters"))
+                    iteration_time = service_parameters['iteration_time']
 
-                start_time = time.time()
-                containers_being_managed = 0
-                keys = redisdB.keys("vehicle:*")
-                for key in keys:
-                    my_logger.debug("key = '%s'", key)
-                    json_str = redisdB.get(key)
-                    if json_str is not None:  # vehicle may have been deleted
-                        my_logger.debug("redisDbObj = '%s'", json_str)
-                        vehicle = json.loads(json_str)
-                        worker_url = vehicle['host_details']['worker_url']
-                        if worker_url == workerURL:  # if this vehicle is managed by this worker component then process
-                            containers_being_managed = containers_being_managed + 1
-                            vehicle_id = key[-8:]
-                            user_id = key[8:-9]
-                            my_logger.info("Execute update for vehicle_id: %s ", vehicle_id)
-                            my_logger.debug("user_id: %s", user_id)
-                            self.executeUpdate(user_id, vehicle_id, vehicle, key)
+                    start_time = time.time()
+                    containers_being_managed = 0
+                    keys = redisdB.keys("vehicle:*")
+                    for key in keys:
+                        my_logger.debug("key = '%s'", key)
+                        json_str = redisdB.get(key)
+                        if json_str is not None:  # vehicle may have been deleted
+                            my_logger.debug("redisDbObj = '%s'", json_str)
+                            vehicle = json.loads(json_str)
+                            worker_url = vehicle['host_details']['worker_url']
+                            if worker_url == workerURL:  # if this vehicle is managed by this worker component then process
+                                containers_being_managed = containers_being_managed + 1
+                                vehicle_id = key[-8:]
+                                user_id = key[8:-9]
+                                my_logger.info("Execute update for vehicle_id: %s ", vehicle_id)
+                                my_logger.debug("user_id: %s", user_id)
+                                self.executeUpdate(user_id, vehicle_id, vehicle, key)
 
-                elapsed_time = time.time() - start_time
-                my_logger.info("Background processing %i took %f", worker_iterations, elapsed_time)
+                    elapsed_time = time.time() - start_time
+                    my_logger.info("Background processing %i took %f", worker_iterations, elapsed_time)
 
-                if (worker_iterations % 10 == 0):  # perform check every 100 iterations
-                    self.checkToTakeoverMaster()
+                    if (worker_iterations % 10 == 0):  # perform check every 100 iterations
+                        self.checkToTakeoverMaster()
 
-                process = psutil.Process(os.getpid())
+                    process = psutil.Process(os.getpid())
 
-                worker_record = {
-                    'master': workerMaster,
-                    'worker_url': workerURL,
-                    'containers_being_managed': containers_being_managed,
-                    'elapsed_time': elapsed_time,
-                    'worker_iterations': worker_iterations,
-                    'last_heartbeat': round(time.time(), 1),
-                    'memory': process.memory_info().rss,
-                    'cpu': psutil.cpu_percent(interval=0)}
-                redisdB.set('worker:' + workerHostname, json.dumps(worker_record))
+                    worker_record = {
+                        'master': workerMaster,
+                        'worker_url': workerURL,
+                        'containers_being_managed': containers_being_managed,
+                        'elapsed_time': elapsed_time,
+                        'worker_iterations': worker_iterations,
+                        'last_heartbeat': round(time.time(), 1),
+                        'memory': process.memory_info().rss,
+                        'cpu': psutil.cpu_percent(interval=0)}
+                    redisdB.set('worker:' + workerHostname, json.dumps(worker_record))
 
-                if (worker_iterations % 10 == 0):  # perform check every 10 iterations
-                    continue_iterating = self.checkIfWorkerFinished(containers_being_managed, worker_iterations)
-                    if workerMaster:
-                        self.performMasterActions()
+                    if (worker_iterations % 10 == 0):  # perform check every 10 iterations
+                        continue_iterating = self.checkIfWorkerFinished(containers_being_managed, worker_iterations)
+                        if workerMaster:
+                            self.performMasterActions()
 
-                if (elapsed_time < iteration_time):
-                    time.sleep(iteration_time - elapsed_time)
+                    if (elapsed_time < iteration_time):
+                        time.sleep(iteration_time - elapsed_time)
+                except Exception as ex:
+                    my_logger.exception(ex)
+                    continue_iterating=False
+
+
 
             cleanUp()
 
@@ -507,6 +539,7 @@ class worker(Thread):
             my_logger.warn("Caught exception: Unexpected error in worker.run  %s ", traceLines)
             my_logger.exception(ex)
         return
+
 
 
 
@@ -533,13 +566,10 @@ class worker(Thread):
     def checkIfWorkerFinished(self, containers_being_managed, worker_iterations):
         service_parameters = json.loads(redisdB.get("service_parameters"))
         max_worker_iterations = service_parameters['max_worker_iterations']
-        min_number_of_workers = service_parameters['min_number_of_workers']
 
         if ((worker_iterations > max_worker_iterations) and (containers_being_managed == 0)
                 ):  # if this worker has been going a long time and it is not managing any containers then stop this loop
-            keys = redisdB.keys("worker:*")
-            if len(keys) > min_number_of_workers:
-                return False
+            return False
         return True
 
     def checkToTakeoverMaster(self):
@@ -564,9 +594,6 @@ class worker(Thread):
     def performMasterActions(self):
         # query redis to see if any other containers are the master. If none then takeover.
         my_logger.info("Performing Master actions")
-
-        service_parameters = json.loads(redisdB.get("service_parameters"))
-        worker_port_range_start = service_parameters['worker_port_range_start']
 
 
         return
