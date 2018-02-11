@@ -243,7 +243,7 @@ spec:
         backend:
           serviceName: droneapiserver # This is the name of the service to be exposed.
           servicePort: 1234  # This is the port on which the service is exposed.
-  - host: redis.ddns.net
+  - host: redis-db.ddns.net
     http:
       paths:
       - path: /
