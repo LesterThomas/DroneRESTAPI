@@ -10,7 +10,7 @@ import json
 import droneAPIUtils
 
 
-my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
+my_logger = logging.getLogger("DroneAPIWorker." + str(__name__))
 
 
 class authorizedZone:

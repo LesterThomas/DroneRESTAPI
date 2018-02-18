@@ -13,6 +13,7 @@ import math
 import os
 import uuid
 import redis
+from redis.sentinel import Sentinel
 import socket
 import docker
 import psutil
@@ -30,7 +31,9 @@ def cleanUp():
         redisdB.delete('worker:' + workerHostname)
         webApp.stop
     except Exception as ex:
+        my_logger.exception("Exception in cleanUp")
         my_logger.exception(ex)
+        my_logger.exception("-------------------------------------------------")
 
     sys.exit()
 
@@ -66,36 +69,34 @@ def initaliseGlobals():
     connectionNameTypeDict = {}  # holds the additonal name, type and start_time for the conections
     authorizedZoneDict = {}  # holds zone authorizations for each drone
 
-
-
     return
 
 
 
 def initiliseRedisDB():
-    my_logger.info("initiliseRedisDB connecting to redis using host redis and port 6379")
-
     global redisdB
-    time.sleep(10)
-    my_logger.info("initiliseRedisDB attempting to connect to redis")
-    redisdB = redis.Redis(host='redis', port=6379)  # redis or localhost
+    try:
+        my_logger.info("initiliseRedisDB getting redis master from sentinel")
 
-    my_logger.info("Getting all keys")
-    keys = redisdB.keys("*")
-    for key in keys:
-        my_logger.info(key)
-    my_logger.info("Finished getting all keys")
+        sentinel = Sentinel([('redis-sentinel', 26379)], socket_timeout=0.1)
+        redisdB = sentinel.master_for('mymaster', socket_timeout=0.1)
 
+        my_logger.info("initiliseRedisDB connected to redis")
 
-    my_logger.info("Checking for mandatory key service_parameters")
-    service_parameters_str = redisdB.get("service_parameters")
-    if service_parameters_str:
-        my_logger.info("service_parameters found OK")
-    else:
-        service_parameters={"max_server_iterations":1000, "min_number_of_servers":1, "iteration_time":0.25, "max_worker_iterations":1000, "min_number_of_workers":1 }
-        service_parameters_str=json.dumps(service_parameters)
-        redisdB.set("service_parameters",service_parameters_str)
+        my_logger.info("Checking for mandatory key service_parameters")
 
+        service_parameters_str = redisdB.get("service_parameters")
+        if service_parameters_str:
+            my_logger.info("service_parameters found OK")
+        else:
+            service_parameters={"max_server_iterations":1000, "min_number_of_servers":1, "iteration_time":0.25, "max_worker_iterations":1000, "min_number_of_workers":1, "target_number_of_workers":1, "target_number_of_servers":1, "worker_port_range_start":8000 }
+            service_parameters_str=json.dumps(service_parameters)
+            redisdB.set("service_parameters",service_parameters_str)
+    except Exception as ex:
+        my_logger.exception("Exception in initiliseRedisDB")
+        my_logger.exception(ex)
+        my_logger.exception("-------------------------------------------------")
+        raise redis.exceptions.ConnectionError("Redis error in initiliseRedisDB")
     return
 
 def getEnvironmentVariable(inVariable):
@@ -173,10 +174,11 @@ def connectVehicle(user_id, inVehicleId):
     except Warning as w:
         my_logger.warn("Caught warning: " + str(w))
         raise Warning(str(w))
-    except Exception as e:
-        my_logger.warn("Caught exceptio: Unexpected error in connectVehicle:")
+    except Exception as ex:
+        my_logger.exception("Exception in connectVehicle")
         my_logger.warn("VehicleId=" + str(inVehicleId))
-        my_logger.exception(e)
+        my_logger.exception(ex)
+        my_logger.exception("-------------------------------------------------")
         tracebackStr = traceback.format_exc()
         traceLines = tracebackStr.split("\n")
         raise Exception('Unexpected error connecting to vehicle ' + str(inVehicleId))
@@ -441,23 +443,42 @@ def deleteDrone(vehicle_id):
     return
 
 def getWorkerDetails():
-    global webApp, workerHostname
+    global webApp, workerHostname, redisdB
     worker_record={}
     try:
+        initiliseRedisDB()
         service_parameters = json.loads(redisdB.get("service_parameters"))
         iteration_time = service_parameters['iteration_time']
         keys = redisdB.keys("vehicle:*")
-        worker_record = json.loads(redisdB.get('worker:' + workerHostname))
-        current_time=round(time.time(), 1)
-        time_since_heartbeat=current_time-worker_record['last_heartbeat']
-        worker_record['time_since_heartbeat']=time_since_heartbeat
-        if (time_since_heartbeat>(iteration_time*2)):
-            worker_record['running']=False
+        worker_record={}
+        worker_record_str=redisdB.get('worker:' + workerHostname)
+        if worker_record_str: #check if worker record still running
+            worker_record = json.loads(worker_record_str)
+            current_time=round(time.time(), 1)
+            time_since_heartbeat=current_time-worker_record['last_heartbeat']
+            worker_record['time_since_heartbeat']=time_since_heartbeat
+            if (time_since_heartbeat>(iteration_time*2)):
+                worker_record['running']=False
+            else:
+                worker_record['running']=True
         else:
             worker_record['running']=True
-
-    except Exception as ex:
+    except socket.timeout as ex:
+        #if it is a redis connection error then allow worker to remain running
+        my_logger.exception("Caught socket.timeout in getWorkerDetails")
+        worker_record['running']=True
         my_logger.exception(ex)
+        my_logger.exception("-------------------------------------------------")
+    except redis.exceptions.ConnectionError as ex:
+        #if it is a redis connection error then allow worker to remain running
+        my_logger.exception("Caught redis.exceptions.ConnectionError in getWorkerDetails")
+        worker_record['running']=True
+        my_logger.exception(ex)
+        my_logger.exception("-------------------------------------------------")
+    except Exception as ex:
+        my_logger.exception("Exception in getWorkerDetails")
+        my_logger.exception(ex)
+        my_logger.exception("-------------------------------------------------")
         worker_record['running']=False
 
     return worker_record
@@ -476,6 +497,7 @@ class worker(Thread):
             continue_iterating = True
             while continue_iterating:
                 try:
+                    initiliseRedisDB() #re-initialize every iteration in case redis has failed-over
                     worker_iterations = worker_iterations + 1
                     service_parameters = json.loads(redisdB.get("service_parameters"))
                     iteration_time = service_parameters['iteration_time']
@@ -524,8 +546,22 @@ class worker(Thread):
 
                     if (elapsed_time < iteration_time):
                         time.sleep(iteration_time - elapsed_time)
-                except Exception as ex:
+                except redis.exceptions.ConnectionError as ex:
+                    my_logger.exception("Caught redis.exceptions.ConnectionError in worker")
                     my_logger.exception(ex)
+                    my_logger.exception("-------------------------------------------------")
+                    #redis database connection error
+                    time.sleep(5) #sleep for 5 seconds to allow Redis to failover
+                except socket.timeout as ex:
+                    my_logger.exception("Caught socket.timeout in worker")
+                    my_logger.exception(ex)
+                    my_logger.exception("-------------------------------------------------")
+                    #redis database connection error
+                    time.sleep(5) #sleep for 5 seconds to allow Redis to failover
+                except Exception as ex:
+                    my_logger.exception("Exception in worker")
+                    my_logger.exception(ex)
+                    my_logger.exception("-------------------------------------------------")
                     continue_iterating=False
 
 
@@ -537,7 +573,9 @@ class worker(Thread):
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
             my_logger.warn("Caught exception: Unexpected error in worker.run  %s ", traceLines)
+            my_logger.exception("Exception in worker (outer)")
             my_logger.exception(ex)
+            my_logger.exception("-------------------------------------------------")
         return
 
 
@@ -559,8 +597,9 @@ class worker(Thread):
         except Exception as ex:
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
-            my_logger.warn("Caught exception: Unexpected error in worker.run connectVehicle. %s ", traceLines)
+            my_logger.warn("Caught exception: Unexpected error in executeUpdate. %s ", traceLines)
             my_logger.exception(ex)
+            my_logger.exception("-------------------------------------------------")
         return
 
     def checkIfWorkerFinished(self, containers_being_managed, worker_iterations):

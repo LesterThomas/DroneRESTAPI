@@ -29,21 +29,6 @@ class Admin:
                                             "/admin", "title": "Administration functions for the Drone API service"}}
 
             availableActions = []
-            availableActions.append({
-                "name": "Rebuild dockerHostsArray",
-                "title": "Rebuild the Array of available Docker Hosts and ports used.",
-                "href": APIServerUtils.homeDomain + "/admin",
-                "method": "POST",
-                "fields": [{"name": "name", "type": "string", "value": "Rebuild dockerHostsArray"}]
-            })
-            availableActions.append({
-                "name": "Refresh containers",
-                "title": "Restart all the docker containers (and create new ones if required).",
-                "href": APIServerUtils.homeDomain + "/admin",
-                "method": "POST",
-                "fields": [{"name": "name", "type": "string", "value": "Refresh containers"}]
-            })
-            outputObj['dockerHostsArray'] = json.loads(APIServerUtils.redisdB.get('dockerHostsArray'))
             outputObj['_actions'] = availableActions
 
             workers = []
@@ -93,19 +78,6 @@ class Admin:
             value = data["name"]
             outputObj = {}
 
-            if (value == "Rebuild dockerHostsArray"):
-                APIServerUtils.rebuildDockerHostsArray()
-                outputObj = {"status": "success"}
-
-            if (value == "Refresh containers"):
-                # delegate this call to all the worker containers
-
-                workerURLs = APIServerUtils.getAllWorkerURLs()
-                for workerURL in workerURLs:
-                    result = requests.post(workerURL + "/admin", data=dataStr)
-                    my_logger.info("Return from worker %s:%s", str(workerURL), str(result.text))
-
-                outputObj = {"status": "success"}
 
             output = json.dumps(outputObj)
             my_logger.info("Return: =" + output)

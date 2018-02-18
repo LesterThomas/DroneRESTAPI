@@ -21,12 +21,16 @@ spec:
       terminationGracePeriodSeconds: 1
       containers:
       - name: droneapiworker
-        image: lesterthomas/droneapiworker:3.0.8
+        image: lesterthomas/droneapiworker:3.0.9
         env:
         - name: DRONEAPI_URL
-          value: http://test.droneapi.net
+          value: http://droneapi.ddns.net
         - name: DOCKER_DRONESIM_IMAGE
           value: lesterthomas/dronesim:1.8
         ports:
         - containerPort: 1236
           name: droneapiworker
+        livenessProbe:
+          httpGet:
+            path: /admin
+            port: 1236

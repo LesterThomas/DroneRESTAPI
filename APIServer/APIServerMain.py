@@ -8,6 +8,7 @@ import json
 import logging
 import logging.handlers
 import traceback
+
 import web
 
 # Import  modules that are part of this app
@@ -166,9 +167,16 @@ def startup():
     """This function starts the application. It initialises the logger, global data structures,
     Redis database and refreshes the drone docker containers. Finally it starts the web
     application that serves the API HTTP traffic."""
+
+
+
+
+
+
     try:
 
         print "Starting up at " + str(time.time())
+
 
         APIServerUtils.initaliseLogger()
         print "initaliseLogger"

@@ -155,7 +155,6 @@ spec:
           httpGet:
             path: /admin
             port: 1236
-
 ---
 ###################################################################
 # Service that exposes droneapiworker

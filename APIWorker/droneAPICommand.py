@@ -12,7 +12,7 @@ import math
 import docker
 import droneAPIUtils
 
-my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
+my_logger = logging.getLogger("DroneAPIWorker." + str(__name__))
 
 
 class CannotArmException(Exception):

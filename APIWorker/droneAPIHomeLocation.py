@@ -9,7 +9,7 @@ import droneAPIUtils
 import redis
 import web
 
-my_logger = logging.getLogger("DroneAPIServer." + str(__name__))
+my_logger = logging.getLogger("DroneAPIWorker." + str(__name__))
 
 
 class homeLocation:
