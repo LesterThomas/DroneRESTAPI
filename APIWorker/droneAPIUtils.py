@@ -57,11 +57,12 @@ def initaliseLogger():
 
 
 def initaliseGlobals():
-    global homeDomain, dronesimImage, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster,   workerHostname
+    global homeDomain, dronesimImage, droneproxyImage, connectionDict, connectionNameTypeDict, authorizedZoneDict, workerURL, workerMaster,   workerHostname
 
     # Set environment variables
     homeDomain = getEnvironmentVariable('DRONEAPI_URL')
     dronesimImage = getEnvironmentVariable('DOCKER_DRONESIM_IMAGE')
+    droneproxyImage = getEnvironmentVariable('DOCKER_DRONEPROXY_IMAGE')
     workerMaster = False
     workerHostname = socket.gethostname()
     workerURL = workerHostname+".droneapiworker:1236"
@@ -343,7 +344,7 @@ def delete_deployment(api_instance, inName):
 
 
 def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id, in_key=''):
-    global workerURL, dronesimImage
+    global workerURL, dronesimImage, droneproxyImage
     connection = None
     my_logger.info("************ Creating Drone %s : %s : %s : %s : %s : %s : %s : %s ***********",
                    droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_dir, user_id, in_key)
@@ -357,7 +358,10 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
 
     #build simulated container using kubernetes
     deploymentName=key
-    containerImageName = dronesimImage
+    if droneType=="real":
+        containerImageName=droneproxyImage
+    else:
+        containerImageName = dronesimImage
     my_logger.info("Kubernetes deployment name %s | image name %s",deploymentName, containerImageName)
     config.load_incluster_config()
     extensions_v1beta1 = client.ExtensionsV1beta1Api()
@@ -366,7 +370,7 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
     deployment = create_deployment_object(deploymentName, containerImageName,environmentObj)
     create_deployment(extensions_v1beta1, deployment,deploymentName)
 
-    #Create Service
+    #Create Service for api to connect to sim / proxy
     api_instance = client.CoreV1Api()
     namespace = 'default'
     manifest = {
@@ -398,6 +402,39 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
 
     api_response = api_instance.create_namespaced_service(namespace, manifest, pretty=True)
 
+    if droneType=="real":
+        #Create additional Service for external drone to connect to proxy
+        manifest = {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "proxy"+str(deploymentName),
+                "labels":{
+                    "app": deploymentName,
+                    "tier":"backend"
+                }
+            },
+            "spec": {
+                "selector": {
+                    "app": deploymentName,
+                    "tier": "backend"
+                },
+                "type": "NodePort",
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 14551,
+                        "targetPort": deploymentName,
+                        "name": deploymentName
+                    }
+                ]
+            }
+        }
+        api_response = api_instance.create_namespaced_service(namespace, manifest, pretty=True)
+        nodePort=api_response.spec.ports[0].node_port
+        my_logger.info("External Port: %s", nodePort)
+
+
     port=14550
     connection = "tcp:" + deploymentName + ":" + str(port)
 
@@ -413,7 +450,7 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
                                        "worker_url": workerURL}}
 
     if (droneType == 'real'):
-        droneDBDetails['vehicle_details']['drone_connect_to'] = port + 10
+        droneDBDetails['vehicle_details']['drone_connect_to'] = nodePort
         droneDBDetails['vehicle_details']['groundstation_connect_to'] = port + 20
 
     redisdBManager.set("vehicle:" + str(user_id) + ":" + key, droneDBDetails)
@@ -422,7 +459,7 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
     outputObj = {}
     outputObj["connection"] = connection
     if (droneType == "real"):
-        outputObj["drone_connect_to"] = "tcp:droneapi.ddns.net:" + str(port + 10)
+        outputObj["drone_connect_to"] = "tcp:droneapi.ddns.net:" + str(nodePort)
         outputObj["groundstation_connect_to"] = "tcp:droneapi.ddns.net:" + str(port + 20)
     outputObj["id"] = key
     my_logger.info("Return: =" + json.dumps(outputObj))
