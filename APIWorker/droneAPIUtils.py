@@ -22,6 +22,8 @@ from kubernetes import client, config
 
 from threading import Thread
 import droneAPICommand
+from droneAPIRedis import RedisManager
+import droneAPIRedis
 
 def cleanUp():
     global webApp, workerHostname
@@ -41,9 +43,9 @@ def initaliseLogger():
     global my_logger
     # Set logging framework
     my_logger = logging.getLogger("DroneAPIWorker." + str(__name__))
-    my_logger.setLevel(logging.DEBUG)
+    my_logger.setLevel(logging.INFO)
     handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.DEBUG)
+    handler.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     my_logger.addHandler(handler)
@@ -74,24 +76,26 @@ def initaliseGlobals():
 
 
 def initiliseRedisDB():
-    global redisdB
+    global redisdBManager, redisdB
     try:
-        my_logger.info("initiliseRedisDB getting redis master from sentinel")
+
+        my_logger.info("initiliseRedisDB testing redis manager")
+        try:
+           redisdBManager
+        except NameError:
+            redisdBManager=RedisManager() #create redisDbManager if it is not already defined
+
+        my_logger.info("redisdBManager %s",redisdBManager)
+
+        default_service_parameters={"max_server_iterations":10000, "min_number_of_servers":1, "iteration_time":0.25, "max_worker_iterations":10000, "min_number_of_workers":1, "target_number_of_workers":1, "target_number_of_servers":1, "worker_port_range_start":8000 }
 
         sentinel = Sentinel([('redis-sentinel', 26379)], socket_timeout=0.1)
         redisdB = sentinel.master_for('mymaster', socket_timeout=0.1)
 
         my_logger.info("initiliseRedisDB connected to redis")
-
         my_logger.info("Checking for mandatory key service_parameters")
+        service_parameters=redisdBManager.get("service_parameters",default_service_parameters)
 
-        service_parameters_str = redisdB.get("service_parameters")
-        if service_parameters_str:
-            my_logger.info("service_parameters found OK")
-        else:
-            service_parameters={"max_server_iterations":1000, "min_number_of_servers":1, "iteration_time":0.25, "max_worker_iterations":1000, "min_number_of_workers":1, "target_number_of_workers":1, "target_number_of_servers":1, "worker_port_range_start":8000 }
-            service_parameters_str=json.dumps(service_parameters)
-            redisdB.set("service_parameters",service_parameters_str)
     except Exception as ex:
         my_logger.exception("Exception in initiliseRedisDB")
         my_logger.exception(ex)
@@ -137,13 +141,11 @@ def connectVehicle(user_id, inVehicleId):
     try:
         my_logger.debug("connectVehicle called with inVehicleId = " + str(inVehicleId))
         # connection_string=connection_string_array[inVehicleId]
-        json_str = redisdB.get('vehicle:' + user_id + ":" + str(inVehicleId))
-        my_logger.debug("Redis returns '" + str(json_str) + "'")
-        if (json_str is None):
+        json_obj = redisdBManager.get('vehicle:' + user_id + ":" + str(inVehicleId))
+        if 'vehicle_details' not in json_obj:
             my_logger.warn("Raising Vehicle not found warning")
             raise Warning('Vehicle not found ')
-        my_logger.debug("redisDbObj = '" + json_str + "'")
-        json_obj = json.loads(json_str)
+
         vehicle_details = json_obj['vehicle_details']
         host_details = json_obj['host_details']
         connection_string = vehicle_details['connection_string']
@@ -414,8 +416,8 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
         droneDBDetails['vehicle_details']['drone_connect_to'] = port + 10
         droneDBDetails['vehicle_details']['groundstation_connect_to'] = port + 20
 
-    redisdB.set("vehicle:" + str(user_id) + ":" + key, json.dumps(droneDBDetails))
-    redisdB.set("vehicle_commands:" + str(user_id) + ":" + key, json.dumps({"commands": []}))
+    redisdBManager.set("vehicle:" + str(user_id) + ":" + key, droneDBDetails)
+    redisdBManager.set("vehicle_commands:" + str(user_id) + ":" + key, {"commands": []})
 
     outputObj = {}
     outputObj["connection"] = connection
@@ -446,14 +448,11 @@ def getWorkerDetails():
     global webApp, workerHostname, redisdB
     worker_record={}
     try:
-        initiliseRedisDB()
-        service_parameters = json.loads(redisdB.get("service_parameters"))
+        service_parameters = redisdBManager.get("service_parameters")
         iteration_time = service_parameters['iteration_time']
         keys = redisdB.keys("vehicle:*")
-        worker_record={}
-        worker_record_str=redisdB.get('worker:' + workerHostname)
-        if worker_record_str: #check if worker record still running
-            worker_record = json.loads(worker_record_str)
+        worker_record=redisdBManager.get('worker:' + workerHostname)
+        if 'last_heartbeat' in worker_record: #check if worker record still running
             current_time=round(time.time(), 1)
             time_since_heartbeat=current_time-worker_record['last_heartbeat']
             worker_record['time_since_heartbeat']=time_since_heartbeat
@@ -462,19 +461,10 @@ def getWorkerDetails():
             else:
                 worker_record['running']=True
         else:
-            worker_record['running']=True
-    except socket.timeout as ex:
-        #if it is a redis connection error then allow worker to remain running
-        my_logger.exception("Caught socket.timeout in getWorkerDetails")
-        worker_record['running']=True
-        my_logger.exception(ex)
-        my_logger.exception("-------------------------------------------------")
-    except redis.exceptions.ConnectionError as ex:
-        #if it is a redis connection error then allow worker to remain running
-        my_logger.exception("Caught redis.exceptions.ConnectionError in getWorkerDetails")
-        worker_record['running']=True
-        my_logger.exception(ex)
-        my_logger.exception("-------------------------------------------------")
+            worker_record['running']=False
+    except Warning as warn:
+        my_logger.info("Caught warning in getWorkerDetails:%s ", str(warn))
+        worker_record['running']=True #assume worker is still running
     except Exception as ex:
         my_logger.exception("Exception in getWorkerDetails")
         my_logger.exception(ex)
@@ -497,9 +487,8 @@ class worker(Thread):
             continue_iterating = True
             while continue_iterating:
                 try:
-                    initiliseRedisDB() #re-initialize every iteration in case redis has failed-over
                     worker_iterations = worker_iterations + 1
-                    service_parameters = json.loads(redisdB.get("service_parameters"))
+                    service_parameters = redisdBManager.get("service_parameters")
                     iteration_time = service_parameters['iteration_time']
 
                     start_time = time.time()
@@ -507,10 +496,8 @@ class worker(Thread):
                     keys = redisdB.keys("vehicle:*")
                     for key in keys:
                         my_logger.debug("key = '%s'", key)
-                        json_str = redisdB.get(key)
-                        if json_str is not None:  # vehicle may have been deleted
-                            my_logger.debug("redisDbObj = '%s'", json_str)
-                            vehicle = json.loads(json_str)
+                        vehicle = redisdBManager.get(key)
+                        if 'vehicle_details' in vehicle:  # vehicle may have been deleted
                             worker_url = vehicle['host_details']['worker_url']
                             if worker_url == workerURL:  # if this vehicle is managed by this worker component then process
                                 containers_being_managed = containers_being_managed + 1
@@ -537,7 +524,7 @@ class worker(Thread):
                         'last_heartbeat': round(time.time(), 1),
                         'memory': process.memory_info().rss,
                         'cpu': psutil.cpu_percent(interval=0)}
-                    redisdB.set('worker:' + workerHostname, json.dumps(worker_record))
+                    redisdBManager.set('worker:' + workerHostname, worker_record)
 
                     if (worker_iterations % 10 == 0):  # perform check every 10 iterations
                         continue_iterating = self.checkIfWorkerFinished(containers_being_managed, worker_iterations)
@@ -546,17 +533,8 @@ class worker(Thread):
 
                     if (elapsed_time < iteration_time):
                         time.sleep(iteration_time - elapsed_time)
-                except redis.exceptions.ConnectionError as ex:
-                    my_logger.exception("Caught redis.exceptions.ConnectionError in worker")
-                    my_logger.exception(ex)
-                    my_logger.exception("-------------------------------------------------")
-                    #redis database connection error
-                    time.sleep(5) #sleep for 5 seconds to allow Redis to failover
-                except socket.timeout as ex:
-                    my_logger.exception("Caught socket.timeout in worker")
-                    my_logger.exception(ex)
-                    my_logger.exception("-------------------------------------------------")
-                    #redis database connection error
+                except Warning as warn:
+                    my_logger.info("Caught warning in worker:%s ", str(warn))
                     time.sleep(5) #sleep for 5 seconds to allow Redis to failover
                 except Exception as ex:
                     my_logger.exception("Exception in worker")
@@ -576,6 +554,7 @@ class worker(Thread):
             my_logger.exception("Exception in worker (outer)")
             my_logger.exception(ex)
             my_logger.exception("-------------------------------------------------")
+            my_logger.exception("")
         return
 
 
@@ -587,7 +566,7 @@ class worker(Thread):
             vehicle_status = getVehicleStatus(vehicle_obj, vehicle_id)
             vehicle['vehicle_status'] = vehicle_status
             vehicle['host_details']['update_heartbeat'] = time.time()
-            redisdB.set(key, json.dumps(vehicle))
+            redisdBManager.set(key, vehicle)
         except Warning as warn:
             my_logger.info("Caught warning in worker.run connectVehicle:%s ", str(warn))
         except APIException as ex:
@@ -600,10 +579,11 @@ class worker(Thread):
             my_logger.warn("Caught exception: Unexpected error in executeUpdate. %s ", traceLines)
             my_logger.exception(ex)
             my_logger.exception("-------------------------------------------------")
+            my_logger.exception("")
         return
 
     def checkIfWorkerFinished(self, containers_being_managed, worker_iterations):
-        service_parameters = json.loads(redisdB.get("service_parameters"))
+        service_parameters = redisdBManager.get("service_parameters")
         max_worker_iterations = service_parameters['max_worker_iterations']
 
         if ((worker_iterations > max_worker_iterations) and (containers_being_managed == 0)
@@ -618,7 +598,7 @@ class worker(Thread):
             keys = redisdB.keys("worker:*")
             master_found = False
             for key in keys:
-                worker = json.loads(redisdB.get(key))
+                worker = redisdBManager.get(key)
                 if worker['master']:
                     # test if still active
                     last_heartbeat = worker['last_heartbeat']

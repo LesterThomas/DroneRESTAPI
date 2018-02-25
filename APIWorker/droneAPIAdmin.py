@@ -1,23 +1,23 @@
 """This module provides the API endpoint to administer the API service."""
 
-
+import sys
 import logging
 import traceback
 import json
 import droneAPIUtils
 import web
 
-my_logger = logging.getLogger("DroneAPIWorker." + str(__name__))
-
 
 class admin:
 
     def __init__(self):
+        self.logger = logging.getLogger("DroneAPIWorker." + str(__name__))
+        self.logger.info("droneAPIRedis Initialised admin")
         return
 
     def GET(self):
         try:
-            my_logger.info("GET")
+            self.logger.info("GET")
             droneAPIUtils.applyHeadders()
             outputObj = {}
             outputObj['_links'] = {"self": {"href": droneAPIUtils.homeDomain +
@@ -27,17 +27,17 @@ class admin:
 
             #get this workers stats
             outputObj['worker_record']=droneAPIUtils.getWorkerDetails()
+            self.logger.info("worker_record: = %s", outputObj['worker_record'])
+
             if (outputObj['worker_record']['running']==False):
+                self.logger.info("Get Admin raising 500 error")
                 raise web.HTTPError(500)
 
-
-
             outputObj['_actions'] = availableActions
-
             output = json.dumps(outputObj)
-            my_logger.info("Return: =" + output)
+            self.logger.info("Return: =" + output)
         except Exception as e:
-            my_logger.exception(e)
+            self.logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
@@ -45,7 +45,7 @@ class admin:
 
     def POST(self):
         try:
-            my_logger.info("POST")
+            self.logger.info("POST")
             droneAPIUtils.applyHeadders()
             data = json.loads(web.data())
             value = data["name"]
@@ -60,9 +60,9 @@ class admin:
                 outputObj = {"status": "success"}
 
             output = json.dumps(outputObj)
-            my_logger.info("Return: =" + output)
+            self.logger.info("Return: =" + output)
         except Exception as e:
-            my_logger.exception(e)
+            self.logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})
@@ -71,15 +71,15 @@ class admin:
     def OPTIONS(self):
         """This method handles the OPTIONS HTTP verb, required for CORS support."""
         try:
-            my_logger.info("OPTIONS")
+            self.logger.info("OPTIONS")
             # just here to suppor the CORS Cross-Origin security
             droneAPIUtils.applyHeadders()
 
             outputObj = {}
             output = json.dumps(outputObj)
-            my_logger.info("Return: =" + output)
+            self.logger.info("Return: =" + output)
         except Exception as e:
-            my_logger.exception(e)
+            self.logger.exception(e)
             tracebackStr = traceback.format_exc()
             traceLines = tracebackStr.split("\n")
             return json.dumps({"error": "An unknown Error occurred ", "details": e.message, "args": e.args, "traceback": traceLines})

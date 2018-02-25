@@ -9,7 +9,6 @@ import traceback
 import json
 import time
 import math
-import docker
 import droneAPIUtils
 
 my_logger = logging.getLogger("DroneAPIWorker." + str(__name__))
@@ -119,10 +118,9 @@ class Command(object):
             else:
                 output_obj['command'] = {"status": "error", "name": value, "error": "No command found with name '" + value + "'."}
             #command_array = droneAPIUtils.commandArrayDict[vehicle_id]
-            json_str = droneAPIUtils.redisdB.get('vehicle_commands:' + user_id + ":" + str(vehicle_id))
+            command_array_obj = droneAPIUtils.redisdBManager.get('vehicle_commands:' + user_id + ":" + str(vehicle_id))
             my_logger.info('############################vehicle_commands from Redis######################################')
-            my_logger.info(json_str)
-            command_array_obj = json.loads(str(json_str))
+            my_logger.info(command_array_obj)
             command_array = command_array_obj['commands']
 
             if len(command_array) == 0:
@@ -132,7 +130,7 @@ class Command(object):
             command_array.append(output_obj)
             if len(command_array) > 10:
                 command_array.pop(0)
-            droneAPIUtils.redisdB.set('vehicle_commands:' + user_id + ":" + str(vehicle_id), json.dumps({"commands": command_array}))
+            droneAPIUtils.redisdBManager.set('vehicle_commands:' + user_id + ":" + str(vehicle_id), {"commands": command_array})
             output_obj['href'] = droneAPIUtils.homeDomain + "/vehicle/" + str(vehicle_id) + "/command"
             my_logger.info("Return: =" + json.dumps(output_obj))
 
@@ -242,9 +240,7 @@ def powerOff(inVehicle, vehicle_id, user_id):
         output_obj["param4"] = 0
         output_obj["command"] = 402
 
-        json_str = droneAPIUtils.redisdB.get('vehicle:' + user_id + ":" + str(vehicle_id))
-        my_logger.debug("redisDbObj = '" + json_str + "'")
-        json_obj = json.loads(json_str)
+        json_obj = droneAPIUtils.redisdBManager.get('vehicle:' + user_id + ":" + str(vehicle_id))
         connection_string = json_obj['vehicle_details']['connection_string']
         ipAddress = connection_string[4:-6]
 
@@ -278,7 +274,7 @@ def powerOff(inVehicle, vehicle_id, user_id):
         json_obj['vehicle_status']['gps_0']['satellites_visible'] = 0
         json_obj['vehicle_status']['last_heartbeat'] = 0
 
-        droneAPIUtils.redisdB.set('vehicle:' + user_id + ":" + str(vehicle_id), json.dumps(json_obj))
+        droneAPIUtils.redisdBManager.set('vehicle:' + user_id + ":" + str(vehicle_id), json_obj)
 
     else:
         output_obj["name"] = "Power-Off"
@@ -292,9 +288,7 @@ def powerOff(inVehicle, vehicle_id, user_id):
 def powerOn(vehicle_id, user_id):
     """This function turns the drone power on."""
     output_obj = {}
-    json_str = droneAPIUtils.redisdB.get('vehicle:' + user_id + ":" + str(vehicle_id))
-    my_logger.debug("redisDbObj = '" + json_str + "'")
-    json_obj = json.loads(json_str)
+    json_obj = droneAPIUtils.redisdBManager.get('vehicle:' + user_id + ":" + str(vehicle_id))
 
     if json_obj['host_details']['worker_url'] == "Power-Off":
         my_logger.info("Powering On")

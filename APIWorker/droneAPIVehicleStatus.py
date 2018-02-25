@@ -32,9 +32,7 @@ class vehicleStatus:
             # remove reference t dronekit object
             droneAPIUtils.connectionDict[vehicle_id] = None
             # delete docker container for this vehicle
-            json_str = droneAPIUtils.redisdB.get('vehicle:' + user_id + ":" + str(vehicle_id))
-            my_logger.debug("redisDbObj = '" + json_str + "'")
-            json_obj = json.loads(json_str)
+            json_obj = droneAPIUtils.redisdBManager.get('vehicle:' + user_id + ":" + str(vehicle_id))
             connection_string = json_obj['vehicle_details']['connection_string']
 
             droneAPIUtils.redisdB.delete('vehicle:' + user_id + ":" + str(vehicle_id))

@@ -3,7 +3,7 @@ angular.module('droneFrontendApp')
 	var self=this;
     this.droneId=-1;
     this.apiURL='HTTP://droneapi.ddns.net/'
-    this.consoleRootURL='HTTP://droneapi.ddns.net'
+    this.consoleRootURL='http://droneapi.ddns.net/static/app/#!/inventory'
     this.droneName='';
     this.lat=0;
     this.lon=0;

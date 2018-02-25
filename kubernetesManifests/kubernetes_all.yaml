@@ -14,62 +14,58 @@ spec:
   storageClassName: standard
 ---
 ###################################################################
-# Redis Database stateful container
+# Redis Database and Sentinel pod (for high availability run additional script to launch redis and sentinel slaves). This pod boot-straps redis and sentinel
 ###################################################################
-apiVersion: apps/v1beta1
-kind: StatefulSet
+apiVersion: v1
+kind: Pod
 metadata:
-  name: redis
+  labels:
+    name: redis
+    redis-sentinel: "true"
+    role: master
+  name: redis-master
 spec:
-  selector:
-    matchLabels:
-      app: redis
-  serviceName: "redis"
-  replicas: 1 # by default is 1
-  template:
-    metadata:
-      labels:
-        app: redis
-        tier: backend
-    spec:
-      terminationGracePeriodSeconds: 10
-      containers:
-      - name: redis
-        image: redis
-        ports:
+  containers:
+    - name: master
+      image: k8s.gcr.io/redis:v1
+      env:
+        - name: MASTER
+          value: "true"
+      ports:
         - containerPort: 6379
-          name: redis
-        volumeMounts:
-        - name: redis-data
-          mountPath: /data
-  volumeClaimTemplates:
-  - metadata:
-      name: redis-data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: manual
       resources:
-        requests:
-          storage: 20Gi
+        limits:
+          cpu: "0.1"
+      volumeMounts:
+        - mountPath: /redis-master-data
+          name: data
+    - name: sentinel
+      image: kubernetes/redis:v1
+      env:
+        - name: SENTINEL
+          value: "true"
+      ports:
+        - containerPort: 26379
+  volumes:
+    - name: data
+      emptyDir: {}
 ---
 ###################################################################
-# Service that exposes Redis Database
+# Service that exposes Redis Sentinel (use sentinel to query the Redis master)
 ###################################################################
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis
   labels:
-    app: redis
-    tier: backend
+    name: sentinel
+    role: service
+  name: redis-sentinel
 spec:
   ports:
-  - port: 6379
-    targetPort: redis
-    name: redis
+    - port: 26379
+      targetPort: 26379
   selector:
-    app: redis
-    tier: backend
+    redis-sentinel: "true"
 ---
 ###################################################################
 # Redis User Interface stateless container deployment
@@ -142,7 +138,7 @@ spec:
       terminationGracePeriodSeconds: 1
       containers:
       - name: droneapiworker
-        image: lesterthomas/droneapiworker:3.0.9
+        image: lesterthomas/droneapiworker:3.0.10
         env:
         - name: DRONEAPI_URL
           value: http://droneapi.ddns.net
@@ -195,7 +191,7 @@ spec:
     spec:
       containers:
       - name: droneapiserver
-        image: lesterthomas/droneapiserver:3.0.7
+        image: lesterthomas/droneapiserver:3.0.8
         env:
         - name: DRONEAPI_URL
           value: http://droneapi.ddns.net
@@ -232,6 +228,7 @@ metadata:
   name: droneapiserver
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - host: droneapi.ddns.net
