@@ -13,6 +13,16 @@ spec:
         redis-sentinel: "true"
         role: sentinel
     spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - redis-sentinel
+        topologyKey: "kubernetes.io/hostname"    
       containers:
       - name: sentinel
         image: k8s.gcr.io/redis:v1
