@@ -135,6 +135,16 @@ spec:
         app: droneapiworker
         tier: backend
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In  
+                values:
+                - droneapiworker
+            topologyKey: "kubernetes.io/hostname"    
       terminationGracePeriodSeconds: 1
       containers:
       - name: droneapiworker
