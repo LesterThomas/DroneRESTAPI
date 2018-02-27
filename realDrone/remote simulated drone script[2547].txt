@@ -1,0 +1,9 @@
+sleep infinity | /usr/local/bin/mavproxy.py --master=tcp:127.0.0.1:14550 --out=$(curl --header "apikey: 93f87af7-f529-4c" -X POST -d '{"name":"piDrone","vehicle_type":"real"}' 'http://droneapi.ddns.net/vehicle' 2>/dev/null | python -c "import sys, json; print json.load(sys.stdin)['drone_connect_to']")  | python /arducopter/Tools/autotest/sim_vehicle.py -N -w --custom-location "51.4,-1.35,105,0"  --out=tcpin:0.0.0.0:14550
+
+
+
+
+
+sleep infinity | python /arducopter/Tools/autotest/sim_vehicle.py -N -w --custom-location "51.4,-1.35,105,0"  --out=$(curl --header "apikey: 93f87af7-f529-4c" -X POST -d '{"name":"piDrone","vehicle_type":"real"}' 'http://droneapi.ddns.net/vehicle' 2>/dev/null | python -c "import sys, json; print json.load(sys.stdin)['drone_connect_to']")  
+
+

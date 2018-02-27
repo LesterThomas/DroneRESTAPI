@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: droneapiserver
-        image: lesterthomas/droneapiserver:3.0.8
+        image: lesterthomas/droneapiserver:3.0.9
         env:
         - name: DRONEAPI_URL
           value: http://droneapi.ddns.net
