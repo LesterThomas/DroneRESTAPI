@@ -4,7 +4,6 @@ metadata:
   name: droneapiworker
   labels:
     app: droneapiworker
-    tier: backend
 spec:
   ports:
   - port: 1236
@@ -12,4 +11,3 @@ spec:
   clusterIP: None
   selector:
     app: droneapiworker
-    tier: backend

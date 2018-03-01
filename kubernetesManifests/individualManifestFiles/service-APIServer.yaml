@@ -4,7 +4,6 @@ metadata:
   name: droneapiserver
   labels:
     app: droneapiserver
-    tier: frontend
 spec:
   ports:
   - port: 1234
@@ -13,4 +12,3 @@ spec:
   type: NodePort
   selector:
     app: droneapiserver
-    tier: frontend

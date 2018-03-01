@@ -76,7 +76,6 @@ metadata:
   name: redis
   labels:
     app: redis
-    tier: backend
 spec:
   ports:
   - port: 6379
@@ -84,7 +83,6 @@ spec:
     name: redis
   selector:
     app: redis
-    tier: backend
 ---
 ###################################################################
 # Redis User Interface stateless container deployment
@@ -102,7 +100,6 @@ spec:
     metadata:
       labels:
         app: redis-commander
-        tier: backend
     spec:
       containers:
       - name: redis-commander
@@ -123,7 +120,6 @@ metadata:
   name: redis-commander
   labels:
     app: redis-commander
-    tier: backend
 spec:
   ports:
   - port: 8081
@@ -132,7 +128,6 @@ spec:
   type: NodePort
   selector:
     app: redis-commander
-    tier: backend
 ---
 ###################################################################
 # droneapiworker stateful container deployment
@@ -152,7 +147,6 @@ spec:
     metadata:
       labels:
         app: droneapiworker
-        tier: backend
     spec:
       affinity:
         podAntiAffinity:
@@ -192,7 +186,6 @@ metadata:
   name: droneapiworker
   labels:
     app: droneapiworker
-    tier: backend
 spec:
   ports:
   - port: 1236
@@ -200,7 +193,6 @@ spec:
   clusterIP: None
   selector:
     app: droneapiworker
-    tier: backend
 ---
 ###################################################################
 # droneapiserver stateless container deployment
@@ -218,7 +210,6 @@ spec:
     metadata:
       labels:
         app: droneapiserver
-        tier: frontend
     spec:
       containers:
       - name: droneapiserver
@@ -239,7 +230,6 @@ metadata:
   name: droneapiserver
   labels:
     app: droneapiserver
-    tier: frontend
 spec:
   ports:
   - port: 1234
@@ -248,7 +238,6 @@ spec:
   type: NodePort
   selector:
     app: droneapiserver
-    tier: frontend
 ---
 ###################################################################
 # Ingress that exposes http traffic to outside world

@@ -4,7 +4,6 @@ metadata:
   name: redis
   labels:
     app: redis
-    tier: backend
 spec:
   ports:
   - port: 6379
@@ -12,4 +11,3 @@ spec:
     name: redis
   selector:
     app: redis
-    tier: backend

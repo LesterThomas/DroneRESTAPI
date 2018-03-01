@@ -4,7 +4,6 @@ metadata:
   name: redis-commander
   labels:
     app: redis-commander
-    tier: backend
 spec:
   ports:
   - port: 8081
@@ -13,4 +12,3 @@ spec:
   type: LoadBalancer
   selector:
     app: redis-commander
-    tier: backend

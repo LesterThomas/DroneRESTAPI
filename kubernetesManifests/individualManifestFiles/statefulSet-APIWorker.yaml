@@ -16,7 +16,6 @@ spec:
     metadata:
       labels:
         app: droneapiworker
-        tier: backend
     spec:
       terminationGracePeriodSeconds: 1
       containers:
