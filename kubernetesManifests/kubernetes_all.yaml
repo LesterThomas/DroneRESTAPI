@@ -82,7 +82,7 @@ spec:
     targetPort: redis
     name: redis
   selector:
-    app: redis
+    name: redis
 ---
 ###################################################################
 # Redis User Interface stateless container deployment
