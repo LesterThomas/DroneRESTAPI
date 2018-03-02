@@ -20,7 +20,7 @@ spec:
       terminationGracePeriodSeconds: 1
       containers:
       - name: droneapiworker
-        image: lesterthomas/droneapiworker:3.0.11
+        image: lesterthomas/droneapiworker:3.0.16
         env:
         - name: DRONEAPI_URL
           value: http://droneapi.ddns.net
