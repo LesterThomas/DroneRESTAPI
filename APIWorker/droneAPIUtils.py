@@ -288,7 +288,7 @@ def create_deployment_object(inName, inImage, inEnvironment):
     container = client.V1Container(
         name=inName,
         image=inImage,
-        ports=[client.V1ContainerPort(container_port=14550, name=inName)],
+        ports=[client.V1ContainerPort(container_port=14550, name=inName+'-dr'),client.V1ContainerPort(container_port=14551, name=inName),client.V1ContainerPort(container_port=14552, name=inName+'-mp')],
         env=inEnvironment)
     # Create and configurate a spec section
     template = client.V1PodTemplateSpec(
@@ -370,40 +370,73 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
     deployment = create_deployment_object(deploymentName, containerImageName,environmentObj)
     create_deployment(extensions_v1beta1, deployment,deploymentName)
 
-    #Create Service for api to connect to sim / proxy
-    api_instance = client.CoreV1Api()
-    namespace = 'default'
-    manifest = {
-        "kind": "Service",
-        "apiVersion": "v1",
-        "metadata": {
-            "name": deploymentName,
-            "labels":{
-                "app": deploymentName,
-                "tier":"backend"
-            }
-        },
-        "spec": {
-            "selector": {
-                "app": deploymentName,
-                "tier": "backend"
-            },
-            "type": "NodePort",
-            "ports": [
-                {
-                    "protocol": "TCP",
-                    "port": 14550,
-                    "targetPort": deploymentName,
-                    "name": deploymentName
-                }
-            ]
-        }
-    }
+    if droneType!="real":
 
-    api_response = api_instance.create_namespaced_service(namespace, manifest, pretty=True)
+        #Create Service for api to connect to sim
+        api_instance = client.CoreV1Api()
+        namespace = 'default'
+        manifest = {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": deploymentName,
+                "labels":{
+                    "app": deploymentName,
+                    "tier":"backend"
+                }
+            },
+            "spec": {
+                "selector": {
+                    "app": deploymentName,
+                    "tier": "backend"
+                },
+                "type": "NodePort",
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 14550,
+                        "targetPort": 14550,
+                        "name": deploymentName
+                    }
+                ]
+            }
+        }
+
+        api_response = api_instance.create_namespaced_service(namespace, manifest, pretty=True)
 
     if droneType=="real":
-        #Create additional Service for external drone to connect to proxy
+        #Create Service for api to connect to proxy
+        api_instance = client.CoreV1Api()
+        namespace = 'default'
+        manifest = {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": deploymentName,
+                "labels":{
+                    "app": deploymentName,
+                    "tier":"backend"
+                }
+            },
+            "spec": {
+                "selector": {
+                    "app": deploymentName,
+                    "tier": "backend"
+                },
+                "type": "NodePort",
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 14550,
+                        "targetPort": 14551,
+                        "name": deploymentName
+                    }
+                ]
+            }
+        }
+        api_response = api_instance.create_namespaced_service(namespace, manifest, pretty=True)
+
+        #Create  Services for external drone to connect to proxy
         manifest = {
             "kind": "Service",
             "apiVersion": "v1",
@@ -424,8 +457,8 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
                     {
                         "protocol": "TCP",
                         "port": 14551,
-                        "targetPort": deploymentName,
-                        "name": deploymentName
+                        "targetPort": 14550,
+                        "name": deploymentName+'-dr'
                     }
                 ]
             }
