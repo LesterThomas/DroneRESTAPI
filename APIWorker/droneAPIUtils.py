@@ -428,7 +428,7 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
                     {
                         "protocol": "TCP",
                         "port": 14550,
-                        "targetPort": 14551,
+                        "targetPort": 14550,
                         "name": deploymentName
                     }
                 ]
@@ -457,14 +457,22 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
                     {
                         "protocol": "TCP",
                         "port": 14551,
-                        "targetPort": 14550,
+                        "targetPort": 14551,
                         "name": deploymentName+'-dr'
+                    }
+                    {
+                        "protocol": "TCP",
+                        "port": 14552,
+                        "targetPort": 14552,
+                        "name": deploymentName+'-mp'
                     }
                 ]
             }
         }
         api_response = api_instance.create_namespaced_service(namespace, manifest, pretty=True)
         nodePort=api_response.spec.ports[0].node_port
+        my_logger.info("External Port: %s", nodePort)
+        mpNodePort=api_response.spec.ports[1].node_port
         my_logger.info("External Port: %s", nodePort)
 
 
@@ -484,7 +492,7 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
 
     if (droneType == 'real'):
         droneDBDetails['vehicle_details']['drone_connect_to'] = nodePort
-        droneDBDetails['vehicle_details']['groundstation_connect_to'] = port + 20
+        droneDBDetails['vehicle_details']['groundstation_connect_to'] = mpNodePort
 
     redisdBManager.set("vehicle:" + str(user_id) + ":" + key, droneDBDetails)
     redisdBManager.set("vehicle_commands:" + str(user_id) + ":" + key, {"commands": []})
@@ -511,6 +519,11 @@ def deleteDrone(vehicle_id):
         namespace="default",
         pretty=True)
     my_logger.info("Service deleted. status='%s'" % str(api_response.status))
+    api_response = api_instance.delete_namespaced_service(
+        name='proxy'+vehicle_id,
+        namespace="default",
+        pretty=True)
+    my_logger.info("Proxy Service deleted. status='%s'" % str(api_response.status))
 
     return
 

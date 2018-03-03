@@ -20,14 +20,14 @@ spec:
       terminationGracePeriodSeconds: 1
       containers:
       - name: droneapiworker
-        image: lesterthomas/droneapiworker:3.0.16
+        image: lesterthomas/droneapiworker:3.0.17
         env:
         - name: DRONEAPI_URL
           value: http://droneapi.ddns.net
         - name: DOCKER_DRONESIM_IMAGE
           value: lesterthomas/dronesim:1.8
         - name: DOCKER_DRONEPROXY_IMAGE
-          value: lesterthomas/droneproxy:1.0
+          value: lesterthomas/droneproxy:1.1
         ports:
         - containerPort: 1236
           name: droneapiworker
