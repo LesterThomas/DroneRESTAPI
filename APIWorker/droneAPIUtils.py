@@ -137,8 +137,8 @@ def applyHeadders():
 
 def connectVehicle(user_id, inVehicleId):
     #global connection_string_array
-    global redisdB
-    global connectionDict
+    global redisdBManager
+    global connectionDict, connectionNameTypeDict
     try:
         my_logger.debug("connectVehicle called with inVehicleId = " + str(inVehicleId))
         # connection_string=connection_string_array[inVehicleId]
@@ -156,7 +156,7 @@ def connectVehicle(user_id, inVehicleId):
         currentTime = time.time()
         timeSinceStart = currentTime - vehicle_start_time
         my_logger.debug("timeSinceStart= " + str(timeSinceStart))
-        if (timeSinceStart < 12):  # less than 10 seconds so throw Exception
+        if (timeSinceStart < 12):  # less than 12 seconds so throw Exception
             my_logger.warn("Raising Vehicle starting up warning")
             raise Warning('Vehicle starting up ')
 
@@ -168,10 +168,11 @@ def connectVehicle(user_id, inVehicleId):
 
         # Connect to the Vehicle.
         elif not connectionDict.get(inVehicleId):
-            my_logger.info("connection_string: %s" % (connection_string,))
-            my_logger.info("Connecting to vehicle on: %s" % (connection_string,))
+
+            my_logger.info("Connecting to vehicle on: %s" ,connection_string)
+            vehicle_connection=connect(connection_string) #, wait_ready=True, heartbeat_timeout=10)
             connectionNameTypeDict[inVehicleId] = {"name": vehicleName, "vehicle_type": vehicle_type}
-            connectionDict[inVehicleId] = connect(connection_string, wait_ready=True, heartbeat_timeout=10)
+            connectionDict[inVehicleId] = vehicle_connection
         else:
             my_logger.debug("Already connected to vehicle")
     except Warning as w:
@@ -288,7 +289,7 @@ def create_deployment_object(inName, inImage, inEnvironment):
     container = client.V1Container(
         name=inName,
         image=inImage,
-        ports=[client.V1ContainerPort(container_port=14550, name=inName+'-dr'),client.V1ContainerPort(container_port=14551, name=inName),client.V1ContainerPort(container_port=14552, name=inName+'-mp')],
+        ports=[client.V1ContainerPort(container_port=14550, name=inName),client.V1ContainerPort(container_port=14551, name=inName+'-dr'),client.V1ContainerPort(container_port=14552, name=inName+'-mp')],
         env=inEnvironment)
     # Create and configurate a spec section
     template = client.V1PodTemplateSpec(
@@ -404,6 +405,36 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
 
         api_response = api_instance.create_namespaced_service(namespace, manifest, pretty=True)
 
+        #Create  Services for external groundstation to connect to proxy
+        manifest = {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "proxy"+str(deploymentName),
+                "labels":{
+                    "app": deploymentName,
+                    "tier":"backend"
+                }
+            },
+            "spec": {
+                "selector": {
+                    "app": deploymentName,
+                    "tier": "backend"
+                },
+                "type": "NodePort",
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 14552,
+                        "targetPort": 14552,
+                        "name": deploymentName+'-mp'
+                    }
+                ]
+            }
+        }
+        api_response = api_instance.create_namespaced_service(namespace, manifest, pretty=True)
+        mpNodePort=api_response.spec.ports[0].node_port
+        my_logger.info("MP External Port: %s", mpNodePort)
     if droneType=="real":
         #Create Service for api to connect to proxy
         api_instance = client.CoreV1Api()
@@ -436,7 +467,7 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
         }
         api_response = api_instance.create_namespaced_service(namespace, manifest, pretty=True)
 
-        #Create  Services for external drone to connect to proxy
+        #Create  Services for external drone and groundstation to connect to proxy
         manifest = {
             "kind": "Service",
             "apiVersion": "v1",
@@ -459,7 +490,7 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
                         "port": 14551,
                         "targetPort": 14551,
                         "name": deploymentName+'-dr'
-                    }
+                    },
                     {
                         "protocol": "TCP",
                         "port": 14552,
@@ -471,9 +502,9 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
         }
         api_response = api_instance.create_namespaced_service(namespace, manifest, pretty=True)
         nodePort=api_response.spec.ports[0].node_port
-        my_logger.info("External Port: %s", nodePort)
+        my_logger.info("Drone External Port: %s", nodePort)
         mpNodePort=api_response.spec.ports[1].node_port
-        my_logger.info("External Port: %s", nodePort)
+        my_logger.info("MP External Port: %s", mpNodePort)
 
 
     port=14550
@@ -485,14 +516,15 @@ def createDrone(droneType, vehicleName, drone_lat, drone_lon, drone_alt, drone_d
     droneDBDetails = {"vehicle_details": {"connection_string": connection,
                                           "name": vehicleName,
                                           "port": port,
-                                          "vehicle_type": droneType},
+                                          "vehicle_type": droneType,
+                                          "groundstation_connect_to": mpNodePort
+                                          },
                       "host_details": {"host": deploymentName,
                                        "start_time": time.time(),
                                        "worker_url": workerURL}}
 
     if (droneType == 'real'):
         droneDBDetails['vehicle_details']['drone_connect_to'] = nodePort
-        droneDBDetails['vehicle_details']['groundstation_connect_to'] = mpNodePort
 
     redisdBManager.set("vehicle:" + str(user_id) + ":" + key, droneDBDetails)
     redisdBManager.set("vehicle_commands:" + str(user_id) + ":" + key, {"commands": []})
