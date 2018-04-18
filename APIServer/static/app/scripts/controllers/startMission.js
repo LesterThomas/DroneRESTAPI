@@ -527,12 +527,10 @@ angular.module('droneFrontendApp')
 		//executeCommandList
 		//executeCommandIndex
 		
-		if (executeCommandIndex<executeCommandList.length){
-			console.log('Executing command ',executeCommandList[executeCommandIndex]);
-			$scope.commandButton(executeCommandList[executeCommandIndex]);
-			executeCommandIndex++;
-			
-			
+		if ($scope.executeCommandIndex<$scope.executeCommandList.length){
+			console.log('Executing command ',$scope.executeCommandList[$scope.executeCommandIndex]);
+			$scope.commandButton($scope.executeCommandList[$scope.executeCommandIndex]);
+			$scope.executeCommandIndex++;
 		}
 		
 		
