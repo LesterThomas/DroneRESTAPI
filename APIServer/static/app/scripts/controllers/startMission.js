@@ -22,7 +22,9 @@ angular.module('droneFrontendApp')
 		}
 	}
     $scope.executeCommandList=[
-	    {name:"Arm", attributes:[]}
+	    {name:"Arm", attributes:[]},
+	     {name:"Takeoff", attributes:[{name:"height",value:"10"}]},
+	     {name:"Start-Mission", attributes:[]}
     ];
     $scope.executeCommandIndex=0;
 	  
