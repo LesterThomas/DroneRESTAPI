@@ -500,7 +500,7 @@ angular.module('droneFrontendApp')
 		payload['name']=inAction.name;
 
 		if (inAction.name=="Check"){
-			    var commandItem={"name":inAction.name,"textDescription":inAction.attributes[0].name + " " + inAction.attributes[0].value,status":"success" }
+			    var commandItem={"name":inAction.name,"textDescription":inAction.attributes[0].name + " " + inAction.attributes[0].value,"status":"success" }
 			    $scope.commandLog.items.push(commandItem);
 
 			
