@@ -30,6 +30,12 @@ angular
         controllerAs: 'individual',
         needAuth:true
       })
+      .when('/startMission', {
+        templateUrl: 'views/startMission.html',
+        controller: 'StartMissionCtrl',
+        controllerAs: 'startMission',
+        needAuth:false
+      })
       .when('/new', {
         templateUrl: 'views/new.html',
         controller: 'NewCtrl',
