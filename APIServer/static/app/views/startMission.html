@@ -29,24 +29,25 @@
 </div>
 
 
-<div  class="col-lg-12 col-sm-12">
-	<div class="panel panel-default panel-primary">
-		<div class="panel-heading">Command log </div>
-		<div class="panel-body">
-			<table class="table table-striped">
 
-				<tr  ng-repeat="commandItem in commandLog.items" >
-
-					<th ><span ng-style="commandItem.status === 'Error' ? { color:'red' } : { color:'black' }">{{commandItem.name}}</span></th>
-					<td >{{commandItem.textDescription}}</td>
-				</tr>
-			</table>
-		</p>
-		</div>
-	</div>
-</div>	
 
 <div  class="col-lg-6 col-sm-12 " style="padding-right:0; padding-left:0;">
+	<div  class="col-lg-12 col-sm-12">
+		<div class="panel panel-default panel-primary">
+			<div class="panel-heading">Command log </div>
+			<div class="panel-body">
+				<table class="table table-striped">
+
+					<tr  ng-repeat="commandItem in commandLog.items" >
+
+						<th ><span ng-style="commandItem.status === 'Error' ? { color:'red' } : { color:'black' }">{{commandItem.name}}</span></th>
+						<td >{{commandItem.textDescription}}</td>
+					</tr>
+				</table>
+			</p>
+			</div>
+		</div>
+	</div>	
 
 	<div  class="col-lg-6 col-sm-6">
 		<div class="panel panel-default panel-primary">
