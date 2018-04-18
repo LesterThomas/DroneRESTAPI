@@ -2,16 +2,16 @@
 
 /**
  * @ngdoc function
- * @name droneFrontendApp.controller:IndividualCtrl
+ * @name droneFrontendApp.controller:StartMissionCtrl
  * @description
  * # IndividualCtrl
  * Controller of the droneFrontendApp
  */
 
 angular.module('droneFrontendApp')
-  .controller('IndividualCtrl', ['$scope', '$http','NgMap','$interval','$location','droneService','$rootScope',function ($scope,$http,NgMap,$interval,$location,droneService,$rootScope) {
+  .controller('StartMissionCtrl', ['$scope', '$http','NgMap','$interval','$location','droneService','$rootScope',function ($scope,$http,NgMap,$interval,$location,droneService,$rootScope) {
 
-  	console.log('Started individual controller');
+  	console.log('Started startMission controller');
     $scope.apiURL=droneService.apiURL;
     $scope.consoleRootURL=droneService.consoleRootURL;
 	$scope.drones=droneService.drones;
