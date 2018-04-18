@@ -25,6 +25,10 @@ angular.module('droneFrontendApp')
 
 
     $scope.executeCommandList=[
+	    {name:"Check", attributes:[{name:"No-Fly Zones",value:"OK"}]},
+	    {name:"Check", attributes:[{name:"Weather",value:"OK"}]},
+	    {name:"Check", attributes:[{name:"5G Connectivity",value:"Not-Available"}]},
+	    {name:"Check", attributes:[{name:"Drone Telemetry",value:"OK"}]},
 	    {name:"Arm", attributes:[]},
 	     {name:"Takeoff", attributes:[{name:"height",value:"10"}]},
 	     {name:"Start-Mission", attributes:[]}
@@ -493,43 +497,49 @@ angular.module('droneFrontendApp')
 		for (var i=0;i<inAction.attributes.length;i++) {
 			payload[inAction.attributes[i].name]=inAction.attributes[i].value;
 		}
-
-
 		payload['name']=inAction.name;
 
-		console.log('Sending POST with payload ',payload);
+		if (inAction.name=="Check"){
+			    var commandItem={"name":inAction.name,"textDescription":inAction.attributes[0].name + " " + inAction.attributes[0].value,status":"success" }
+			    $scope.commandLog.items.push(commandItem);
 
-		$http.post($scope.apiURL + 'vehicle/'+droneService.droneId+'/command',payload,{
-			headers : {
-				'Content-Type' : 'application/json; charset=UTF-8',
-                'APIKEY': $rootScope.loggedInUser.api_key
+			
+		}
+		else {
+			
+			console.log('Sending POST with payload ',payload);
+
+			$http.post($scope.apiURL + 'vehicle/'+droneService.droneId+'/command',payload,{
+				headers : {
+					'Content-Type' : 'application/json; charset=UTF-8',
+			'APIKEY': $rootScope.loggedInUser.api_key
+				}
+			}).then(function(data, status, headers, config) {
+
+		    //test for error
+		    if (typeof data.data.error  === 'undefined') {
+					var commandItem=data.data.command;
+					commandItem['textDescription']=setActionText(commandItem);
+
+					$scope.commandLog.items.push(commandItem);
+					console.log('API command POST success',data,status);
 			}
-		}).then(function(data, status, headers, config) {
+			else {
+			    var commandItem={"name":"Power-On","error":"Unknown error","status":"Error" }
+			    commandItem['textDescription']=setActionText(commandItem);
 
-            //test for error
-            if (typeof data.data.error  === 'undefined') {
-        			var commandItem=data.data.command;
-        			commandItem['textDescription']=setActionText(commandItem);
-
-        			$scope.commandLog.items.push(commandItem);
-        			console.log('API command POST success',data,status);
-                }
-                else {
-                    var commandItem={"name":"Power-On","error":"Unknown error","status":"Error" }
-                    commandItem['textDescription']=setActionText(commandItem);
-
-                    $scope.commandLog.items.push(commandItem);
-                    console.log('API command POST returned error',data,status);
+			    $scope.commandLog.items.push(commandItem);
+			    console.log('API command POST returned error',data,status);
 
 
-                }
+			}
 
-		},
-		function(data, status, headers, config) {
-		  // log error
-			console.log('API commands POST error',data, status, headers, config);
-		});
-
+			},
+			function(data, status, headers, config) {
+			  // log error
+				console.log('API commands POST error',data, status, headers, config);
+			});
+		}
 
 	}
 
