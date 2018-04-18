@@ -3,27 +3,7 @@
 <div  class="col-lg-6 col-sm-12 " style="padding-right:0; padding-left:0;">
 
 
-	<div  class="col-lg-12 col-sm-12">
-		<div class="panel panel-default panel-primary">
-			<div class="panel-heading">Drone </div>
-			<div class="panel-body">
-				<div class="panel-body" style="  height:100%; " >
-					<table width="100%">
-						<tr>
-							<td>
-								Name:<b> {{drones.collection[droneIndex].vehicle_details.name}}</b> &nbsp; &nbsp;
-								Type:<b> {{drones.collection[droneIndex].vehicle_details.vehicle_type}}</b>
-							</td>
-							<td>
-								<button type="button" class="btn btn-primary" ng-if="drones.collection[droneIndex].vehicle_details.vehicle_type=='real'" ng-click="disconnectDelete()">Disconnect from Drone</button>
-								<button type="button" class="btn btn-primary" ng-if="drones.collection[droneIndex].vehicle_details.vehicle_type=='simulated'" ng-click='disconnectDelete()'>Delete Drone</button>
-							</td>
-						</tr>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
+
 	<div  class="col-lg-12 col-sm-12">
 	 	<div style="padding-top: 70%; position:relative;">
 			<div class="panel panel-default panel-primary" style="position: absolute; top: 0;    left: 0;    bottom: 0;    right: 0;">
@@ -177,33 +157,6 @@
 		</div>
 	</div>
 
-
-	<div  class="col-lg-12 col-sm-12">
-		<div class="panel panel-default panel-primary">
-			<div class="panel-heading">Simulator Environment parameters </div>
-			<div class="panel-body">
-				<label for="sel1">Select sim parameter value:</label>
-				<table>
-					<tr>
-						<td>
-						    <select class="form-control" name="simParamSelect" id="simParamSelect" ng-model="simParamSelected">
-						      <option ng-repeat="(key, value) in simEnvironment" value="{{key}}">{{key}}</option>
-						    </select>
-						</td>
-						<td>
-						    <input type="text" class=" form-control" ng-model="simParamValue" />
-						</td>
-						<td>
-							<button type="button" ng-if="simParamSelected!=''" class="btn btn-primary"  ng-click='simParamUpdateButton()'>Update</button>
-						</td>
-					</tr>
-				</table>
-			</p>
-			</div>
-		</div>
-	</div>
-
-<div>local frame:{{-drones.collection[droneIndex].vehicle_status.local_frame.down | number : 2}} : global frame:{{-drones.collection[droneIndex].vehicle_status.global_relative_frame.alt | number : 2}}</div>
 
 
 </div>
