@@ -22,6 +22,8 @@ angular.module('droneFrontendApp')
     $scope.consoleRootURL=droneService.consoleRootURL;
 	$scope.drones=droneService.drones;
 	droneService.droneId='d2a7a30c';
+	var myVideo = document.getElementById("videoPlayer"); 
+	myVideo.pause(); 
 
 
     $scope.executeCommandList=[
