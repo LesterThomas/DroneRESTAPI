@@ -21,7 +21,11 @@ angular.module('droneFrontendApp')
 			$scope.droneIndex=i;
 		}
 	}
-
+    $scope.executeCommandList=[
+	    {name:"Arm", attributes:[]}
+    ];
+    $scope.executeCommandIndex=0;
+	  
     $scope.status='Loading';
 	$scope.mission={};
 	$scope.commands={availableCommands:{}};
@@ -518,7 +522,22 @@ angular.module('droneFrontendApp')
 
 	function updateCommands() {
 
+		
 		redrawAdvisories();
+		//executeCommandList
+		//executeCommandIndex
+		
+		if (executeCommandIndex<executeCommandList.length){
+			console.log('Executing command ',executeCommandList[executeCommandIndex]);
+			$scope.commandButton(executeCommandList[executeCommandIndex]);
+			executeCommandIndex++;
+			
+			
+		}
+		
+		
+		
+		/*
 		$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/command',{
             headers : {
                 'APIKEY': $rootScope.loggedInUser.api_key
@@ -588,6 +607,8 @@ angular.module('droneFrontendApp')
 				  // log error
 					console.log('API commands get error',data, status, headers, config);
 				});
+*/
+		
 			}
 
 	$scope.deleteAllAdvisories=function() {
