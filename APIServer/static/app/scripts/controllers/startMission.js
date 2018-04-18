@@ -133,9 +133,9 @@ angular.module('droneFrontendApp')
 								},
                             ticks: {
 								beginAtZero: true,
-                                steps: 6,
+                                steps: 8,
                                 stepValue: 10,
-                                max:40
+                                max:70
                             }
                         }]
 		}
