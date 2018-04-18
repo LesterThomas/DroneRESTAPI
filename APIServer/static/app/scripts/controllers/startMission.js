@@ -12,6 +12,7 @@ angular.module('droneFrontendApp')
   .controller('StartMissionCtrl', ['$scope', '$http','NgMap','$interval','$location','droneService','$rootScope',function ($scope,$http,NgMap,$interval,$location,droneService,$rootScope) {
 
   	console.log('Started startMission controller');
+	  $rootScope.loggedInUser.api_key='c3a75292-333e-4b';
     $scope.apiURL=droneService.apiURL;
     $scope.consoleRootURL=droneService.consoleRootURL;
 	$scope.drones=droneService.drones;
