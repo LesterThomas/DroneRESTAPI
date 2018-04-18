@@ -23,12 +23,7 @@ angular.module('droneFrontendApp')
 	$scope.drones=droneService.drones;
 	droneService.droneId='d2a7a30c';
 
-	$scope.droneIndex=-1;
-	for (var i in $scope.drones.collection){
-		if ($scope.drones.collection[i].id==droneService.droneId){
-			$scope.droneIndex=i;
-		}
-	}
+
     $scope.executeCommandList=[
 	    {name:"Arm", attributes:[]},
 	     {name:"Takeoff", attributes:[{name:"height",value:"10"}]},
@@ -259,6 +254,7 @@ angular.module('droneFrontendApp')
 
 	var intervalTimer = $interval(updateDrone, 250);
 	var intervalActionsTimer = $interval(updateCommands, 3000);
+	updateCommands();
 	function updateDrone() {
 
         if(typeof $scope.drones.collection[$scope.droneIndex] === 'undefined') {
@@ -537,8 +533,16 @@ angular.module('droneFrontendApp')
 		//executeCommandList
 		//executeCommandIndex
 		if ($scope.executeCommandIndex==0) {
-		    $scope.getMission(); 
-		    }
+			
+			$scope.droneIndex=-1;
+			for (var i in $scope.drones.collection){
+				if ($scope.drones.collection[i].id==droneService.droneId){
+					$scope.droneIndex=i;
+				}
+			}
+			
+		    	$scope.getMission(); 
+		}
 		if ($scope.executeCommandIndex<$scope.executeCommandList.length){
 			console.log('Executing command ',$scope.executeCommandList[$scope.executeCommandIndex]);
 			$scope.commandButton($scope.executeCommandList[$scope.executeCommandIndex]);
