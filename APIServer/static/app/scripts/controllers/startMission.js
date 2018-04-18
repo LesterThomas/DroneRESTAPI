@@ -25,10 +25,10 @@ angular.module('droneFrontendApp')
 
 
     $scope.executeCommandList=[
-	    {name:"Check", attributes:[{name:"No-Fly Zones",value:"OK"}]},
 	    {name:"Check", attributes:[{name:"Weather",value:"OK"}]},
-	    {name:"Check", attributes:[{name:"5G Connectivity",value:"Not-Available"}]},
+	    {name:"Check", attributes:[{name:"5G Connectivity",value:"Data Not-Available"}]},
 	    {name:"Check", attributes:[{name:"Drone Telemetry",value:"OK"}]},
+	    {name:"Check", attributes:[{name:"No-Fly Zones",value:"OK"}]},
 	    {name:"Arm", attributes:[]},
 	     {name:"Takeoff", attributes:[{name:"height",value:"10"}]},
 	     {name:"Start-Mission", attributes:[]}
@@ -506,7 +506,9 @@ angular.module('droneFrontendApp')
 			
 		}
 		else {
-			
+			var myVideo = document.getElementById("videoPlayer"); 
+			myVideo.play(); 
+			  		
 			console.log('Sending POST with payload ',payload);
 
 			$http.post($scope.apiURL + 'vehicle/'+droneService.droneId+'/command',payload,{
