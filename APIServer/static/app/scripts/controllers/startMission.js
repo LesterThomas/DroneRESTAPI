@@ -250,7 +250,7 @@ angular.module('droneFrontendApp')
 	});
 
 	var intervalTimer = $interval(updateDrone, 250);
-	var intervalActionsTimer = $interval(updateCommands, 1000);
+	var intervalActionsTimer = $interval(updateCommands, 3000);
 	function updateDrone() {
 
         if(typeof $scope.drones.collection[$scope.droneIndex] === 'undefined') {
