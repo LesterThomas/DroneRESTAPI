@@ -530,7 +530,9 @@ angular.module('droneFrontendApp')
 		redrawAdvisories();
 		//executeCommandList
 		//executeCommandIndex
-		
+		if ($scope.executeCommandIndex==0) {
+		    $scope.getMission(); 
+		    }
 		if ($scope.executeCommandIndex<$scope.executeCommandList.length){
 			console.log('Executing command ',$scope.executeCommandList[$scope.executeCommandIndex]);
 			$scope.commandButton($scope.executeCommandList[$scope.executeCommandIndex]);
