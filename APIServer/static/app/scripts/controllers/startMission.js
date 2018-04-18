@@ -254,11 +254,18 @@ angular.module('droneFrontendApp')
 
 	var intervalTimer = $interval(updateDrone, 250);
 	var intervalActionsTimer = $interval(updateCommands, 3000);
-	updateCommands();
 	function updateDrone() {
 
         if(typeof $scope.drones.collection[$scope.droneIndex] === 'undefined') {
             // does not exist
+		$scope.droneIndex=-1;
+		for (var i in $scope.drones.collection){
+			if ($scope.drones.collection[i].id==droneService.droneId){
+				$scope.droneIndex=i;
+			}
+		}
+			
+		
         }
         else {
             // does exist
@@ -533,13 +540,7 @@ angular.module('droneFrontendApp')
 		//executeCommandIndex
 		if ($scope.executeCommandIndex==0) {
 			
-			$scope.droneIndex=-1;
-			for (var i in $scope.drones.collection){
-				if ($scope.drones.collection[i].id==droneService.droneId){
-					$scope.droneIndex=i;
-				}
-			}
-			
+
 		    	$scope.getMission(); 
 		}
 		
