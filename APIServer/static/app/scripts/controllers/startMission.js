@@ -15,6 +15,8 @@ angular.module('droneFrontendApp')
     $scope.apiURL=droneService.apiURL;
     $scope.consoleRootURL=droneService.consoleRootURL;
 	$scope.drones=droneService.drones;
+	droneService.droneId='d2a7a30c';
+
 	$scope.droneIndex=-1;
 	for (var i in $scope.drones.collection){
 		if ($scope.drones.collection[i].id==droneService.droneId){
