@@ -30,8 +30,8 @@ angular.module('droneFrontendApp')
 	function getDroneFromInventory() {
 		console.log('Calling getDroneFromInventory to get id of first Drone' );
 		
-		if (self.drones.collection.length>0) {
-			droneService.droneId=self.drones.collection[0].id;
+		if ($scope.drones.collection.length>0) {
+			droneService.droneId=$scope.drones.collection[0].id;
 		}
 
 	}
