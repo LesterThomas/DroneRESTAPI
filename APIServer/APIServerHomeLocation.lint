@@ -1,8 +1,0 @@
-************* Module APIServerHomeLocation
-APIServerHomeLocation.py:11: [C0103(invalid-name), ] Invalid constant name "my_logger"
-APIServerHomeLocation.py:14: [C0111(missing-docstring), HomeLocation] Missing class docstring
-APIServerHomeLocation.py:14: [C1001(old-style-class), HomeLocation] Old-style class defined.
-APIServerHomeLocation.py:30: [C0103(invalid-name), HomeLocation.GET] Invalid variable name "tracebackStr"
-APIServerHomeLocation.py:31: [C0103(invalid-name), HomeLocation.GET] Invalid variable name "traceLines"
-APIServerHomeLocation.py:19: [R0201(no-self-use), HomeLocation.GET] Method could be a function
-APIServerHomeLocation.py:14: [R0903(too-few-public-methods), HomeLocation] Too few public methods (1/2)
