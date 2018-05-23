@@ -35,7 +35,7 @@ angular.module('droneFrontendApp')
 			if (self.drones.collection.length>0) {
 				droneService.droneId=self.drones.collection[0].id;
 			}
-		}	
+		})	
 	}
 					
 	var myVideo = document.getElementById("videoPlayer"); 
