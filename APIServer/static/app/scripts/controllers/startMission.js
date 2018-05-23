@@ -4,8 +4,9 @@
  * @ngdoc function
  * @name droneFrontendApp.controller:StartMissionCtrl
  * @description
- * # IndividualCtrl
- * Controller of the droneFrontendApp
+ * # StartMissionCtrl
+ * Controller of the StartMission view that was created for the Softfire Hackathon. It selects the first drone from the inventory and
+ * commands it to follow the mission. If there are no drones in the inventory, it shows an error message.
  */
 
 angular.module('droneFrontendApp')
@@ -14,14 +15,29 @@ angular.module('droneFrontendApp')
   console.log('Started startMission controller');
   $rootScope.loggedInUser= {
     		email: "lesterthomas@hotmail.com",
-		id_provider: "Facebook",
+			id_provider: "Facebook",
     		api_key: "c3a75292-333e-4b",
     		id: "10211950448669833",
     		name: "Lester Thomas"};
     $scope.apiURL=droneService.apiURL;
     $scope.consoleRootURL=droneService.consoleRootURL;
 	$scope.drones=droneService.drones;
-	droneService.droneId='d2a7a30c';
+
+	droneService.droneId='';
+
+	getDroneFromInventory();
+
+	function getDroneFromInventory() {
+		$http.get(self.apiURL + 'vehicle?status=true',{headers: {'APIKEY': $rootScope.loggedInUser.api_key }}).
+		then(function(data, status, headers, config) {
+			console.debug('getDroneFromInventory API get success',data,status);
+			self.drones.collection=data.data._embedded.vehicle;
+			if (self.drones.collection.length>0) {
+				droneService.droneId=self.drones.collection[0].id;
+			}
+		}	
+	}
+					
 	var myVideo = document.getElementById("videoPlayer"); 
 	myVideo.pause(); 
 
@@ -168,6 +184,7 @@ angular.module('droneFrontendApp')
 	$scope.flightPath=null;
 	//console.log('Calling API');
 	getSimEnvironment();
+
 	function getSimEnvironment() {
 	$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator',{headers: {'APIKEY': $rootScope.loggedInUser.api_key }}).
 	    then(function(data, status, headers, config) {
@@ -180,6 +197,8 @@ angular.module('droneFrontendApp')
 				});
 			}
 
+
+						
 	function updateSimEnvironment(key, value){
 		console.log('simEnvironment.' + key + ' value changed to ',value);
 		var payload={"parameter":key,"value":parseFloat(value)};
