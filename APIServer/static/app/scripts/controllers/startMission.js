@@ -46,13 +46,13 @@ angular.module('droneFrontendApp')
 
 
     $scope.executeCommandList=[
-	    {name:"Check", attributes:[{name:"Weather",value:"OK"}]},
-	    {name:"Check", attributes:[{name:"5G Connectivity",value:"Data Not-Available"}]},
-	    {name:"Check", attributes:[{name:"Drone Telemetry",value:"OK"}]},
-	    {name:"Check", attributes:[{name:"No-Fly Zones",value:"OK"}]},
-	    {name:"Arm", attributes:[]},
-	     {name:"Takeoff", attributes:[{name:"height",value:"10"}]},
-	     {name:"Start-Mission", attributes:[]}
+	    {assert:[{name:"is_armable",value:true,description:"Waiting for drone to be armable."}], name:"Check", attributes:[{name:"Weather",value:"OK"}]},
+	    {assert:[], name:"Check", attributes:[{name:"5G Connectivity",value:"Data Not-Available"}]},
+	    {assert:[], name:"Check", attributes:[{name:"Drone Telemetry",value:"OK"}]},
+	    {assert:[], name:"Check", attributes:[{name:"No-Fly Zones",value:"OK"}]},
+	    {assert:[], name:"Arm", attributes:[]},
+	     {assert:[], name:"Takeoff", attributes:[{name:"height",value:"10"}]},
+	     {assert:[], name:"Start-Mission", attributes:[]}
     ];
     $scope.executeCommandIndex=0;
 	  
@@ -584,8 +584,25 @@ angular.module('droneFrontendApp')
 		
 		if ($scope.executeCommandIndex<$scope.executeCommandList.length){
 			console.log('Executing command ',$scope.executeCommandList[$scope.executeCommandIndex]);
-			$scope.commandButton($scope.executeCommandList[$scope.executeCommandIndex]);
-			$scope.executeCommandIndex++;
+
+			//test assertions
+			assertions_passed=true;
+			assertion_text="";
+			for(var i=0;i<$scope.executeCommandList[$scope.executeCommandIndex].assert.length;i++){
+				var assertion=$scope.executeCommandList[$scope.executeCommandIndex].assert[i];
+				console.log('Checking assertion ',assertion);
+				if ($scope.drones.collection[$scope.droneIndex].vehicle_status[assertion.name]!=assertion.value){
+					assertions_passed=false;
+					assertion_text=assertion.description;
+				}
+			}
+			if (assertions_passed) {
+				$scope.commandButton($scope.executeCommandList[$scope.executeCommandIndex]);
+				$scope.executeCommandIndex++;	
+			} else {
+			    var commandItem={"name":inAction.name,"textDescription":assertion_text ,"status":"success" }
+			    $scope.commandLog.items.push(commandItem);				
+			}
 		}
 		
 		
