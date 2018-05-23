@@ -25,17 +25,15 @@ angular.module('droneFrontendApp')
 
 	droneService.droneId='';
 
-	getDroneFromInventory();
+	
 
 	function getDroneFromInventory() {
-		$http.get( $scope.apiURL + 'vehicle?status=true',{headers: {'APIKEY': $rootScope.loggedInUser.api_key }}).
-		then(function(data, status, headers, config) {
-			console.debug('getDroneFromInventory API get success',data,status);
-			self.drones.collection=data.data._embedded.vehicle;
-			if (self.drones.collection.length>0) {
-				droneService.droneId=self.drones.collection[0].id;
-			}
-		})	
+		console.log('Calling getDroneFromInventory to get id of first Drone' );
+		
+		if (self.drones.collection.length>0) {
+			droneService.droneId=self.drones.collection[0].id;
+		}
+
 	}
 					
 	var myVideo = document.getElementById("videoPlayer"); 
@@ -186,16 +184,20 @@ angular.module('droneFrontendApp')
 	getSimEnvironment();
 
 	function getSimEnvironment() {
-	$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator',{headers: {'APIKEY': $rootScope.loggedInUser.api_key }}).
-	    then(function(data, status, headers, config) {
-				console.log('getSimEnvironment API get success',data,status);
-				$scope.simEnvironment=data.data.simulatorParams;
-			},
-				function(data, status, headers, config) {
-				  // log error
-					console.log('getSimEnvironment API get error',data, status, headers, config);
+		if (droneService.droneId=='') 
+		{
+			getDroneFromInventory();
+		}
+		$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator',{headers: {'APIKEY': $rootScope.loggedInUser.api_key }}).
+			then(function(data, status, headers, config) {
+					console.log('getSimEnvironment API get success',data,status);
+					$scope.simEnvironment=data.data.simulatorParams;
+				},
+					function(data, status, headers, config) {
+					// log error
+						console.log('getSimEnvironment API get error',data, status, headers, config);
 				});
-			}
+		}
 
 
 						
