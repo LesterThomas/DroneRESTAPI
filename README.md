@@ -29,7 +29,7 @@ The returned payload is the EntryPoint (or homepage) of the API and shows the AP
 
 
 
-#Build instructions
+#Build instructions for compiling the Docker images
 
 ## Building Docker image
 
