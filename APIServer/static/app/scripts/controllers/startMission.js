@@ -46,9 +46,9 @@ angular.module('droneFrontendApp')
 
 
     $scope.executeCommandList=[
-	    {assert:[{name:"is_armable",value:true,description:"Waiting for drone to be armable."}], name:"Check", attributes:[{name:"Weather",value:"OK"}]},
+	    {assert:[{name:"is_armable",value:true,description:"Waiting for drone to be armable."}], name:"Check", attributes:[{name:"Drone Telemetry",value:"OK"}]},
 	    {assert:[], name:"Check", attributes:[{name:"5G Connectivity",value:"Data Not-Available"}]},
-	    {assert:[], name:"Check", attributes:[{name:"Drone Telemetry",value:"OK"}]},
+	    {assert:[], name:"Check", attributes:[{name:"Weather",value:"OK"}]},
 	    {assert:[], name:"Check", attributes:[{name:"No-Fly Zones",value:"OK"}]},
 	    {assert:[], name:"Arm", attributes:[]},
 	     {assert:[], name:"Takeoff", attributes:[{name:"height",value:"10"}]},
@@ -600,7 +600,7 @@ angular.module('droneFrontendApp')
 				$scope.commandButton($scope.executeCommandList[$scope.executeCommandIndex]);
 				$scope.executeCommandIndex++;	
 			} else {
-			    var commandItem={"name":inAction.name,"textDescription":assertion_text ,"status":"success" }
+			    var commandItem={"name":$scope.executeCommandList[$scope.executeCommandIndex].name,"textDescription":assertion_text ,"status":"success" }
 			    $scope.commandLog.items.push(commandItem);				
 			}
 		}
