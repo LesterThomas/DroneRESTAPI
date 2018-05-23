@@ -586,8 +586,8 @@ angular.module('droneFrontendApp')
 			console.log('Executing command ',$scope.executeCommandList[$scope.executeCommandIndex]);
 
 			//test assertions
-			assertions_passed=true;
-			assertion_text="";
+			var assertions_passed=true;
+			var assertion_text="";
 			for(var i=0;i<$scope.executeCommandList[$scope.executeCommandIndex].assert.length;i++){
 				var assertion=$scope.executeCommandList[$scope.executeCommandIndex].assert[i];
 				console.log('Checking assertion ',assertion);
