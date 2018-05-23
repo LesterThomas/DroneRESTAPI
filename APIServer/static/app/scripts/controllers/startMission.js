@@ -28,7 +28,7 @@ angular.module('droneFrontendApp')
 	getDroneFromInventory();
 
 	function getDroneFromInventory() {
-		$http.get(self.apiURL + 'vehicle?status=true',{headers: {'APIKEY': $rootScope.loggedInUser.api_key }}).
+		$http.get( $scope.apiURL + 'vehicle?status=true',{headers: {'APIKEY': $rootScope.loggedInUser.api_key }}).
 		then(function(data, status, headers, config) {
 			console.debug('getDroneFromInventory API get success',data,status);
 			self.drones.collection=data.data._embedded.vehicle;
