@@ -25,13 +25,18 @@ angular.module('droneFrontendApp')
 
 	droneService.droneId='';
 
+	$scope.checkDroneId = $interval(getDroneFromInventory, 250);
 	
 
 	function getDroneFromInventory() {
 		console.log('Calling getDroneFromInventory to get id of first Drone' );
-		
-		if ($scope.drones.collection.length>0) {
-			droneService.droneId=$scope.drones.collection[0].id;
+		if (droneService.droneId=='') 
+		{
+			if ($scope.drones.collection.length>0) {
+				droneService.droneId=$scope.drones.collection[0].id;
+				$interval.cancel($scope.checkDroneId);
+
+			}
 		}
 
 	}
@@ -184,10 +189,6 @@ angular.module('droneFrontendApp')
 	getSimEnvironment();
 
 	function getSimEnvironment() {
-		if (droneService.droneId=='') 
-		{
-			getDroneFromInventory();
-		}
 		$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator',{headers: {'APIKEY': $rootScope.loggedInUser.api_key }}).
 			then(function(data, status, headers, config) {
 					console.log('getSimEnvironment API get success',data,status);
