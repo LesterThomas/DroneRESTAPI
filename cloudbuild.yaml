@@ -11,9 +11,9 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'eu.gcr.io/$PROJECT_ID/droneapiserver:latest']
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['container', 'clusters', 'get-credentials', 'cluster-1', '--zone','europe-west3-b', '--project', 'lunar-standard-157209' ]
+  args: ['container', 'clusters', 'get-credentials', 'cluster-1', '--zone','europe-west3-b', '--project', '$PROJECT_ID' ]
 - name: 'gcr.io/cloud-builders/kubectl'
-  args: ['set', 'image', 'deployment/droneapiserver', 'droneapiserver=eu.gcr.io/lunar-standard-157209/droneapiserver:$SHORT_SHA']
+  args: ['set', 'image', 'deployment/droneapiserver', 'droneapiserver=eu.gcr.io/$PROJECT_ID/droneapiserver:$SHORT_SHA']
   env:
   - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1' 
   - 'CLOUDSDK_COMPUTE_ZONE=europe-west3-b'
