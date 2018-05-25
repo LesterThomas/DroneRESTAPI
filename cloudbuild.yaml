@@ -1,5 +1,5 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'eu.gcr.io/lunar-standard-157209/droneapiserver:3.0.9', '.']
+  args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/droneapiserver:$SHORT_SHA', '.']
   dir: 'APIServer'
-images: ['eu.gcr.io/lunar-standard-157209/droneapiserver:3.0.9']
+images: ['eu.gcr.io/$PROJECT_ID/droneapiserver:$SHORT_SHA']
