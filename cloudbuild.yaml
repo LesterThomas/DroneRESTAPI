@@ -2,4 +2,8 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/droneapiserver:$SHORT_SHA', '.']
   dir: 'APIServer'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'eu.gcr.io/$PROJECT_ID/droneapiserver:$SHORT_SHA']
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['set', 'image', 'deployment/droneapiserver', 'droneapiserver=eu.gcr.io/lunar-standard-157209/droneapiserver:$SHORT_SHA']
 images: ['eu.gcr.io/$PROJECT_ID/droneapiserver:$SHORT_SHA']
