@@ -16,7 +16,7 @@ angular.module('droneFrontendApp')
   $rootScope.loggedInUser= {
     		email: "lesterthomas@hotmail.com",
 			id_provider: "Facebook",
-    		api_key: "9ff08868-540d-47",
+    		api_key: "61d50878-2230-45",
     		id: "10211950448669833",
     		name: "Lester Thomas"};
     $scope.apiURL=droneService.apiURL;
