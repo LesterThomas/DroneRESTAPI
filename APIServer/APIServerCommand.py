@@ -1,4 +1,4 @@
-"""This module manages the API endpoint to manage an individual vehicles commands."""
+"""This module manages the API endpoint to manage an individual vehicles commands. """
 
 import web
 import logging
