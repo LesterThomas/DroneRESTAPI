@@ -14,6 +14,7 @@ angular.module('droneFrontendApp')
 
   console.log('Started startMission controller');
   var user_payload={name:"Lester Thomas",email:"lesterthomas@hotmail.com",id:"10211950448669833",id_provider:"Facebook"};
+  $scope.apiURL=droneService.apiURL;
   console.log('Sending getting API Key - POST with payload ',user_payload);
 
   $http.post($scope.apiURL + 'user',user_payload,{
@@ -28,7 +29,6 @@ angular.module('droneFrontendApp')
 	  console.log('API actions POST error',data, status, headers, config);
 	});
 	  	  
-    $scope.apiURL=droneService.apiURL;
     $scope.consoleRootURL=droneService.consoleRootURL;
 	$scope.drones=droneService.drones;
 
