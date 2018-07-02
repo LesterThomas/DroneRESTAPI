@@ -214,7 +214,7 @@ spec:
     spec:
       containers:
       - name: droneapiserver
-        image: lesterthomas/droneapiserver:3.0.9
+        image: eu.gcr.io/lunar-standard-157209/droneapiserver:latest
         env:
         - name: DRONEAPI_URL
           value: http://droneapi.ddns.net
