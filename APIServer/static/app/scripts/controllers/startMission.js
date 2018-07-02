@@ -13,8 +13,12 @@ angular.module('droneFrontendApp')
   .controller('StartMissionCtrl', ['$scope', '$http','NgMap','$interval','$location','droneService','$rootScope',function ($scope,$http,NgMap,$interval,$location,droneService,$rootScope) {
 
   console.log('Started startMission controller');
-  var user_payload={name:"Lester Thomas",email:"lesterthomas@hotmail.com",id:"10211950448669833",id_provider:"Facebook"};
   $scope.apiURL=droneService.apiURL;
+  $scope.consoleRootURL=droneService.consoleRootURL;
+  $scope.drones=droneService.drones;
+  droneService.droneId='';
+	  
+  var user_payload={name:"Lester Thomas",email:"lesterthomas@hotmail.com",id:"10211950448669833",id_provider:"Facebook"};
   console.log('Sending getting API Key - POST with payload ',user_payload);
 
   $http.post($scope.apiURL + 'user',user_payload,{
@@ -23,18 +27,15 @@ angular.module('droneFrontendApp')
 	}).then(function(data, status, headers, config) {
 	  $rootScope.loggedInUser= data.data;
 	  console.log('API user POST success',data,status);
+	  $scope.checkDroneId = $interval(getDroneFromInventory, 250);
 	},
 	function(data, status, headers, config) {
 	  // log error
 	  console.log('API actions POST error',data, status, headers, config);
 	});
 	  	  
-    $scope.consoleRootURL=droneService.consoleRootURL;
-	$scope.drones=droneService.drones;
 
-	droneService.droneId='';
-
-	$scope.checkDroneId = $interval(getDroneFromInventory, 250);
+    
 	
 
 	function getDroneFromInventory() {
