@@ -13,12 +13,21 @@ angular.module('droneFrontendApp')
   .controller('StartMissionCtrl', ['$scope', '$http','NgMap','$interval','$location','droneService','$rootScope',function ($scope,$http,NgMap,$interval,$location,droneService,$rootScope) {
 
   console.log('Started startMission controller');
-  $rootScope.loggedInUser= {
-    		email: "lesterthomas@hotmail.com",
-			id_provider: "Facebook",
-    		api_key: "61d50878-2230-45",
-    		id: "10211950448669833",
-    		name: "Lester Thomas"};
+  var user_payload={name:"Lester Thomas",email:"lesterthomas@hotmail.com",id:"10211950448669833",id_provider:"Facebook"};
+  console.log('Sending getting API Key - POST with payload ',user_payload);
+
+  $http.post($scope.apiURL + 'user',user_payload,{
+      headers : {
+	'Content-Type' : 'application/json; charset=UTF-8'}
+	}).then(function(data, status, headers, config) {
+	  $rootScope.loggedInUser= data.data;
+	  console.log('API user POST success',data,status);
+	},
+	function(data, status, headers, config) {
+	  // log error
+	  console.log('API actions POST error',data, status, headers, config);
+	});
+	  	  
     $scope.apiURL=droneService.apiURL;
     $scope.consoleRootURL=droneService.consoleRootURL;
 	$scope.drones=droneService.drones;
