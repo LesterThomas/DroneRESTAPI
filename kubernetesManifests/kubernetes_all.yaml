@@ -261,7 +261,7 @@ spec:
       - name: videoserver
         image: lesterthomas/videoserver
         ports:
-        - name: droneapiserver
+        - name: videoserver
           containerPort: 80
 ---
 ###################################################################
