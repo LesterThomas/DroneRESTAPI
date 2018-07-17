@@ -195,51 +195,7 @@ angular.module('droneFrontendApp')
 
 	$scope.markers=[];
 	$scope.flightPath=null;
-	//console.log('Calling API');
-	getSimEnvironment();
 
-	function getSimEnvironment() {
-		$http.get($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator',{headers: {'APIKEY': $rootScope.loggedInUser.api_key }}).
-			then(function(data, status, headers, config) {
-					console.log('getSimEnvironment API get success',data,status);
-					$scope.simEnvironment=data.data.simulatorParams;
-				},
-					function(data, status, headers, config) {
-					// log error
-						console.log('getSimEnvironment API get error',data, status, headers, config);
-				});
-		}
-
-
-						
-	function updateSimEnvironment(key, value){
-		console.log('simEnvironment.' + key + ' value changed to ',value);
-		var payload={"parameter":key,"value":parseFloat(value)};
-		console.log('Sending POST with payload ',payload);
-
-		$http.post($scope.apiURL + 'vehicle/'+droneService.droneId+'/simulator',payload,{
-		    headers : {
-		        'Content-Type' : 'application/json; charset=UTF-8',
-                'APIKEY': $rootScope.loggedInUser.api_key
-		    }
-			}).then(function(data, status, headers, config) {
-					var actionItem=data.data.action;
-					console.log('API  action POST success',data,status);
-				},
-				function(data, status, headers, config) {
-				  	// log error
-					console.log('API actions POST error',data, status, headers, config);
-				});
-
-
-	}
-
-	$scope.simParamUpdateButton = function(){
-		console.log("Setting simulator parameter '"+$scope.simParamSelected+"' to '" + $scope.simParamValue + "'.");
-
-		updateSimEnvironment($scope.simParamSelected,$scope.simParamValue);
-
-	}
 
 	//if vehicle is disarmed then delete the authorized zone
 	$scope.$watch("drones.collection[droneIndex].vehicle_status.armed_status", function (newValue) {
@@ -285,10 +241,6 @@ angular.module('droneFrontendApp')
 		});
 	}
 
-
-	$scope.$watch("simParamSelected", function (newValue) {
-		$scope.simParamValue=$scope.simEnvironment[newValue];
-	});
 
 	var intervalTimer = $interval(updateDrone, 250);
 	var intervalActionsTimer = $interval(updateCommands, 3000);
