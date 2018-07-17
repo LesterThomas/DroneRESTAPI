@@ -263,7 +263,7 @@ spec:
         ports:
         - name: videoserver
           containerPort: 80
-        livenessProbe:
+        readinessProbe:
           initialDelaySeconds: 10
           httpGet:
             path: /test.html
