@@ -263,6 +263,11 @@ spec:
         ports:
         - name: videoserver
           containerPort: 80
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: /test.html
+            port: 80
 ---
 ###################################################################
 # Service that exposes videoserver
