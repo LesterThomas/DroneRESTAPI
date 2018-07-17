@@ -241,6 +241,48 @@ spec:
     app: droneapiserver
 ---
 ###################################################################
+# videoserver stateless container deployment
+###################################################################
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: videoserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: videoserver
+  template:
+    metadata:
+      labels:
+        app: videoserver
+    spec:
+      containers:
+      - name: videoserver
+        image: lesterthomas/videoserver
+        ports:
+        - name: droneapiserver
+          containerPort: 80
+---
+###################################################################
+# Service that exposes videoserver
+###################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: videoserver
+  labels:
+    app: videoserver
+spec:
+  ports:
+  - port: 80
+    targetPort: videoserver
+    name: videoserver
+  type: NodePort
+  selector:
+    app: videoserver
+---
+###################################################################
 # Ingress that exposes http traffic to outside world
 ###################################################################
 apiVersion: extensions/v1beta1
@@ -266,3 +308,10 @@ spec:
         backend:
           serviceName: redis-commander
           servicePort: 8081
+  - host: drone-video.ddns.net
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: videoserver
+          servicePort: 80
