@@ -259,7 +259,7 @@ spec:
     spec:
       containers:
       - name: videoserver
-        image: lesterthomas/videoserver
+        image: lesterthomas/videoserver:1.1
         ports:
         - name: videoserver
           containerPort: 80
