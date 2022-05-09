@@ -303,6 +303,7 @@ spec:
     http:
       paths:
       - path: /*
+        pathType: Prefix
         backend:
           service:
             name: droneapiserver # This is the name of the service to be exposed.
@@ -312,6 +313,7 @@ spec:
     http:
       paths:
       - path: /*
+        pathType: Prefix
         backend:
           service:
             name: redis-commander
@@ -321,6 +323,7 @@ spec:
     http:
       paths:
       - path: /*
+        pathType: Prefix
         backend:
           service:
             name: videoserver
