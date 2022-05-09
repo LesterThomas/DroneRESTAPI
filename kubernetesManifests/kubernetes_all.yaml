@@ -313,8 +313,8 @@ spec:
       paths:
       - path: /*
         backend:
-          cccc: redis-commander
           service:
+            name: redis-commander
             port:
               number: 8081
   - host: drone-video.ddns.net
