@@ -87,7 +87,7 @@ spec:
 ###################################################################
 # Redis User Interface stateless container deployment
 ###################################################################
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis-commander
@@ -132,7 +132,7 @@ spec:
 ###################################################################
 # droneapiworker stateful container deployment
 ###################################################################
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: droneapiworker
@@ -198,7 +198,7 @@ spec:
 ###################################################################
 # droneapiserver stateless container deployment
 ###################################################################
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: droneapiserver
@@ -243,7 +243,7 @@ spec:
 ###################################################################
 # videoserver stateless container deployment
 ###################################################################
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: videoserver
@@ -290,7 +290,7 @@ spec:
 ###################################################################
 # Ingress that exposes http traffic to outside world
 ###################################################################
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Ingress
 metadata:
   name: droneapiserver
