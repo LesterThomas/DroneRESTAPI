@@ -304,19 +304,25 @@ spec:
       paths:
       - path: /*
         backend:
-          service.name: droneapiserver # This is the name of the service to be exposed.
-          service.port.number: 1234  # This is the port on which the service is exposed.
+          service:
+            name: droneapiserver # This is the name of the service to be exposed.
+            port:
+              number: 1234  # This is the port on which the service is exposed.
   - host: redis-db.ddns.net
     http:
       paths:
       - path: /*
         backend:
           cccc: redis-commander
-          service.port.number: 8081
+          service:
+            port:
+              number: 8081
   - host: drone-video.ddns.net
     http:
       paths:
       - path: /*
         backend:
-          service.name: videoserver
-          service.port.number: 80
+          service:
+            name: videoserver
+            port:
+              number: 80
