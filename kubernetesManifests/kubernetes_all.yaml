@@ -290,7 +290,7 @@ spec:
 ###################################################################
 # Ingress that exposes http traffic to outside world
 ###################################################################
-apiVersion: apps/v1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: droneapiserver
