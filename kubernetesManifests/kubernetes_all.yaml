@@ -290,7 +290,7 @@ spec:
 ###################################################################
 # Ingress that exposes http traffic to outside world
 ###################################################################
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: droneapiserver
@@ -304,19 +304,19 @@ spec:
       paths:
       - path: /*
         backend:
-          serviceName: droneapiserver # This is the name of the service to be exposed.
-          servicePort: 1234  # This is the port on which the service is exposed.
+          service.name: droneapiserver # This is the name of the service to be exposed.
+          service.port.number: 1234  # This is the port on which the service is exposed.
   - host: redis-db.ddns.net
     http:
       paths:
       - path: /*
         backend:
-          serviceName: redis-commander
-          servicePort: 8081
+          cccc: redis-commander
+          service.port.number: 8081
   - host: drone-video.ddns.net
     http:
       paths:
       - path: /*
         backend:
-          serviceName: videoserver
-          servicePort: 80
+          service.name: videoserver
+          service.port.number: 80
