@@ -87,7 +87,7 @@ spec:
 ###################################################################
 # Redis User Interface stateless container deployment
 ###################################################################
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: redis-commander
@@ -132,7 +132,7 @@ spec:
 ###################################################################
 # droneapiworker stateful container deployment
 ###################################################################
-apiVersion: apps/v1
+apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: droneapiworker
@@ -198,7 +198,7 @@ spec:
 ###################################################################
 # droneapiserver stateless container deployment
 ###################################################################
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: droneapiserver
@@ -243,7 +243,7 @@ spec:
 ###################################################################
 # videoserver stateless container deployment
 ###################################################################
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: videoserver
@@ -290,7 +290,7 @@ spec:
 ###################################################################
 # Ingress that exposes http traffic to outside world
 ###################################################################
-apiVersion: networking.k8s.io/v1
+apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: droneapiserver
@@ -303,29 +303,20 @@ spec:
     http:
       paths:
       - path: /*
-        pathType: Prefix
         backend:
-          service:
-            name: droneapiserver # This is the name of the service to be exposed.
-            port:
-              number: 1234  # This is the port on which the service is exposed.
+          serviceName: droneapiserver # This is the name of the service to be exposed.
+          servicePort: 1234  # This is the port on which the service is exposed.
   - host: redis-db.ddns.net
     http:
       paths:
       - path: /*
-        pathType: Prefix
         backend:
-          service:
-            name: redis-commander
-            port:
-              number: 8081
+          serviceName: redis-commander
+          servicePort: 8081
   - host: drone-video.ddns.net
     http:
       paths:
       - path: /*
-        pathType: Prefix
         backend:
-          service:
-            name: videoserver
-            port:
-              number: 80
+          serviceName: videoserver
+          servicePort: 80
