@@ -27,7 +27,7 @@ metadata:
 spec:
   containers:
     - name: master
-      image: k8s.gcr.io/redis:v1
+      image: bitnami/redis:latest
       env:
         - name: MASTER
           value: "true"
